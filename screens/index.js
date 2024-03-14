@@ -1,3 +1,3 @@
-import { MainFeed, Camera, Community } from "./TabScreens";
+import { MainFeed, Camera, Community, MyPage, Friends, MyOptions } from "./StackScreens";
 
-export { MainFeed, Camera, Community }
+export { MainFeed, Camera, Community, MyPage, Friends, MyOptions }
