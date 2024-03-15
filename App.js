@@ -1,12 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import LoginForm from './LoginForm';
+import SignUpForm from './SignUpForm';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <LoginForm />
+      <SignUpForm />
       <StatusBar style="auto" />
     </View>
   );
@@ -20,3 +20,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
