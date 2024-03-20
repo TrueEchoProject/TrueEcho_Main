@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import DateTimePickerModal from "react-native-modal-datetime-picker"; // 날짜 모달 라이브러리.
+import Notification from "./Notification";
 
 
 const SignUpForm = () => {
@@ -32,7 +33,7 @@ const SignUpForm = () => {
   };
 
   const continueClick = () => { // 페이지 동작 관련 함수.
-    if (step < 6) {
+    if (step < 9) {
       if (step === 1) {
         if (userData.email === "") {
           setWarning("empty"); // 이메일이 공란인 경우 경고노출.
@@ -48,7 +49,22 @@ const SignUpForm = () => {
         setWarning(true);
       } else if (step === 5 && userData.userAge === "") {
         setWarning("empty");
-      } else {
+      } else if (step === 6) {
+        // 성별 선택 후 다음 단계로 넘어가는 로직
+        setStep(step + 1);
+        setWarning(false);
+      }
+      else if (step === 7) {
+        // 성별 선택 후 다음 단계로 넘어가는 로직
+        setStep(step + 1);
+        setWarning(false);
+      }
+      else if (step === 8) {
+        // 성별 선택 후 다음 단계로 넘어가는 로직
+        setStep(step + 1);
+        setWarning(false);
+      }
+      else {
         setStep(step + 1);
         setWarning(false);
       }
@@ -188,36 +204,55 @@ const SignUpForm = () => {
         )}
         {step === 6 && (
           <View style={styles.inputBox}>
-          <Text style={styles.text}>성별</Text>
-          <Text style={styles.description}>성별을 선택해주세요!</Text>
-          <View style={styles.sexBtnWrap}>
-            <Pressable
-              onPress={() => {
-                setUserData({ ...userData, userSex: "남성" });
-                setWarning("choose"); 
-              }}
-              style={styles.sexBtn}
-            >
-              <Text style={styles.sexBtnText}>남성</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => {
-                setUserData({ ...userData, userSex: "여성" });
-                setWarning("choose"); 
-              }}
-              style={styles.sexBtn}
-            >
-              <Text style={styles.sexBtnText}>여성</Text>
-            </Pressable>
+            <Text style={styles.text}>성별</Text>
+            <Text style={styles.description}>성별을 선택해주세요!</Text>
+            <View style={styles.sexBtnWrap}>
+              <Pressable
+                onPress={() => {
+                  setUserData({ ...userData, userSex: "남성" });
+                  setWarning("choose");
+                }}
+                style={styles.sexBtn}
+              >
+                <Text style={styles.sexBtnText}>남성</Text>
+              </Pressable>
+              <Pressable
+                onPress={() => {
+                  setUserData({ ...userData, userSex: "여성" });
+                  setWarning("choose");
+                }}
+                style={styles.sexBtn}
+              >
+                <Text style={styles.sexBtnText}>여성</Text>
+              </Pressable>
+            </View>
+            {warning === "choose" && <Text style={{ fontSize: hp(2.5), marginTop: hp(3), fontSize: hp(5), fontWeight: "bold" }}>{userData.userSex}</Text>}
           </View>
-          {warning === "choose" && <Text style={{ fontSize: hp(2.5),marginTop:hp(3),fontSize:hp(5), fontWeight: "bold"}}>{userData.userSex}</Text>}
-        </View>
+        )}
+        {step === 7 && (
+          <View style={styles.inputBox}>
+            <Text style={styles.text}>알림을 활성화 해주세요.</Text>
+            <Text style={styles.description}>게시물을 공유하거나, 투표를 받으면 알림으로 바로 알려드려요!</Text>
+            <Notification />
+          </View>
+        )}
+        {step === 8 && (
+          <View style={styles.inputBox}>
+            <Text style={styles.text}>언제 게시물을 작성할까요?</Text>
+            <Text style={styles.description}>알림을 받고 게시물을 공유할 시간을 알려주세요!</Text>
+          </View>
+        )}
+        {step === 9 && (
+          <View style={styles.inputBox}>
+            <Text style={styles.text}>TrueEcho를 위한 준비가 끝났어요!</Text>
+            <Text style={styles.description}>사람들을 만날 준비가 되었나요?{'\n'}바로 시작할게요!</Text>
+          </View>
         )}
       </View>
       <KeyboardAvoidingView >
         <Pressable style={styles.continueBtn} onPress={continueClick}>
           <Text style={styles.btnText}>
-            {step < 6 ? "Continue" : "Finish"}
+            {step < 9 ? "Continue" : "Finish"}
           </Text>
         </Pressable>
       </KeyboardAvoidingView>
@@ -267,18 +302,18 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginBottom: hp(1),
   },
-  sexBtnWrap:{
+  sexBtnWrap: {
     flexDirection: "row",
     justifyContent: "center",
-    marginTop:hp(3),
+    marginTop: hp(3),
   },
   sexBtn: {
     backgroundColor: '#3B4664',
     paddingVertical: wp(3),
     paddingHorizontal: wp(10),
-    borderRadius: 15, 
+    borderRadius: 15,
     marginHorizontal: wp(3),
-    marginTop:hp(3),
+    marginTop: hp(3),
   },
   sexBtnText: {
     color: "#fff",
