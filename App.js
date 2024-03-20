@@ -17,13 +17,7 @@ export default function App() {
       try {
         // Pre-load 되어야 하는 API 등을 여기에 기술
         // 2초 딜레이
-        await new Promise(resolve => setTimeout(resolve, 2000));
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        // 어플에게 로딩이 되었음을 알림
-        setIsReady(true);
-        await SplashScreen.hideAsync();
+
       }
     }
     
