@@ -8,7 +8,7 @@ export const Button1 = ({ onPress }) => { // 상단 친구 옵션 이동 버튼
 		<TouchableOpacity onPress={onPress}>
 			<View>
 				< MaterialIcons name='peopleeee' size={30} style={{ height: 30, width:40, marginRight:10 }}/>
-			</View>
+			</View>ddd
 		</ TouchableOpacity>sdfdsfsdf
 	) 
 }
