@@ -1,8 +1,9 @@
-import React from 'react';
+import React from 'react'; //주석추가
 import { createStackNavigator } from "@react-navigation/stack";
 import { MainFeed, Community, MyPage, Friends, MyOptions } from "../screens";
 import { View } from 'react-native';
 import { Button1, Button2, Button3 } from "../components/Button";
+import { Camera } from '../screens';
 
 const MainFeedStack = createStackNavigator();
 
