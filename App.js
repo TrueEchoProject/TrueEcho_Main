@@ -31,6 +31,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <SignUpForm />
+      <Text>하이</Text>
       <StatusBar style="auto" />
     </View>
   );
