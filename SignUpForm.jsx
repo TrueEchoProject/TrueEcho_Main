@@ -8,10 +8,13 @@ import {
   StyleSheet,
   Image,
   Button,
+  TouchableOpacity, //터치 가능한 투명한 영역을 만드는데 사용.
 } from "react-native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import DateTimePickerModal from "react-native-modal-datetime-picker"; // 날짜 모달 라이브러리.
 import Notification from "./Notification";
+import SettingTime from "./SettingTime";
+
 
 
 const SignUpForm = () => {
@@ -23,18 +26,20 @@ const SignUpForm = () => {
     userName: "",
     userAge: "",
     userSex: "",
+    timeRange: [10, 20], // 멀티 슬라이드 초기 값. 
   });
   const [authCode, setAuthCode] = useState(""); // 인증 번호 확인 절차는 회원가입 과정중 진행되므로 따로 다루기 위해 따로 선언. 
   const [warning, setWarning] = useState(""); // 에러 메시지의 유형을 세분화 해야함. 아직 미구현.
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false); // 모달이 현재 디스플레이 보여지고 있는지의 여부. 
+  const [displayAge, setDisplayAge] = useState(""); // 모달이 현재 디스플레이 보여지고 있는지의 여부. 
   //------------------------------------------------------------------------
   const handleChange = (key, value) => {
     setUserData({ ...userData, [key]: value });
   };
 
   const continueClick = () => { // 페이지 동작 관련 함수.
-    if (step < 9) {
-      if (step === 1) {
+    switch (step) {
+      case 1:
         if (userData.email === "") {
           setWarning("empty"); // 이메일이 공란인 경우 경고노출.
         } else if (!isValidEmail(userData.email)) {
@@ -43,33 +48,59 @@ const SignUpForm = () => {
           setWarning(false); // 이메일이 유효하면 경고 해제.
           setStep(step + 1);
         }
-      } else if (step === 3 && (userData.id === "" || userData.password === "")) {
-        setWarning(true);
-      } else if (step === 4 && userData.userName === "") {
-        setWarning(true);
-      } else if (step === 5 && userData.userAge === "") {
-        setWarning("empty");
-      } else if (step === 6) {
+        break;
+      case 3:
+        if (!userData.id) {
+          setWarning("idEmpty");
+        } else if (!userData.password) {
+          setWarning("passwordEmpty");
+        } else if (userData.password && !userData.confirmPassword) {
+          setWarning("confirmPasswordEmpty");
+        } else if (userData.password !== userData.confirmPassword) {
+          setWarning("passwordMismatch");
+        } else {
+          setStep(step + 1);
+          setWarning("");
+        }
+        break;
+      case 4:
+        if (userData.userName === "") {
+          setWarning(true);
+        } else {
+          setStep(step + 1);
+          setWarning(false);
+        }
+        break;
+      case 5:
+        if (userData.userAge === "") {
+          setWarning("empty");
+        } else {
+          setStep(step + 1);
+          setWarning(false);
+        }
+        break;
+      case 6:
+      case 7:
+      case 8:
         // 성별 선택 후 다음 단계로 넘어가는 로직
         setStep(step + 1);
         setWarning(false);
-      }
-      else if (step === 7) {
-        // 성별 선택 후 다음 단계로 넘어가는 로직
-        setStep(step + 1);
-        setWarning(false);
-      }
-      else if (step === 8) {
-        // 성별 선택 후 다음 단계로 넘어가는 로직
-        setStep(step + 1);
-        setWarning(false);
-      }
-      else {
-        setStep(step + 1);
-        setWarning(false);
-      }
-    } else {
-      console.log("회원 가입 완료:", userData);
+        break;
+      default:
+        if (step < 9) {
+          setStep(step + 1);
+          setWarning(false);
+        } else {
+          console.log("회원 가입 완료:", userData);
+        }
+        break;
+    }
+  };
+
+
+  const goBack = () => { // 뒤로가기 버튼 클릭시 호출. 
+    if (step > 1) {
+      setStep(step - 1);
     }
   };
 
@@ -87,13 +118,31 @@ const SignUpForm = () => {
   };
 
   const handleConfirm = (date) => {
-    console.log(date); // UTC 기준으로 출력됨
-    const koreanDate = new Date(date.getTime() + (9 * 60 * 60 * 1000)); // 한국 시간으로 변환.
-    const koreanDateString = koreanDate.toISOString().slice(0, 10); // ISO 형식의 한국 시간 문자열로 변환.
-    setUserData({ ...userData, userAge: koreanDateString }); // 한국 시간을 사용하여 userData 업데이트.
-    setWarning("choose");
+    console.log("A date has been picked: ", date);
+    const koreanDate = new Date(date.getTime() + (9 * 60 * 60 * 1000)); // 한국 시간으로 변환
+    const koreanDateString = koreanDate.toISOString().split('T')[0]; // 'yyyy-mm-dd' 형식으로 변환
+    setUserData({ ...userData, userAge: koreanDateString }); // userData 업데이트
+
+    const age = calculateAge(koreanDate); // 현재 나이 계산 함수 호출
+    setDisplayAge(age);
     hideDatePicker();
   };
+
+
+  const calculateAge = (birthdate) => { // 유저 현재 나이 계산 함수. 
+    const today = new Date();
+    let age = today.getFullYear() - birthdate.getFullYear();
+    const m = today.getMonth() - birthdate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthdate.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
+  const updateTimeRange = (newTimeRange) => {
+    setUserData({ ...userData, timeRange: newTimeRange });
+  };
+
   //------------------------------------------------------------------------
   return (
     <View style={styles.container}>
@@ -143,7 +192,8 @@ const SignUpForm = () => {
               onChangeText={(text) => handleChange("id", text)}
               style={styles.input}
             />
-            {warning && <Text style={styles.warningText}>아이디 중복검사 버튼을 눌러주세요.</Text>}
+            {warning === "idEmpty" && <Text style={styles.warningText}>아이디를 입력해주세요.</Text>}
+
             <TextInput
               placeholder="비밀번호를 입력해주세요."
               value={userData.password}
@@ -151,7 +201,7 @@ const SignUpForm = () => {
               style={styles.input}
               secureTextEntry
             />
-            {warning && <Text style={styles.warningText}>비밀번호가 틀렸습니다.</Text>}
+            {warning === "passwordEmpty" && <Text style={styles.warningText}>비밀번호를 입력해주세요.</Text>}
 
             <TextInput
               placeholder="비밀번호를 다시 입력해주세요."
@@ -160,7 +210,8 @@ const SignUpForm = () => {
               style={styles.input}
               secureTextEntry
             />
-            {warning && <Text style={styles.warningText}>비밀번호가 일치하지 않습니다.</Text>}
+            {warning === "confirmPasswordEmpty" && <Text style={styles.warningText}>비밀번호 확인을 입력해주세요.</Text>}
+            {warning === "passwordMismatch" && <Text style={styles.warningText}>비밀번호가 일치하지 않습니다.</Text>}
           </View>
         )}
         {step === 4 && (
@@ -181,13 +232,15 @@ const SignUpForm = () => {
           <View style={styles.inputBox}>
             <Text style={styles.text}>생년월일</Text>
             <Text style={styles.description}>같은 연령대의 친구들을 추천해드려요!</Text>
+
             <TextInput
               placeholder="Year / Month / Day"
               value={userData.userAge}
-              onChangeText={(text) => handleChange("userAge", text)}
+              // onChangeText={(text) => handleChange("userAge", text)}
               style={styles.input}
               editable={false}
             />
+
             {warning === "empty" && <Text style={styles.warningText}>생년월일을 입력해주세요.</Text>}
             <View>
               <Button title="Show Date Picker" onPress={showDatePicker} />
@@ -198,8 +251,9 @@ const SignUpForm = () => {
                 onCancel={hideDatePicker}
               />
             </View>
-            {warning === "choose" && <Text style={{ fontSize: hp(6), fontWeight: "bold", }}>만 {userData.userAge}세</Text>}
-            {warning === "choose" && <Text style={{ fontSize: hp(2.5), }}>친구들의 일상을 볼 수 있어요!</Text>}
+
+            {displayAge && <Text style={{ fontSize: hp(6), fontWeight: "bold", }}>만 {displayAge}세</Text>}
+            {displayAge && <Text style={{ fontSize: hp(2.5), }}>친구들의 일상을 볼 수 있어요!</Text>}
           </View>
         )}
         {step === 6 && (
@@ -240,6 +294,7 @@ const SignUpForm = () => {
           <View style={styles.inputBox}>
             <Text style={styles.text}>언제 게시물을 작성할까요?</Text>
             <Text style={styles.description}>알림을 받고 게시물을 공유할 시간을 알려주세요!</Text>
+            <SettingTime timeRange={userData.timeRange} setTimeRange={updateTimeRange}/>
           </View>
         )}
         {step === 9 && (
@@ -250,6 +305,11 @@ const SignUpForm = () => {
         )}
       </View>
       <KeyboardAvoidingView >
+        {step > 1 && ( // Step 1에서는 뒤로 가기 버튼이 보이지 않음.
+          <Pressable style={styles.backBtn} onPress={goBack}>
+            <Text style={styles.btnText}>Back</Text>
+          </Pressable>
+        )}
         <Pressable style={styles.continueBtn} onPress={continueClick}>
           <Text style={styles.btnText}>
             {step < 9 ? "Continue" : "Finish"}
@@ -330,6 +390,14 @@ const styles = StyleSheet.create({
     color: "red",
     fontSize: hp(2),
     marginTop: hp(1),
+  },
+  backBtn: {
+    backgroundColor: "#AAA",
+    width: wp(90),
+    padding: wp(2),
+    paddingHorizontal: wp(4),
+    borderRadius: 15,
+    marginBottom: hp(1),
   },
 });
 
