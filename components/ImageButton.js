@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Image, TouchableOpacity, View, Text } from 'react-native';
 
-export const ImageButton = () => {
-	// 이미지 URL 상태와 현재 인덱스 상태를 정의합니다.
+export const ImageButton = ({ author }) => {
 	const [images, setImages] = useState([]);
 	const [imageIndex, setImageIndex] = useState(0);
 	
-	// API에서 이미지 데이터를 가져오는 함수
-	const fetchFeeds = async () => {
+	const fetchImagesByAuthor = async () => {
 		const data = {
 			id: 1,
 			jsonrpc: "2.0",
-			method: "call",
-			params: [
-				"database_api",
-				"get_discussions_by_created",
-				[{ tag: "kr", limit: 20 }] 
-			]
+			method: "tags_api.get_discussions_by_author_before_date",
+			params: {
+				author: author,
+				start_permlink: "",
+				before_date: "2025-01-19T03:14:07",
+				limit: 5
+			}
 		};
 		
 		try {
@@ -27,18 +26,17 @@ export const ImageButton = () => {
 			const jsonResponse = await response.json();
 			const feeds = jsonResponse.result || [];
 			
-			// 피드에서 이미지 URL을 추출하여 상태를 업데이트합니다.
 			const extractedImages = feeds.map(feed => {
 				try {
 					const metadata = JSON.parse(feed.json_metadata);
-					if (metadata.image && metadata.image.length > 0) {
+					if (metadata && metadata.image && metadata.image.length > 0) {
 						return metadata.image[0];
 					}
 				} catch (error) {
 					console.error('Error parsing json_metadata:', error);
 				}
 				return null;
-			}).filter(url => url !== null); // null 값을 제거합니다.
+			}).filter(url => url !== null);
 			
 			setImages(extractedImages);
 		} catch (error) {
@@ -48,12 +46,14 @@ export const ImageButton = () => {
 	
 	// feedId 의존성 추가로 인해 컴포넌트가 마운트될 때와 feedId가 변경될 때 이미지 데이터를 가져옵니다.
 	useEffect(() => {
-		fetchFeeds();
-	}, []);
+		if (author) {
+			fetchImagesByAuthor();
+		}
+	}, [author]);
 	
 	// 버튼 클릭 시 이미지 인덱스를 변경하는 함수
 	const changeImage = () => {
-		setImageIndex(prevIndex => (prevIndex === 0 ? 1 : 0));
+		setImageIndex(prevIndex => (prevIndex + 1) % images.length);
 	};
 	
 	// 이미지가 아직 로드되지 않았다면, 로딩 중임을 표시합니다.
@@ -64,12 +64,15 @@ export const ImageButton = () => {
 			</View>
 		);
 	}
+	// 이미지 배열이 최소 2개의 이미지를 포함하고 있는지 확인
+	const firstImageUri = images[0];
+	const secondImageUri = images.length > 1 ? images[1] : firstImageUri; // 이미지가 1개만 있는 경우 동일 이미지 사용
 	
 	return (
 		<View style={{ position: 'relative' }}>
-			<TouchableOpacity onPress={changeImage} style={{ zIndex: 2, position: 'absolute', top: 10, left: 10 }}>
+			<TouchableOpacity onPress={() => changeImage()} style={{ zIndex: 2, position: 'absolute', top: 10, left: 10 }}>
 				<Image
-					source={{ uri: images[imageIndex] }}
+					source={{ uri: imageIndex === 0 ? firstImageUri : secondImageUri }}
 					style={{
 						borderColor: '#ffffff',
 						borderWidth: 2,
@@ -79,9 +82,9 @@ export const ImageButton = () => {
 					}}
 				/>
 			</TouchableOpacity>
-			<TouchableOpacity onPress={changeImage} style={{ zIndex: 1 }}>
+			<TouchableOpacity onPress={() => changeImage()} style={{ zIndex: 1 }}>
 				<Image
-					source={{ uri: images[1 - imageIndex] }}
+					source={{ uri: imageIndex === 0 ? secondImageUri : firstImageUri }}
 					style={{
 						height: 450,
 						width: '100%',

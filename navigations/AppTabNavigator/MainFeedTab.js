@@ -103,7 +103,6 @@ const MainFeedTab = () => {
 						<View key={index} style={{flex: 1}}>
 							<CardComponent
 								data={feed}
-								
 							/>
 						</View>
 					))}

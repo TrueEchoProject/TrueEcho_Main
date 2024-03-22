@@ -22,7 +22,7 @@ export default class CardCompnent extends Component{
 						</Body>
 					</Left>
 				</CardItem>
-				<ImageButton />
+				<ImageButton author={data.author} />
 				<CardItem style={{ height: 20 }}>
 					<Text>{ data.active_votes.length } likes</Text>
 				</CardItem>
