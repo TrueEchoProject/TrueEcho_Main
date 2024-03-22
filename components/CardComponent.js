@@ -20,8 +20,8 @@ export default class CardCompnent extends Component{
 						</Body>
 					</Left>
 				</CardItem>
-					<ImageButton />
 				<CardItem style={{ height: 30}}>
+				<ImageButton author={data.author} />
 					<Left>
 						<Button transparent>
 							<Ionicons name='heart' style={{ color:'black' }}/>
