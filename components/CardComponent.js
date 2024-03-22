@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
-import { View, Image, Text, StyleSheet } from 'react-native';
+import {View, Image, Text, StyleSheet, TouchableOpacity,} from 'react-native';
 import { Card, CardItem, Thumbnail, Body, Left, Right, Button } from 'native-base';
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
+import { ImageButton } from "./ImageButton";
 
 
 export default class CardCompnent extends Component{
 
 	render(){
 		return (
-			<Card>
+			<View>
 				<CardItem>
 					<Left style={{ height: 35 }} >
 						<Thumbnail
@@ -19,11 +20,7 @@ export default class CardCompnent extends Component{
 						</Body>
 					</Left>
 				</CardItem>
-				<CardItem cardBody >
-					<Image
-						source={{ uri: 'https://user-images.githubusercontent.com/3969643/51441420-b41f1c80-1d14-11e9-9f5d-af5cd3a6aaae.png' }}
-						style={{ height: 450, width: '100%' , resizeMode: 'stretch' }} />
-				</CardItem>
+					<ImageButton />
 				<CardItem style={{ height: 30}}>
 					<Left>
 						<Button transparent>
@@ -42,7 +39,7 @@ export default class CardCompnent extends Component{
 						<Text style={{ fontWeight:'900'}}>Comment</Text>
 					</Text>
 				</CardItem>
-			</Card>
+			</View>
 		);
 	}
 }
