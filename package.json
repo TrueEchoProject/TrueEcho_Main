@@ -6,7 +6,8 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "json-server": "json-server --watch db.json"
   },
   "dependencies": {
     "@ptomasroos/react-native-multi-slider": "^2.2.2",
@@ -14,6 +15,7 @@
     "@react-navigation/bottom-tabs": "^6.5.19",
     "@react-navigation/native": "^6.1.15",
     "@react-navigation/stack": "^6.3.28",
+    "axios": "^1.6.8",
     "expo": "~50.0.11",
     "expo-app-loading": "^2.1.1",
     "expo-notifications": "^0.27.6",
@@ -35,6 +37,7 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "eslint": "^8.57.0",
+    "json-server": "^1.0.0-alpha.23",
     "prettier": "^3.2.5"
   },
   "private": true

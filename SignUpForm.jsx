@@ -14,6 +14,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import DateTimePickerModal from "react-native-modal-datetime-picker"; // 날짜 모달 라이브러리.
 import Notification from "./Notification";
 import SettingTime from "./SettingTime";
+import axios from 'axios'; // HTTP 통신 라이브러리. 
 
 
 
@@ -91,7 +92,8 @@ const SignUpForm = () => {
           setStep(step + 1);
           setWarning(false);
         } else {
-          console.log("회원 가입 완료:", userData);
+          // console.log("회원 가입 완료:", userData);
+          sendDataToServer(userData);
         }
         break;
     }
@@ -143,6 +145,35 @@ const SignUpForm = () => {
     setUserData({ ...userData, timeRange: newTimeRange });
   };
 
+  const sendDataToServer = async (userData) => { // 가상 서버로 회원가입 과정에서 수집한 유저 데이터 (userData) 전송. 
+    try {
+      const response = await axios.post('https://jsonplaceholder.typicode.com/users', userData);
+      console.log("백엔드로 전송", response.data);
+    } catch (error) {
+      console.error('Error sending data:', error);
+    }
+  };
+
+
+  const checkUserId = () => { // 아이디 중복 테스트. db.json에 있는 아이디와 비교함. 
+    console.log('Checking user ID:', userData.id);
+    axios.get(`http://172.30.1.76:3000/users?userId=${userData.id}`) // get으로 목록을 조회.
+        .then(response => {
+            console.log('Response data:', response.data); // 응답 데이터 로깅
+            if (response.data.length > 0) { //get을 통해 무언가 반환이 되면, 중복이므로 중복 알림 표시.
+                alert('이미 사용 중인 아이디입니다.');
+                setWarning('이미 사용 중인 아이디입니다.');
+            } else { // 빈배열이 반환되면 중복이 아니므로 사용가능 알림 표시. 
+                alert('사용 가능한 아이디입니다.');
+                setWarning('');
+            }
+        })
+        .catch(error => { // 에러처리.
+            console.error('Error:', error);
+        });
+};
+
+
   //------------------------------------------------------------------------
   return (
     <View style={styles.container}>
@@ -192,6 +223,7 @@ const SignUpForm = () => {
               onChangeText={(text) => handleChange("id", text)}
               style={styles.input}
             />
+            <Button title="중복 확인" onPress={checkUserId}/>
             {warning === "idEmpty" && <Text style={styles.warningText}>아이디를 입력해주세요.</Text>}
 
             <TextInput
@@ -294,7 +326,7 @@ const SignUpForm = () => {
           <View style={styles.inputBox}>
             <Text style={styles.text}>언제 게시물을 작성할까요?</Text>
             <Text style={styles.description}>알림을 받고 게시물을 공유할 시간을 알려주세요!</Text>
-            <SettingTime timeRange={userData.timeRange} setTimeRange={updateTimeRange}/>
+            <SettingTime timeRange={userData.timeRange} setTimeRange={updateTimeRange} />
           </View>
         )}
         {step === 9 && (
