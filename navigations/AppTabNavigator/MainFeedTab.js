@@ -99,11 +99,11 @@ const MainFeedTab = () => {
 						}
 					}}
 				>
-					{feeds.map((feed, index) => (
+					{feeds.map((feed, index ) => (
 						<View key={index} style={{flex: 1}}>
 							<CardComponent
 								data={feed}
-								author={feed.author}
+								
 							/>
 						</View>
 					))}

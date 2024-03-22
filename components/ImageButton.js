@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Image, TouchableOpacity, View, Text } from 'react-native';
 
-export const ImageButton = ({  }) => {
+export const ImageButton = () => {
 	// 이미지 URL 상태와 현재 인덱스 상태를 정의합니다.
 	const [images, setImages] = useState([]);
 	const [imageIndex, setImageIndex] = useState(0);
@@ -15,7 +15,7 @@ export const ImageButton = ({  }) => {
 			params: [
 				"database_api",
 				"get_discussions_by_created",
-				[{ tag: "kr", limit: 20 }] // 'start_author'를 사용해 특정 피드의 데이터를 요청
+				[{ tag: "kr", limit: 20 }] 
 			]
 		};
 		

@@ -6,38 +6,51 @@ import { ImageButton } from "./ImageButton";
 
 
 export default class CardCompnent extends Component{
-
-	render(){
+	
+	render() {
+		const { data } = this.props;
+		
 		return (
 			<View>
 				<CardItem>
 					<Left style={{ height: 35 }} >
 						<Thumbnail
-							small source={{ uri: 'https://steemitimages.com/u/anpigon/avatar' }} />
+							small source={{ uri: `https://steemitimages.com/u/${data.author}/avatar` }} />
 						<Body>
-							<Text>Username</Text>
-							<Text note>Jan 21, 2024</Text>
+							<Text>{data.author}</Text>
+							<Text note>{new Date(data.created).toDateString()}</Text>
 						</Body>
 					</Left>
 				</CardItem>
-				<CardItem style={{ height: 30}}>
-				<ImageButton author={data.author} />
+				<ImageButton />
+				<CardItem style={{ height: 20 }}>
+					<Text>{ data.active_votes.length } likes</Text>
+				</CardItem>
+				<CardItem>
+					<Text style={{ fontWeight:'900'}}>{ data.title.slice(0, 15) }</Text>
+				</CardItem>
+				<CardItem>
+					<Text>
+						{ data.body.replace(/\n/g,' ').slice(0, 15) }
+					</Text>
+				</CardItem>
+				<CardItem style={{ height:20 }}>
 					<Left>
 						<Button transparent>
-							<Ionicons name='heart' style={{ color:'black' }}/>
+							<Ionicons name='heart' style={{ color:'black', marginRight: 5 }}/>
+							<Text>{ data.active_votes.length }</Text>
 						</Button>
 						<Button transparent>
-							<Ionicons name='chatbubbles' style={{ color:'black' }}/>
+							<Ionicons name='chatbubbles' style={{ color:'black', marginRight: 5 }}/>
+							<Text>{ data.children }</Text>
 						</Button>
 						<Button transparent>
 							<MaterialIcons name='send' style={{ color:'black' }}/>
 						</Button>
 					</Left>
-				</CardItem>
-				<CardItem>
-					<Text>
-						<Text style={{ fontWeight:'900'}}>Comment</Text>
-					</Text>
+					<Right>
+						<Text>{ data.pending_payout_value }</Text>
+					</Right>
 				</CardItem>
 			</View>
 		);
