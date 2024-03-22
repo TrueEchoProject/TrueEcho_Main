@@ -38,32 +38,23 @@ export const ImageButton = ({ author }) => {
 				return null;
 			}).filter(url => url !== null);
 			
-			setImages(extractedImages);
+			setImages(extractedImages.length > 0 ? extractedImages : ["https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=150&h=150&fit=crop", "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=450&h=450&fit=crop"]);
 		} catch (error) {
 			console.error('Error fetching images:', error);
+			setImages(["https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=150&h=150&fit=crop", "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=450&h=450&fit=crop"]); // 에러 발생 시 대체 이미지 사용
 		}
 	};
 	
-	// feedId 의존성 추가로 인해 컴포넌트가 마운트될 때와 feedId가 변경될 때 이미지 데이터를 가져옵니다.
 	useEffect(() => {
 		if (author) {
 			fetchImagesByAuthor();
 		}
 	}, [author]);
 	
-	// 버튼 클릭 시 이미지 인덱스를 변경하는 함수
 	const changeImage = () => {
 		setImageIndex(prevIndex => (prevIndex + 1) % images.length);
 	};
 	
-	// 이미지가 아직 로드되지 않았다면, 로딩 중임을 표시합니다.
-	if (images.length === 0) {
-		return (
-			<View>
-				<Text>Loading...</Text>
-			</View>
-		);
-	}
 	// 이미지 배열이 최소 2개의 이미지를 포함하고 있는지 확인
 	const firstImageUri = images[0];
 	const secondImageUri = images.length > 1 ? images[1] : firstImageUri; // 이미지가 1개만 있는 경우 동일 이미지 사용
