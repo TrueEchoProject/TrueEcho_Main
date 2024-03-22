@@ -5,19 +5,38 @@ import PagerView from 'react-native-pager-view';
 import CardComponent from '../../components/CardComponent';
 import { useFocusEffect } from '@react-navigation/native';
 
-export default class MainFeedTab extends Component {
-	render() {
-		return (
-				<Container style={style.container}>
-					<Content>
-						<CardComponent />
-	        </Content>
-				</Container>
-		);
-	}
 const MainFeedTab = () => {
+	const [feeds, setFeeds] = useState([]);
 	const [refreshing, setRefreshing] = useState(false);
 	const pagerViewRef = useRef(null);
+	
+	const fetchFeeds = async () => {
+		setRefreshing(true);
+		const data = {
+			id: 1,
+			jsonrpc: "2.0",
+			method: "call",
+			params: [
+				"database_api",
+				"get_discussions_by_created",
+				[{ tag: "kr", limit: 10 }]
+			]
+		};
+		
+		try {
+			const response = await fetch('https://api.steemit.com', {
+				method: 'POST',
+				body: JSON.stringify(data)
+			});
+			const json = await response.json();
+			setFeeds(json.result);
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setRefreshing(false);
+			pagerViewRef.current?.setPageWithoutAnimation(0);
+		}
+	};
 	
 	const fetchMoreFeeds = async () => {
 		const data = {
@@ -51,6 +70,10 @@ const MainFeedTab = () => {
 		}
 	};
 	
+	useFocusEffect(
+		useCallback(() => {
+			fetchFeeds();
+		}, [])
 	);
 	
 	return (
@@ -76,6 +99,12 @@ const MainFeedTab = () => {
 						}
 					}}
 				>
+					{feeds.map((feed, index) => (
+						<View key={index} style={{flex: 1}}>
+							<CardComponent
+								data={feed}
+								author={feed.author}
+							/>
 						</View>
 					))}
 				</PagerView>
@@ -87,3 +116,15 @@ const MainFeedTab = () => {
 const style = StyleSheet.create({
 	container: {
 		flex: 1,
+		backgroundColor: 'white',
+	},
+	scrollViewContent: {
+		flexGrow: 1,
+	},
+	pagerView: {
+		flex: 1,
+	},
+});
+
+export default MainFeedTab;
+
