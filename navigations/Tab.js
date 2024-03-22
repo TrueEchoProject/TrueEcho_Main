@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"; // 하
 import { CameraTab } from "./AppTabNavigator"; // 하단 Tab 네비게이터와 연결된 화면
 import { MaterialIcons } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
-import {CommunityStackScreen, MainFeedStackScreen} from "./Stack"; // 각 화면의 아이콘
+import { CommunityStackScreen, MainFeedStackScreen } from "./Stack"; // 각 화면의 아이콘
 
 const Tab = createBottomTabNavigator();
 
