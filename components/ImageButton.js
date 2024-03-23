@@ -79,7 +79,7 @@ export const ImageButton = ({ author }) => {
 				<Image
 					source={{ uri: imageIndex === 0 ? secondImageUri : firstImageUri }}
 					style={{
-						height: 425,
+						height: 480,
 						width: '100%',
 						resizeMode: 'stretch'
 					}}

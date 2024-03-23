@@ -11,7 +11,7 @@ export const MainFeedStackScreen = () => { // 메인 피드 속 Stack 구성
 	return (
 		<MainFeedStack.Navigator>
 			<MainFeedStack.Screen
-				name="FriendFeed"
+				name="FeedTab"
 				component={MainFeedTabScreen}
 				options={({ navigation }) => ({// 메인 피드 화면에서 상단 네비 구현
 					headerRight: () => (

@@ -1,11 +1,12 @@
 import React from 'react';
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 
-const FeedButton = ({ title, onPress, isSelected }) => {
+// isSelected prop을 추가합니다.
+const FeedButton = ({ title, onPress }) => {
 	return (
-		<TouchableOpacity onPress={onPress} style={[styles.button, isSelected && styles.selected]}>
+		<TouchableOpacity onPress={onPress} style={styles.button}>
 			<View>
-				<Text style={isSelected ? styles.selectedText : styles.text}>{title}</Text>
+				<Text style={styles.text}>{title}</Text>
 			</View>
 		</TouchableOpacity>
 	);
@@ -13,21 +14,13 @@ const FeedButton = ({ title, onPress, isSelected }) => {
 
 const styles = StyleSheet.create({
 	button: {
-		marginRight: 5,
-		marginLeft: 5,
-		padding: 4,
-		borderRadius: 6,
+		marginRight: 10,
+		marginLeft: 10,
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
 	text: {
-		color: 'grey', // Default text color
-	},
-	selected: {
-		backgroundColor: '#3B4664',
-	},
-	selectedText: {
-		color: 'white', // Text color when selected
+		color: 'black',
 	},
 });
 
