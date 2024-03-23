@@ -41,9 +41,6 @@ export default class CardComponent extends Component {
 							<MaterialIcons name='send' style={styles.icon}/>
 						</TouchableOpacity>
 					</View>
-					<View style={styles.right}>
-						<Text>{data.pending_payout_value}</Text>
-					</View>
 				</View>
 			</View>
 		);
@@ -52,8 +49,6 @@ export default class CardComponent extends Component {
 
 const styles = StyleSheet.create({
 	cardContainer: {
-		borderWidth: 1,
-		borderColor: '#e1e1e1',
 		marginBottom: 16,
 	},
 	cardItem: {

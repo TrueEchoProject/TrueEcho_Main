@@ -3,12 +3,14 @@ import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import CardComponent from '../../components/CardComponent';
 import { useFocusEffect } from '@react-navigation/native';
+import FeedButton from "../../components/FeedButton";
 
 const MainFeedTab = () => {
 	const [feeds, setFeeds] = useState([]);
 	const [refreshing, setRefreshing] = useState(false);
 	const pagerViewRef = useRef(null);
 	const lastFeed = useRef({}); // 마지막 피드 정보 저장용
+	const [selectedTab, setSelectedTab] = useState('친구'); // 추가: 선택된 탭 상태 관리
 	
 	const fetchFeeds = async () => {
 		setRefreshing(true);
@@ -99,6 +101,20 @@ const MainFeedTab = () => {
 	
 	return (
 		<View style={style.container}>
+			<View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+				<FeedButton
+					title="친구"
+					onPress={() => setSelectedTab('친구')}
+					isSelected={selectedTab === '친구'} />
+				<FeedButton
+					title="친구의 친구"
+					onPress={() => setSelectedTab('친구의 친구')}
+					isSelected={selectedTab === '친구의 친구'} />
+				<FeedButton
+					title="더보기"
+					onPress={() => setSelectedTab('더보기')}
+					isSelected={selectedTab === '더보기'} />
+			</View>
 			<ScrollView
 				contentContainerStyle={style.scrollViewContent}
 				refreshControl={
