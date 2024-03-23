@@ -14,7 +14,7 @@ export const ImageButton = ({ author }) => {
 				author: author,
 				start_permlink: "",
 				before_date: "2025-01-19T03:14:07",
-				limit: 5
+				limit: 10
 			}
 		};
 		
@@ -26,7 +26,7 @@ export const ImageButton = ({ author }) => {
 			const jsonResponse = await response.json();
 			const feeds = jsonResponse.result || [];
 			
-			const extractedImages = feeds.map(feed => {
+			let extractedImages = feeds.map(feed => {
 				try {
 					const metadata = JSON.parse(feed.json_metadata);
 					if (metadata && metadata.image && metadata.image.length > 0) {
@@ -37,6 +37,9 @@ export const ImageButton = ({ author }) => {
 				}
 				return null;
 			}).filter(url => url !== null);
+			
+			// 배열에서 최대 2개의 이미지만 유지
+			extractedImages = extractedImages.slice(0, 2);
 			
 			setImages(extractedImages.length > 0 ? extractedImages : ["https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=150&h=150&fit=crop", "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=450&h=450&fit=crop"]);
 		} catch (error) {
@@ -55,9 +58,8 @@ export const ImageButton = ({ author }) => {
 		setImageIndex(prevIndex => (prevIndex + 1) % images.length);
 	};
 	
-	// 이미지 배열이 최소 2개의 이미지를 포함하고 있는지 확인
 	const firstImageUri = images[0];
-	const secondImageUri = images.length > 1 ? images[1] : firstImageUri; // 이미지가 1개만 있는 경우 동일 이미지 사용
+	const secondImageUri = images.length > 1 ? images[1] : firstImageUri;
 	
 	return (
 		<View style={{ position: 'relative' }}>
@@ -86,6 +88,7 @@ export const ImageButton = ({ author }) => {
 		</View>
 	);
 };
+
 
 
 
