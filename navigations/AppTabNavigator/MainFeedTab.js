@@ -8,6 +8,10 @@ import FeedButton from "../../components/FeedButton";
 
 const MainFeedTab = createBottomTabNavigator();
 export const MainFeedTabScreen = () => {
+	const friendFeedRef = React.useRef();
+	const fofFeedRef = React.useRef();
+	const otherFeedRef = React.useRef();
+	
 	return (
 		<MainFeedTab.Navigator
 			screenOptions={{
@@ -17,7 +21,7 @@ export const MainFeedTabScreen = () => {
 		>
 			<MainFeedTab.Screen
 				name="FriendFeed"
-				component={FriendFeed}
+				children={(props) => <FriendFeed ref={friendFeedRef} {...props} />}
 				options={({ navigation }) => ({
 					headerTitle: () => {
 						// 현재 활성화된 탭 이름 가져오기
@@ -26,7 +30,11 @@ export const MainFeedTabScreen = () => {
 							<View style={{ flexDirection: 'row' }}>
 								<FeedButton
 									title="친구"
-									onPress={() => navigation.navigate('FriendFeed')}
+									onPress={() => {
+										if (currentRouteName === 'FriendFeed') {
+											friendFeedRef.current.refresh(); // FriendFeed의 새로고침 함수 호출
+										}
+									}}
 									isSelected={currentRouteName === 'FriendFeed'}
 								/>
 								<FeedButton
@@ -49,7 +57,7 @@ export const MainFeedTabScreen = () => {
 			</MainFeedTab.Screen>
 			<MainFeedTab.Screen
 				name="FofFeed"
-				component={FofFeed}
+				children={(props) => <FofFeed ref={fofFeedRef} {...props} />}
 				options={({ navigation }) => ({
 					headerTitle: () => {
 						// 현재 활성화된 탭 이름 가져오기
@@ -62,7 +70,11 @@ export const MainFeedTabScreen = () => {
 								/>
 								<FeedButton
 									title="친구의 친구"
-									onPress={() => navigation.navigate('FofFeed')}
+									onPress={() => {
+										if (currentRouteName === 'FofFeed') {
+											fofFeedRef.current.refresh(); // FriendFeed의 새로고침 함수 호출
+										}
+									}}
 									isSelected={currentRouteName === 'FofFeed'}
 								/>
 								<FeedButton
@@ -81,7 +93,7 @@ export const MainFeedTabScreen = () => {
 			</MainFeedTab.Screen>
 			<MainFeedTab.Screen
 				name="OtherFeed"
-				component={OtherFeed}
+				children={(props) => <OtherFeed ref={otherFeedRef} {...props} />}
 				options={({ navigation }) => ({
 					headerTitle: () => {
 						// 현재 활성화된 탭 이름 가져오기
@@ -98,7 +110,11 @@ export const MainFeedTabScreen = () => {
 								/>
 								<FeedButton
 									title="더보기"
-									onPress={() => navigation.navigate('OtherFeed')}
+									onPress={() => {
+										if (currentRouteName === 'OtherFeed') {
+											otherFeedRef.current.refresh(); // FriendFeed의 새로고침 함수 호출
+										}
+									}}
 									isSelected={currentRouteName === 'OtherFeed'}
 								/>
 							</View>

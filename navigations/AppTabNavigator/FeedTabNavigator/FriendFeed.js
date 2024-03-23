@@ -4,7 +4,7 @@ import PagerView from 'react-native-pager-view';
 import CardComponent from '../../../components/CardComponent';
 import { useFocusEffect } from '@react-navigation/native';
 
-const FriendFeed = () => {
+const FriendFeed = React.forwardRef((props, ref) => {
 	const [feeds, setFeeds] = useState([]);
 	const [refreshing, setRefreshing] = useState(false);
 	const pagerViewRef = useRef(null);
@@ -97,6 +97,10 @@ const FriendFeed = () => {
 		}, [])
 	);
 	
+	React.useImperativeHandle(ref, () => ({
+		refresh: fetchFeeds,
+	}));
+	
 	return (
 		<View style={style.container}>
 			<ScrollView
@@ -131,7 +135,7 @@ const FriendFeed = () => {
 			</ScrollView>
 		</View>
 	);
-}
+});
 
 const style = StyleSheet.create({
 	container: {
