@@ -38,9 +38,9 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      {/* <SignUpForm /> */}
+      <SignUpForm />
       {/* <NotificationSetting /> */}
-      <LoginForm />
+      {/* <LoginForm /> */}
       <StatusBar style="auto" />
     </View>
   );
