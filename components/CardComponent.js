@@ -1,66 +1,89 @@
 import React, { Component } from 'react';
-import {View, Image, Text, StyleSheet, TouchableOpacity,} from 'react-native';
-import { Card, CardItem, Thumbnail, Body, Left, Right, Button } from 'native-base';
+import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
-import { ImageButton } from "./ImageButton";
+import { ImageButton } from "./ImageButton"; // 경로 확인 필요
 
-
-export default class CardCompnent extends Component{
-	
+export default class CardComponent extends Component {
 	render() {
 		const { data } = this.props;
 		
 		return (
-			<View>
-				<CardItem>
-					<Left style={{ height: 35 }} >
-						<Thumbnail
-							small source={{ uri: `https://steemitimages.com/u/${data.author}/avatar` }} />
-						<Body>
+			<View style={styles.cardContainer}>
+				<View style={styles.cardItem}>
+					<View style={styles.left}>
+						<Image
+							style={styles.thumbnail}
+							source={{ uri: `https://steemitimages.com/u/${data.author}/avatar` }} />
+						<View style={styles.body}>
 							<Text>{data.author}</Text>
 							<Text note>{new Date(data.created).toDateString()}</Text>
-						</Body>
-					</Left>
-				</CardItem>
+						</View>
+					</View>
+				</View>
 				<ImageButton author={data.author} />
-				<CardItem style={{ height: 20 }}>
-					<Text>{ data.active_votes.length } likes</Text>
-				</CardItem>
-				<CardItem>
-					<Text style={{ fontWeight:'900'}}>{ data.title.slice(0, 15) }</Text>
-				</CardItem>
-				<CardItem>
-					<Text>
-						{ data.body.replace(/\n/g,' ').slice(0, 15) }
-					</Text>
-				</CardItem>
-				<CardItem style={{ height:20 }}>
-					<Left>
-						<Button transparent>
-							<Ionicons name='heart' style={{ color:'black', marginRight: 5 }}/>
-							<Text>{ data.active_votes.length }</Text>
-						</Button>
-						<Button transparent>
-							<Ionicons name='chatbubbles' style={{ color:'black', marginRight: 5 }}/>
-							<Text>{ data.children }</Text>
-						</Button>
-						<Button transparent>
-							<MaterialIcons name='send' style={{ color:'black' }}/>
-						</Button>
-					</Left>
-					<Right>
-						<Text>{ data.pending_payout_value }</Text>
-					</Right>
-				</CardItem>
+				<View style={styles.cardItem}>
+					<Text style={styles.title}>{data.title.slice(0, 15)}</Text>
+				</View>
+				<View style={styles.cardItem}>
+					<Text>{data.body.replace(/\n/g, ' ').slice(0, 15)}</Text>
+				</View>
+				<View style={styles.cardItem}>
+					<View style={styles.left}>
+						<TouchableOpacity style={styles.iconButton}>
+							<Ionicons name='heart' style={styles.icon}/>
+							<Text>{data.active_votes.length}</Text>
+						</TouchableOpacity>
+						<TouchableOpacity style={styles.iconButton}>
+							<Ionicons name='chatbubbles' style={styles.icon}/>
+							<Text>{data.children}</Text>
+						</TouchableOpacity>
+						<TouchableOpacity>
+							<MaterialIcons name='send' style={styles.icon}/>
+						</TouchableOpacity>
+					</View>
+					<View style={styles.right}>
+						<Text>{data.pending_payout_value}</Text>
+					</View>
+				</View>
 			</View>
 		);
 	}
 }
 
-const style = StyleSheet.create({
-	container: {
-		flex: 1,
+const styles = StyleSheet.create({
+	cardContainer: {
+		borderWidth: 1,
+		borderColor: '#e1e1e1',
+		marginBottom: 16,
+	},
+	cardItem: {
+		padding: 10,
+		flexDirection: 'row',
 		alignItems: 'center',
-		justifyContent: 'center',
-	}
+	},
+	left: {
+		flexDirection: 'row',
+		alignItems: 'center',
+	},
+	body: {
+		marginLeft: 10,
+	},
+	thumbnail: {
+		width: 30,
+		height: 30,
+		borderRadius: 15,
+	},
+	title: {
+		fontWeight: '900',
+	},
+	iconButton: {
+		flexDirection: 'row',
+		marginRight: 15,
+	},
+	icon: {
+		marginRight: 5,
+	},
+	right: {
+		marginLeft: 'auto',
+	},
 });

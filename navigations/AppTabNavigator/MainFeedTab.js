@@ -1,6 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
-import { Container } from 'native-base';
 import PagerView from 'react-native-pager-view';
 import CardComponent from '../../components/CardComponent';
 import { useFocusEffect } from '@react-navigation/native';
@@ -99,7 +98,7 @@ const MainFeedTab = () => {
 	);
 	
 	return (
-		<Container style={style.container}>
+		<View style={style.container}>
 			<ScrollView
 				contentContainerStyle={style.scrollViewContent}
 				refreshControl={
@@ -130,7 +129,7 @@ const MainFeedTab = () => {
 					))}
 				</PagerView>
 			</ScrollView>
-		</Container>
+		</View>
 	);
 }
 
