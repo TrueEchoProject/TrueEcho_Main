@@ -5,7 +5,7 @@ import SignUpForm from './SignUpForm';
 import Navigation from "./navigations";
 import * as SplashScreen from 'expo-splash-screen';
 import { useState, useEffect, useCallback } from'react';
-import NotificationSetting from './NotificationSetting'; // 알림을 관리하는 컴포넌트. (개발 보류)
+import LoginForm from './LoginForm';
 
 
 // 로딩이 완료되기 전, 자동으로 loding 화면이 넘어가는 것을 방지
@@ -38,8 +38,9 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <SignUpForm />
+      {/* <SignUpForm /> */}
       {/* <NotificationSetting /> */}
+      <LoginForm />
       <StatusBar style="auto" />
     </View>
   );

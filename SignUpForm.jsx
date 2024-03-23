@@ -30,7 +30,7 @@ const SignUpForm = () => {
     timeRange: [10, 20], // 멀티 슬라이드 초기 값. 
   });
   const [authCode, setAuthCode] = useState(""); // 인증 번호 확인 절차는 회원가입 과정중 진행되므로 따로 다루기 위해 따로 선언. 
-  const [warning, setWarning] = useState(""); // 에러 메시지의 유형을 세분화 해야함. 아직 미구현.
+  const [warning, setWarning] = useState(""); // 에러 메시지의 유형을 세분화 해야함. 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false); // 모달이 현재 디스플레이 보여지고 있는지의 여부. 
   const [displayAge, setDisplayAge] = useState(""); // 모달이 현재 디스플레이 보여지고 있는지의 여부. 
   //------------------------------------------------------------------------
