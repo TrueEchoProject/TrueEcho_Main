@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Image, Text, StyleSheet, TouchableOpacity, Share } from 'react-native';
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { ImageButton } from "./ImageButton"; // 경로 확인 필요
 
 export default class CardComponent extends Component {
+	
 	render() {
 		const { data } = this.props;
 		
@@ -37,7 +38,7 @@ export default class CardComponent extends Component {
 							<Ionicons name='chatbubbles' style={styles.icon}/>
 							<Text>{data.children}</Text>
 						</TouchableOpacity>
-						<TouchableOpacity>
+						<TouchableOpacity onPress={() => Share.share({ message: 'hi' })}>
 							<MaterialIcons name='send' style={styles.icon}/>
 						</TouchableOpacity>
 					</View>
