@@ -38,7 +38,7 @@ export default class CardComponent extends Component {
 							<Ionicons name='chatbubbles' style={styles.icon}/>
 							<Text>{data.children}</Text>
 						</TouchableOpacity>
-						<TouchableOpacity onPress={() => Share.share({ message: 'hi' })}>
+						<TouchableOpacity onPress={() => Share.share({ message: `${data.title}: https://steemit.com/@${data.author}/${data.permlink}` })}>
 							<MaterialIcons name='send' style={styles.icon}/>
 						</TouchableOpacity>
 					</View>
