@@ -8,9 +8,9 @@ TrueEcho는 사진을 컨텐츠로 한 소셜 네트워킹 서비스입니다.
 
 ### 🧑‍💻 기술 스택
 
-Backend: Spring Boot
-Database: [MySQL]
-Others: [React-Native, AWS RDS, ]
+## Backend: Spring Boot
+## Database: [MySQL]
+## Others: [React-Native, AWS RDS, ]
 
 ### 👨‍👩‍👧‍👦 팀원
 Huijun Seo - @HeeJohn - gjshj366@gmail.com
