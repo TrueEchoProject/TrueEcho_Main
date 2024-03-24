@@ -132,6 +132,12 @@ const FriendFeed = React.forwardRef((props, ref) => {
 });
 
 const style = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: 'white',
+		alignItems: 'center',
+    justifyContent: 'center',
+	},
 	scrollViewContent: {
 		flexGrow: 1,
 	},
