@@ -1,11 +1,11 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import React, { useState, useRef, useCallback, } from 'react';
+import { View, StyleSheet, ScrollView, RefreshControl, Text } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import CardComponent from '../../../components/CardComponent';
 import { useFocusEffect } from '@react-navigation/native';
 
 const FriendFeed = React.forwardRef((props, ref) => {
-	const [feeds, setFeeds] = useState([]);
+	const [feeds, setFeeds] = useState(null);
 	const [refreshing, setRefreshing] = useState(false);
 	const pagerViewRef = useRef(null);
 	const lastFeed = useRef({});
@@ -91,7 +91,7 @@ const FriendFeed = React.forwardRef((props, ref) => {
 	
 	useFocusEffect(
 		useCallback(() => {
-			fetchFeeds();
+			if (!feeds) fetchFeeds(); // feeds가 비어있다면 피드를 불러옵니다.
 		}, [])
 	);
 	
@@ -99,46 +99,39 @@ const FriendFeed = React.forwardRef((props, ref) => {
 		refresh: fetchFeeds,
 	}));
 	
+	if (!feeds) {
+		return <View style={style.container}><Text>Loading...</Text></View>;
+	}
+	
 	return (
-		<View style={style.container}>
-			<ScrollView
-				contentContainerStyle={style.scrollViewContent}
-				refreshControl={
-					<RefreshControl
-						refreshing={refreshing}
-						onRefresh={fetchFeeds}
-					/>
-				}
+		<ScrollView
+			contentContainerStyle={style.scrollViewContent}
+			refreshControl={
+				<RefreshControl refreshing={refreshing} onRefresh={fetchFeeds} />
+			}
+		>
+			<PagerView
+				style={style.pagerView}
+				initialPage={0}
+				ref={pagerViewRef}
+				onPageSelected={e => {
+					const newIndex = e.nativeEvent.position;
+					if (newIndex === feeds.length - 2) {
+						fetchMoreFeeds();
+					}
+				}}
 			>
-				<PagerView
-					style={style.pagerView}
-					initialPage={0}
-					ref={pagerViewRef}
-					onPageSelected={e => {
-						const newIndex = e.nativeEvent.position;
-						if (newIndex === feeds.length - 2) {
-							fetchMoreFeeds();
-						}
-					}}
-				>
-					{feeds.map((feed, index) => (
-						<View key={index} style={{ flex: 1 }}>
-							<CardComponent
-								data={feed}
-							/>
-						</View>
-					))}
-				</PagerView>
-			</ScrollView>
-		</View>
+				{feeds.map((feed, index) => (
+					<View key={index} style={{ flex: 1 }}>
+						<CardComponent data={feed} />
+					</View>
+				))}
+			</PagerView>
+		</ScrollView>
 	);
 });
 
 const style = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: 'white',
-	},
 	scrollViewContent: {
 		flexGrow: 1,
 	},
