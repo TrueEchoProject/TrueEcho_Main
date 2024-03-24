@@ -1,17 +1,25 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl, Text } from 'react-native';
+import React, { useState, useRef, useCallback } from 'react';
+import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+// 페이지 뷰를 위한 라이브러리를 가져옵니다.
 import PagerView from 'react-native-pager-view';
+// 카드 컴포넌트를 가져옵니다. 이 컴포넌트는 피드를 보여주는 데 사용됩니다.
 import CardComponent from '../../../components/CardComponent';
+// 네비게이션 포커스 상태를 관리하기 위해 사용합니다.
 import { useFocusEffect } from '@react-navigation/native';
 
+// FriendFeed 컴포넌트를 정의합니다. 이 컴포넌트는 함수 컴포넌트로 정의되며, ref를 통해 부모 컴포넌트에서 직접 접근할 수 있습니다.
 const FriendFeed = React.forwardRef((props, ref) => {
-	const [feeds, setFeeds] = useState(null);
+	// 상태 관리를 위해 useState 훅을 사용합니다. feeds는 피드 목록, refreshing은 새로고침 상태를 나타냅니다.
+	const [feeds, setFeeds] = useState([]);
 	const [refreshing, setRefreshing] = useState(false);
+	// 페이지 뷰의 참조와 마지막 피드의 정보를 저장하기 위해 useRef를 사용합니다.
 	const pagerViewRef = useRef(null);
-	const lastFeed = useRef({});
+	const lastFeed = useRef({}); // 마지막 피드 정보 저장용
 	
+	// 피드를 가져오는 함수입니다. 비동기로 동작하며, 외부 API에서 피드 목록을 가져옵니다.
 	const fetchFeeds = async () => {
-		setRefreshing(true);
+		setRefreshing(true); // 새로고침 상태를 true로 설정
+		// API 요청을 위한 데이터 구조
 		const data = {
 			id: 1,
 			jsonrpc: "2.0",
@@ -24,13 +32,15 @@ const FriendFeed = React.forwardRef((props, ref) => {
 		};
 		
 		try {
+			// API 요청을 수행
 			const response = await fetch('https://api.steemit.com', {
 				method: 'POST',
 				body: JSON.stringify(data)
 			});
-			const json = await response.json();
-			setFeeds(json.result);
+			const json = await response.json(); // 응답을 JSON으로 변환
+			setFeeds(json.result); // 피드 상태를 업데이트
 			
+			// 마지막 피드 정보 업데이트
 			if (json.result.length > 0) {
 				const lastElement = json.result[json.result.length - 1];
 				lastFeed.current = {
@@ -41,7 +51,8 @@ const FriendFeed = React.forwardRef((props, ref) => {
 		} catch (error) {
 			console.error(error);
 		} finally {
-			setRefreshing(false);
+			setRefreshing(false); // 새로고침 상태를 false로 설정
+			pagerViewRef.current?.setPageWithoutAnimation(0); // 페이지 뷰의 페이지를 처음으로 설정
 		}
 	};
 	
@@ -94,14 +105,9 @@ const FriendFeed = React.forwardRef((props, ref) => {
 	// 컴포넌트가 포커스를 받을 때 마다 피드를 새로 불러오는 효과를 사용합니다.
 	useFocusEffect(
 		useCallback(() => {
-			if (!feeds) fetchFeeds(); // feeds가 비어있다면 피드를 불러옵니다.
+			fetchFeeds();
 		}, [])
 	);
-	
-	// feeds 상태가 비어있는 경우, 로딩 인디케이터 또는 플레이스홀더를 보여주기
-	if (!feeds) {
-		return <View style={style.container}><Text>Loading...</Text></View>;
-	}
 	
 	// 부모 컴포넌트가 ref를 통해 이 컴포넌트의 함수를 호출할 수 있게 합니다.
 	React.useImperativeHandle(ref, () => ({
@@ -109,29 +115,39 @@ const FriendFeed = React.forwardRef((props, ref) => {
 	}));
 	
 	return (
-		<ScrollView
-			contentContainerStyle={style.scrollViewContent}
-			refreshControl={
-				<RefreshControl refreshing={refreshing} onRefresh={fetchFeeds} />
-			}
-			style={style.container}
-		>
-			<PagerView
-				style={style.pagerView} initialPage={0}
-				ref={pagerViewRef} onPageSelected={e => {
-				const newIndex = e.nativeEvent.position;
-				if (newIndex === feeds.length - 2) {
-					fetchMoreFeeds();
+		<View style={style.container}>
+			<ScrollView // ScrollView를 사용하여 내용이 화면을 초과할 경우 스크롤이 가능하게 합니다.
+				contentContainerStyle={style.scrollViewContent}
+				refreshControl={  // refreshControl 속성을 통해 새로고침 컨트롤을 추가합니다.
+					<RefreshControl
+						refreshing={refreshing}
+						onRefresh={fetchFeeds}
+					/>
 				}
-			}}
 			>
-				{feeds.map((feed, index) => (
-					<View key={index} style={{ flex: 1 }}>
-						<CardComponent data={feed} />
-					</View>
-				))}
-			</PagerView>
-		</ScrollView>
+				<PagerView  // PagerView 컴포넌트를 사용하여 피드를 페이지 별로 보여줍니다.
+					style={style.pagerView}
+					initialPage={0}
+					ref={pagerViewRef}
+					onPageSelected={e => {
+						// 페이지가 변경될 때 실행할 함수
+						const newIndex = e.nativeEvent.position;
+						// 마지막 페이지에 도달하기 직전에 추가 데이터를 불러옵니다.
+						if (newIndex === feeds.length - 2) {
+							fetchMoreFeeds();
+						}
+					}}
+				>
+					{feeds.map((feed, index) => (	// feeds 배열을 매핑하여 각 피드를 CardComponent로 렌더링합니다.
+						<View key={index} style={{ flex: 1 }}>
+							<CardComponent
+								data={feed}
+							/>
+						</View>
+					))}
+				</PagerView>
+			</ScrollView>
+		</View>
 	);
 });
 
