@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, Profiler } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl, Text } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import CardComponent from '../../../components/CardComponent';
@@ -110,6 +110,20 @@ const FofFeed = React.forwardRef((props, ref) => {
 		return <View style={style.container}><Text>Loading...</Text></View>;
 	}
 	
+	function onRenderCallback(
+		id, // 프로파일러 트리의 id
+		phase, // "mount" 또는 "update"
+		actualDuration, // 컴포넌트 렌더링에 걸린 실제 시간
+		baseDuration, // 메모이제이션하지 않았을 때 예상되는 기본 렌더링 시간
+		startTime, // 렌더링이 시작된 시간
+		commitTime, // 렌더링이 커밋된 시간
+		interactions // 이 렌더링에 연관된 상호작용들의 집합
+	) {
+		console.log('Profiler ID:', id);
+		console.log('Actual duration:', actualDuration);
+		console.log('Base duration:', baseDuration);
+	}
+	
 	return (
 		<ScrollView
 			contentContainerStyle={style.scrollViewContent}
@@ -123,15 +137,17 @@ const FofFeed = React.forwardRef((props, ref) => {
 				ref={pagerViewRef}
 				onPageSelected={e => {
 					const newIndex = e.nativeEvent.position;
-					if (newIndex === feeds.length - 2) {
+					if (newIndex === feeds.length - 8) {
 						fetchMoreFeeds();
 					}
 				}}
 			>
 				{feeds.map((feed, index) => (
-					<View key={index} style={{ flex: 1 }}>
-						<CardComponent data={feed} />
-					</View>
+					<Profiler id={index} onRender={onRenderCallback}>
+						<View key={index} style={{ flex: 1 }}>
+							<CardComponent data={feed} />
+						</View>
+					</Profiler>
 				))}
 			</PagerView>
 		</ScrollView>
