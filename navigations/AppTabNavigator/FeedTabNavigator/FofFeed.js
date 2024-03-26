@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl, Text } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import CardComponent from '../../../components/CardComponent';
@@ -29,7 +29,11 @@ const FofFeed = React.forwardRef((props, ref) => {
 				body: JSON.stringify(data)
 			});
 			const json = await response.json();
-			setFeeds(json.result);
+			const feedsWithImages = json.result.map(feed => ({
+				...feed,
+				images: feed.json_metadata && JSON.parse(feed.json_metadata).image ? JSON.parse(feed.json_metadata).image.slice(0, 2) : []
+			}));
+			setFeeds(feedsWithImages);
 			
 			if (json.result.length > 0) {
 				const lastElement = json.result[json.result.length - 1];
@@ -69,16 +73,19 @@ const FofFeed = React.forwardRef((props, ref) => {
 				body: JSON.stringify(data)
 			});
 			const json = await response.json();
-			const newFeeds = json.result;
+			const newFeedsWithImages = json.result.map(feed => ({
+				...feed,
+				images: feed.json_metadata && JSON.parse(feed.json_metadata).image ? JSON.parse(feed.json_metadata).image.slice(0, 2) : []
+			}));
 			
-			if (newFeeds.length > 0 && newFeeds[0].author === start_author && newFeeds[0].permlink === start_permlink) {
-				newFeeds.shift();
+			if (newFeedsWithImages.length > 0 && newFeedsWithImages[0].author === start_author && newFeedsWithImages[0].permlink === start_permlink) {
+				newFeedsWithImages.shift(); // 첫 번째 요소가 중복되면 제거
 			}
 			
-			setFeeds(prevFeeds => [...prevFeeds, ...newFeeds]);
+			setFeeds(prevFeeds => [...prevFeeds, ...newFeedsWithImages]);
 			
-			if (newFeeds.length > 0) {
-				const lastElement = newFeeds[newFeeds.length - 1];
+			if (newFeedsWithImages.length > 0) {
+				const lastElement = newFeedsWithImages[newFeedsWithImages.length - 1];
 				lastFeed.current = {
 					start_author: lastElement.author,
 					start_permlink: lastElement.permlink,
