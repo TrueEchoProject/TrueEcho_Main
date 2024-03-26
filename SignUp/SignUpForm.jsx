@@ -15,7 +15,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker"; // 날짜 
 import Notification from "./Notification";
 import SettingTime from "./SettingTime";
 import axios from 'axios'; // HTTP 통신 라이브러리. 
-import { auth } from './FirebaseConfig'; // 파이어베이스 sdk 불러오는 코드. [백엔드랑 논의 필요함.]
+import { auth } from '../FirebaseConfig'; // 파이어베이스 sdk 불러오는 코드. [백엔드랑 논의 필요함.]
 import { sendSignInLinkToEmail } from "firebase/auth"; // 파이어베이스의 이메일 인증 기능을 사용하기 위한 코드. [백엔드랑 논의 필요함.]
 
 
