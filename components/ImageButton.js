@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Image, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { TouchableOpacity, View, } from 'react-native';
+import { Image } from 'expo-image';
 
-export const ImageButton = ({ author, images }) => {
+export const ImageButton = ({ images }) => {
 	const [imageIndex, setImageIndex] = useState(0);
 	
 	const changeImage = () => {
@@ -37,7 +38,6 @@ export const ImageButton = ({ author, images }) => {
 							style={{
 								height: 480,
 								width: '100%',
-								resizeMode: 'cover',
 							}}
 						/>
 					</TouchableOpacity>
@@ -49,7 +49,6 @@ export const ImageButton = ({ author, images }) => {
 						style={{
 							height: 480,
 							width: '100%',
-							resizeMode: 'cover',
 						}}
 					/>
 				</View>
