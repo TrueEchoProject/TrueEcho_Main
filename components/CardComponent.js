@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Share } from 'react-native';
 import { Image } from 'expo-image';
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { ImageButton } from "./ImageButton"; // 경로 확인 필요
 
-export default class CardComponent extends Component {
+export default class CardComponent extends PureComponent {
 	render() {
 		const { data } = this.props;
 		

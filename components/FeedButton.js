@@ -32,4 +32,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default FeedButton;
+export default React.memo(FeedButton);

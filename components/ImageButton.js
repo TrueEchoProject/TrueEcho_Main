@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { TouchableOpacity, View, } from 'react-native';
 import { Image } from 'expo-image';
 
-export const ImageButton = ({ images }) => {
+const ImageButton = React.memo(({ images }) => {
 	const [imageIndex, setImageIndex] = useState(0);
 	
 	const changeImage = () => {
@@ -55,8 +55,9 @@ export const ImageButton = ({ images }) => {
 		)}
 		</View>
 	);
-};
+});
 
+export { ImageButton };
 
 
 
