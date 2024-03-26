@@ -55,7 +55,7 @@ const LoginForm = () => {
   return (
     <View style={styles.container}>
       <View>
-        <Image style={styles.logo} source={require('./assets/logo.png')} />
+        <Image style={styles.logo} source={require('../assets/logo.png')} />
         <View style={styles.inputBox}>
           <Text style={styles.text}>로그인</Text>
           <Text style={styles.description}>새로운 사진들이 기다리고 있었어요!</Text>

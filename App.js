@@ -1,11 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import SignUpForm from './SignUpForm';
+import SignUpForm from './SignUp/SignUpForm';
 import Navigation from "./navigations";
 import * as SplashScreen from 'expo-splash-screen';
 import { useState, useEffect, useCallback } from'react';
-import LoginForm from './LoginForm';
+import LoginForm from './SignUp/LoginForm';
 
 
 // 로딩이 완료되기 전, 자동으로 loding 화면이 넘어가는 것을 방지
