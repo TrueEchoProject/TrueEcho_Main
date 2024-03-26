@@ -18,28 +18,42 @@ export const ImageButton = ({ author, images }) => {
 	
 	return (
 		<View style={{ position: 'relative' }}>
-			{images.length > 1 && (
-				<TouchableOpacity onPress={changeImage} style={{ zIndex: 2, position: 'absolute', top: 10, left: 10 }}>
+			{images.length > 1 ? (
+				<View>
+					<TouchableOpacity onPress={changeImage} style={{ zIndex: 2, position: 'absolute', top: 10, left: 10 }}>
+						<Image
+							source={{ uri: images[(imageIndex + 1) % images.length] }}
+							style={{
+								borderColor: '#ffffff',
+								borderWidth: 2,
+								height: 150,
+								width: 100,
+							}}
+						/>
+					</TouchableOpacity>
+					<TouchableOpacity onPress={changeImage} style={{ zIndex: 1 }}>
+						<Image
+							source={{ uri: images[imageIndex] }}
+							style={{
+								height: 480,
+								width: '100%',
+								resizeMode: 'cover',
+							}}
+						/>
+					</TouchableOpacity>
+				</View>
+			) : (
+				<View style={{ zIndex: 1 }}>
 					<Image
-						source={{ uri: images[(imageIndex + 1) % images.length] }}
+						source={{ uri: imageUri }}
 						style={{
-							borderColor: '#ffffff',
-							borderWidth: 2,
-							height: 150,
-							width: 100,
+							height: 480,
+							width: '100%',
+							resizeMode: 'cover',
 						}}
 					/>
-				</TouchableOpacity>
-			)}
-			<TouchableOpacity onPress={changeImage} style={{ zIndex: 1 }}>
-				<Image
-					source={{ uri: imageUri }}
-					style={{
-						height: 480,
-						width: '100%',
-					}}
-				/>
-			</TouchableOpacity>
+				</View>
+		)}
 		</View>
 	);
 };
