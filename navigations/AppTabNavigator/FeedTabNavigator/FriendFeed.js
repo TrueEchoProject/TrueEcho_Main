@@ -78,14 +78,14 @@ const FriendFeed = React.forwardRef((props, ref) => {
 				images: feed.json_metadata && JSON.parse(feed.json_metadata).image ? JSON.parse(feed.json_metadata).image.slice(0, 2) : []
 			}));
 			
-			if (newFeeds.length > 0 && newFeeds[0].author === start_author && newFeeds[0].permlink === start_permlink) {
-				newFeeds.shift();
+			if (newFeedsWithImages.length > 0 && newFeedsWithImages[0].author === start_author && newFeedsWithImages[0].permlink === start_permlink) {
+				newFeedsWithImages.shift(); // 첫 번째 요소가 중복되면 제거
 			}
 			
-			setFeeds(prevFeeds => [...prevFeeds, ...newFeeds]);
+			setFeeds(prevFeeds => [...prevFeeds, ...newFeedsWithImages]);
 			
-			if (newFeeds.length > 0) {
-				const lastElement = newFeeds[newFeeds.length - 1];
+			if (newFeedsWithImages.length > 0) {
+				const lastElement = newFeedsWithImages[newFeedsWithImages.length - 1];
 				lastFeed.current = {
 					start_author: lastElement.author,
 					start_permlink: lastElement.permlink,
