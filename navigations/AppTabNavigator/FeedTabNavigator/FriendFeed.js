@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl, Text } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import CardComponent from '../../../components/CardComponent';
@@ -29,7 +29,11 @@ const FriendFeed = React.forwardRef((props, ref) => {
 				body: JSON.stringify(data)
 			});
 			const json = await response.json();
-			setFeeds(json.result);
+			const feedsWithImages = json.result.map(feed => ({
+				...feed,
+				images: feed.json_metadata && JSON.parse(feed.json_metadata).image ? JSON.parse(feed.json_metadata).image.slice(0, 2) : []
+			}));
+			setFeeds(feedsWithImages);
 			
 			if (json.result.length > 0) {
 				const lastElement = json.result[json.result.length - 1];
@@ -69,7 +73,10 @@ const FriendFeed = React.forwardRef((props, ref) => {
 				body: JSON.stringify(data)
 			});
 			const json = await response.json();
-			const newFeeds = json.result;
+			const newFeedsWithImages = json.result.map(feed => ({
+				...feed,
+				images: feed.json_metadata && JSON.parse(feed.json_metadata).image ? JSON.parse(feed.json_metadata).image.slice(0, 2) : []
+			}));
 			
 			if (newFeeds.length > 0 && newFeeds[0].author === start_author && newFeeds[0].permlink === start_permlink) {
 				newFeeds.shift();
@@ -136,7 +143,7 @@ const style = StyleSheet.create({
 		flex: 1,
 		backgroundColor: 'white',
 		alignItems: 'center',
-    justifyContent: 'center',
+		justifyContent: 'center',
 	},
 	scrollViewContent: {
 		flexGrow: 1,

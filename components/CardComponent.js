@@ -21,7 +21,7 @@ export default class CardComponent extends Component {
 						</View>
 					</View>
 				</View>
-				<ImageButton author={data.author} />
+				<ImageButton author={data.author} images={data.images} />
 				<View style={styles.cardItem}>
 					<Text style={styles.title}>{data.title.slice(0, 15)}</Text>
 				</View>

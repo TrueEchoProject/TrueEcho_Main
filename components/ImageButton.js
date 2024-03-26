@@ -1,64 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Image, TouchableOpacity, View, Text } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
 
-export const ImageButton = ({ author }) => {
-	const [images, setImages] = useState([]);
+export const ImageButton = ({ author, images }) => { // images prop 추가
 	const [imageIndex, setImageIndex] = useState(0);
-	
-	const fetchImagesByAuthor = async () => {
-		const data = {
-			id: 1,
-			jsonrpc: "2.0",
-			method: "tags_api.get_discussions_by_author_before_date",
-			params: {
-				author: author,
-				start_permlink: "",
-				before_date: "2025-01-19T03:14:07",
-				limit: 10
-			}
-		};
-		
-		try {
-			const response = await fetch('https://api.steemit.com', {
-				method: 'POST',
-				body: JSON.stringify(data)
-			});
-			const jsonResponse = await response.json();
-			const feeds = jsonResponse.result || [];
-			
-			let extractedImages = feeds.map(feed => {
-				try {
-					const metadata = JSON.parse(feed.json_metadata);
-					if (metadata && metadata.image && metadata.image.length > 0) {
-						return metadata.image[0];
-					}
-				} catch (error) {
-					console.error('Error parsing json_metadata:', error);
-				}
-				return null;
-			}).filter(url => url !== null);
-			
-			// 배열에서 최대 2개의 이미지만 유지
-			extractedImages = extractedImages.slice(0, 2);
-			
-			setImages(extractedImages.length > 0 ? extractedImages : ["https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=150&h=150&fit=crop", "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=450&h=450&fit=crop"]);
-		} catch (error) {
-			console.error('Error fetching images:', error);
-			setImages(["https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=150&h=150&fit=crop", "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=450&h=450&fit=crop"]); // 에러 발생 시 대체 이미지 사용
-		}
-	};
-	
-	useEffect(() => {
-		if (author) {
-			fetchImagesByAuthor();
-		}
-	}, [author]);
 	
 	const changeImage = () => {
 		setImageIndex(prevIndex => (prevIndex + 1) % images.length);
 	};
 	
-	const firstImageUri = images[0];
+	// 기본 이미지 혹은 대체 이미지 설정
+	const defaultImages = [
+		"https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=150&h=150&fit=crop",
+		"https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=450&h=450&fit=crop"
+	];
+	
+	// 이미지 배열이 비어있지 않으면 사용, 그렇지 않으면 기본 이미지 사용
+	const firstImageUri = images.length > 0 ? images[0] : defaultImages[0];
 	const secondImageUri = images.length > 1 ? images[1] : firstImageUri;
 	
 	return (
@@ -88,7 +45,6 @@ export const ImageButton = ({ author }) => {
 		</View>
 	);
 };
-
 
 
 
