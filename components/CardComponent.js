@@ -43,7 +43,7 @@ export default function CardComponent({ data }) {
 					<View style={[
 						styles.optionsContainer,
 						{
-							top: buttonLayout.y + buttonLayout.height, // 버튼의 하단에 위치
+							top: buttonLayout.y + buttonLayout.height - 5, // 버튼의 하단에 위치
 							right: 0 // 화면의 오른쪽 끝에 위치
 						}
 					]}>
@@ -52,25 +52,27 @@ export default function CardComponent({ data }) {
 						{/* 기타 옵션들 */}
 					</View>
 				)}
-				<View style={styles.cardItem}>
-					<Text style={styles.title}>{data.title.slice(0, 15)}</Text>
-				</View>
-				<View style={styles.cardItem}>
-					<Text>{data.body.replace(/\n/g, ' ').slice(0, 15)}</Text>
-				</View>
-				<View style={styles.cardItem}>
-					<View style={styles.left}>
-						<TouchableOpacity style={styles.iconButton}>
-							<Ionicons name='heart' style={styles.icon}/>
-							<Text>{data.active_votes.length}</Text>
-						</TouchableOpacity>
-						<TouchableOpacity style={styles.iconButton}>
-							<Ionicons name='chatbubbles' style={styles.icon}/>
-							<Text>{data.children}</Text>
-						</TouchableOpacity>
-						<TouchableOpacity onPress={() => Share.share({ message: `${data.title}: https://steemit.com/@${data.author}/${data.permlink}` })}>
-							<MaterialIcons name='send' style={styles.icon}/>
-						</TouchableOpacity>
+				<View>
+					<View style={styles.cardItem}>
+						<Text style={styles.title}>{data.title.slice(0, 15)}</Text>
+					</View>
+					<View style={styles.cardItem}>
+						<Text>{data.body.replace(/\n/g, ' ').slice(0, 15)}</Text>
+					</View>
+					<View style={styles.cardItem}>
+						<View style={styles.left}>
+							<TouchableOpacity style={styles.iconButton}>
+								<Ionicons name='heart' style={styles.icon}/>
+								<Text>{data.active_votes.length}</Text>
+							</TouchableOpacity>
+							<TouchableOpacity style={styles.iconButton}>
+								<Ionicons name='chatbubbles' style={styles.icon}/>
+								<Text>{data.children}</Text>
+							</TouchableOpacity>
+							<TouchableOpacity onPress={() => Share.share({ message: `${data.title}: https://steemit.com/@${data.author}/${data.permlink}` })}>
+								<MaterialIcons name='send' style={styles.icon}/>
+							</TouchableOpacity>
+						</View>
 					</View>
 				</View>
 			</View>
@@ -100,7 +102,7 @@ const styles = StyleSheet.create({
 		marginBottom: 16,
 	},
 	cardItem: {
-		padding: 10,
+		padding: 5,
 		flexDirection: 'row',
 		alignItems: 'center',
 	},

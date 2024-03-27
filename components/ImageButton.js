@@ -6,7 +6,6 @@ const ImageButton = React.memo(({ images }) => {
 	const [imageIndex, setImageIndex] = useState(0);
 	const windowWidth = Dimensions.get('window').width;
 	const windowHeight = Dimensions.get('window').height;
-
 	
 	const changeImage = () => {
 		if (images.length > 1) {
