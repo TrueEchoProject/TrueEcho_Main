@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { TouchableOpacity, View, } from 'react-native';
+import { TouchableOpacity, View, Dimensions, } from 'react-native';
 import { Image } from 'expo-image';
 
 const ImageButton = React.memo(({ images }) => {
 	const [imageIndex, setImageIndex] = useState(0);
+	const windowWidth = Dimensions.get('window').width;
+	const windowHeight = Dimensions.get('window').height;
+
 	
 	const changeImage = () => {
 		if (images.length > 1) {
@@ -27,8 +30,8 @@ const ImageButton = React.memo(({ images }) => {
 							style={{
 								borderColor: '#ffffff',
 								borderWidth: 2,
-								height: 150,
-								width: 100,
+								height: windowHeight * 0.2,
+								width: windowWidth * 0.33,
 							}}
 						/>
 					</TouchableOpacity>
@@ -36,8 +39,8 @@ const ImageButton = React.memo(({ images }) => {
 						<Image
 							source={{ uri: images[imageIndex] }}
 							style={{
-								height: 480,
-								width: '100%',
+								height: windowHeight * 0.6,
+								width: windowWidth,
 							}}
 						/>
 					</TouchableOpacity>
@@ -47,8 +50,8 @@ const ImageButton = React.memo(({ images }) => {
 					<Image
 						source={{ uri: imageUri }}
 						style={{
-							height: 480,
-							width: '100%',
+							height: windowHeight * 0.6,
+							width: windowWidth,
 						}}
 					/>
 				</View>
