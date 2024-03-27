@@ -7,9 +7,15 @@ import { ImageButton } from "./ImageButton"; // 경로 확인 필요
 export default function CardComponent({ data }) {
 	const [isOptionsVisible, setIsOptionsVisible] = useState(false);
 	const [buttonLayout, setButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
-	
+	// 추가: ImageButton 컨테이너의 높이를 저장하기 위한 상태
+	const [imageButtonHeight, setImageButtonHeight] = useState(0);
 	const toggleOptionsVisibility = () => {
 		setIsOptionsVisible(!isOptionsVisible);
+	};
+	// 추가: ImageButton 컨테이너의 높이를 측정하는 함수
+	const onImageButtonLayout = (event) => {
+		const { height } = event.nativeEvent.layout;
+		setImageButtonHeight(height);
 	};
 	
 	const hideOptions = () => {
@@ -38,7 +44,9 @@ export default function CardComponent({ data }) {
 						<Text style={{fontSize: 30}}>...</Text>
 					</TouchableOpacity>
 				</View>
-				<ImageButton images={data.images} />
+				<View style={styles.imageButtonContainer} onLayout={onImageButtonLayout}>
+					<ImageButton images={data.images} containerHeight={imageButtonHeight} />
+				</View>
 				{isOptionsVisible && (
 					<View style={[
 						styles.optionsContainer,
@@ -52,7 +60,7 @@ export default function CardComponent({ data }) {
 						{/* 기타 옵션들 */}
 					</View>
 				)}
-				<View>
+				<View style={{margin: 5}}>
 					<View style={styles.cardItem}>
 						<Text style={styles.title}>{data.title.slice(0, 15)}</Text>
 					</View>
@@ -81,6 +89,9 @@ export default function CardComponent({ data }) {
 	}
 
 const styles = StyleSheet.create({
+	imageButtonContainer: {
+		flex: 1,
+	},
 	optionsContainer: {
 		position: 'absolute',
 		zIndex: 3,
@@ -99,7 +110,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 	},
 	cardContainer: {
-		marginBottom: 16,
+		flex: 1, // 컨테이너가 전체 화면을 차지하도록 설정
 	},
 	cardItem: {
 		padding: 5,

@@ -2,17 +2,19 @@ import React, { useState } from 'react';
 import { TouchableOpacity, View, Dimensions, } from 'react-native';
 import { Image } from 'expo-image';
 
-const ImageButton = React.memo(({ images }) => {
+const ImageButton = React.memo(({ images, containerHeight }) => {
 	const [imageIndex, setImageIndex] = useState(0);
 	const windowWidth = Dimensions.get('window').width;
-	const windowHeight = Dimensions.get('window').height;
 	
 	const changeImage = () => {
 		if (images.length > 1) {
 			setImageIndex(prevIndex => (prevIndex + 1) % images.length);
 		}
 	};
-	
+	console.log(containerHeight)
+	const ImageHeight = Math.floor(containerHeight);
+	const SmallHeight = Math.floor(ImageHeight / 3);
+	const SmallWidth = Math.floor(windowWidth / 3);
 	// 기본 이미지 혹은 대체 이미지 설정
 	const defaultImage = "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=450&h=450&fit=crop";
 	
@@ -29,8 +31,8 @@ const ImageButton = React.memo(({ images }) => {
 							style={{
 								borderColor: '#ffffff',
 								borderWidth: 2,
-								height: windowHeight * 0.2,
-								width: windowWidth * 0.33,
+								height: SmallHeight,
+								width: SmallWidth
 							}}
 						/>
 					</TouchableOpacity>
@@ -38,7 +40,7 @@ const ImageButton = React.memo(({ images }) => {
 						<Image
 							source={{ uri: images[imageIndex] }}
 							style={{
-								height: windowHeight * 0.6,
+								height: ImageHeight,
 								width: windowWidth,
 							}}
 						/>
@@ -49,7 +51,7 @@ const ImageButton = React.memo(({ images }) => {
 					<Image
 						source={{ uri: imageUri }}
 						style={{
-							height: windowHeight * 0.6,
+							height: ImageHeight,
 							width: windowWidth,
 						}}
 					/>
