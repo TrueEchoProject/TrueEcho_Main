@@ -2,6 +2,7 @@ package te.trueEcho.domain.friend;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import te.trueEcho.domain.user.User;
@@ -27,4 +28,11 @@ public class Friend {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "target_user_id")
     private User targetUser;
+
+    @Builder
+    public Friend(FriendStatus friendStatus, User user, User targetUser) {
+        this.friendStatus = friendStatus;
+        this.user = user;
+        this.targetUser = targetUser;
+    }
 }
