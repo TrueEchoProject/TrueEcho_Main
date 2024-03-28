@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Share } from 'react-native';
 import { Image } from 'expo-image';
-import { MaterialIcons, Ionicons } from "@expo/vector-icons";
+import { MaterialIcons, Ionicons, Feather } from "@expo/vector-icons";
 import { ImageButton } from "./ImageButton"; // 경로 확인 필요
 
 export default function CardComponent({ data }) {
@@ -55,9 +55,14 @@ export default function CardComponent({ data }) {
 							right: 0 // 화면의 오른쪽 끝에 위치
 						}
 					]}>
-						<Text style={styles.optionItem}>옵션 1</Text>
-						<Text style={styles.optionItem}>옵션 2</Text>
-						{/* 기타 옵션들 */}
+						<TouchableOpacity style={{ flexDirection:'row', alignItems: 'center', marginBottom: 10, }}>
+							<Ionicons name='eye-off' style={{ marginLeft: 10 }}/>
+							<Text style={styles.optionItem}>현재 피드 숨기기</Text>
+						</TouchableOpacity>
+						<TouchableOpacity style={{ flexDirection:'row', alignItems: 'center', }}>
+							<Feather name='alert-triangle' style={{ marginLeft: 10, color: 'red' }}/>
+							<Text style={[styles.optionItem, {color: 'red'}]}>사용자 신고하기</Text>
+						</TouchableOpacity>
 					</View>
 				)}
 				<View style={{margin: 5}}>
@@ -94,9 +99,10 @@ const styles = StyleSheet.create({
 	},
 	optionsContainer: {
 		position: 'absolute',
-		zIndex: 3,
+		zIndex: 2,
 		backgroundColor: 'white',
-		padding: 8,
+		padding: 12,
+		paddingLeft: 14,
 		borderRadius: 4,
 		shadowColor: 'black',
 		shadowOffset: { width: 0, height: 2 },
@@ -106,8 +112,9 @@ const styles = StyleSheet.create({
 		marginTop: 10, // '...' 버튼과 옵션 컨테이너 사이의 간격을 조정하세요.
 	},
 	optionItem: {
-		paddingVertical: 8,
-		paddingHorizontal: 16,
+		marginLeft: 10,
+		marginRight: 10,
+		fontSize: 15,
 	},
 	cardContainer: {
 		flex: 1, // 컨테이너가 전체 화면을 차지하도록 설정

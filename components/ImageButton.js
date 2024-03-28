@@ -11,7 +11,6 @@ const ImageButton = React.memo(({ images, containerHeight }) => {
 			setImageIndex(prevIndex => (prevIndex + 1) % images.length);
 		}
 	};
-	console.log(containerHeight)
 	const ImageHeight = Math.floor(containerHeight);
 	const SmallHeight = Math.floor(ImageHeight / 3);
 	const SmallWidth = Math.floor(windowWidth / 3);
