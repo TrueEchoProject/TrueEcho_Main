@@ -4,7 +4,11 @@ import PagerView from 'react-native-pager-view';
 import CardComponent from '../../../components/CardComponent';
 import { useFocusEffect } from '@react-navigation/native';
 
-const FriendFeed = React.forwardRef((props, ref) => {
+const MemoizedCardComponent = React.memo(CardComponent, (prevProps, nextProps) => {
+	return prevProps.data.id === nextProps.data.id;
+});
+
+const OtherFeed = React.forwardRef((props, ref) => {
 	const [feeds, setFeeds] = useState(null);
 	const [refreshing, setRefreshing] = useState(false);
 	const pagerViewRef = useRef(null);
@@ -145,7 +149,7 @@ const FriendFeed = React.forwardRef((props, ref) => {
 				{feeds.map((feed, index) => (
 					<Profiler id={`Feed-${index}`} onRender={onRenderCallback} key={index}>
 						<View style={{ flex: 1 }}>
-							<CardComponent data={feed} />
+							<MemoizedCardComponent data={feed} />
 						</View>
 					</Profiler>
 				))}
@@ -170,4 +174,4 @@ const style = StyleSheet.create({
 	},
 });
 
-export default FriendFeed;
+export default OtherFeed;
