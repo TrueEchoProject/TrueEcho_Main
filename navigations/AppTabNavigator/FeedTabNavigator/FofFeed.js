@@ -137,14 +137,14 @@ const FofFeed = React.forwardRef((props, ref) => {
 				ref={pagerViewRef}
 				onPageSelected={e => {
 					const newIndex = e.nativeEvent.position;
-					if (newIndex === feeds.length - 8) {
+					if (newIndex === feeds.length - 6) {
 						fetchMoreFeeds();
 					}
 				}}
 			>
 				{feeds.map((feed, index) => (
-					<Profiler id={index} onRender={onRenderCallback}>
-						<View key={index} style={{ flex: 1 }}>
+					<Profiler id={`Feed-${index}`} onRender={onRenderCallback} key={index}>
+						<View style={{ flex: 1 }}>
 							<CardComponent data={feed} />
 						</View>
 					</Profiler>
