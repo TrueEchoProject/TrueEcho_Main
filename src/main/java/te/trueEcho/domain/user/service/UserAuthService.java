@@ -4,6 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import te.trueEcho.domain.user.dto.EditUserDto;
 import te.trueEcho.domain.user.dto.EmailUserDto;
+import te.trueEcho.domain.user.dto.LoginUserDto;
 import te.trueEcho.domain.user.dto.SignUpUserDto;
 import te.trueEcho.domain.user.entity.User;
 
@@ -28,4 +29,5 @@ public interface UserAuthService {
     @Transactional
     User updateUser(EditUserDto editUserDTO);
 
+    boolean login(LoginUserDto loginUserDto);
 }
