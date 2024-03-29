@@ -1,4 +1,4 @@
-package te.trueEcho.domain.notification;
+package te.trueEcho.domain.notification.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

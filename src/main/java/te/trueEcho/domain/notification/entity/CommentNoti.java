@@ -1,7 +1,7 @@
-package te.trueEcho.domain.notification;
+package te.trueEcho.domain.notification.entity;
 
 import jakarta.persistence.*;
-import te.trueEcho.domain.post.Comment;
+import te.trueEcho.domain.post.entity.Comment;
 
 @Entity
 @DiscriminatorValue("comment_notis")

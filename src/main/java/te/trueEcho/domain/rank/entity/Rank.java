@@ -1,13 +1,13 @@
-package te.trueEcho.domain.rank;
+package te.trueEcho.domain.rank.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import te.trueEcho.domain.notification.RankNoti;
-import te.trueEcho.domain.user.User;
-import te.trueEcho.domain.vote.Vote;
+import te.trueEcho.domain.notification.entity.RankNoti;
+import te.trueEcho.domain.user.entity.User;
+import te.trueEcho.domain.vote.entity.Vote;
 
 import java.time.LocalDate;
 import java.util.List;

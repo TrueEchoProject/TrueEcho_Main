@@ -21,9 +21,9 @@ public enum ResponseCode {
     // user
     REGISTER_SUCCESS(200, "U001", "회원가입에 성공했습니다.."),
     LOGIN_SUCCESS(200, "U002", "로그인에 성공했습니다."),
-    DUPLICATED_ACCOUNT_GOOD(200, "U002", "중복되지 않은 계정입니다."),
-    DUPLICATED_ACCOUNT_BAD(200, "U001", "중복된 계정입니다."),
-    VERIFY_EMAIL_SUCESS(200, "U002", "이메일 인증에 성공했습니다."),
+    NOT_DUPLICATED_ACCESS(200, "U002", "중복되지 않은 계정입니다."),
+    NOT_DUPLICATED_FAIL(200, "U001", "중복된 계정입니다."),
+    VERIFY_EMAIL_SUCCESS(200, "U002", "이메일 인증에 성공했습니다."),
     VERIFY_EMAIL_FAIL(200, "U003","이메일 인증에 실패했습니다."),
     SEND_EMAIL_SUCCESS(200, "U004", "이메일을 성공적으로 전송했습니다."),
     SEND_EMAIL_FAIL(200, "U005", "이메일 전송에 실패했습니다.");

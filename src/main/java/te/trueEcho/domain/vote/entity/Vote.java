@@ -1,4 +1,4 @@
-package te.trueEcho.domain.vote;
+package te.trueEcho.domain.vote.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

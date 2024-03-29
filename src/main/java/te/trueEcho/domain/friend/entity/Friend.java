@@ -1,35 +1,38 @@
-package te.trueEcho.domain.user;
+package te.trueEcho.domain.friend.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import te.trueEcho.domain.user.entity.User;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "blocks")
-public class Block {
+@Table(name = "friends")
+public class Friend {
 
     @Id
-    @Column(name = "block_id")
+    @Column(name = "friend_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "friend_status")
+    private FriendStatus friendStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "block_user_id")
-    private User blockUser;
+    @JoinColumn(name = "target_user_id")
+    private User targetUser;
 
-    @Column(name = "block_level")
-    private int blockLevel;
     @Builder
-    public Block(User user, User blockUser) {
+    public Friend(FriendStatus friendStatus, User user, User targetUser) {
+        this.friendStatus = friendStatus;
         this.user = user;
-        this.blockUser = blockUser;
+        this.targetUser = targetUser;
     }
 }

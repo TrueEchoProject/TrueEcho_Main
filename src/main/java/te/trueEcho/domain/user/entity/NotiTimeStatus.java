@@ -1,4 +1,4 @@
-package te.trueEcho.domain.user;
+package te.trueEcho.domain.user.entity;
 
 public enum NotiTimeStatus {
     MORNING, //06 ~ 12시

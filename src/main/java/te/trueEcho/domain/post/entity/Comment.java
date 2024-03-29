@@ -1,4 +1,4 @@
-package te.trueEcho.domain.post;
+package te.trueEcho.domain.post.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -6,8 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import te.trueEcho.domain.notification.CommentNoti;
-import te.trueEcho.domain.user.User;
+import te.trueEcho.domain.notification.entity.CommentNoti;
+import te.trueEcho.domain.user.entity.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
