@@ -1,4 +1,4 @@
-package te.trueEcho.domain.user;
+package te.trueEcho.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

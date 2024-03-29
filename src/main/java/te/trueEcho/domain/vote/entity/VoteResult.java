@@ -1,4 +1,4 @@
-package te.trueEcho.domain.vote;
+package te.trueEcho.domain.vote.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -7,8 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import te.trueEcho.domain.notification.VoteResultNoti;
-import te.trueEcho.domain.user.User;
+import te.trueEcho.domain.notification.entity.VoteResultNoti;
+import te.trueEcho.domain.user.entity.User;
+
 import java.time.LocalDateTime;
 
 @Getter

@@ -1,10 +1,10 @@
-package te.trueEcho.domain.notification;
+package te.trueEcho.domain.notification.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import te.trueEcho.domain.vote.VoteResult;
+import te.trueEcho.domain.vote.entity.VoteResult;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
