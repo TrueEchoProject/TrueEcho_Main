@@ -26,7 +26,6 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final SignUpDtoToUserConverter signUpToUser;
     private final EmailMemoryRepository emailMemoryRepository;
 
-    @Transactional(readOnly = true)
     public boolean isDuplicated(EmailUserDto email) {
         return userRepository.checkDuplication(email.getEmail());
     }
@@ -43,9 +42,8 @@ public class UserAuthServiceImpl implements UserAuthService {
     @Transactional
     public boolean registerUser(SignUpUserDto signUpUserDTO) {
         final String registerdCode =emailMemoryRepository.findCheckCodeByEmail(signUpUserDTO.getEmail());
-        log.info("registseredCode = {}", registerdCode);
         boolean isVerified = signUpUserDTO.getCheckCode().equals(registerdCode) ;
-        log.info("isVerified = {}", isVerified);
+
         if(isVerified){
             final User newUser = signUpToUser.converter(signUpUserDTO);
             userRepository.save(newUser);
