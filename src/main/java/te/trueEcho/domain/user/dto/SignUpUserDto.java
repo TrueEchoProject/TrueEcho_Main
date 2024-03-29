@@ -24,7 +24,6 @@ public class SignUpUserDto {
         @ApiModelProperty(value = "이메일", example = "trueEcho@gmail.com", required = true)
         private String email;
 
-
         @ApiModelProperty(value = "성별", example = "남자(1)/여자(0)", required = true)
         private Gender gender;
 
