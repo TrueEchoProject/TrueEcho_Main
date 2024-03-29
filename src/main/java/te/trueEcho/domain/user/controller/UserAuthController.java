@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import te.trueEcho.domain.user.dto.LoginUserDto;
 import te.trueEcho.domain.user.dto.SignUpUserDto;
 import te.trueEcho.domain.user.dto.EmailUserDto;
 import te.trueEcho.domain.user.service.UserAuthService;
@@ -34,15 +35,14 @@ public class UserAuthController {
     @ApiImplicitParam(name = "email", value = "이메일", required = true, example = "trueEcho@gmail.com")
 
 
-    @GetMapping(value = "/duplication")
+    @PostMapping(value = "/duplication")
     public ResponseEntity<ResponseForm> checkAccountDuplication(
-            @RequestParam EmailUserDto emailUserDTO) {
+            @RequestBody EmailUserDto emailUserDTO) {
         final boolean isDuplicated = userAuthService.isDuplicated(emailUserDTO);
         return isDuplicated ?
                 ResponseEntity.ok(ResponseForm.of(NOT_DUPLICATED_FAIL, false)) :
                 ResponseEntity.ok(ResponseForm.of(NOT_DUPLICATED_ACCESS, true)) ;
     }
-
 
     @ApiOperation(value = "회원가입")
     @ApiResponses({
@@ -83,4 +83,18 @@ public class UserAuthController {
     }
 
 
+    @ApiOperation(value = "로그인")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "M002 - 로그인에 성공하였습니다."),
+            @ApiResponse(code = 400, message = "G003 - 유효하지 않은 입력입니다.\n"
+                    + "G004 - 입력 타입이 유효하지 않습니다."),
+            @ApiResponse(code = 401, message = "M005 - 계정 정보가 일치하지 않습니다.")
+    })
+    @PostMapping(value = "/login")
+    public ResponseEntity<ResponseForm> login(@RequestBody LoginUserDto loginUserDto) {
+        final boolean isLoggedIn =  userAuthService.login(loginUserDto);
+        return isLoggedIn ?
+                ResponseEntity.ok(ResponseForm.of(LOGIN_SUCCESS)) :
+                ResponseEntity.ok(ResponseForm.of(LOGIN_FAIL));
+    }
 }
