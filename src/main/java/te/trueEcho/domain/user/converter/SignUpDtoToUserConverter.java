@@ -10,15 +10,12 @@ import te.trueEcho.domain.user.entity.User;
 public class SignUpDtoToUserConverter {
     public User converter(SignUpUserDto signUpUserDto) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String role = "ROLE_ADMIN"; // 기본 권한 설정
         String encryptedPassword = passwordEncoder.encode(signUpUserDto.getPassword());
         return User.builder()
-                .role(role)
-                .username(signUpUserDto.getUsername())
-                .password(signUpUserDto.getPassword())
+                .name(signUpUserDto.getUsername())
+                .password(encryptedPassword)
                 .email(signUpUserDto.getEmail())
-                .code(signUpUserDto.getEmail())
-                .dob(signUpUserDto.getDob())
+                .birthday(signUpUserDto.getDob())
                 .gender(signUpUserDto.getGender())
                 .location(signUpUserDto.getLocation())
                 .notificationTime(signUpUserDto.getNotificationTime())
