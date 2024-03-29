@@ -39,10 +39,9 @@ public class UserAuthController {
             @RequestParam EmailUserDto emailUserDTO) {
         final boolean isDuplicated = userAuthService.isDuplicated(emailUserDTO);
         return isDuplicated ?
-                ResponseEntity.ok(ResponseForm.of(DUPLICATED_ACCOUNT_GOOD, true)) :
-                ResponseEntity.ok(ResponseForm.of(DUPLICATED_ACCOUNT_BAD, false));
+                ResponseEntity.ok(ResponseForm.of(NOT_DUPLICATED_FAIL, false)) :
+                ResponseEntity.ok(ResponseForm.of(NOT_DUPLICATED_ACCESS, true)) ;
     }
-
 
 
     @ApiOperation(value = "회원가입")
@@ -76,13 +75,8 @@ public class UserAuthController {
     @PostMapping(value = "/email")
     public ResponseEntity<ResponseForm> sendEmail(
             @RequestBody EmailUserDto emailUserDTO) {
-        System.out.println("emailUserDTO = " + emailUserDTO);
-        log.trace(emailUserDTO.getEmail());
-        log.trace(emailUserDTO.getUsername());
-        log.trace(emailUserDTO.getCheckCode());
 
       final boolean sent =  userAuthService.sendEmailCode(emailUserDTO);
-
         return sent ?
                 ResponseEntity.ok(ResponseForm.of(SEND_EMAIL_SUCCESS)) :
                 ResponseEntity.ok(ResponseForm.of(SEND_EMAIL_FAIL));

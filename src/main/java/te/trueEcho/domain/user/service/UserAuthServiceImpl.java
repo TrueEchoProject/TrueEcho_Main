@@ -11,6 +11,7 @@ import te.trueEcho.domain.user.dto.EditUserDto;
 import te.trueEcho.domain.user.dto.EmailUserDto;
 import te.trueEcho.domain.user.dto.SignUpUserDto;
 import te.trueEcho.domain.user.entity.User;
+import te.trueEcho.domain.user.repository.EmailMemoryRepository;
 import te.trueEcho.domain.user.repository.UserRepository;
 
 @Slf4j
@@ -22,9 +23,11 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final SignUpDtoToUserConverter signUpToUser;
+    private final EmailMemoryRepository emailMemoryRepository;
+
     @Transactional(readOnly = true)
     public boolean isDuplicated(EmailUserDto email) {
-        return !userRepository.checkDuplication(email.getEmail());
+        return userRepository.checkDuplication(email.getEmail());
     }
 
     /**
@@ -38,28 +41,22 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Transactional
     public boolean registerUser(SignUpUserDto signUpUserDTO) {
-        if (isDuplicated(EmailUserDto.builder().email(signUpUserDTO.getEmail()).build())) {
-            System.out.println("중복");
-        }
-
-        if (!emailCodeService.checkRegisterCode(signUpUserDTO.getEmail(), signUpUserDTO.getCode())) {
+        final String registerdCode =emailMemoryRepository.findCheckCodeByEmail(signUpUserDTO.getEmail());
+        log.info("registseredCode = {}", registerdCode);
+        boolean isVerified = signUpUserDTO.getCheckCode().equals(registerdCode) ;
+        log.info("isVerified = {}", isVerified);
+        if(isVerified){
+            final User newUser = signUpToUser.converter(signUpUserDTO);
+            userRepository.save(newUser);
+            return true;
+        }else{
             return false;
         }
-
-        final User newUser = signUpToUser.converter(signUpUserDTO);
-        userRepository.addUser(newUser);
-
-        return true;
     }
 
     @Override
     public User findUserByID(Long id) {
         return userRepository.findUserById(id);
-    }
-
-    @Override
-    public String findCheckCodeByEmail(String email) {
-        return  userRepository.findCheckCodeByEmail(email);
     }
 
     @Override
@@ -73,6 +70,11 @@ public class UserAuthServiceImpl implements UserAuthService {
         return true;
     }
 
+    @Override
+    public User updateUser(EditUserDto editUserDTO) {
+        return null;
+    }
+
 
     /**
      *     public User updateUserInfoWithEmail : HeeJohn
@@ -82,9 +84,6 @@ public class UserAuthServiceImpl implements UserAuthService {
      *    created_at 자료
      *    last edit: 24.03.28
      */
-    @Override
-    public User updateUserInfoWithEmail(String email, EditUserDto editUserDTO) {
-        return null;
-    }
+
 
 }
