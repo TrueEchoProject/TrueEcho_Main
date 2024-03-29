@@ -14,7 +14,7 @@ public class SignUpDtoToUserConverter {
         String encryptedPassword = passwordEncoder.encode(signUpUserDto.getPassword());
         return User.builder()
                 .name(signUpUserDto.getUsername())
-                .password(signUpUserDto.getPassword())
+                .password(encryptedPassword)
                 .email(signUpUserDto.getEmail())
                 .birthday(signUpUserDto.getDob())
                 .gender(signUpUserDto.getGender())
