@@ -40,8 +40,8 @@ public class UserAuthController {
             @RequestBody EmailUserDto emailUserDTO) {
         final boolean isDuplicated = userAuthService.isDuplicated(emailUserDTO);
         return isDuplicated ?
-                ResponseEntity.ok(ResponseForm.of(NOT_DUPLICATED_FAIL, false)) :
-                ResponseEntity.ok(ResponseForm.of(NOT_DUPLICATED_ACCESS, true)) ;
+                ResponseEntity.ok(ResponseForm.of(NOT_DUPLICATED_FAIL, true)) :
+                ResponseEntity.ok(ResponseForm.of(NOT_DUPLICATED_ACCESS, false)) ;
     }
 
     @ApiOperation(value = "회원가입")
@@ -72,6 +72,8 @@ public class UserAuthController {
                     G004 - 입력 타입이 유효하지 않습니다.
                     M002 - 이미 존재하는 사용자 이름입니다.""")
     })
+
+
     @PostMapping(value = "/email")
     public ResponseEntity<ResponseForm> sendEmail(
             @RequestBody EmailUserDto emailUserDTO) {
