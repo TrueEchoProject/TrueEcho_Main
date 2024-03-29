@@ -13,12 +13,10 @@ public class SignUpDtoToUserConverter {
         String role = "ROLE_ADMIN"; // 기본 권한 설정
         String encryptedPassword = passwordEncoder.encode(signUpUserDto.getPassword());
         return User.builder()
-                .role(role)
-                .username(signUpUserDto.getUsername())
+                .name(signUpUserDto.getUsername())
                 .password(signUpUserDto.getPassword())
                 .email(signUpUserDto.getEmail())
-                .code(signUpUserDto.getEmail())
-                .dob(signUpUserDto.getDob())
+                .birthday(signUpUserDto.getDob())
                 .gender(signUpUserDto.getGender())
                 .location(signUpUserDto.getLocation())
                 .notificationTime(signUpUserDto.getNotificationTime())

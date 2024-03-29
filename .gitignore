@@ -38,8 +38,8 @@ out/
 
 
 # properties # do not share
-application.properties
-application-API.properties
-application-db.properties
-application-JWT.properties
-application-email.properties
+#application.properties
+#application-API.properties
+#application-db.properties
+#application-JWT.properties
+#application-email.properties
