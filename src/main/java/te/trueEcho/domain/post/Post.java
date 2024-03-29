@@ -5,9 +5,11 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import te.trueEcho.domain.user.User;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -36,6 +38,10 @@ public class Post {
 
     @Column(name = "post_scope") // 공개 범위
     private int postScope;
+
+    @CreatedDate
+    @Column(name = "post_created_date")
+    private LocalDateTime createdDate;
 
     @OneToOne(mappedBy = "post")
     private Pin pin;
