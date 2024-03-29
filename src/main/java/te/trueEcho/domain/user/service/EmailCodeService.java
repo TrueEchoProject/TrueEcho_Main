@@ -53,9 +53,6 @@ public class EmailCodeService {
 
 
     private String getRegisterEmailText(String email, String code) {
-        System.out.println("email = " + email);
-        System.out.println("code = " + code);
-        System.out.println("confirmEmailUIResource = " + confirmEmailUI);
         return String.format(confirmEmailUI, email, code);
     }
 
@@ -75,7 +72,7 @@ public class EmailCodeService {
         try {
             final ClassPathResource confirmEmailUIResource = new ClassPathResource("static/confirmEmailUI.html");
             confirmEmailUI = new String(confirmEmailUIResource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            System.out.println("confirmEmailUIResource = " + confirmEmailUIResource);
+
         } catch (IOException e) {
             log.error("Error loading email UI template: {}", e.getMessage()); // 예외 발생 시 로그 출력
             throw new Exception("Error loading email UI template", e);
