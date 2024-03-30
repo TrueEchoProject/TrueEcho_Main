@@ -1,9 +1,10 @@
 import React from 'react';
 import { createStackNavigator } from "@react-navigation/stack";
-import { CommunityTab, FriendsTab, MyPageTab, MyOptionsTab } from "./AppTabNavigator"
+import { FriendsTab, MyPageTab, MyOptionsTab } from "./AppTabNavigator"
 import { View } from 'react-native';
 import { Button1, Button2, Button3 } from "../components/Button";
 import { MainFeedTabScreen } from "./AppTabNavigator/MainFeedTab";
+import { CommunityTabScreen } from "./AppTabNavigator/CommunityTab";
 
 const MainFeedStack = createStackNavigator();
 
@@ -52,7 +53,7 @@ export const CommunityStackScreen = () => { // 커뮤니티 속 Stack 구성
 		<CommunityStack.Navigator>
 			<CommunityStack.Screen
 				name="Community"
-				component={CommunityTab}
+				component={CommunityTabScreen}
 				options={({ navigation }) => ({ // 커뮤니티 화면에서 상단 네비 구현
 					headerRight: () => (
 						<View style={{flexDirection: 'row'}}>

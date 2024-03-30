@@ -1,20 +1,31 @@
-import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React from 'react';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { CommunityStart, CommunityVote, CommunityResult } from './CommunityTabNavigator'
 
-export default class CommunityTab extends Component {
-	render() {
-		return (
-			<View style={style.container}>
-				<Text>CommunityTab</Text>
-			</View>
-		);
-	}
+const CommunityTab = createBottomTabNavigator();
+export const CommunityTabScreen = () => {
+	
+	return (
+		<CommunityTab.Navigator
+			screenOptions={{
+				tabBarStyle: { display: 'none' }
+			}}
+			initialRouteName="Start"
+		>
+			<CommunityTab.Screen
+				name="Start"
+				children={CommunityStart}
+			>
+			</CommunityTab.Screen>
+			<CommunityTab.Screen
+				name="Vote"
+				children={CommunityVote}
+			>
+			</CommunityTab.Screen>
+			<CommunityTab.Screen
+				name="Result"
+				children={CommunityResult}
+			/>
+		</CommunityTab.Navigator>
+	);
 }
-
-const style = StyleSheet.create({
-	container: {
-		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
-	}
-});
