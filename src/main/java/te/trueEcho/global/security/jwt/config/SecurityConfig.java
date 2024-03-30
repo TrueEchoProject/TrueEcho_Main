@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -42,8 +43,9 @@ public class SecurityConfig {
         http
                 // token을 사용하는 방식이기 때문에 csrf를 disable
 
-                .csrf((csrfConfig) ->
-                        csrfConfig.disable()
+                .csrf((csrfConfig) -> {
+                            csrfConfig.disable();
+                        }
                 )
                 // 인가 오류 403 jwtAccessDeniedHandler
                 // 인증 오류 401 jwtAuthenticationEntryPoint
@@ -52,6 +54,8 @@ public class SecurityConfig {
                                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                                 .accessDeniedHandler(jwtAccessDeniedHandler)
                 )
+                //swagger를 위한 H2 콘솔
+                .headers((headers) -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 // 세션을 사용하지 않기 때문에 STATELESS로 설정
                 .sessionManagement((exceptionHandlingCustomizer)->
                         exceptionHandlingCustomizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -59,10 +63,9 @@ public class SecurityConfig {
                 // HttpServletRequest를 사용하는 요청들에 대한 접근제한을 설정
                 .authorizeHttpRequests((authorizeRequests) ->
                         authorizeRequests
-                                .requestMatchers(PathRequest.toH2Console()).permitAll()
-                                .requestMatchers("/", "/login/**").permitAll()
-                                .requestMatchers("/posts/**", "/api/v1/posts/**").hasRole(Role.USER.name())
-                                .requestMatchers("/admins/**", "/api/v1/admins/**").hasRole(Role.ADMIN.name())
+//                                .requestMatchers(PathRequest.toH2Console()).permitAll()
+                                .requestMatchers("/swagger-ui/**", "/accounts/**").permitAll()
+                                .requestMatchers("/", "/email/**").hasRole(Role.ADMIN.name())
                                 .anyRequest().authenticated()
                 ).
                 addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
