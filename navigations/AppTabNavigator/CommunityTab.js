@@ -8,6 +8,7 @@ export const CommunityTabScreen = () => {
 	return (
 		<CommunityTab.Navigator
 			screenOptions={{
+				headerShown: false,
 				tabBarStyle: { display: 'none' }
 			}}
 			initialRouteName="Start"
