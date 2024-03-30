@@ -8,14 +8,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import te.trueEcho.domain.user.dto.LoginUserDto;
 import te.trueEcho.domain.user.dto.SignUpUserDto;
 import te.trueEcho.domain.user.dto.EmailUserDto;
+import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.service.UserAuthService;
 import te.trueEcho.global.config.Admin;
 import te.trueEcho.global.response.ResponseForm;
+import te.trueEcho.global.security.jwt.dto.TokenDto;
+import te.trueEcho.global.security.jwt.service.JwtService;
+
 import static te.trueEcho.global.response.ResponseCode.*;
 
 @Tag(name = "유저 식별 RESTAPI")
@@ -26,6 +32,7 @@ import static te.trueEcho.global.response.ResponseCode.*;
 public class UserAuthController {
 
     private final UserAuthService userAuthService;
+    private final JwtService jwtService;
 
     @Operation(summary = "계정중복 조회", description = "이메일로 이미 등록된 계정인지를 확인")
     @ApiResponses({
@@ -89,7 +96,7 @@ public class UserAuthController {
                     M002 - 이미 존재하는 사용자 이름입니다.""")
     })
 
-    @Admin
+
     @PostMapping(value = "/email")
     public ResponseEntity<ResponseForm> sendEmail(
             @RequestBody EmailUserDto emailUserDTO) {
@@ -108,11 +115,28 @@ public class UserAuthController {
                     + "G004 - 입력 타입이 유효하지 않습니다."),
             @ApiResponse(responseCode = "401", description = "M005 - 계정 정보가 일치하지 않습니다.")
     })
-    @PostMapping(value = "/login")
+
+
+    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseForm> login(@RequestBody LoginUserDto loginUserDto) {
-        final boolean isLoggedIn =  userAuthService.login(loginUserDto);
-        return isLoggedIn ?
-                ResponseEntity.ok(ResponseForm.of(LOGIN_SUCCESS)) :
-                ResponseEntity.ok(ResponseForm.of(LOGIN_FAIL));
+        boolean isEmpty = false;
+
+        if(userAuthService.login(loginUserDto)) {
+            final TokenDto tokenDto = jwtService.login(loginUserDto);
+            isEmpty= tokenDto.getRefreshToken().isBlank() || tokenDto.getAccessToken().isBlank();
+        }
+        return isEmpty ?
+                ResponseEntity.ok(ResponseForm.of(LOGIN_FAIL)):
+                ResponseEntity.ok(ResponseForm.of(LOGIN_SUCCESS));
+    }
+
+
+    @PostMapping("/logout")
+    public ResponseEntity<ResponseForm> logout(@RequestHeader("Authorization") String token) {
+        boolean isDeleted = jwtService.deleteRefreshToken(token);
+
+        return isDeleted ?
+                ResponseEntity.ok(ResponseForm.of(REGISTER_SUCCESS)) :
+                ResponseEntity.ok(ResponseForm.of(VERIFY_EMAIL_FAIL));
     }
 }
