@@ -8,15 +8,13 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import te.trueEcho.domain.friend.entity.Friend;
-import te.trueEcho.domain.notification.entity.RankNoti;
 import te.trueEcho.domain.post.entity.Comment;
 import te.trueEcho.domain.post.entity.Like;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.rank.entity.Rank;
-import te.trueEcho.domain.vote.entity.Vote;
 import te.trueEcho.domain.vote.entity.VoteResult;
+import te.trueEcho.global.security.jwt.entity.RefreshToken;
 
-import java.awt.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -83,6 +81,9 @@ public class User {
     @Column(name = "user_password", nullable = false)
     private String password;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private RefreshToken refreshToken;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Friend> friend;
 
@@ -121,7 +122,8 @@ public class User {
                  boolean notificationSetting,
                  LocalDate birthday,
                  String location,
-                 String password) {
+                 String password,
+                 Role role) {
         this.email = email;
         this.name = name;
         this.gender = gender;
@@ -130,8 +132,9 @@ public class User {
         this.birthday = birthday;
         this.location = location;
         this.password = password;
+
+        this.role = role;
         // 자동 초기화
-        this.role = Role.USER;
         this.connectByFriend = true;
 
     }
@@ -152,6 +155,8 @@ public class User {
     public void setEncryptedPassword(String encryptedPassword) {
         this.password = encryptedPassword;
     }
+
+
 
 
 
