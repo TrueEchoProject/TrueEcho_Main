@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-
 public class TokenProvider {
 
     private final TokenKeyDto accessTokenKeyDto;
