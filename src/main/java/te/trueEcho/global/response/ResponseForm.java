@@ -1,20 +1,23 @@
 package te.trueEcho.global.response;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.models.Response;
+
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
-@ApiModel(description = "응답 데이터 폼")
+@Schema(description = "응답 데이터 폼")
 @Getter
 public class ResponseForm {
 
-    @ApiModelProperty(value = "Http 상태 코드")
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "Http 상태 코드")
    final private int status;
-    @ApiModelProperty(value = "Business 상태 코드")
+
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "Business 상태 코드")
     final private String code;
-    @ApiModelProperty(value = "응답 메세지")
+
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "응답 메세지")
     final private String message;
-    @ApiModelProperty(value = "응답 데이터")
+
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "응답 데이터")
     final  private Object data;
 
 
