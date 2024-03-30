@@ -1,9 +1,9 @@
 import React from 'react';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"; // 하단 Tab 네비게이터
-import { CameraTab } from "./AppTabNavigator"; // 하단 Tab 네비게이터와 연결된 화면
 import { MaterialIcons } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
-import {CommunityStackScreen, MainFeedStackScreen} from "./Stack"; // 각 화면의 아이콘
+import { CommunityStackScreen, MainFeedStackScreen } from "./Stack";
+import { CameraStackScreen } from "./AppTabNavigator/CameraStack/CameraStack"; // 각 화면의 아이콘
 
 const Tab = createBottomTabNavigator();
 
@@ -34,8 +34,8 @@ const TabNav = () => {
 					}}
 				/>
 				<Tab.Screen //하단
-					name="  "
-					component={CameraTab}
+					name="Camera"
+					component={CameraStackScreen}
 					options={{
 						tabBarIcon: props => { //위의 아이콘 설정값 대입
 							return TabIcon({...props, name: 'camera'});
@@ -43,7 +43,7 @@ const TabNav = () => {
 					}}
 				/>
 				<Tab.Screen
-					name="   "
+					name="CommunityTab"
 					component={CommunityStackScreen} // 커뮤니티 속 Stack 연결
 					options={{
 						headerShown: false,

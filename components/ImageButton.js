@@ -11,12 +11,13 @@ const ImageButton = React.memo(({ images, containerHeight }) => {
 			setImageIndex(prevIndex => (prevIndex + 1) % images.length);
 		}
 	};
+	
 	const ImageHeight = Math.floor(containerHeight);
 	const SmallHeight = Math.floor(ImageHeight / 3);
 	const SmallWidth = Math.floor(windowWidth / 3);
+	
 	// 기본 이미지 혹은 대체 이미지 설정
 	const defaultImage = "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=450&h=450&fit=crop";
-	
 	// 이미지 배열이 비어있지 않으면 사용, 그렇지 않으면 기본 이미지 사용
 	const imageUri = images.length > 0 ? images[Math.min(imageIndex, images.length - 1)] : defaultImage;
 	
