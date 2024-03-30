@@ -28,8 +28,9 @@ public enum ResponseCode {
     SEND_EMAIL_SUCCESS(200, "U004", "이메일을 성공적으로 전송했습니다."),
     SEND_EMAIL_FAIL(200, "U005", "이메일 전송에 실패했습니다."),
     LOGIN_SUCCESS(200, "U009", "로그인에 성공했습니다."),
-    LOGIN_FAIL(200, "U009", "로그인에 성공했습니다.");
-
+    LOGIN_FAIL(200, "U009", "로그인에 성공했습니다."),
+    LOGOUT_SUCCESS(200, "U0010", "로그아웃에 성공했습니다."),
+    LOGOUT_FAIL(200, "U0011", "로그아웃에 실패했습니다.");
     private final int status;
     private final String code;
     private final String message;
