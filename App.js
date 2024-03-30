@@ -30,16 +30,16 @@ export default function App() {
     prepare();
   }, []);
   
-  // return (
-  //     <Navigation />
-  // );
+   return (
+       <Navigation />
+   );
 
-  return (
-    <View style={styles.container}>
-      <SignUpForm />
-      <StatusBar style="auto" />
-    </View>
-  );
+//  return (
+//    <View style={styles.container}>
+//      <SignUpForm />
+//      <StatusBar style="auto" />
+//    </View>
+//  );
 }
 
 const styles = StyleSheet.create({
