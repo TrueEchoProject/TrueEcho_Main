@@ -8,9 +8,9 @@ import FeedButton from "../../components/FeedButton";
 
 const MainFeedTab = createBottomTabNavigator();
 export const MainFeedTabScreen = () => {
-	const friendFeedRef = React.useRef();
-	const fofFeedRef = React.useRef();
-	const otherFeedRef = React.useRef();
+	const friendFeedRef = React.useRef(); // 탭의 활성화 확인
+	const fofFeedRef = React.useRef(); // 탭의 활성화 확인
+	const otherFeedRef = React.useRef(); // 탭의 활성화 확인
 	
 	return (
 		<MainFeedTab.Navigator
@@ -31,35 +31,35 @@ export const MainFeedTabScreen = () => {
 								<FeedButton
 									title="친구"
 									onPress={() => {
-										if (currentRouteName === 'FriendFeed') {
+										if (currentRouteName === 'FriendFeed') { // 현재 활성화된 탭과 비교
 											friendFeedRef.current.refresh(); // FriendFeed의 새로고침 함수 호출
 										} else {
-											navigation.navigate('FriendFeed');
+											navigation.navigate('FriendFeed'); // 아니면 이동
 										}
 									}}
-									isSelected={currentRouteName === 'FriendFeed'}
+									isSelected={currentRouteName === 'FriendFeed'} // FeedButton 스타일 전환
 								/>
 								<FeedButton
 									title="친구의 친구"
 									onPress={() => {
-										if (currentRouteName === 'FofFeed') {
+										if (currentRouteName === 'FofFeed') { // 현재 활성화된 탭과 비교
 											fofFeedRef.current.refresh(); // FriendFeed의 새로고침 함수 호출
 										} else {
-											navigation.navigate('FofFeed');
+											navigation.navigate('FofFeed'); // 아니면 이동
 										}
 									}}
-									isSelected={currentRouteName === 'FofFeed'}
+									isSelected={currentRouteName === 'FofFeed'} // FeedButton 스타일 전환
 								/>
 								<FeedButton
 									title="더보기"
 									onPress={() => {
-										if (currentRouteName === 'OtherFeed') {
+										if (currentRouteName === 'OtherFeed') { // 현재 활성화된 탭과 비교
 											otherFeedRef.current.refresh(); // FriendFeed의 새로고침 함수 호출
 										} else {
-											navigation.navigate('OtherFeed');
+											navigation.navigate('OtherFeed'); // 아니면 이동
 										}
 									}}
-									isSelected={currentRouteName === 'OtherFeed'}
+									isSelected={currentRouteName === 'OtherFeed'} // FeedButton 스타일 전환
 								/>
 							</View>
 						);
@@ -83,35 +83,35 @@ export const MainFeedTabScreen = () => {
 								<FeedButton
 									title="친구"
 									onPress={() => {
-										if (currentRouteName === 'FriendFeed') {
+										if (currentRouteName === 'FriendFeed') { // 현재 활성화된 탭과 비교
 											friendFeedRef.current.refresh(); // FriendFeed의 새로고침 함수 호출
 										} else {
-											navigation.navigate('FriendFeed');
+											navigation.navigate('FriendFeed'); // 아니면 이동
 										}
 									}}
-									isSelected={currentRouteName === 'FriendFeed'}
+									isSelected={currentRouteName === 'FriendFeed'} // FeedButton 스타일 전환
 								/>
 								<FeedButton
 									title="친구의 친구"
 									onPress={() => {
-										if (currentRouteName === 'FofFeed') {
+										if (currentRouteName === 'FofFeed') { // 현재 활성화된 탭과 비교
 											fofFeedRef.current.refresh(); // FriendFeed의 새로고침 함수 호출
 										} else {
-											navigation.navigate('FofFeed');
+											navigation.navigate('FofFeed'); // 아니면 이동
 										}
 									}}
-									isSelected={currentRouteName === 'FofFeed'}
+									isSelected={currentRouteName === 'FofFeed'} // FeedButton 스타일 전환
 								/>
 								<FeedButton
 									title="더보기"
 									onPress={() => {
-									if (currentRouteName === 'OtherFeed') {
+									if (currentRouteName === 'OtherFeed') { // 현재 활성화된 탭과 비교
 										otherFeedRef.current.refresh(); // FriendFeed의 새로고침 함수 호출
 									} else {
-										navigation.navigate('OtherFeed');
+										navigation.navigate('OtherFeed'); // 아니면 이동
 									}
 										}}
-								isSelected={currentRouteName === 'OtherFeed'}
+								isSelected={currentRouteName === 'OtherFeed'} // FeedButton 스타일 전환
 								/>
 							</View>
 						);
@@ -135,35 +135,35 @@ export const MainFeedTabScreen = () => {
 								<FeedButton
 									title="친구"
 									onPress={() => {
-										if (currentRouteName === 'FriendFeed') {
+										if (currentRouteName === 'FriendFeed') { // 현재 활성화된 탭과 비교
 											friendFeedRef.current.refresh(); // FriendFeed의 새로고침 함수 호출
 										} else {
-											navigation.navigate('FriendFeed');
+											navigation.navigate('FriendFeed'); // 아니면 이동
 										}
 									}}
-									isSelected={currentRouteName === 'FriendFeed'}
+									isSelected={currentRouteName === 'FriendFeed'} // FeedButton 스타일 전환
 								/>
 								<FeedButton
 									title="친구의 친구"
 									onPress={() => {
-										if (currentRouteName === 'FofFeed') {
+										if (currentRouteName === 'FofFeed') { // 현재 활성화된 탭과 비교
 											fofFeedRef.current.refresh(); // FriendFeed의 새로고침 함수 호출
 										} else {
-											navigation.navigate('FofFeed');
+											navigation.navigate('FofFeed'); // 아니면 이동
 										}
 									}}
-									isSelected={currentRouteName === 'FofFeed'}
+									isSelected={currentRouteName === 'FofFeed'} // FeedButton 스타일 전환
 								/>
 								<FeedButton
 									title="더보기"
 									onPress={() => {
-										if (currentRouteName === 'OtherFeed') {
+										if (currentRouteName === 'OtherFeed') { // 현재 활성화된 탭과 비교
 											otherFeedRef.current.refresh(); // FriendFeed의 새로고침 함수 호출
 										} else {
-											navigation.navigate('OtherFeed');
+											navigation.navigate('OtherFeed'); // 아니면 이동
 										}
 									}}
-									isSelected={currentRouteName === 'OtherFeed'}
+									isSelected={currentRouteName === 'OtherFeed'} // FeedButton 스타일 전환
 								/>
 							</View>
 						);

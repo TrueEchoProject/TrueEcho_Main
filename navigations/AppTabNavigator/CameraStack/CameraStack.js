@@ -7,7 +7,7 @@ export const CameraStackScreen = () => {
 	return (
 		<CameraStack.Navigator>
 			<CameraStack.Screen
-				name="CamerOption"
+				name="CameraOption"
 				component={Camera}
 			/>
 			<CameraStack.Screen

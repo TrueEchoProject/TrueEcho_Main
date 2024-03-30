@@ -14,7 +14,7 @@ export const MainFeedStackScreen = () => { // 메인 피드 속 Stack 구성
 			<MainFeedStack.Screen
 				name="FeedTab"
 				component={MainFeedTabScreen}
-				options={({ navigation }) => ({// 메인 피드 화면에서 상단 네비 구현
+				options={({ navigation }) => ({ // 메인 피드 화면에서 상단 네비 구현
 					headerRight: () => (
 						<View style={{flexDirection: 'row'}}>
 							<Button1 onPress={() => navigation.navigate('Friends')} />

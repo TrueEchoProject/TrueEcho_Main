@@ -8,7 +8,7 @@ const SendPostStack = ({ navigation }) => {
 			<Text>SendPost</Text>
 			<Button
 				title="ToCamera"
-				onPress={() => navigation.navigate("Camera")}
+				onPress={() => navigation.navigate("CameraOption")}
 			/>
 		</View>
 	);
