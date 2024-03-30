@@ -3,41 +3,57 @@ import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import { Camera as ExpoCamera } from 'expo-camera';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 
-const CameraScreen = () => {
+const CameraScreen = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraType, setCameraType] = useState(ExpoCamera.Constants.Type.back);
   const [flashMode, setFlashMode] = useState(ExpoCamera.Constants.FlashMode.off);
   const [zoom, setZoom] = useState(0);
   const cameraRef = useRef(null);
-
+  
   useEffect(() => {
     (async () => {
       const { status } = await ExpoCamera.requestCameraPermissionsAsync();
       setHasPermission(status === 'granted');
     })();
   }, []);
-
+  
   const takePicture = async () => {
     if (cameraRef.current) {
       const options = { quality: 0.5, base64: true, skipProcessing: true };
       const data = await cameraRef.current.takePictureAsync(options);
-      // 사진을 처리하는 로직을 추가예쩡
       console.log(data.uri);
+      return data;
     }
+    return null;
   };
-
+  
   const handleCapture = async () => {
-    await takePicture();
+    const photoUris = []; // 사진 URI를 저장할 배열
+    // 첫 번째 사진 촬영
+    const firstPictureData = await takePicture();
+    if (firstPictureData && firstPictureData.uri) {
+      photoUris.push(firstPictureData.uri); // 첫 번째 사진 URI 배열에 추가
+    }
+    // 카메라 타입 전환
     setCameraType(
       cameraType === ExpoCamera.Constants.Type.back
         ? ExpoCamera.Constants.Type.front
         : ExpoCamera.Constants.Type.back
     );
-    setTimeout(() => {
-      takePicture();
+    // 두 번째 사진 촬영을 위한 지연
+    setTimeout(async () => {
+      const secondPictureData = await takePicture(); // 두 번째 사진 촬영
+      if (secondPictureData && secondPictureData.uri) {
+        photoUris.push(secondPictureData.uri); // 두 번째 사진 URI 배열에 추가
+      }
+      
+      // 모든 사진 촬영이 완료된 후, 배열을 다음 화면으로 전달
+      if (photoUris.length > 0) {
+        navigation.navigate("SendPost", { photoUris: photoUris }); // SendPost 페이지로 이동하면서 photoUris 배열 파라미터를 전달
+      }
     }, 1000);
   };
-
+  
   const handleFlashMode = () => {
     setFlashMode(
       flashMode === ExpoCamera.Constants.FlashMode.off
