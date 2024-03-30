@@ -12,6 +12,9 @@ public interface UserRepository {
 
     User findUserById(Long id); //READ
 
+
+    User findUserByEmail(String email); //READ
+
     List<User> findAll(); //READ
 
     void deleteUserById(Long id) throws Exception; //DELETE
