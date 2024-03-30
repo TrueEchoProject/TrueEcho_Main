@@ -39,3 +39,4 @@ out/
 
 # properties # do not share
 src/main/resources/*.properties
+*.properties
