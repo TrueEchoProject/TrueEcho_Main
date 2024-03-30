@@ -8,8 +8,9 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class EmailUserDto {
-    @ApiModelProperty(value = "이메일", example = "trueEcho@gmail.com", required = true)
+
     private String username;
+    @ApiModelProperty(value = "이메일", example = "trueEcho@gmail.com", required = true)
     private String email;
     private String checkCode;
 }

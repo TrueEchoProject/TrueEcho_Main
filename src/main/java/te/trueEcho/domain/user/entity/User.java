@@ -8,14 +8,11 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import te.trueEcho.domain.friend.entity.Friend;
-import te.trueEcho.domain.notification.entity.RankNoti;
 import te.trueEcho.domain.post.entity.Comment;
 import te.trueEcho.domain.post.entity.Like;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.rank.entity.Rank;
-import te.trueEcho.domain.vote.entity.Vote;
 import te.trueEcho.domain.vote.entity.VoteResult;
-
 import java.awt.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
