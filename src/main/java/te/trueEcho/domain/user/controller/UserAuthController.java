@@ -36,8 +36,11 @@ public class UserAuthController {
                     G003 - 유효하지 않은 입력입니다.
                     G004 - 입력 타입이 유효하지 않습니다.""")
     })
+    @Parameters({@Parameter()})
     @Parameter(name = "email", required = true, example = "trueEcho@gmail.com")
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(useParameterTypeSchema = true)
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            required = true,    description = "hihihihi",
+            useParameterTypeSchema = true)
     @PostMapping(value = "/duplication")
 
 
@@ -50,6 +53,13 @@ public class UserAuthController {
     }
 
     @Operation(summary = "회원가입", description = "사용자의 정보를 이용하여 회원가입")
+    @Parameters({
+            @Parameter(name = "email", required = true, example = "trueEcho@gmail.com"),
+            @Parameter(name = "email", required = true, example = "trueEcho@gmail.com"),
+    })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            required = true,    description = "hihihihi",
+            useParameterTypeSchema = true)
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = """
                     U001 - 회원가입에 성공하였습니다.
@@ -60,10 +70,7 @@ public class UserAuthController {
                     U002 - 이미 존재하는 사용자 이름입니다.
                     U007 - 인증 이메일 전송을 먼저 해야합니다.""")
     })
-    @Parameters({
-            @Parameter(name = "email", required = true, example = "trueEcho@gmail.com"),
-            @Parameter(name = "email", required = true, example = "trueEcho@gmail.com"),
-    })
+
     @PostMapping(value = "/register")
     public ResponseEntity<ResponseForm> register(@RequestBody SignUpUserDto signUpUserDTO) {
         final boolean isRegistered = userAuthService.registerUser(signUpUserDTO);
