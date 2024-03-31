@@ -5,7 +5,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import te.trueEcho.domain.friend.entity.Friend;
 import te.trueEcho.domain.post.entity.Comment;
@@ -13,8 +12,8 @@ import te.trueEcho.domain.post.entity.Like;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.rank.entity.Rank;
 import te.trueEcho.domain.vote.entity.VoteResult;
+import te.trueEcho.global.entity.Audit;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -22,7 +21,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "users")
-public class User {
+public class User extends Audit {
     /**
      *    entity : jun10920
      *    * @param : NONE
@@ -57,10 +56,6 @@ public class User {
     @Column(name = "user_noti_time")
     @Enumerated(EnumType.STRING)
     private NotiTimeStatus notificationTime;
-
-    @CreatedDate
-    @Column(name = "user_created_date")
-    private LocalDateTime createdDate;
 
     @Column(name = "user_noti_setting")
     private boolean notificationSetting;

@@ -5,17 +5,17 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import te.trueEcho.domain.user.entity.User;
-import java.time.LocalDateTime;
+import te.trueEcho.global.entity.Audit;
+
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "pins")
-public class Pin {
+public class Pin extends Audit {
 
     @Id
     @Column(name = "pin_id")
@@ -24,10 +24,6 @@ public class Pin {
 
     @Column(name = "pin_scope")
     private int scope;
-
-    @CreatedDate
-    @Column(name = "pin_created_date")
-    private LocalDateTime createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
