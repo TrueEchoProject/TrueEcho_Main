@@ -23,7 +23,7 @@ public class Pin {
     private Long id;
 
     @Column(name = "pin_scope")
-    private int pinScope;
+    private int scope;
 
     @CreatedDate
     @Column(name = "pin_created_date")
@@ -38,8 +38,8 @@ public class Pin {
     private Post post;
 
     @Builder
-    public Pin(int pinScope, User user, Post post) {
-        this.pinScope = pinScope;
+    public Pin(int scope, User user, Post post) {
+        this.scope = scope;
         this.user = user;
         this.post = post;
     }
