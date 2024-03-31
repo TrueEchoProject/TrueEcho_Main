@@ -34,10 +34,11 @@ public class Post {
     private String urlBack;
 
     @Column(name = "post_status") // 2분 이내 답장 여부
-    private PostStatus postStatus;
+    @Enumerated(EnumType.STRING)
+    private PostStatus status;
 
     @Column(name = "post_scope") // 공개 범위
-    private int postScope;
+    private int scope;
 
     @CreatedDate
     @Column(name = "post_created_date")
@@ -57,12 +58,12 @@ public class Post {
     private List<Comment> comments;
 
     @Builder
-    public Post(String title, String urlFront, String urlBack, PostStatus postStatus, int postScope, User user) {
+    public Post(String title, String urlFront, String urlBack, PostStatus status, int scope, User user) {
         this.title = title;
         this.urlFront = urlFront;
         this.urlBack = urlBack;
-        this.postStatus = postStatus;
-        this.postScope = postScope;
+        this.status = status;
+        this.scope = scope;
         this.user = user;
     }
 }

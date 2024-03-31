@@ -13,7 +13,6 @@ import te.trueEcho.domain.post.entity.Like;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.rank.entity.Rank;
 import te.trueEcho.domain.vote.entity.VoteResult;
-import java.awt.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,10 +54,8 @@ public class User {
     @Column(name = "connect_by_friend")
     private boolean connectByFriend; //친구의 친구에게 내 계정 노출
 
-    @Column(name = "connect_by_phone")
-    private boolean connectByPhone; //전화번호로 내 계정 노출
-
     @Column(name = "user_noti_time")
+    @Enumerated(EnumType.STRING)
     private NotiTimeStatus notificationTime;
 
     @CreatedDate
