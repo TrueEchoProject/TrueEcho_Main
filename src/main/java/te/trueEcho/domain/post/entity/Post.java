@@ -5,11 +5,10 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import te.trueEcho.domain.user.entity.User;
+import te.trueEcho.global.entity.Audit;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -17,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "posts")
-public class Post {
+public class Post extends Audit {
 
     @Id
     @Column(name = "post_id")
@@ -39,10 +38,6 @@ public class Post {
 
     @Column(name = "post_scope") // 공개 범위
     private int scope;
-
-    @CreatedDate
-    @Column(name = "post_created_date")
-    private LocalDateTime createdDate;
 
     @OneToOne(mappedBy = "post")
     private Pin pin;

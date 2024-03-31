@@ -4,10 +4,9 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import te.trueEcho.global.entity.Audit;
 
-import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -16,7 +15,7 @@ import java.time.LocalDateTime;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "DTYPE", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "notifications")
-public abstract class Notification {
+public abstract class Notification extends Audit {
 
     @Id
     @Column(name = "noti_id")
@@ -27,9 +26,6 @@ public abstract class Notification {
     @Column(name = "noti_content")
     private String content;
 
-    @CreatedDate
-    @Column(name = "noti_created_date")
-    private LocalDateTime createdDate;
 }
 
 
