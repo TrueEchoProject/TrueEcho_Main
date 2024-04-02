@@ -41,10 +41,6 @@ public class EmailCodeService {
         emailMemoryRepository.saveCheckCode(emailUserDto.getEmail(),code); // 랜덤 번호/이메일 저장.
     }
 
-    public void deleteCheckCode(EmailUserDto emailUserDto){
-        emailMemoryRepository.deleteCheckCode(emailUserDto.getEmail());
-    }
-
     public boolean checkRegisterCode( String email, String code) {
         final String savedCode = emailMemoryRepository.findCheckCodeByEmail(email);
 
