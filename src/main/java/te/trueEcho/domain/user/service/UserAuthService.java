@@ -14,7 +14,7 @@ public interface UserAuthService {
     @Transactional
     boolean registerUser(SignUpUserDto signUpUserDTO);
 
-    boolean isDuplicated(EmailUserDto email) ;
+    boolean isTypeDuplicated(EmailUserDto email, String type) ;
 
     // 유저 찾기
     User findUserByID(Long id);
