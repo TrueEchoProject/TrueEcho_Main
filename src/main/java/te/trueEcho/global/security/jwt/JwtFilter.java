@@ -31,7 +31,7 @@ public class JwtFilter extends GenericFilterBean {
         String requestURI = httpServletRequest.getRequestURI();
         TokenType type = isRefreshRequest(requestURI) ? TokenType.REFRESH : TokenType.ACCESS;
 
-        log.warn("=============== this is do Filter ");
+        log.warn("=============== this is do Filter " + jwt);
         if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt, type)) {
             UsernamePasswordAuthenticationToken authentication = tokenProvider.getAuthentication(jwt,type);
             SecurityContextHolder.getContext().setAuthentication(authentication);
