@@ -1,21 +1,21 @@
 package te.trueEcho.domain.user.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import te.trueEcho.domain.friend.entity.Friend;
+import te.trueEcho.domain.notification.entity.NotiTimeQ;
 import te.trueEcho.domain.post.entity.Comment;
 import te.trueEcho.domain.post.entity.Like;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.rank.entity.Rank;
 import te.trueEcho.domain.vote.entity.VoteResult;
-
+import te.trueEcho.global.entity.Audit;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -23,7 +23,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "users")
-public class User {
+public class User extends Audit {
     /**
      *    entity : jun10920
      *    * @param : NONE
@@ -44,6 +44,7 @@ public class User {
     private Role role;
 
     @Column(name = "user_email", nullable = false, unique = true)
+    @Email
     private String email;
 
     @Column(name = "user_name", nullable = false, length = 20, unique = true)
@@ -55,15 +56,9 @@ public class User {
     @Column(name = "connect_by_friend")
     private boolean connectByFriend; //친구의 친구에게 내 계정 노출
 
-    @Column(name = "connect_by_phone")
-    private boolean connectByPhone; //전화번호로 내 계정 노출
-
     @Column(name = "user_noti_time")
+    @Enumerated(EnumType.STRING)
     private NotiTimeStatus notificationTime;
-
-    @CreatedDate
-    @Column(name = "user_created_date")
-    private LocalDateTime createdDate;
 
     @Column(name = "user_noti_setting")
     private boolean notificationSetting;
@@ -111,7 +106,8 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Comment> comments;
 
-
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private NotiTimeQ notiTimeQ;
 
     @Builder
     public User( String email,
@@ -142,10 +138,6 @@ public class User {
         this.name = name;
     }
 
-    public void setRefreshToken(String refreshToken){
-        this.refreshToken=refreshToken;
-    }
-
     public void updateEmail(String email) {
         this.email = email;
     }
@@ -157,8 +149,6 @@ public class User {
     public void setEncryptedPassword(String encryptedPassword) {
         this.password = encryptedPassword;
     }
-
-
 
 
 
