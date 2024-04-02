@@ -2,10 +2,7 @@ package te.trueEcho.domain.user.service;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
-import te.trueEcho.domain.user.dto.EditUserDto;
-import te.trueEcho.domain.user.dto.EmailUserDto;
-import te.trueEcho.domain.user.dto.LoginUserDto;
-import te.trueEcho.domain.user.dto.SignUpUserDto;
+import te.trueEcho.domain.user.dto.*;
 import te.trueEcho.domain.user.entity.User;
 
 public interface UserAuthService {
@@ -20,7 +17,7 @@ public interface UserAuthService {
     User findUserByID(Long id);
 
     // 이메일 인증코드 확인
-    boolean checkEmailCode(EmailUserDto emailUserDto);
+    boolean checkEmailCode(EmailCheckCodeDto emailCheckCodeDto);
 
     @Transactional
     // 이메일 인증코드 전송

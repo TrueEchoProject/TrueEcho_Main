@@ -44,6 +44,5 @@ public class SignUpUserDto {
         @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "지역", example = "서울광역시 용산구",requiredMode = Schema.RequiredMode.REQUIRED)
         private String location;
 
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "이메일 인증번호", example = "123123",requiredMode = Schema.RequiredMode.REQUIRED)
-        private String checkCode;
+
 }
