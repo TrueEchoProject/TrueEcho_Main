@@ -2,10 +2,13 @@ package te.trueEcho.global.security.jwt.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.antlr.v4.runtime.Token;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import te.trueEcho.domain.user.dto.LoginUserDto;
@@ -13,12 +16,8 @@ import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.UserRepository;
 import te.trueEcho.global.security.jwt.Repository.RefreshTokenRepository;
 import te.trueEcho.global.security.jwt.TokenProvider;
-import te.trueEcho.global.security.jwt.dto.Token;
+import te.trueEcho.global.security.jwt.dto.TokenType;
 import te.trueEcho.global.security.jwt.dto.TokenDto;
-import te.trueEcho.global.security.jwt.entity.RefreshToken;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,27 +31,20 @@ public class JwtService {
 
     @Transactional
     public TokenDto login(LoginUserDto loginUserDto){
-        Authentication authentication = setAuthentication(loginUserDto);
+        Authentication  authentication = setAuthentication(loginUserDto); // 인증 & 인가
 
-        User regiseredUser = userRepository.findUserByEmail(loginUserDto.getEmail());
-
-        if(regiseredUser!=null){
-            log.info("기존의 존재하는 refresh 토큰 삭제");
-            refreshTokenRepository.deleteByUser(regiseredUser);
-        }
-        // authentication 객체를 createToken 메소드를 통해서 JWT Token을 생성
-        String accessToken = tokenProvider.createToken(authentication, Token.ACCESS);
-        String refreshToken = tokenProvider.createToken(authentication, Token.REFRESH);
-        RefreshToken token = RefreshToken.builder().refreshToken(refreshToken).user(regiseredUser).build();
-        refreshTokenRepository.save(token);
-        return TokenDto.builder().accessToken(accessToken).refreshToken(refreshToken).build();
+        return createToken();
     }
 
     private Authentication setAuthentication(LoginUserDto loginUserDto) {
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(loginUserDto.getEmail(), loginUserDto.getPassword());
 
-        // authenticate 메소드가 실행이 될 때 CustomUserDetailsService class의 loadUserByUsername 메소드가 실행
+        // 1. Login ID/PW 를 기반으로 Authentication 객체 생성
+        // 이때 authentication 는 인증 여부를 확인하는 authenticated 값이 false
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(loginUserDto.getUsername(), loginUserDto.getPassword());
+
+        // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
+        // authenticate 매서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         // 해당 객체를 SecurityContextHolder에 저장
@@ -60,17 +52,28 @@ public class JwtService {
         return authentication;
     }
 
-    public Optional<RefreshToken> getRefreshToken(String email){
-        User foundUser = userRepository.findUserByEmail(email);
-        return Optional.ofNullable(refreshTokenRepository.findByUser(foundUser));
+
+    public boolean deleteRefreshToken(){
+        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+        log.info("authentication.name ={}", authentication.getName());
+        User foundUser = userRepository.findUserByName(authentication.getName());
+        refreshTokenRepository.deleteTokenByUser(foundUser);
+        return refreshTokenRepository.findTokenByUser(foundUser) == null;
     }
 
 
-    public boolean deleteRefreshToken(String email){
-        User foundUser = userRepository.findUserByEmail(email);
-        refreshTokenRepository.deleteByUser(foundUser);
-        return refreshTokenRepository.existsByUser(foundUser);
-    }
+    public TokenDto createToken(){
 
+        if(!deleteRefreshToken()) TokenDto.builder().accessToken("").refreshToken("").build();
+
+
+        // authentication 객체를 createToken 메소드를 통해서 JWT Token을 생성
+        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+        deleteRefreshToken();
+        String accessToken = tokenProvider.createToken(authentication, TokenType.ACCESS);
+        String refreshToken = tokenProvider.createToken(authentication, TokenType.REFRESH);
+        refreshTokenRepository.saveTokenByUsername(refreshToken,authentication.getName());
+        return TokenDto.builder().accessToken(accessToken).refreshToken(refreshToken).build();
+    }
     
 }
