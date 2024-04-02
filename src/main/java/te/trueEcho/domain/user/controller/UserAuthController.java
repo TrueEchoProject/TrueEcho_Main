@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import te.trueEcho.domain.user.dto.EmailCheckCodeDto;
 import te.trueEcho.domain.user.dto.LoginUserDto;
 import te.trueEcho.domain.user.dto.SignUpUserDto;
 import te.trueEcho.domain.user.dto.EmailUserDto;
@@ -65,6 +66,16 @@ public class UserAuthController {
 
 
         return sendEmail(emailUserDTO);
+    }
+
+    @GetMapping(value = "/checkcode")
+    public ResponseEntity<ResponseForm> checkCode(
+            @RequestBody EmailCheckCodeDto emailCheckCodeDto) {
+      boolean isVerified =   userAuthService.checkEmailCode(emailCheckCodeDto);
+
+      return isVerified ?
+             ResponseEntity.ok(ResponseForm.of(VERIFY_EMAIL_SUCCESS, "")) :
+             ResponseEntity.ok(ResponseForm.of(VERIFY_EMAIL_FAIL, ""));
     }
 
 
