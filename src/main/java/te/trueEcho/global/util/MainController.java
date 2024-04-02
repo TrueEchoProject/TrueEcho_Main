@@ -1,4 +1,4 @@
-package te.trueEcho.global.security;
+package te.trueEcho.global.util;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
