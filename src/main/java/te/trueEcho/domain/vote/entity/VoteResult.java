@@ -5,28 +5,23 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import te.trueEcho.domain.notification.entity.VoteResultNoti;
 import te.trueEcho.domain.user.entity.User;
+import te.trueEcho.global.entity.Audit;
 
-import java.time.LocalDateTime;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "vote_results")
-public class VoteResult {
+public class VoteResult extends Audit {
 
     @Id
     @Column(name = "vote_result_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @CreatedDate
-    @Column(name = "vote_time")
-    private LocalDateTime voteTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id_voter")

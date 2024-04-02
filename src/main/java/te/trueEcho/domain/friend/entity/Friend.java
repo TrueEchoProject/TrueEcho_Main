@@ -19,7 +19,8 @@ public class Friend {
     private Long id;
 
     @Column(name = "friend_status")
-    private FriendStatus friendStatus;
+    @Enumerated(EnumType.STRING)
+    private FriendStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -30,8 +31,8 @@ public class Friend {
     private User targetUser;
 
     @Builder
-    public Friend(FriendStatus friendStatus, User user, User targetUser) {
-        this.friendStatus = friendStatus;
+    public Friend(FriendStatus status, User user, User targetUser) {
+        this.status = status;
         this.user = user;
         this.targetUser = targetUser;
     }
