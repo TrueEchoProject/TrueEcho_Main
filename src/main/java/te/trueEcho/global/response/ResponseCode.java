@@ -19,9 +19,9 @@ import lombok.Getter;
 public enum ResponseCode {
 
     // user
-    REGISTER_SUCCESS(200, "U001", "회원가입에 성공했습니다.."),
+    REGISTER_SUCCESS(200, "U001", "회원가입에 성공했습니다."),
     REGISTER_FAIL(200, "U002", "회원가입에 실패했습니다."),
-    NOT_DUPLICATED_ACCESS(200, "U002", "중복되지 않은 계정입니다."),
+    NOT_DUPLICATED_SUCCESS(200, "U002", "중복되지 않은 계정입니다."),
     NOT_DUPLICATED_FAIL(200, "U001", "중복된 계정입니다."),
     VERIFY_EMAIL_SUCCESS(200, "U002", "이메일 인증에 성공했습니다."),
     VERIFY_EMAIL_FAIL(200, "U003","이메일 인증에 실패했습니다."),
@@ -30,7 +30,10 @@ public enum ResponseCode {
     LOGIN_SUCCESS(200, "U009", "로그인에 성공했습니다."),
     LOGIN_FAIL(200, "U009", "로그인에 성공했습니다."),
     LOGOUT_SUCCESS(200, "U0010", "로그아웃에 성공했습니다."),
-    LOGOUT_FAIL(200, "U0011", "로그아웃에 실패했습니다.");
+    LOGOUT_FAIL(200, "U0011", "로그아웃에 실패했습니다."),
+    AUTHENTICATION_FAIL(401, "T001", "사용자 인증에 실패했습니다."),
+    AUTHORIZATION_FAIL(403, "T002", "사용자 인가에 실패했습니다.");
+
     private final int status;
     private final String code;
     private final String message;
