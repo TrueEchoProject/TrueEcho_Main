@@ -17,17 +17,25 @@ public class EmailMemoryRepository {
         log.info("found code = {}", checkCodeMap.get(email));
         return checkCodeMap.get(email);
     }
+    public Boolean checkStatusByEmail(String email){
+       return Boolean.valueOf(findCheckCodeByEmail(email));
+    }
 
     @Transactional
-    public void saveCheckCode(String email, String checkCode) { // CREATE
+    public void saveCheckCode(String email, String  checkCode) { // CREATE
 
         log.info("saved email&code = {}&{}",email,checkCode);
         checkCodeMap.put(email,checkCode);
     }
 
+    @Transactional
+    public void verifyEmail(String email){
+        saveCheckCode(email,"true");
+    }
+
 
     @Transactional
-    public  void deleteCheckCode(String email){ // DELETE
+    public void deleteEmail(String email){ // DELETE
         checkCodeMap.remove(email);
     }
 }
