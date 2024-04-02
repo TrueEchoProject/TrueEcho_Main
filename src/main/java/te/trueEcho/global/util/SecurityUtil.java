@@ -1,12 +1,9 @@
 package te.trueEcho.global.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import te.trueEcho.global.security.jwt.principal.CustomUserDetails;
 
 import java.util.Optional;
 @Slf4j
@@ -27,13 +24,13 @@ public class SecurityUtil {
             return Optional.empty();
         }
 
-        String email = null;
-        if (authentication.getPrincipal() instanceof CustomUserDetails springSecurityUser) {
-            email = springSecurityUser.getEmail();
+        String username = null;
+        if (authentication.getPrincipal() instanceof UserDetails springSecurityUser) {
+            username = springSecurityUser.getUsername();
         } else if (authentication.getPrincipal() instanceof String) {
-            email = (String) authentication.getPrincipal();
+            username = (String) authentication.getPrincipal();
         }
 
-        return Optional.ofNullable(email);
+        return Optional.ofNullable(username);
     }
 }
