@@ -13,7 +13,6 @@ import te.trueEcho.domain.post.entity.Like;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.rank.entity.Rank;
 import te.trueEcho.domain.vote.entity.VoteResult;
-import te.trueEcho.global.security.jwt.entity.RefreshToken;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -44,10 +43,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(name = "user_email", nullable = false)
+    @Column(name = "user_email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "user_name", nullable = false, length = 20)
+    @Column(name = "user_name", nullable = false, length = 20, unique = true)
     private String name;
 
     @Enumerated(EnumType.STRING)
@@ -81,8 +80,8 @@ public class User {
     @Column(name = "user_password", nullable = false)
     private String password;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private RefreshToken refreshToken;
+    @Column(name = "refresh_token", nullable = true)
+    private String refreshToken;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Friend> friend;
@@ -143,6 +142,9 @@ public class User {
         this.name = name;
     }
 
+    public void setRefreshToken(String refreshToken){
+        this.refreshToken=refreshToken;
+    }
 
     public void updateEmail(String email) {
         this.email = email;
