@@ -2,43 +2,48 @@ package te.trueEcho.global.security.jwt.Repository;
 
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import te.trueEcho.domain.user.entity.User;
-import te.trueEcho.global.security.jwt.entity.RefreshToken;
-
-import java.util.Objects;
-import java.util.Optional;
 
 @Repository
+@Slf4j
 @RequiredArgsConstructor
 public class RefreshTokenRepository {
 
     private final EntityManager em;
-   public RefreshToken findByUser(User user){
-      return (RefreshToken) em.createQuery("select t from RefreshToken t where t.user =: user")
-                .setParameter("user", user)
-                .getSingleResult();
+   public String findTokenByUser(User user){
+       User foundUser = em.find(User.class, user.getId());
+       log.info("getRefreshToken = {}",foundUser.getRefreshToken());
+       return foundUser.getRefreshToken();
     }
-
-    public void save(RefreshToken refreshToken){
-       em.persist(refreshToken);
+    @Transactional
+    public void saveTokenByUsername(String refreshToken, String name){
+       log.info("refreshToken ={}",refreshToken);
+       em.createQuery("update User u set u.refreshToken=:refreshToken where u.name =:name")
+               .setParameter("name",name)
+               .setParameter("refreshToken",refreshToken)
+                       .executeUpdate();
+       em.flush();
+       em.clear();
     }
-
-   public void deleteByUser(User user ){
-        em.remove(user);
+    @Transactional
+   public void deleteTokenByUser(User user){
+       saveTokenByUsername(null, user.getName());
    }
 
-   public boolean existsByUser(User user){
-     User foundUser =  em.find(User.class, user);
-     return foundUser!=null;
-   }
+   public String findTokenByToken(String refreshToken){
+       try {
+          return (String) em.createQuery("select u.refreshToken from User u where u.refreshToken =: refreshToken")
+                   .setParameter("refreshToken", refreshToken)
+                   .getSingleResult();
+       }catch (NoResultException e){
+           return null;
+       }
 
-   public boolean existsByToken(String refreshToken){
-    Object result = em.createQuery("select t from RefreshToken t where t.refreshToken =: refreshToken")
-               .setParameter("refreshToken", refreshToken)
-               .getSingleResult();
-    return result==null;
    }
 
 
