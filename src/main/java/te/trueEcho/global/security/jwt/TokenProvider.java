@@ -4,18 +4,15 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import te.trueEcho.domain.user.entity.Role;
-import te.trueEcho.domain.user.entity.User;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import te.trueEcho.global.security.jwt.Repository.RefreshTokenRepository;
-import te.trueEcho.global.security.jwt.dto.Token;
+import te.trueEcho.global.security.jwt.dto.TokenType;
 import te.trueEcho.global.security.jwt.dto.TokenKeyDto;
 import te.trueEcho.global.security.jwt.service.CustomUserDetailsService;
 
@@ -31,8 +28,6 @@ public class TokenProvider {
 
     private final TokenKeyDto accessTokenKeyDto;
     private final TokenKeyDto refreshTokenKeyDto;
-
-    @Autowired
     private final RefreshTokenRepository refreshTokenRepository;
 
     public TokenProvider(
@@ -40,8 +35,10 @@ public class TokenProvider {
             @Value("${jwt.refreshSecret}") String refreshSecretKey,
             CustomUserDetailsService customUserDetailsService,
             @Value("${jwt.accessToken-validity-in-seconds}") long accessTokenValidityInMilliseconds,
-            @Value("${jwt.refreshToken-validity-in-seconds}") long refreshTokenValidityInMilliseconds, RefreshTokenRepository refreshTokenRepository
+            @Value("${jwt.refreshToken-validity-in-seconds}") long refreshTokenValidityInMilliseconds,
+            RefreshTokenRepository refreshTokenRepository
     ) {
+
         this.refreshTokenRepository = refreshTokenRepository;
 
         byte[] accessKeyBytes = Decoders.BASE64.decode(accessSecretKey);
@@ -54,11 +51,13 @@ public class TokenProvider {
         this.refreshTokenKeyDto = TokenKeyDto.builder().validityInMilliseconds(refreshTokenValidityInMilliseconds * 1000L).key(refreshKey).build();
     }
 
-    private TokenKeyDto getTokenKeyByType(Token type){
-        return type == Token.ACCESS ? accessTokenKeyDto : refreshTokenKeyDto;
+
+    private TokenKeyDto getTokenKeyByType(TokenType type){
+        return type == TokenType.ACCESS ? accessTokenKeyDto : refreshTokenKeyDto;
     }
 
-    public String createToken(Authentication authentication, Token type) {
+    public String createToken(Authentication authentication, TokenType type) {
+        String username = authentication.getName();
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -70,9 +69,8 @@ public class TokenProvider {
         Date validity = new Date(now + tokenKeyDto.getValidityInMilliseconds());
 
         return Jwts.builder()
-                .claim("uuid", "550e8400-e29b-41d4-a716-446655440000") // 사용자 uuid
                 .claim("role", authorities) // 사용자 role
-                .setSubject(authentication.getName())
+                .setSubject(username)
                 .signWith(tokenKeyDto.getKey(),
                         SignatureAlgorithm.HS512) // 암호화 알고리즘 , 시그니처 서명
                 .setIssuedAt(new Date(now))
@@ -82,8 +80,8 @@ public class TokenProvider {
 
 
     // 토큰으로 클레임을 만들고 이를 이용해 유저 객체를 만들어서 최종적으로 authentication 객체를 리턴
-    public UsernamePasswordAuthenticationToken getAuthentication(String token, Token type) {
-
+    public UsernamePasswordAuthenticationToken getAuthentication(String token, TokenType type) {
+        log.warn("=============== this is getAuthentication ");
         TokenKeyDto tokenKeyDto = getTokenKeyByType(type);
 
         Claims claims = Jwts
@@ -98,19 +96,19 @@ public class TokenProvider {
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-        User principal = User.builder().name(claims.getSubject()).email("").role(Role.USER).build();
-        return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+        return new UsernamePasswordAuthenticationToken(claims.getSubject(), token, authorities);
     }
 
     // 토큰의 유효성 검증을 수행
-    public boolean validateToken(String token, Token type) {
-
+    public boolean validateToken(String token, TokenType type) {
+        log.warn("=============== this is validateToken ");
         TokenKeyDto tokenKeyDto = getTokenKeyByType(type);
         try {
             Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(tokenKeyDto.getKey()).build().parseClaimsJws(token);
 
-            if(type==Token.REFRESH){
-               return refreshTokenRepository.existsByToken(token);
+            if(type== TokenType.REFRESH){
+                Object result = refreshTokenRepository.findTokenByToken(token);
+              return result!=null;
             }
 
             return true;
@@ -128,8 +126,6 @@ public class TokenProvider {
 
             log.info("JWT 토큰이 잘못되었습니다.");
         }
-
-
         return false;
     }
 }
