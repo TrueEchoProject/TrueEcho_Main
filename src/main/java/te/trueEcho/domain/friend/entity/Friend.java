@@ -1,0 +1,39 @@
+package te.trueEcho.domain.friend.entity;
+
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import te.trueEcho.domain.user.entity.User;
+
+@Getter
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "friends")
+public class Friend {
+
+    @Id
+    @Column(name = "friend_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "friend_status")
+    @Enumerated(EnumType.STRING)
+    private FriendStatus status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "target_user_id")
+    private User targetUser;
+
+    @Builder
+    public Friend(FriendStatus status, User user, User targetUser) {
+        this.status = status;
+        this.user = user;
+        this.targetUser = targetUser;
+    }
+}
