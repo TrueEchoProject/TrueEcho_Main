@@ -1,6 +1,9 @@
 package te.trueEcho.domain.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 import te.trueEcho.domain.user.entity.Gender;
@@ -15,12 +18,18 @@ import java.time.LocalDate;
 @Validated
 public class SignUpUserDto {
         @Schema(accessMode = Schema.AccessMode.READ_ONLY, name = "닉네임", example = "홍길동이지",requiredMode = Schema.RequiredMode.REQUIRED)
+        @NotNull
+        @Size(min = 3, max = 50)
         private String username;
 
         @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "비밀번호", example = "truefalse02!",requiredMode = Schema.RequiredMode.REQUIRED)
+        @Size(min = 3, max = 100)
         private String password;
 
         @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "이메일", example = "trueEcho@gmail.com",requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+        @NotNull
+        @Size(min = 3, max = 50)
         private String email;
 
         @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "성별", example = "남자(1)/여자(0)",requiredMode = Schema.RequiredMode.REQUIRED)
@@ -35,6 +44,5 @@ public class SignUpUserDto {
         @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "지역", example = "서울광역시 용산구",requiredMode = Schema.RequiredMode.REQUIRED)
         private String location;
 
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "이메일 인증번호", example = "123123",requiredMode = Schema.RequiredMode.REQUIRED)
-        private String checkCode;
+
 }

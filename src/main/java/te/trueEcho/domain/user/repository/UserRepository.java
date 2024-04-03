@@ -12,11 +12,14 @@ public interface UserRepository {
 
     User findUserById(Long id); //READ
 
+    User findUserByName(String name);
+
+    User findUserByEmail(String email); //READ
+
     List<User> findAll(); //READ
 
     void deleteUserById(Long id) throws Exception; //DELETE
 
-    boolean checkDuplication(String email); //READ
 
     String getPasswordByEmail(String email);
 }

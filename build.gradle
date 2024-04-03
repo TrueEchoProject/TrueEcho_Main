@@ -8,7 +8,11 @@ group = 'te'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	sourceCompatibility = '21'
+	java {
+		sourceCompatibility = JavaVersion.VERSION_19
+		targetCompatibility = JavaVersion.VERSION_19
+	}
+
 }
 
 configurations {
@@ -22,24 +26,43 @@ repositories {
 }
 
 dependencies {
+	//jpa
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	testImplementation 'org.springframework.security:spring-security-test'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
-	// springfox lib for swagger -> swagger-ui, swagger-api
+	//security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	//view
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	// spring boot
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	//lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// springdoc ->swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.4.0'
+
 	// javamail
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
+	// jwt
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 
-	compileOnly 'org.projectlombok:lombok'
+	// 개발 편의용
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	//mysql
 	runtimeOnly 'com.mysql:mysql-connector-j'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+
 
 }
 

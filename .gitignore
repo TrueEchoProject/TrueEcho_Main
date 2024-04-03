@@ -40,6 +40,3 @@ out/
 # properties # do not share
 src/main/resources/*.properties
 *.properties
-application-db.properties
-application-email.properties
-application-jwt.properties

@@ -3,6 +3,7 @@ package te.trueEcho.domain.user.converter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import te.trueEcho.domain.user.dto.SignUpUserDto;
+import te.trueEcho.domain.user.entity.Role;
 import te.trueEcho.domain.user.entity.User;
 
 
@@ -10,11 +11,11 @@ import te.trueEcho.domain.user.entity.User;
 public class SignUpDtoToUserConverter {
     public User converter(SignUpUserDto signUpUserDto) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String role = "ROLE_ADMIN"; // 기본 권한 설정
         String encryptedPassword = passwordEncoder.encode(signUpUserDto.getPassword());
         return User.builder()
+                .role(Role.USER) //default 권한
                 .name(signUpUserDto.getUsername())
-                .password(signUpUserDto.getPassword())
+                .password(encryptedPassword)
                 .email(signUpUserDto.getEmail())
                 .birthday(signUpUserDto.getDob())
                 .gender(signUpUserDto.getGender())

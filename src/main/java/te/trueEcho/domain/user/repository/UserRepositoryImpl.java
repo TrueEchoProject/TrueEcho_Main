@@ -1,6 +1,7 @@
 package te.trueEcho.domain.user.repository;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +24,37 @@ public class UserRepositoryImpl implements UserRepository{
     }
     @Override
     public User findUserById(Long id) {
-        return em.find(User.class, id);
+       try {
+           return em.find(User.class, id);
+       }catch (NoResultException e){
+           return null;
+       }
     }
+
+    @Override
+    public User findUserByEmail(String email) {
+        try{
+            return em.createQuery("select u from User u where u.email=: email" , User.class)
+                    .setParameter("email", email)
+                    .getSingleResult();
+        }catch (NoResultException e){
+            return null;
+        }
+
+    }
+
+    @Override
+    public User findUserByName(String name) {
+        try {
+            return
+                    em.createQuery("select u from User u where u.name=: name", User.class)
+                            .setParameter("name", name)
+                            .getSingleResult();
+        }catch (NoResultException e){
+            return null;
+        }
+    }
+
 
     public List<User> findAll() {
         return em.createQuery("select u from User u", User.class)
@@ -55,18 +85,13 @@ public class UserRepositoryImpl implements UserRepository{
     }
 
     @Override
-    public boolean checkDuplication(String email) {
-        List<User> user = em.createQuery("select u from User u where u.email = :email", User.class)
-                .setParameter("email", email)
-                .getResultList();
-        return !user.isEmpty(); // 현재 email로 조회되지 않을때 중복x
-    }
-
-    @Override
     public   String getPasswordByEmail(String email){
-        return (String) em.createQuery("select u.email from User u where email =: email")
-                .setParameter("email", email).getSingleResult();
-
+       try {
+           return (String) em.createQuery("select u.password from User u where email =: email")
+                   .setParameter("email", email).getSingleResult();
+       }catch(NoResultException e){
+           return null;
+       }
     }
 
 }

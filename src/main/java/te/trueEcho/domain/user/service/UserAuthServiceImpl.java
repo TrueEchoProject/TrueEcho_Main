@@ -3,14 +3,10 @@ package te.trueEcho.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import te.trueEcho.domain.user.converter.SignUpDtoToUserConverter;
-import te.trueEcho.domain.user.dto.EditUserDto;
-import te.trueEcho.domain.user.dto.EmailUserDto;
-import te.trueEcho.domain.user.dto.LoginUserDto;
-import te.trueEcho.domain.user.dto.SignUpUserDto;
+import te.trueEcho.domain.user.dto.*;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.EmailMemoryRepository;
 import te.trueEcho.domain.user.repository.UserRepository;
@@ -22,31 +18,24 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     private final EmailCodeService emailCodeService;
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
     private final SignUpDtoToUserConverter signUpToUser;
     private final EmailMemoryRepository emailMemoryRepository;
 
-    public boolean isDuplicated(EmailUserDto email) {
-        return userRepository.checkDuplication(email.getEmail());
+    public boolean isTypeDuplicated(EmailUserDto emailUserDto, String target) {
+        return  target.equals("email") ?
+                userRepository.findUserByEmail(emailUserDto.getEmail())!=null:
+                userRepository.findUserByEmail(emailUserDto.getUsername())!=null;
     }
-
-    /**
-     *     public boolean registerUser : HeeJohn
-     *    * @param : signUpUserDto( 회원가입 시 필요한 데이터)
-     *    ! 이메일 인증이 완료됐는데,
-     *    TODO: 이메일 인증을 완료했는지 체크
-     *    created_at 자료
-     *    last edit: 24.03.28
-     */
 
     @Transactional
     public boolean registerUser(SignUpUserDto signUpUserDTO) {
-        final String registerdCode =emailMemoryRepository.findCheckCodeByEmail(signUpUserDTO.getEmail());
-        boolean isVerified = signUpUserDTO.getCheckCode().equals(registerdCode) ;
-
-        if(isVerified){
+        final boolean status =emailMemoryRepository.checkStatusByEmail(signUpUserDTO.getEmail());
+        log.info("email status = {}",status);
+        if(status){
             final User newUser = signUpToUser.converter(signUpUserDTO);
             userRepository.save(newUser);
+            emailMemoryRepository.deleteEmail(signUpUserDTO.getEmail());
             return true;
         }else{
             return false;
@@ -59,8 +48,15 @@ public class UserAuthServiceImpl implements UserAuthService {
     }
 
     @Override
-    public boolean checkEmailCode(EmailUserDto emailUserDto) {
-        return false;
+    public boolean checkEmailCode(EmailCheckCodeDto emailCheckCodeDto) {
+        final String registerdCode =emailMemoryRepository.findCheckCodeByEmail(emailCheckCodeDto.getEmail());
+
+       if (emailCheckCodeDto.getCheckCode().equals(registerdCode)){
+           emailMemoryRepository.verifyEmail(emailCheckCodeDto.getEmail());
+           return true;
+       }
+
+       return false;
     }
 
     @Override
@@ -77,8 +73,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Override
     public boolean  login(LoginUserDto loginUserDto){
-        final String storedPassword = userRepository.getPasswordByEmail(loginUserDto.getEmail());
-        return bCryptPasswordEncoder.matches(loginUserDto.getPassword(), storedPassword);
+      return true;
     }
 
 
