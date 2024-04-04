@@ -3,21 +3,18 @@ package te.trueEcho.global.security.jwt.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import te.trueEcho.domain.user.entity.Role;
-import te.trueEcho.global.security.jwt.exception.JwtAccessDeniedHandler;
-import te.trueEcho.global.security.jwt.exception.JwtAuthenticationEntryPoint;
 import te.trueEcho.global.security.jwt.JwtFilter;
 import te.trueEcho.global.security.jwt.TokenProvider;
+import te.trueEcho.global.security.jwt.exception.JwtAccessDeniedHandler;
+import te.trueEcho.global.security.jwt.exception.JwtAuthenticationEntryPoint;
 
 @Configuration
 @EnableWebSecurity
