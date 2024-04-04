@@ -20,7 +20,7 @@ public class SignUpUserDto {
         @Schema(accessMode = Schema.AccessMode.READ_ONLY, name = "닉네임", example = "홍길동이지",requiredMode = Schema.RequiredMode.REQUIRED)
         @NotNull
         @Size(min = 3, max = 50)
-        private String username;
+        private String nickname;
 
         @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "비밀번호", example = "truefalse02!",requiredMode = Schema.RequiredMode.REQUIRED)
         @Size(min = 3, max = 100)

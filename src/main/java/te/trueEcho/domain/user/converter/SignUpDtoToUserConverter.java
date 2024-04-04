@@ -14,7 +14,7 @@ public class SignUpDtoToUserConverter {
         String encryptedPassword = passwordEncoder.encode(signUpUserDto.getPassword());
         return User.builder()
                 .role(Role.USER) //default 권한
-                .name(signUpUserDto.getUsername())
+                .nickname(signUpUserDto.getNickname())
                 .password(encryptedPassword)
                 .email(signUpUserDto.getEmail())
                 .birthday(signUpUserDto.getDob())
