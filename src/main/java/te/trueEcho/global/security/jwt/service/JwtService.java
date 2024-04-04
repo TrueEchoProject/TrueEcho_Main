@@ -72,7 +72,7 @@ public class JwtService {
         deleteRefreshToken();
         String accessToken = tokenProvider.createToken(authentication, TokenType.ACCESS);
         String refreshToken = tokenProvider.createToken(authentication, TokenType.REFRESH);
-        refreshTokenRepository.saveTokenByUsername(refreshToken,authentication.getName());
+        refreshTokenRepository.saveTokenByEmail(refreshToken,authentication.getName());
         return TokenDto.builder().accessToken(accessToken).refreshToken(refreshToken).build();
     }
     
