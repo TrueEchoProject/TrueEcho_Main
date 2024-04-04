@@ -31,17 +31,17 @@ public class JwtService {
 
     @Transactional
     public TokenDto login(LoginUserDto loginUserDto){
-        Authentication  authentication = setAuthentication(loginUserDto); // 인증 & 인가
+        setAuthentication(loginUserDto); // 인증 & 인가
 
         return createToken();
     }
 
-    private Authentication setAuthentication(LoginUserDto loginUserDto) {
+    private void setAuthentication(LoginUserDto loginUserDto) {
 
         // 1. Login ID/PW 를 기반으로 Authentication 객체 생성
         // 이때 authentication 는 인증 여부를 확인하는 authenticated 값이 false
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(loginUserDto.getUsername(), loginUserDto.getPassword());
+                new UsernamePasswordAuthenticationToken(loginUserDto.getEmail(), loginUserDto.getPassword());
 
         // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
         // authenticate 매서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행
@@ -49,14 +49,14 @@ public class JwtService {
 
         // 해당 객체를 SecurityContextHolder에 저장
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return authentication;
+
     }
 
 
     public boolean deleteRefreshToken(){
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
         log.info("authentication.name ={}", authentication.getName());
-        User foundUser = userRepository.findUserByName(authentication.getName());
+        User foundUser = userRepository.findUserByEmail(authentication.getName());
         refreshTokenRepository.deleteTokenByUser(foundUser);
         return refreshTokenRepository.findTokenByUser(foundUser) == null;
     }
@@ -64,7 +64,7 @@ public class JwtService {
 
     public TokenDto createToken(){
 
-        if(!deleteRefreshToken()) TokenDto.builder().accessToken("").refreshToken("").build();
+        if(!deleteRefreshToken())  return TokenDto.builder().accessToken("").refreshToken("").build();
 
 
         // authentication 객체를 createToken 메소드를 통해서 JWT Token을 생성

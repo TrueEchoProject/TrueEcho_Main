@@ -12,7 +12,7 @@ public interface UserRepository {
 
     User findUserById(Long id); //READ
 
-    User findUserByName(String name);
+    User findUserByNickName(String nickName);
 
     User findUserByEmail(String email); //READ
 

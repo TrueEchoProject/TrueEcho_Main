@@ -7,9 +7,8 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import te.trueEcho.domain.user.dto.LoginUserDto;
 import te.trueEcho.global.response.ResponseForm;
@@ -17,11 +16,9 @@ import te.trueEcho.global.security.jwt.dto.TokenDto;
 import te.trueEcho.global.security.jwt.service.JwtService;
 
 import static te.trueEcho.global.response.ResponseCode.*;
-import static te.trueEcho.global.response.ResponseCode.VERIFY_EMAIL_FAIL;
 
-
+@Slf4j
 @RestController
-@RequestMapping("/accounts")
 @RequiredArgsConstructor
 public class JwtController {
     private final JwtService jwtService;
@@ -39,8 +36,9 @@ public class JwtController {
             @ApiResponse(responseCode = "401", description = "M005 - 계정 정보가 일치하지 않습니다.")
     })
 
-    @PostMapping(value = "/login")
+    @PostMapping(value = "/accounts/login")
     public ResponseEntity<ResponseForm> login(@RequestBody LoginUserDto loginUserDto) {
+        log.info("login : {}", loginUserDto);
         boolean isEmpty = true;
 
         final TokenDto tokenDto = jwtService.login(loginUserDto);
@@ -63,7 +61,7 @@ public class JwtController {
     }
 
     @GetMapping("/refresh")
-    public ResponseEntity<ResponseForm> refreshToken(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<ResponseForm> refreshToken() {
 
         final TokenDto tokenDto = jwtService.createToken();
         boolean isEmpty = true;
