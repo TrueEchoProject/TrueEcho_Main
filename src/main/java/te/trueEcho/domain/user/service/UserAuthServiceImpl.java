@@ -23,9 +23,12 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final EmailMemoryRepository emailMemoryRepository;
 
     public boolean isTypeDuplicated(EmailUserDto emailUserDto, String target) {
-        return  target.equals("email") ?
-                userRepository.findUserByEmail(emailUserDto.getEmail())!=null:
-                userRepository.findUserByEmail(emailUserDto.getUsername())!=null;
+        if( target.equals("email"))
+             return  userRepository.findUserByEmail(emailUserDto.getEmail())!=null;
+        if( target.equals("nickname"))
+            return userRepository.findUserByNickName(emailUserDto.getNickname())!=null;
+
+        return false;
     }
 
     @Transactional
@@ -34,6 +37,8 @@ public class UserAuthServiceImpl implements UserAuthService {
         log.info("email status = {}",status);
         if(status){
             final User newUser = signUpToUser.converter(signUpUserDTO);
+            log.info("user's nickname = {}",        newUser.getNickname());
+
             userRepository.save(newUser);
             emailMemoryRepository.deleteEmail(signUpUserDTO.getEmail());
             return true;

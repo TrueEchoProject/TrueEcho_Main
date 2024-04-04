@@ -21,10 +21,10 @@ public class RefreshTokenRepository {
        return foundUser.getRefreshToken();
     }
     @Transactional
-    public void saveTokenByUsername(String refreshToken, String name){
+    public void saveTokenByEmail(String refreshToken, String email){
        log.info("refreshToken ={}",refreshToken);
-       em.createQuery("update User u set u.refreshToken=:refreshToken where u.name =:name")
-               .setParameter("name",name)
+       em.createQuery("update User u set u.refreshToken=:refreshToken where u.email =:email")
+               .setParameter("email",email)
                .setParameter("refreshToken",refreshToken)
                        .executeUpdate();
        em.flush();
@@ -32,7 +32,7 @@ public class RefreshTokenRepository {
     }
     @Transactional
    public void deleteTokenByUser(User user){
-       saveTokenByUsername(null, user.getName());
+        saveTokenByEmail(null, user.getName());
    }
 
    public String findTokenByToken(String refreshToken){
