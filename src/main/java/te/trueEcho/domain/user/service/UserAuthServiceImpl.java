@@ -25,7 +25,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     public boolean isTypeDuplicated(EmailUserDto emailUserDto, String target) {
         if( target.equals("email"))
              return  userRepository.findUserByEmail(emailUserDto.getEmail())!=null;
-        if( target.equals("nick_name"))
+        if( target.equals("nickname"))
             return userRepository.findUserByNickName(emailUserDto.getNickname())!=null;
 
         return false;

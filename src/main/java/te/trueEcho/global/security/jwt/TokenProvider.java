@@ -104,7 +104,7 @@ public class TokenProvider {
         log.warn("=============== this is validateToken ");
         TokenKeyDto tokenKeyDto = getTokenKeyByType(type);
         try {
-            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(tokenKeyDto.getKey()).build().parseClaimsJws(token);
+           Jwts.parserBuilder().setSigningKey(tokenKeyDto.getKey()).build().parseClaimsJws(token);
 
             if(type== TokenType.REFRESH){
                 Object result = refreshTokenRepository.findTokenByToken(token);
