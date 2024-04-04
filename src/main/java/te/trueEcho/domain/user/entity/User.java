@@ -135,6 +135,7 @@ public class User extends Audit {
         // 자동 초기화
         this.connectByFriend = true;
 
+
     }
 
     public void updateName(String name) {
