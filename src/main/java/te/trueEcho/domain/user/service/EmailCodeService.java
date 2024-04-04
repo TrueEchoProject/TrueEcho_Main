@@ -34,7 +34,7 @@ public class EmailCodeService {
         final String code = generateRandomCode(); // 랜덤 번호 생성
 
         emailService.sendHtmlTextEmail(
-                emailUserDto.getUsername() + REGISTER_EMAIL_SUBJECT_POSTFIX,
+                emailUserDto.getNickname() + REGISTER_EMAIL_SUBJECT_POSTFIX,
                 getRegisterEmailText(emailUserDto.getEmail(), code),
                 emailUserDto.getEmail()); // 메일 전송
 

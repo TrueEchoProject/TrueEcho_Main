@@ -44,11 +44,11 @@ public class UserRepositoryImpl implements UserRepository{
     }
 
     @Override
-    public User findUserByName(String name) {
+    public User findUserByNickName(String nickName) {
         try {
             return
-                    em.createQuery("select u from User u where u.name=: name", User.class)
-                            .setParameter("name", name)
+                    em.createQuery("select u from User u where u.nickname=: nickName", User.class)
+                            .setParameter("nickName", nickName)
                             .getSingleResult();
         }catch (NoResultException e){
             return null;

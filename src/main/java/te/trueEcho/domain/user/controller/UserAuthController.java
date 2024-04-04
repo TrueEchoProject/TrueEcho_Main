@@ -52,20 +52,19 @@ public class UserAuthController {
                     G003 - 유효하지 않은 입력입니다.
                     G004 - 입력 타입이 유효하지 않습니다.""")
     })
-    @GetMapping(value = "/email/duplication")
-    public ResponseEntity<ResponseForm> checkEmailDuplication(
+
+    @GetMapping(value = "/{type}/duplication")
+    public ResponseEntity<ResponseForm> checkEmailDuplication(@PathVariable String type,
             @RequestBody EmailUserDto emailUserDTO) {
-        final boolean isEmailDuplicated = userAuthService.isTypeDuplicated(emailUserDTO, "email");
-        final boolean isUsernameDuplicated = userAuthService.isTypeDuplicated(emailUserDTO, "username");
 
-        if (isEmailDuplicated)
-            return ResponseEntity.ok(ResponseForm.of(NOT_DUPLICATED_FAIL, "email")); // 중복된 이메일
+        final boolean isDuplicated = userAuthService.isTypeDuplicated(emailUserDTO, type);
 
-        if (isUsernameDuplicated)
-            return ResponseEntity.ok(ResponseForm.of(NOT_DUPLICATED_FAIL, "username")); // 중복된 이름
+        if (isDuplicated)
+            return ResponseEntity.ok(ResponseForm.of(NOT_DUPLICATED_FAIL, type)); // 중복
 
+      if(type.equals("email")) return sendEmail(emailUserDTO);
 
-        return sendEmail(emailUserDTO);
+      return ResponseEntity.ok(ResponseForm.of(NOT_DUPLICATED_SUCCESS, type));
     }
 
     @GetMapping(value = "/checkcode")
@@ -107,7 +106,7 @@ public class UserAuthController {
 
     @Operation(summary = "인증메일 전송", description = "회원의 중복을 확인하기 위해 이메일 인증코드 전송")
     @Parameters({@Parameter(name = "email", required = true, example = "trueEcho@gmail.com"),
-            @Parameter(name = "username", required = true, example = "heejune")
+            @Parameter(name = "nickname", required = true, example = "heejune")
     })
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             required = true, description = "hihihihi", useParameterTypeSchema = true)
@@ -118,7 +117,7 @@ public class UserAuthController {
                     G004 - 입력 타입이 유효하지 않습니다.
                     M002 - 이미 존재하는 사용자 이름입니다.""")
     })
-    @PostMapping(value = "/email")
+    @GetMapping(value = "/email")
     public ResponseEntity<ResponseForm> sendEmail(
             @RequestBody EmailUserDto emailUserDTO) {
 
