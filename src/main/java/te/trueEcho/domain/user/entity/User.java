@@ -78,6 +78,9 @@ public class User extends Audit {
     @Column(name = "user_password", nullable = false)
     private String password;
 
+    @Column(name = "refresh_token", nullable = true)
+    private String refreshToken;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Friend> friend;
 
@@ -118,7 +121,8 @@ public class User extends Audit {
                  LocalDate birthday,
                  String location,
                  String password,
-                 String nickname) {
+                 String nickname,
+                 Role role) {
         this.email = email;
         this.name = name;
         this.gender = gender;
@@ -128,8 +132,8 @@ public class User extends Audit {
         this.location = location;
         this.password = password;
         this.nickname = nickname;
+        this.role = role;
         // 자동 초기화
-        this.role = Role.USER;
         this.connectByFriend = true;
 
     }
