@@ -47,8 +47,11 @@ public class User extends Audit {
     @Email
     private String email;
 
-    @Column(name = "user_name", nullable = false, length = 20, unique = true)
+    @Column(name = "user_name",  length = 20, unique = false)
     private String name;
+
+    @Column(name = "user_nick_name", nullable = false, length = 20, unique = true)
+    private String nickname;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
@@ -111,7 +114,7 @@ public class User extends Audit {
 
     @Builder
     public User( String email,
-                 String name,
+                 String nickname,
                  Gender gender,
                  NotiTimeStatus notificationTime,
                  boolean notificationSetting,
@@ -120,7 +123,7 @@ public class User extends Audit {
                  String password,
                  Role role) {
         this.email = email;
-        this.name = name;
+        this.nickname = nickname;
         this.gender = gender;
         this.notificationSetting = notificationSetting;
         this.notificationTime = notificationTime;
