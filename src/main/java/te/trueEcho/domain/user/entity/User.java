@@ -14,7 +14,7 @@ import te.trueEcho.domain.post.entity.Like;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.rank.entity.Rank;
 import te.trueEcho.domain.vote.entity.VoteResult;
-import te.trueEcho.global.entity.Audit;
+import te.trueEcho.global.entity.CreatedDateAudit;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -23,15 +23,12 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "users")
-public class User extends Audit {
+public class User extends CreatedDateAudit {
     /**
      *    entity : jun10920
      *    * @param : NONE
      *    ! 설명 및 주의사항
-     *    User는 builder 추후에 생성 - enum 타입이나 아직 토의할 부분이 필요해보임
-     *
-     *    TODO: token 엔티티 토의
-     *    last edit: 04.03.26
+     *    last edit: 24.04.05
      */
 
     @Id
@@ -45,13 +42,13 @@ public class User extends Audit {
 
     @Column(name = "user_email", nullable = false, unique = true)
     @Email
-    private String email;
+    private String email; // 가입시 사용하는 ID
 
     @Column(name = "user_name",  length = 20, unique = false)
     private String name;
 
     @Column(name = "user_nick_name", nullable = false, length = 20, unique = true)
-    private String nickname;
+    private String nickname; // user 구분하는 식별자
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
@@ -130,12 +127,9 @@ public class User extends Audit {
         this.birthday = birthday;
         this.location = location;
         this.password = password;
-
         this.role = role;
         // 자동 초기화
         this.connectByFriend = true;
-
-
     }
 
     public void updateName(String name) {
