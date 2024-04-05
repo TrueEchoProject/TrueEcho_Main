@@ -40,7 +40,6 @@ public class UserRepositoryImpl implements UserRepository{
         }catch (NoResultException e){
             return null;
         }
-
     }
 
     @Override

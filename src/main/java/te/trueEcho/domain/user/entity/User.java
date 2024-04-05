@@ -132,22 +132,11 @@ public class User extends CreatedDateAudit {
         this.connectByFriend = true;
     }
 
-    public void updateName(String name) {
-        this.name = name;
+    public boolean getNotificationSetting() {
+        return this.notificationSetting;
     }
 
-    public void updateEmail(String email) {
-        this.email = email;
-    }
-
-
-    public void updateGender(Gender gender) {
-        this.gender = gender;
-    }
     public void setEncryptedPassword(String encryptedPassword) {
         this.password = encryptedPassword;
     }
-
-
-
 }
