@@ -25,14 +25,14 @@ public class RefreshTokenRepository {
        log.info("refreshToken ={}",refreshToken);
        em.createQuery("update User u set u.refreshToken=:refreshToken where u.email =:email")
                .setParameter("email",email)
-               .setParameter("refreshToken",refreshToken)
+               .setParameter("refreshToken",refreshToken )
                        .executeUpdate();
        em.flush();
        em.clear();
     }
     @Transactional
    public void deleteTokenByUser(User user){
-        saveTokenByEmail(null, user.getName());
+        saveTokenByEmail(null, user.getEmail());
    }
 
    public String findTokenByToken(String refreshToken){

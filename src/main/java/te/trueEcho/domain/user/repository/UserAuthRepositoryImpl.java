@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class UserRepositoryImpl implements UserRepository{
+public class UserAuthRepositoryImpl implements UserAuthRepository {
 
     private final EntityManager em;
 
@@ -93,5 +93,6 @@ public class UserRepositoryImpl implements UserRepository{
            return null;
        }
     }
+
 
 }

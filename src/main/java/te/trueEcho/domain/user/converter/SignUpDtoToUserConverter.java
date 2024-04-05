@@ -1,5 +1,6 @@
 package te.trueEcho.domain.user.converter;
 
+import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import te.trueEcho.domain.user.dto.SignUpUserDto;
@@ -8,8 +9,9 @@ import te.trueEcho.domain.user.entity.User;
 
 
 @Component
+@NoArgsConstructor
 public class SignUpDtoToUserConverter {
-    public User converter(SignUpUserDto signUpUserDto) {
+    public static User converter(SignUpUserDto signUpUserDto) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encryptedPassword = passwordEncoder.encode(signUpUserDto.getPassword());
         return User.builder()

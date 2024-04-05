@@ -4,7 +4,7 @@ import te.trueEcho.domain.user.entity.User;
 
 import java.util.List;
 
-public interface UserRepository {
+public interface UserAuthRepository {
 
     void save(User user); // CREATE
 
@@ -22,4 +22,5 @@ public interface UserRepository {
 
 
     String getPasswordByEmail(String email);
+
 }
