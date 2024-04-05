@@ -32,7 +32,7 @@ public class RefreshTokenRepository {
     }
     @Transactional
    public void deleteTokenByUser(User user){
-        saveTokenByEmail(null, user.getName());
+        saveTokenByEmail(null, user.getEmail());
    }
 
    public String findTokenByToken(String refreshToken){

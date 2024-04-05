@@ -50,8 +50,7 @@ public class JwtController {
 
     }
 
-
-    @GetMapping("/logout")
+    @DeleteMapping("/logout")
     public ResponseEntity<ResponseForm> logout(@RequestHeader("Authorization") String token) {
         boolean isDeleted = jwtService.deleteRefreshToken();
 
