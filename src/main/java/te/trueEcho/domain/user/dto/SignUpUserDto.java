@@ -26,6 +26,10 @@ public class SignUpUserDto {
         @Size(min = 3, max = 100)
         private String password;
 
+        @Size(min = 2, max = 12)
+        @NotNull
+        private String name;
+
         @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "이메일", example = "trueEcho@gmail.com",requiredMode = Schema.RequiredMode.REQUIRED)
         @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
         @NotNull

@@ -62,13 +62,19 @@ public class UserRepositoryImpl implements UserRepository{
 
     @Transactional
     @Override
-    public Long updateUser(User user) {
+    public void updateUser(User user) {
         User existUser = em.find(User.class, user.getId());
-        if(existUser==null)
-            return null;
-    // 다른 필드도 추가해야됨.
+        if (existUser == null) {
+            throw new RuntimeException("User not found with id: " + user.getId());
+        }
+        // existUser 객체의 각 필드를 업데이트합니다.
+        existUser.updateName(user.getName());
         existUser.setEncryptedPassword(user.getPassword());
-        return existUser.getId();
+        existUser.updateGender(user.getGender());
+        existUser.updateNotificationTime(user.getNotificationTime());
+        existUser.updateNotificationSetting(user.getNotificationSetting());
+        existUser.updateBirthDay(user.getBirthday());
+        existUser.updateLocation(user.getLocation());
     }
 
     @Override
@@ -91,6 +97,13 @@ public class UserRepositoryImpl implements UserRepository{
        }catch(NoResultException e){
            return null;
        }
+    }
+
+    public boolean existsByUsername(String username) {
+        Long count = em.createQuery("select count(u) from User u where u.username = :username", Long.class)
+                .setParameter("username", username)
+                .getSingleResult();
+        return count > 0;
     }
 
 }

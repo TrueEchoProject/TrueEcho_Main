@@ -28,6 +28,7 @@ public class User extends CreatedDateAudit {
      *    entity : jun10920
      *    * @param : NONE
      *    ! 설명 및 주의사항
+     *    TODO: updateLocation 로직 구상해서 추후에 수정
      *    last edit: 24.04.05
      */
 
@@ -112,6 +113,7 @@ public class User extends CreatedDateAudit {
     @Builder
     public User( String email,
                  String nickname,
+                 String name,
                  Gender gender,
                  NotiTimeStatus notificationTime,
                  boolean notificationSetting,
@@ -138,5 +140,34 @@ public class User extends CreatedDateAudit {
 
     public void setEncryptedPassword(String encryptedPassword) {
         this.password = encryptedPassword;
+    }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updatePassword(String updatepassword) {
+        this.password = password;
+    }
+
+    public void updateGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public void updateNotificationTime(NotiTimeStatus notificationTime) {
+        this.notificationTime = notificationTime;
+    }
+
+    public void updateNotificationSetting(boolean notificationSetting) {
+        this.notificationSetting = notificationSetting;
+    }
+
+    public void updateBirthDay(LocalDate birthday) {
+        this.birthday = birthday;
+    }
+
+    public void updateLocation(String location) {
+        // 위치 갱신하는 로직을 새로 작성
+        this.location = location;
     }
 }
