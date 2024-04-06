@@ -25,7 +25,6 @@ const FriendPosts = () => {
 	const getPosts = async (scope) => {
 		setRefreshing(true);
 		try {
-			setPosts(null)
 			const response = await axios.get(`http://192.168.0.3:3000/posts?scope=${scope}&_limit=10`);
 			setPosts(response.data); // 상태 업데이트
 			setCurrentScope(scope); // 현재 스코프 상태 업데이트
@@ -61,13 +60,17 @@ const FriendPosts = () => {
 	useFocusEffect(
 		useCallback(() => {
 			getPosts('FRIEND');
+			getLocation();
 		}, [])
 	);
 	
 	useEffect(() => {
 		console.log(posts);
-		console.log(location);
 	}, [posts]);
+	
+	useEffect(() => {
+		console.log(location);
+	},[location]);
 	
 	if (!posts) {
 		return <View style={style.container}><Text>Loading...</Text></View>;
@@ -75,13 +78,13 @@ const FriendPosts = () => {
 	
 	return (
 		<>
-			<View style={{ flexDirection: "row" }}>
+			<View style={{ flexDirection: "row", height: 30 }}>
 				<TouchableOpacity
 					style={{
 						flex: 1,
 						alignItems: "center",
+						justifyContent: "center",
 						backgroundColor: currentScope === 'FRIEND' ? '#4B89DC' : 'white',
-						height: 20,
 					}}
 					onPress={() => {setCurrentScope('FRIEND'); getPosts('FRIEND');}}
 				>
@@ -99,7 +102,6 @@ const FriendPosts = () => {
 							alignItems: "center",
 							justifyContent: "center",
 							backgroundColor: currentScope === 'PUBLIC' ? '#4B89DC' : 'white', // 조건부 배경색 설정
-							height: 20,
 						}}
 						onPress={() => {setCurrentScope('PUBLIC'); getPosts('PUBLIC');}}
 					>
@@ -116,11 +118,9 @@ const FriendPosts = () => {
 						>
 							<MaterialIcons
 								name='settings'
-								size={20}
+								size={28}
 								style={{
 									backgroundColor:"white",
-									height: 20,
-									width:20,
 									marginRight:10,
 									marginLeft: 10,
 								}}/>
@@ -149,7 +149,7 @@ const FriendPosts = () => {
 												padding: 10,
 												borderRadius: 5,
 											}}
-											onPress={() => setOptionsVisible(!optionsVisible)}
+											onPress={getLocation}
 										>
 											<Text style={style.textStyle}>넓은 범위</Text>
 										</TouchableOpacity>
@@ -160,7 +160,7 @@ const FriendPosts = () => {
 												padding: 10,
 												borderRadius: 5,
 											}}
-											onPress={() => setOptionsVisible(!optionsVisible)}
+											onPress={getLocation}
 										>
 											<Text style={style.textStyle}>중간 범위</Text>
 										</TouchableOpacity>
@@ -171,7 +171,7 @@ const FriendPosts = () => {
 												padding: 10,
 												borderRadius: 5,
 											}}
-											onPress={() => setOptionsVisible(!optionsVisible)}
+											onPress={getLocation}
 										>
 											<Text style={style.textStyle}>작은 범위</Text>
 										</TouchableOpacity>
@@ -251,7 +251,6 @@ const style = StyleSheet.create({
 		top: 2,
 		borderRadius: 20,
 		padding: 10,
-		elevation: 2
 	},
 	textStyle: {
 		color: "black",
