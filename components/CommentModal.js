@@ -70,25 +70,19 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	
 	useEffect(() => {
 		if (isVisible) {
-			const fetchCommentsForPost = async () => {
-				try {
-					const response = await axios.get(`http://192.168.0.3:3000/comments?post_id=${postId}`);
+			setLoading(true);
+			axios.get(`http://192.168.0.3:3000/comments?post_id=${postId}`)
+				.then(response => {
 					setComments(response.data);
-					setLoading(false); // 데이터 로딩 완료
-					// 초기 상태에서는 모든 답글을 숨깁니다.
-					const initialShowState = response.data.reduce((acc, _, index) => {
-						acc[index] = false; // 모든 답글을 기본적으로 숨깁니다.
-						return acc;
-					}, {});
-					setShowUnderComments(initialShowState);
-				} catch (error) {
+					setLoading(false);
+				})
+				.catch(error => {
 					console.error('Fetching comments failed:', error);
-					setLoading(false); // 오류 발생 시 로딩 완료 처리
-				}
-			};
-			fetchCommentsForPost();
+					setLoading(false);
+				});
 		} else {
 			setComments([]); // 모달이 닫힐 때 댓글 상태 초기화
+			animatedHeight.setValue(windowHeight * 0.6); // 모달 높이 초기화
 		}
 	}, [isVisible, postId]);
 	// 답글 표시 상태를 토글하는 함수
