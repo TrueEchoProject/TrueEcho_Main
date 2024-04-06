@@ -8,7 +8,8 @@ public interface UserRepository {
 
     void save(User user); // CREATE
 
-    Long updateUser(User user); //UPDATE
+    void updateUser(User user); //UPDATE
+
 
     User findUserById(Long id); //READ
 

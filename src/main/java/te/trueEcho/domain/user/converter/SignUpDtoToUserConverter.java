@@ -15,6 +15,7 @@ public class SignUpDtoToUserConverter {
         return User.builder()
                 .role(Role.USER) //default 권한
                 .nickname(signUpUserDto.getNickname())
+                .name(signUpUserDto.getName())
                 .password(encryptedPassword)
                 .email(signUpUserDto.getEmail())
                 .birthday(signUpUserDto.getDob())

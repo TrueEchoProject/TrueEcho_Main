@@ -7,7 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import te.trueEcho.domain.user.entity.User;
-import te.trueEcho.global.entity.Audit;
+import te.trueEcho.global.entity.CreatedDateAudit;
+
 
 import java.util.List;
 
@@ -16,7 +17,9 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "posts")
-public class Post extends Audit {
+
+public class Post extends CreatedDateAudit {
+
 
     @Id
     @Column(name = "post_id")

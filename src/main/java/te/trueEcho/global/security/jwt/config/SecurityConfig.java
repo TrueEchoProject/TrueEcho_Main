@@ -14,10 +14,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import te.trueEcho.domain.user.entity.Role;
-import te.trueEcho.global.security.jwt.exception.JwtAccessDeniedHandler;
-import te.trueEcho.global.security.jwt.exception.JwtAuthenticationEntryPoint;
 import te.trueEcho.global.security.jwt.JwtFilter;
 import te.trueEcho.global.security.jwt.TokenProvider;
+import te.trueEcho.global.security.jwt.exception.JwtAccessDeniedHandler;
+import te.trueEcho.global.security.jwt.exception.JwtAuthenticationEntryPoint;
 
 @Configuration
 @EnableWebSecurity

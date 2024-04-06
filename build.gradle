@@ -32,6 +32,10 @@ dependencies {
 	//security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+
+  //validator
+	implementation 'org.hibernate.validator:hibernate-validator'
+
 	testImplementation 'org.springframework.security:spring-security-test'
 
 	//view

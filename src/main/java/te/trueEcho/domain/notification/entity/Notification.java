@@ -5,7 +5,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import te.trueEcho.global.entity.Audit;
+import te.trueEcho.global.entity.CreatedDateAudit;
+
 
 
 @Getter
@@ -15,7 +16,9 @@ import te.trueEcho.global.entity.Audit;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "DTYPE", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "notifications")
-public abstract class Notification extends Audit {
+
+public abstract class Notification extends CreatedDateAudit {
+
 
     @Id
     @Column(name = "noti_id")
