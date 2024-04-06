@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Share } from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Share, Modal, } from 'react-native';
+import axios from 'axios'; // axios 임포트 추가
 import { Image } from 'expo-image';
 import { MaterialIcons, Ionicons, Feather } from "@expo/vector-icons";
 import { ImageButton } from "./ImageButton";
@@ -23,13 +24,20 @@ const CardComponent = ({ post }) => {
 			setIsOptionsVisible(false);
 		}
 	};
-	const toggleLike = () => {
-		if(isLiked) {
-			setLikesCount(likesCount - 1);
-		} else {
-			setLikesCount(likesCount + 1);
-		}
+	const toggleLike = async () => {
+		const newLikesCount = isLiked ? likesCount - 1 : likesCount + 1;
 		setIsLiked(!isLiked);
+		setLikesCount(newLikesCount);
+		console.log(newLikesCount)
+		console.log(post.post_id)
+		try {
+			await axios.patch(`http://192.168.0.3:3000/:${post.post_id}`, {
+				likes_count: newLikesCount
+			});
+			console.log('Likes count updated successfully');
+		} catch (error) {
+			console.error('Error updating likes count:', error);
+		}
 	};
 	
 	return (
@@ -82,7 +90,7 @@ const CardComponent = ({ post }) => {
 					<View style={styles.cardItem}>
 						<View style={styles.left}>
 							<TouchableOpacity style={styles.iconButton} onPress={toggleLike}>
-								<Ionicons name={isLiked ? 'heart' : 'heart-outline'} style={styles.icon}/>
+								<Ionicons name={isLiked ? 'heart' : 'heart-outline'} style={styles.icon} size={24} color={isLiked ? 'red' : 'black'}/>
 								<Text>{likesCount}</Text>
 							</TouchableOpacity>
 							<TouchableOpacity style={styles.iconButton}>

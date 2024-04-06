@@ -14,7 +14,7 @@ const FriendPosts = React.forwardRef((props, ref) => {
 	const [refreshing, setRefreshing] = useState(false); // 새로고침 상태를 관리합니다.
 	const pagerViewRef = useRef(null); // PagerView 컴포넌트를 참조하기 위한 ref입니다.
 	const getPosts = async (start = 0) => {
-		setRefreshing(true);
+		
 		const limit = 10; // 한 번에 불러올 게시물 수
 		try {
 			const url = `http://192.168.0.3:3000/posts?scope=FRIEND&_start=${start}&_limit=${limit}`;
@@ -32,12 +32,14 @@ const FriendPosts = React.forwardRef((props, ref) => {
 		} catch (error) {
 			console.error('Fetching posts failed:', error);
 		} finally {
-			setRefreshing(false);
+		
 		}
 	};
 	
 	const refreshPosts = async () => {
+		setRefreshing(true);
 		await getPosts(); // 데이터를 새로고침합니다.
+		setRefreshing(false);
 		pagerViewRef.current?.setPageWithoutAnimation(0); // PagerView의 첫 페이지로 이동합니다.
 	};
 	
