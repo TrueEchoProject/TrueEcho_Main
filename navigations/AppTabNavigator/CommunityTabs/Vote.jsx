@@ -64,7 +64,7 @@ const Vote = () => {
                 <View style={[styles.pageContainer, styles.start]} key="start">
                     <Text style={{ fontSize: hp(5), fontWeight: "bold" }}>투표를 시작해보세요.</Text>
                     <Text style={{ fontSize: hp(3), marginVertical: hp(2) }}>투표를 통해 친구들과 소통해요.</Text>
-                    <Image style={styles.logo} source={require('../assets/voteImg.png')} />
+                    <Image style={styles.logo} source={require('../../../assets/voteImg.png')} />
                 </View>
                 {questions.map((question, index) => (
                     <VotePage

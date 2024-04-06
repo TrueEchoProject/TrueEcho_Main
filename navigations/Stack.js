@@ -4,9 +4,9 @@ import { Friends, MyPage, MyOptions } from "./AppTabNavigator/ButtonStack"
 import { View } from 'react-native';
 import { Button1, Button2, Button3 } from "../components/Button";
 import { MainPostTabScreen } from "./AppTabNavigator/PostTab/MainPostTab";
-import { CommunityTabScreen } from "./AppTabNavigator/CommunityTabs/CommunityTab";
 
 import {FriendPosts} from "./AppTabNavigator/PostTab";
+import Vote from "./AppTabNavigator/CommunityTabs/Vote";
 
 const MainPostStack = createStackNavigator();
 
@@ -55,7 +55,7 @@ export const CommunityStackScreen = () => { // 커뮤니티 속 Stack 구성
 		<CommunityStack.Navigator>
 			<CommunityStack.Screen
 				name="Community"
-				component={CommunityTabScreen}
+				component={Vote}
 				options={({ navigation }) => ({ // 커뮤니티 화면에서 상단 네비 구현
 					headerRight: () => (
 						<View style={{flexDirection: 'row'}}>
