@@ -33,14 +33,17 @@ public class UserAuthRepositoryImpl implements UserAuthRepository {
 
     @Override
     public User findUserByEmail(String email) {
-        try{
-            return em.createQuery("select u from User u where u.email=: email" , User.class)
+        try {
+            return em.createQuery(
+                            "select distinct u from User u " +
+                                    "left join fetch u.suspendedUser " +
+                                    "left join fetch u.notiTimeQ " +
+                                    "where u.email = :email", User.class)
                     .setParameter("email", email)
                     .getSingleResult();
-        }catch (NoResultException e){
+        } catch (NoResultException e) {
             return null;
         }
-
     }
 
     @Override
