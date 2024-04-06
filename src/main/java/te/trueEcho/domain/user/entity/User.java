@@ -136,6 +136,7 @@ public class User extends CreatedDateAudit {
         this.location = location;
         this.password = password;
         this.role = role;
+        this.name = name;
         // 자동 초기화
         this.connectByFriend = true;
     }

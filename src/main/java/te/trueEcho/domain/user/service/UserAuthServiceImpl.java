@@ -37,7 +37,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         log.info("email status = {}",status);
         if(status){
             final User newUser = signUpToUser.converter(signUpUserDTO);
-            log.info("user's nickname = {}",        newUser.getNickname());
+            log.info("user's name = {}",        newUser.getName());
 
             userRepository.save(newUser);
             emailMemoryRepository.deleteEmail(signUpUserDTO.getEmail());
