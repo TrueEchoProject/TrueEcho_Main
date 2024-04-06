@@ -8,6 +8,8 @@ const CardComponent = ({ post }) => {
 	const [isOptionsVisible, setIsOptionsVisible] = useState(false);
 	const [buttonLayout, setButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
 	const [imageButtonHeight, setImageButtonHeight] = useState(0);
+	const [isLiked, setIsLiked] = useState(false); // 좋아요 상태 관리
+	const [likesCount, setLikesCount] = useState(post.likes_count); // 좋아요 수 관리
 	
 	const toggleOptionsVisibility = () => {
 		setIsOptionsVisible(!isOptionsVisible);
@@ -20,6 +22,14 @@ const CardComponent = ({ post }) => {
 		if (isOptionsVisible) {
 			setIsOptionsVisible(false);
 		}
+	};
+	const toggleLike = () => {
+		if(isLiked) {
+			setLikesCount(likesCount - 1);
+		} else {
+			setLikesCount(likesCount + 1);
+		}
+		setIsLiked(!isLiked);
 	};
 	
 	return (
@@ -71,14 +81,14 @@ const CardComponent = ({ post }) => {
 					</View>
 					<View style={styles.cardItem}>
 						<View style={styles.left}>
-							<TouchableOpacity style={styles.iconButton}>
-								<Ionicons name='heart' style={styles.icon}/>
-								<Text>{post.likes_count}</Text>
+							<TouchableOpacity style={styles.iconButton} onPress={toggleLike}>
+								<Ionicons name={isLiked ? 'heart' : 'heart-outline'} style={styles.icon}/>
+								<Text>{likesCount}</Text>
 							</TouchableOpacity>
 							<TouchableOpacity style={styles.iconButton}>
 								<Ionicons name='chatbubbles' style={styles.icon}/>
 							</TouchableOpacity>
-							<TouchableOpacity onPress={() => Share.share({ message: `sharing` })}>
+							<TouchableOpacity onPress={() => Share.share({ message: `${post.title}: http://192.168.0.3:3000/posts?post_id=${post.post_id}/` })}>
 								<MaterialIcons name='send' style={styles.icon}/>
 							</TouchableOpacity>
 						</View>
