@@ -135,13 +135,47 @@ const FriendPosts = () => {
 						>
 							<View style={style.centeredView}>
 								<View style={style.modalView}>
-									<Text style={style.modalText}>현재 피드 숨기기</Text>
 									<TouchableOpacity
-										style={[style.button, style.buttonClose]}
+										style={style.button}
 										onPress={() => setOptionsVisible(!optionsVisible)}
 									>
-										<Text style={style.textStyle}>닫기</Text>
+										<MaterialIcons name="backspace"></MaterialIcons>
 									</TouchableOpacity>
+									<View style={{marginTop: 10}}>
+										<TouchableOpacity
+											style={{
+												backgroundColor: "grey",
+												margin: 5,
+												padding: 10,
+												borderRadius: 5,
+											}}
+											onPress={() => setOptionsVisible(!optionsVisible)}
+										>
+											<Text style={style.textStyle}>넓은 범위</Text>
+										</TouchableOpacity>
+										<TouchableOpacity
+											style={{
+												backgroundColor: "grey",
+												margin: 5,
+												padding: 10,
+												borderRadius: 5,
+											}}
+											onPress={() => setOptionsVisible(!optionsVisible)}
+										>
+											<Text style={style.textStyle}>중간 범위</Text>
+										</TouchableOpacity>
+										<TouchableOpacity
+											style={{
+												backgroundColor: "grey",
+												margin: 5,
+												padding: 10,
+												borderRadius: 5,
+											}}
+											onPress={() => setOptionsVisible(!optionsVisible)}
+										>
+											<Text style={style.textStyle}>작은 범위</Text>
+										</TouchableOpacity>
+									</View>
 								</View>
 							</View>
 						</Modal>
@@ -196,6 +230,7 @@ const style = StyleSheet.create({
 		alignItems: "center",
 	},
 	modalView: {
+		position: "relative",
 		margin: 10,
 		backgroundColor: "white",
 		borderRadius: 20,
@@ -211,15 +246,15 @@ const style = StyleSheet.create({
 		elevation: 5
 	},
 	button: {
+		position: "absolute",
+		right: 2,
+		top: 2,
 		borderRadius: 20,
 		padding: 10,
 		elevation: 2
 	},
-	buttonClose: {
-		backgroundColor: "#2196F3",
-	},
 	textStyle: {
-		color: "white",
+		color: "black",
 		fontWeight: "bold",
 		textAlign: "center"
 	},
