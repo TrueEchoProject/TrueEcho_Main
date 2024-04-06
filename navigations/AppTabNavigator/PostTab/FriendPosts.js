@@ -13,34 +13,28 @@ const FriendPosts = React.forwardRef((props, ref) => {
 	const [posts, setPosts] = useState([]); // 게시물 상태 초기화
 	const [refreshing, setRefreshing] = useState(false); // 새로고침 상태를 관리합니다.
 	const pagerViewRef = useRef(null); // PagerView 컴포넌트를 참조하기 위한 ref입니다.
-	const getPosts = async () => {
-		setRefreshing(true);
-		const limit = 10; // 한 번에 불러올 게시물 수
-		try {
-			const response = await axios.get(`http://192.168.0.3:3000/posts?scope=FRIEND&_limit=${limit}`)
-			setPosts(response.data);
-		} catch (error) {
-			console.error('Fetching posts failed:', error);
-		} finally {
-			setRefreshing(false);
-			pagerViewRef.current?.setPageWithoutAnimation(0); // PagerView의 첫 페이지로 이동합니다.
-		}
-	};
-	
-	const getMorePosts = async (start) => {
+	const getPosts = async (start = 0) => {
+		// 'refreshing' 상태는 시작 인덱스가 0일 때만 true로 설정합니다.
+		if (start === 0) setRefreshing(true);
+		
 		const limit = 10; // 한 번에 불러올 게시물 수
 		try {
 			const response = await axios.get(`http://192.168.0.3:3000/posts?scope=FRIEND&_start=${start}&_limit=${limit}`);
 			const newPosts = response.data;
 			
-			if (newPosts.length === 0) {
-				console.log("No more posts to load.");
-				return;
+			// 시작 인덱스에 따라 상태를 업데이트합니다.
+			if (start === 0) {
+				setPosts(newPosts); // 처음부터 불러오는 경우, 새로운 데이터로 대체합니다.
+			} else {
+				setPosts(prevPosts => [...prevPosts, ...newPosts]); // 추가로 불러오는 경우, 기존 목록에 추가합니다.
 			}
-			
-			setPosts(prevPosts => [...prevPosts, ...newPosts]); // 기존 목록에 추가
 		} catch (error) {
-			console.error('Fetching more posts failed:', error);
+			console.error(start === 0 ? 'Fetching posts failed:' : 'Fetching more posts failed:', error);
+		} finally {
+			if (start === 0) {
+				setRefreshing(false);
+				pagerViewRef.current?.setPageWithoutAnimation(0); // 첫 페이지로 이동합니다.
+			}
 		}
 	};
 	
@@ -83,7 +77,7 @@ const FriendPosts = React.forwardRef((props, ref) => {
 					onPageSelected={e => {
 						const newIndex = e.nativeEvent.position;
 						if (newIndex === posts.length - 4) {
-							getMorePosts(posts.length);
+							getPosts(posts.length);
 						}
 					}}
 				>
