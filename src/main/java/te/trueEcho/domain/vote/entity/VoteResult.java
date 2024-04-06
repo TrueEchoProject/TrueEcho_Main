@@ -11,11 +11,13 @@ import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.global.entity.CreatedDateAudit;
 
 
+
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "vote_results")
+
 public class VoteResult extends CreatedDateAudit {
 
     @Id

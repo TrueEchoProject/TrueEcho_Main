@@ -15,6 +15,7 @@ import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.rank.entity.Rank;
 import te.trueEcho.domain.vote.entity.VoteResult;
 import te.trueEcho.global.entity.CreatedDateAudit;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -23,13 +24,16 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "users")
+
 public class User extends CreatedDateAudit {
+
     /**
      *    entity : jun10920
      *    * @param : NONE
      *    ! 설명 및 주의사항
      *    TODO: updateLocation 로직 구상해서 추후에 수정
      *    last edit: 24.04.05
+
      */
 
     @Id
@@ -49,7 +53,9 @@ public class User extends CreatedDateAudit {
     private String name;
 
     @Column(name = "user_nick_name", nullable = false, length = 20, unique = true)
+
     private String nickname; // user 구분하는 식별자
+
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
@@ -140,11 +146,13 @@ public class User extends CreatedDateAudit {
 
     public void setEncryptedPassword(String encryptedPassword) {
         this.password = encryptedPassword;
+
     }
 
     public void updateName(String name) {
         this.name = name;
     }
+
 
     public void updatePassword(String updatepassword) {
         this.password = password;
@@ -170,4 +178,5 @@ public class User extends CreatedDateAudit {
         // 위치 갱신하는 로직을 새로 작성
         this.location = location;
     }
+
 }

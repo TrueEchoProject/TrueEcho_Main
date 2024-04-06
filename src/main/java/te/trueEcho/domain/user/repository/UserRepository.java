@@ -10,6 +10,7 @@ public interface UserRepository {
 
     void updateUser(User user); //UPDATE
 
+
     User findUserById(Long id); //READ
 
     User findUserByNickName(String nickName);

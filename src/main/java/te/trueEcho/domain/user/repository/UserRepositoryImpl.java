@@ -62,6 +62,7 @@ public class UserRepositoryImpl implements UserRepository{
 
     @Transactional
     @Override
+
     public void updateUser(User user) {
         User existUser = em.find(User.class, user.getId());
         if (existUser == null) {
@@ -75,6 +76,7 @@ public class UserRepositoryImpl implements UserRepository{
         existUser.updateNotificationSetting(user.getNotificationSetting());
         existUser.updateBirthDay(user.getBirthday());
         existUser.updateLocation(user.getLocation());
+
     }
 
     @Override
@@ -105,5 +107,6 @@ public class UserRepositoryImpl implements UserRepository{
                 .getSingleResult();
         return count > 0;
     }
+
 
 }

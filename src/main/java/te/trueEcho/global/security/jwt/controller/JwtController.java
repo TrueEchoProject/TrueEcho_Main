@@ -56,6 +56,7 @@ public class JwtController {
         boolean isDeleted = jwtService.deleteRefreshToken();
 
         log.info("token: {} ", token);
+
         return isDeleted ?
                 ResponseEntity.ok(ResponseForm.of(LOGOUT_SUCCESS)) :
                 ResponseEntity.ok(ResponseForm.of(LOGOUT_FAIL));

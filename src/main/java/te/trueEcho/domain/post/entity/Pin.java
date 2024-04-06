@@ -10,12 +10,15 @@ import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.global.entity.CreatedDateAudit;
 
 
+
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "pins")
+
 public class Pin extends CreatedDateAudit {
+
 
     @Id
     @Column(name = "pin_id")

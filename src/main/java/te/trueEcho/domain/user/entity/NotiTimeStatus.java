@@ -1,6 +1,7 @@
 package te.trueEcho.domain.user.entity;
 
 public enum NotiTimeStatus {
+
     DAWN, // 00 ~ 07시
     MORNING, //07 ~ 12시
     EARLY_AFTERNOON, // 12 ~ 15시
