@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import { Image } from "expo-image"
 import axios from "axios";
 
@@ -22,8 +22,30 @@ const CommentModal = ({ isVisible, postId, onClose }) => {
 				}
 			};
 			fetchCommentsForPost();
+		} else {
+			setComments([]); // 모달이 닫힐 때 댓글 상태 초기화
 		}
 	}, [isVisible, postId]);
+	// 답글 표시 상태를 토글하는 함수
+	const toggleUnderComments = (index) => {
+		setShowUnderComments(prevState => ({
+			...prevState,
+			[index]: !prevState[index]
+		}));
+	};
+	const CommentItem = ({ comment, toggleUnderComments, showUnderComments, index }) => {
+		return (
+			<View style={styles.commentItem}>
+				<Image style={styles.profileImage} source={{ uri: comment.profile_url }} />
+				<Text>Date: {comment.created_at}</Text>
+				<Text style={styles.commentText}>{comment.username}: {comment.comment}</Text>
+				<TouchableOpacity onPress={() => toggleUnderComments(index)}>
+					<Text>답글 확인</Text>
+				</TouchableOpacity>
+				<UnderComments underComments={comment.under_comments} isVisible={showUnderComments[index]} />
+			</View>
+		);
+	};
 	
 	return (
 		<Modal
@@ -32,38 +54,35 @@ const CommentModal = ({ isVisible, postId, onClose }) => {
 			visible={isVisible}
 			onRequestClose={onClose}
 		>
-			<View style={styles.modalOverlay}>
-				<View style={styles.modalView}>
-					<ScrollView style={{ width: "100%", }}>
-						<TouchableOpacity onPress={onClose} style={styles.closeButton}>
-							<Text>닫기</Text>
-						</TouchableOpacity>
-						{comments.map((comment, index) => (
-							<View key={index+comment.comment} style={styles.commentItem}>
-								<Image style={{
-									width: 30,
-									height: 30,
-									borderRadius: 15,
-								}} source={comment.profile_url}
-								/>
-								<Text> date: {comment.created_at}</Text>
-								<Text style={styles.commentText}>{comment.username}: {comment.comment}</Text>
-								{comment.under_comments && comment.under_comments.map((underComment) => (
-									<View key={index+underComment.under_comment} style={styles.underCommentItem}>
-										<Text style={styles.underCommentText}>{underComment.username}: {underComment.under_comment}</Text>
-									</View>
-								{loading ? (
-									<Text>Loading comments...</Text> // 로딩 인디케이터 표시
-									) : (
+			<TouchableWithoutFeedback onPress={onClose}>
+				<View style={styles.modalOverlay}>
+					<View style={styles.modalView}>
+						<ScrollView style={{ width: "100%" }}>
+							{loading ? (
+								<Text>Loading comments...</Text> // 로딩 인디케이터 표시
+							) : (
+								<>
+									<TouchableOpacity onPress={onClose} style={styles.closeButton}>
+										<Text>닫기</Text>
+									</TouchableOpacity>
+									{comments.map((comment, index) => (
+										<CommentItem
+											key={index}
+											comment={comment}
+											toggleUnderComments={toggleUnderComments}
+											showUnderComments={showUnderComments}
+											index={index}
+										/>
 									))}
-									</View>
-									))}
-							</ScrollView>
-							</View>
-							</View>
-							</Modal>
-							);
-						};
+								</>
+							)}
+						</ScrollView>
+					</View>
+				</View>
+			</TouchableWithoutFeedback>
+		</Modal>
+	);
+};
 
 const styles = StyleSheet.create({
 	modalOverlay: {
