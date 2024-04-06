@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Share, Modal, } from 'react-native';
-import axios from 'axios'; // axios 임포트 추가
+import {View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Share } from 'react-native';
+import axios from 'axios';
 import { Image } from 'expo-image';
 import { MaterialIcons, Ionicons, Feather } from "@expo/vector-icons";
 import { ImageButton } from "./ImageButton";
+import CommentModal from './CommentModal'; // 댓글 창 컴포넌트 임포트
 
 const CardComponent = ({ post }) => {
 	const [isOptionsVisible, setIsOptionsVisible] = useState(false);
@@ -11,6 +12,7 @@ const CardComponent = ({ post }) => {
 	const [imageButtonHeight, setImageButtonHeight] = useState(0);
 	const [isLiked, setIsLiked] = useState(false); // 좋아요 상태 관리
 	const [likesCount, setLikesCount] = useState(post.likes_count); // 좋아요 수 관리
+	const [isCommentVisible, setIsCommentVisible] = useState(false); // 댓글 창 표시 상태
 	
 	const toggleOptionsVisibility = () => {
 		setIsOptionsVisible(!isOptionsVisible);
@@ -31,13 +33,16 @@ const CardComponent = ({ post }) => {
 		console.log(newLikesCount)
 		console.log(post.post_id)
 		try {
-			await axios.patch(`http://192.168.0.3:3000/:${post.post_id}`, {
+			await axios.patch(`http://192.168.0.3:3000/posts?post_id=${post.post_id}`, {
 				likes_count: newLikesCount
 			});
 			console.log('Likes count updated successfully');
 		} catch (error) {
 			console.error('Error updating likes count:', error);
 		}
+	};
+	const toggleCommentVisibility = () => {
+		setIsCommentVisible(!isCommentVisible);
 	};
 	
 	return (
@@ -94,12 +99,17 @@ const CardComponent = ({ post }) => {
 								<Text>{likesCount}</Text>
 							</TouchableOpacity>
 							<TouchableOpacity style={styles.iconButton}>
-								<Ionicons name='chatbubbles' style={styles.icon}/>
+								<Ionicons name='chatbubbles' style={styles.icon} onPress={toggleCommentVisibility}/>
 							</TouchableOpacity>
 							<TouchableOpacity onPress={() => Share.share({ message: `${post.title}: http://192.168.0.3:3000/posts?post_id=${post.post_id}/` })}>
 								<MaterialIcons name='send' style={styles.icon}/>
 							</TouchableOpacity>
 						</View>
+						<CommentModal
+							isVisible={isCommentVisible}
+							postId={post.post_id}
+							onClose={() => setIsCommentVisible(false)}
+						/>
 					</View>
 				</View>
 			</View>
