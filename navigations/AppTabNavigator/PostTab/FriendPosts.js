@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl, Text } from 'react-native';
+import {View, StyleSheet, ScrollView, RefreshControl, Text, TouchableOpacity} from 'react-native';
 import PagerView from 'react-native-pager-view';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
@@ -14,12 +14,14 @@ const FriendPosts = () => {
 	const [location, setLocation] = useState(""); //
 	const [refreshing, setRefreshing] = useState(false); // 새로고침 상태를 관리합니다.
 	const pagerViewRef = useRef(null); // PagerView 컴포넌트를 참조하기 위한 ref입니다.
+	const [currentScope, setCurrentScope] = useState('FRIEND'); // 'FRIEND' 또는 'PUBLIC'
 	
-	const getPosts = async () => {
+	const getPosts = async (scope) => {
 		setRefreshing(true);
 		try {
-			const response = await axios.get('http://192.168.0.3:3000/posts?_limit=10');
+			const response = await axios.get(`http://192.168.0.3:3000/posts?scope=${scope}&_limit=10`);
 			setPosts(response.data); // 상태 업데이트
+			setCurrentScope(scope); // 현재 스코프 상태 업데이트
 		} catch (error) {
 			console.error('Fetching posts failed:', error);
 		} finally {
@@ -38,20 +40,27 @@ const FriendPosts = () => {
 	const getMorePosts = async () => {
 		if (refreshing) return; // 이미 새로고침 중이라면 중복 요청 방지
 		try {
-			const response = await axios.get(`http://192.168.0.3:3000/posts?_start=${posts.length}&_limit=10`);
+			const response = await axios.get(`http://192.168.0.3:3000/posts?scope=${currentScope}&_start=${posts.length}&_limit=10`);
 			setPosts(prevPosts => [...prevPosts, ...response.data]); // 기존 데이터에 추가 데이터 병합
 		} catch (error) {
 			console.error('Fetching more posts failed:', error);
 		}
 	}
 	
-	// 컴포넌트가 마운트될 때 fetchPosts 함수 호출
+	const refreshPosts = () => {
+		getPosts(currentScope);
+	};
+	
 	useFocusEffect(
 		useCallback(() => {
-			getPosts();
+			getPosts('FRIEND');
 			getLocation();
 		}, [])
 	);
+	
+	useEffect(() => {
+		getPosts(currentScope);
+	}, [currentScope]);
 	
 	useEffect(() => {
 		console.log(posts);
@@ -63,30 +72,62 @@ const FriendPosts = () => {
 	}
 	
 	return (
-		<ScrollView
-			contentContainerStyle={style.scrollViewContent}
-			refreshControl={
-				<RefreshControl refreshing={refreshing} onRefresh={getPosts} />
-			}
-		>
-			<PagerView
-				style={style.pagerView}
-				initialPage={0}
-				ref={pagerViewRef}
-				onPageSelected={e => {
-					const newIndex = e.nativeEvent.position;
-					if (newIndex === posts.length - 6) {
-						getMorePosts();
-					}
-				}}
+		<>
+			<View style={{ flexDirection: "row" }}>
+				<TouchableOpacity
+					style={{
+						flex: 1,
+						alignItems: "center",
+						backgroundColor: currentScope === 'FRIEND' ? '#4B89DC' : 'white'
+					}}
+					onPress={() => {setCurrentScope('FRIEND');}}
+				>
+					<Text
+						style={{
+							color: currentScope === 'FRIEND' ? 'white' : 'grey'// 조건부 배경색 설정
+						}}
+					>
+						FRIEND</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={{
+						flex: 1,
+						alignItems: "center",
+						backgroundColor: currentScope === 'PUBLIC' ? '#4B89DC' : 'white', // 조건부 배경색 설정
+					}}
+					onPress={() => {setCurrentScope('PUBLIC');}}>
+					<Text
+						style={{
+							color: currentScope === 'PUBLIC' ? 'white' : 'grey'
+						}}
+					>PUBLIC</Text>
+				</TouchableOpacity>
+			</View>
+			<ScrollView
+				contentContainerStyle={style.scrollViewContent}
+				refreshControl={
+					<RefreshControl refreshing={refreshing} onRefresh={refreshPosts} />
+				}
 			>
-				{posts.map((post) => (
-					<View key={post.post_id} style={style.container}>
-						<MemoizedCardComponent post={post} />
-					</View>
-				))}
-			</PagerView>
-		</ScrollView>
+				<PagerView
+					style={style.pagerView}
+					initialPage={0}
+					ref={pagerViewRef}
+					onPageSelected={e => {
+						const newIndex = e.nativeEvent.position;
+						if (newIndex === posts.length - 6) {
+							getMorePosts();
+						}
+					}}
+				>
+					{posts.map((post) => (
+						<View key={post.post_id} style={style.container}>
+							<MemoizedCardComponent post={post} />
+						</View>
+					))}
+				</PagerView>
+			</ScrollView>
+		</>
 	);
 };
 
