@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Share } from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Share, Dimensions} from 'react-native';
 import axios from 'axios';
 import { Image } from 'expo-image';
 import { MaterialIcons, Ionicons, Feather } from "@expo/vector-icons";
@@ -13,17 +13,17 @@ const CardComponent = ({ post }) => {
 	const [isLiked, setIsLiked] = useState(false); // 좋아요 상태 관리
 	const [likesCount, setLikesCount] = useState(post.likes_count); // 좋아요 수 관리
 	const [isCommentVisible, setIsCommentVisible] = useState(false); // 댓글 창 표시 상태
-	const [layoutSet, setLayoutSet] = useState(0); // 레이아웃 설정 여부 상태 추가
-	
+	const [layoutSet, setLayoutSet] = useState(false); // 레이아웃 설정 여부 상태 추가
+	const windowWidth = Dimensions.get('window').width;
 	const toggleOptionsVisibility = () => {
 		setIsOptionsVisible(!isOptionsVisible);
 	};
 	const onImageButtonLayout = (event) => {
-		if (layoutSet === 2) return; // 레이아웃이 이미 설정되었다면 추가 업데이트 방지
+		if (layoutSet) return; // 레이아웃이 이미 설정되었다면 추가 업데이트 방지
 		
 		const { height } = event.nativeEvent.layout;
 		setImageButtonHeight(height);
-		setLayoutSet(layoutSet + 1); // 레이아웃 설정 완료 표시
+		setLayoutSet(true); // 레이아웃 설정 완료 표시
 	};
 	const hideOptions = () => {
 		if (isOptionsVisible) {
@@ -90,10 +90,11 @@ const CardComponent = ({ post }) => {
 						front_image={post.post_front_url}
 						back_image={post.post_back_url}
 						containerHeight={imageButtonHeight}
+						windowWidth={windowWidth}
 					/>
 				</View>
-				<View style={{margin: 5}}>
-					<View style={styles.cardItem}>
+				<View style={{  padding: 5, zIndex: 2, minHeight: 90, backgroundColor: "white", }}>
+					<View style={[styles.cardItem, {padding: 10}]}>
 						<Text style={styles.title}>{post.title}</Text>
 					</View>
 					<View style={styles.cardItem}>
@@ -116,7 +117,6 @@ const CardComponent = ({ post }) => {
 						/>
 					</View>
 				</View>
-			
 			</View>
 		</TouchableWithoutFeedback>
 	);

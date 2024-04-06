@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { TouchableOpacity, View, Dimensions } from 'react-native';
 import { Image } from 'expo-image';
 
-const ImageButton = React.memo(({ front_image, back_image, containerHeight }) => {
+const ImageButton = React.memo(({ front_image, back_image, containerHeight, windowWidth }) => {
 	const [isFrontShowing, setIsFrontShowing] = useState(true); // 현재 보여지는 이미지가 전면 이미지인지 추적하는 상태
-	const windowWidth = Dimensions.get('window').width;
+	
 	const changeImage = () => {
 		// 둘 다 null이 아닐 때만 이미지 전환 가능
 		if (front_image && back_image) {
