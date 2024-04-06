@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Image } from 'expo-image';
 import { MaterialIcons, Ionicons, Feather } from "@expo/vector-icons";
 import { ImageButton } from "./ImageButton";
-import CommentModal from './CommentModal'; // 댓글 창 컴포넌트 임포트
+import { CommentModal } from './CommentModal'; // 댓글 창 컴포넌트 임포트
 
 const CardComponent = ({ post }) => {
 	const [isOptionsVisible, setIsOptionsVisible] = useState(false);

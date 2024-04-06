@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView, TouchableWithoutFeedback } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { Image } from "expo-image"
 import axios from "axios";
 
 const windowHeight = Dimensions.get('window').height;
 
-const CommentModal = ({ isVisible, postId, onClose }) => {
+export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	const [comments, setComments] = useState([]);
 	const [loading, setLoading] = useState(false); // 로딩 상태 추가
 	// 답글 표시 상태를 관리하는 상태. 각 댓글의 답글 표시 여부를 저장합니다.
@@ -41,19 +41,20 @@ const CommentModal = ({ isVisible, postId, onClose }) => {
 			[index]: !prevState[index]
 		}));
 	};
-	const CommentItem = ({ comment, toggleUnderComments, showUnderComments, index }) => {
+	const CommentItem = React.memo(({ comment, toggleUnderComments, showUnderComments, index }) => {
 		return (
 			<View style={styles.commentItem}>
 				<Image style={styles.profileImage} source={{ uri: comment.profile_url }} />
 				<Text>Date: {comment.created_at}</Text>
 				<Text style={styles.commentText}>{comment.username}: {comment.comment}</Text>
+				<Text style={styles.commentText}>좋아요: {comment.like_count }</Text>
 				<TouchableOpacity onPress={() => toggleUnderComments(index)}>
-					<Text>답글 확인</Text>
+					<Text>답글 {comment.reply_count}개 더보기</Text>
 				</TouchableOpacity>
 				<UnderComments underComments={comment.under_comments} isVisible={showUnderComments[index]} />
 			</View>
 		);
-	};
+	});
 	const UnderComments = React.memo(({ underComments, isVisible }) => {
 		return isVisible ? (
 			<View>
@@ -76,35 +77,33 @@ const CommentModal = ({ isVisible, postId, onClose }) => {
 			visible={isVisible}
 			onRequestClose={onClose}
 		>
-			<TouchableWithoutFeedback onPress={onClose}>
-				<View style={styles.modalOverlay}>
-					<View style={styles.modalView}>
-						<ScrollView style={{ width: "100%" }}>
-							{loading ? (
-								<Text>Loading comments...</Text> // 로딩 인디케이터 표시
-							) : (
-								<>
-									<TouchableOpacity onPress={onClose} style={styles.closeButton}>
-										<Text>닫기</Text>
-									</TouchableOpacity>
-									{comments.map((comment, index) => (
-										<CommentItem
-											key={index}
-											comment={comment}
-											toggleUnderComments={toggleUnderComments}
-											showUnderComments={showUnderComments}
-											index={index}
-										/>
-									))}
-								</>
-							)}
-						</ScrollView>
-					</View>
+			<View style={styles.modalOverlay}>
+				<View style={styles.modalView}>
+					<TouchableOpacity onPress={onClose} style={styles.closeButton}>
+						<Text>닫기</Text>
+					</TouchableOpacity>
+					<ScrollView style={{ width: "100%" }}>
+						{loading ? (
+							<Text>Loading comments...</Text> // 로딩 인디케이터 표시
+						) : (
+							<>
+								{comments.map((comment, index) => (
+									<CommentItem
+										key={index}
+										comment={comment}
+										toggleUnderComments={toggleUnderComments}
+										showUnderComments={showUnderComments}
+										index={index}
+									/>
+								))}
+							</>
+						)}
+					</ScrollView>
 				</View>
-			</TouchableWithoutFeedback>
+			</View>
 		</Modal>
 	);
-};
+});
 
 const styles = StyleSheet.create({
 	profileImage: {
@@ -117,7 +116,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-end',
 	},
 	modalView: {
-		height: windowHeight * 0.4,
+		height: windowHeight * 0.7,
 		backgroundColor: "white",
 		borderTopRightRadius: 20,
 		borderTopLeftRadius: 20,
@@ -152,5 +151,3 @@ const styles = StyleSheet.create({
 		// 필요한 경우 추가 스타일
 	},
 })
-
-export default CommentModal
