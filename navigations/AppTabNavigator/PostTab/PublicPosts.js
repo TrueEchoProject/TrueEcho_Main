@@ -11,112 +11,85 @@ const MemoizedCardComponent = React.memo(CardComponent, (prevProps, nextProps) =
 });
 
 const PublicPosts = React.forwardRef((props, ref) => {
-	const [posts, setPosts] = useState([]); // 게시물 상태 초기화
+	const [posts, setPosts] = useState([]);
 	const [location, setLocation] = useState("");
-	const [refreshing, setRefreshing] = useState(false); // 새로고침 상태를 관리합니다.
-	const pagerViewRef = useRef(null); // PagerView 컴포넌트를 참조하기 위한 ref입니다.
+	const [refreshing, setRefreshing] = useState(false);
+	const pagerViewRef = useRef(null);
 	const [optionsVisible, setOptionsVisible] = useState(false);
+	
 	const toggleOptions = () => {
 		setOptionsVisible(!optionsVisible);
 	};
 	
-	const getPosts = async (range = null) => {
+	const getPosts = async (range = null, start = 0) => {
 		setRefreshing(true);
-		
-		// 위치 정보 요청이 필요 없는 경우 바로 공개 게시물을 가져옵니다.
-		if (!range) {
-			try {
-				const response = await axios.get(`http://192.168.0.3:3000/posts?scope=PUBLIC&_limit=10`);
-				setPosts(response.data);
-			} catch (error) {
-				console.error('Fetching public posts failed:', error);
-			} finally {
-				setRefreshing(false);
-				pagerViewRef.current?.setPageWithoutAnimation(0); // PagerView의 첫 페이지로 이동합니다.
-			}
-			return;
-		}
-		
-		// range가 주어진 경우, 사용자 위치에 따라 게시물을 필터링합니다.
-		let newLocation = '';
-		try {
-			const locationResponse = await axios.get('http://192.168.0.3:3000/user_location');
-			const words = locationResponse.data[0].your_location.split(' ');
-			switch (range) {
-				case 'small':
-					newLocation = words.join(' ');
-					break;
-				case 'middle':
-					newLocation = words.slice(0, 2).join(' ');
-					break;
-				case 'big':
-					newLocation = words[0];
-					break;
-				default:
-					console.error('Invalid range');
+		const limit = 10; // 한 번에 불러올 게시물 수
+		let url = `http://192.168.0.3:3000/posts?scope=PUBLIC&_start=${start}&_limit=${limit}`;
+		if (start === 0) { // 새로고침이나 초기 로드
+			let newLocation = '';
+			if (range) {
+				try {
+					const locationResponse = await axios.get('http://192.168.0.3:3000/user_location');
+					const words = locationResponse.data[0].your_location.split(' ');
+					switch (range) {
+						case 'small':
+							newLocation = words.join(' ');
+							break;
+						case 'middle':
+							newLocation = words.slice(0, 2).join(' ');
+							break;
+						case 'big':
+							newLocation = words[0];
+							break;
+						default:
+							console.error('Invalid range');
+							return;
+					}
+					setLocation(newLocation);
+				} catch (error) {
+					console.error('Fetching user location failed:', error);
+					setRefreshing(false);
 					return;
+				}
+			} else {
+				setLocation('');
 			}
-		} catch (error) {
-			console.error('Fetching user location failed:', error);
-			setRefreshing(false);
-			return;
+			url += newLocation ? `&location_contains=${encodeURIComponent(newLocation)}` : '';
+		} else if (location) {
+			url += `&location_contains=${encodeURIComponent(location)}`;
 		}
 		
 		try {
-			let url = `http://192.168.0.3:3000/posts?scope=PUBLIC&_limit=10`;
-			if (newLocation) {
-				url += `&location_contains=${encodeURIComponent(newLocation)}`;
-				setLocation(newLocation);
-			}
-			
 			const postsResponse = await axios.get(url);
-			setPosts(postsResponse.data);
+			const newPosts = postsResponse.data;
+			if (start === 0) {
+				setPosts(newPosts);
+			} else if (newPosts.length > 0) {
+				setPosts(prevPosts => [...prevPosts, ...newPosts]);
+			} else {
+				console.log("No more posts to load.");
+			}
 		} catch (error) {
 			console.error('Fetching posts failed:', error);
 		} finally {
 			setRefreshing(false);
-			setOptionsVisible(false);
-			pagerViewRef.current?.setPageWithoutAnimation(0); // PagerView의 첫 페이지로 이동합니다.
-		}
-	};
-	
-	
-	const getMorePosts = async () => {
-		if (refreshing) return;
-		console.log(posts.length);
-		let url = `http://192.168.0.3:3000/posts?scope=PUBLIC&_start=${posts.length}&_limit=10`;
-		if (location) {
-			url += `&location_contains=${encodeURIComponent(location)}`;
-		}
-		try {
-			const response = await axios.get(url);
-			if (response.data.length === 0) {
-				console.log("No more posts to load.");
-				return;
+			if (start === 0) {
+				pagerViewRef.current?.setPageWithoutAnimation(0); // 첫 페이지로 이동
+				setOptionsVisible(false);
 			}
-			setPosts(prevPosts => [...prevPosts, ...response.data]);
-		} catch (error) {
-			console.error('Fetching more posts failed:', error);
 		}
 	};
-	
-	const refreshPosts =  () => {
+	const refreshPosts = () => {
 		getPosts(); // 데이터를 새로고침합니다.
-		setLocation("")
 	};
-	
-	// 외부에서 컴포넌트를 제어할 수 있도록 메서드를 제공합니다.
 	React.useImperativeHandle(ref, () => ({
 		getPosts: getPosts,
 	}));
-	
 	useFocusEffect(
 		useCallback(() => {
 			getPosts();
-			setLocation(''); // 위치 상태를 초기화(필요한 경우에만)
 		}, [])
 	);
-	
 	useEffect(() => {
 		console.log(posts);
 		console.log(location);
@@ -207,7 +180,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 					onPageSelected={e => {
 						const newIndex = e.nativeEvent.position;
 						if (newIndex === posts.length - 3) {
-							getMorePosts();
+							getPosts(null, posts.length);
 						}
 					}}
 				>
