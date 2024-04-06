@@ -1,12 +1,12 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { View, StyleSheet, ScrollView, RefreshControl, Text } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
 import CardComponent from '../../../components/CardComponent';
 
 const FriendPosts = () => {
-	const [posts, setPosts] = useState([]); // 게시물 상태 초기화
+	const [posts, setPosts] = useState(null); // 게시물 상태 초기화
 	const [location, setLocation] = useState(""); //
 	const [refreshing, setRefreshing] = useState(false); // 새로고침 상태를 관리합니다.
 	const pagerViewRef = useRef(null); // PagerView 컴포넌트를 참조하기 위한 ref입니다.
@@ -14,7 +14,7 @@ const FriendPosts = () => {
 	const getPosts = async () => {
 		setRefreshing(true);
 		try {
-			const response = await axios.get('http://192.168.0.3:3000/posts?_limit=3');
+			const response = await axios.get('http://192.168.0.3:3000/posts?_limit=10');
 			setPosts(response.data); // 상태 업데이트
 		} catch (error) {
 			console.error('Fetching posts failed:', error);
@@ -31,11 +31,21 @@ const FriendPosts = () => {
 			console.error('Fetching posts failed:', error);
 		}
 	};
+	const getMorePosts = async () => {
+		if (refreshing) return; // 이미 새로고침 중이라면 중복 요청 방지
+		try {
+			const response = await axios.get(`http://192.168.0.3:3000/posts?_start=${posts.length}&_limit=10`);
+			setPosts(prevPosts => [...prevPosts, ...response.data]); // 기존 데이터에 추가 데이터 병합
+		} catch (error) {
+			console.error('Fetching more posts failed:', error);
+		}
+	}
 	
 	// 컴포넌트가 마운트될 때 fetchPosts 함수 호출
 	useFocusEffect(
 		useCallback(() => {
-			getPosts();
+			if (!posts)
+				getPosts();
 			getLocation();
 		}, [])
 	);
@@ -44,6 +54,10 @@ const FriendPosts = () => {
 		console.log(posts);
 		console.log(location);
 	}, [posts]);
+	
+	if (!posts) {
+		return <View style={style.container}><Text>Loading...</Text></View>;
+	}
 	
 	return (
 		<ScrollView
@@ -56,9 +70,15 @@ const FriendPosts = () => {
 				style={style.pagerView}
 				initialPage={0}
 				ref={pagerViewRef}
+				onPageSelected={e => {
+					const newIndex = e.nativeEvent.position;
+					if (newIndex === posts.length - 6) {
+						getMorePosts();
+					}
+				}}
 			>
 				{posts.map((post) => (
-					<View key={post.id} style={style.container}>
+					<View key={post.post_id} style={style.container}>
 						<CardComponent post={post} />
 					</View>
 				))}
