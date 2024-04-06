@@ -1,0 +1,13 @@
+
+{
+    "posts": [
+      {
+        "scope": "int",
+        "post_front": "binary / null",
+        "post_back": "binary / null",
+        "title": "String",
+        "post_status": "int"
+      }
+    ]
+  }
+  
