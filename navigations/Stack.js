@@ -1,12 +1,12 @@
 import React from 'react';
 import { createStackNavigator } from "@react-navigation/stack";
-import { Friends, MyPage, MyOptions } from "./AppTabNavigatior/ButtonStack"
+import { Friends, MyPage, MyOptions } from "./AppTabNavigator/ButtonStack"
 import { View } from 'react-native';
 import { Button1, Button2, Button3 } from "../components/Button";
-import { MainPostTabScreen } from "./AppTabNavigatior/PostTab/MainPostTab";
-import { CommunityTabScreen } from "./AppTabNavigatior/CommunityTabs/CommunityTab";
+import { MainPostTabScreen } from "./AppTabNavigator/PostTab/MainPostTab";
+import { CommunityTabScreen } from "./AppTabNavigator/CommunityTabs/CommunityTab";
 
-import {FriendPosts} from "./AppTabNavigatior/PostTab";
+import {FriendPosts} from "./AppTabNavigator/PostTab";
 
 const MainPostStack = createStackNavigator();
 

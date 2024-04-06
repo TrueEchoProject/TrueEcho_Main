@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-export default class FriendsTab extends Component {
+export default class MyOptions extends Component {
 	render() {
 		return (
 			<View style={style.container}>
-				<Text>FriendsTab</Text>
+				<Text>MyOptions</Text>
 			</View>
 		);
 	}

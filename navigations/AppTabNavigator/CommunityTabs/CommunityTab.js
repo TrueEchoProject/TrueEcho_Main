@@ -1,6 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { CommunityStart, CommunityVote, CommunityResult } from './CommunityTabNavigator'
+import { CommunityStart, CommunityVote, CommunityResult } from './index'
 
 const CommunityTab = createBottomTabNavigator();
 export const CommunityTabScreen = () => {
@@ -15,17 +15,17 @@ export const CommunityTabScreen = () => {
 		>
 			<CommunityTab.Screen
 				name="Start"
-				children={CommunityStart}
+				component={CommunityStart}
 			>
 			</CommunityTab.Screen>
 			<CommunityTab.Screen
 				name="Vote"
-				children={CommunityVote}
+				component={CommunityVote}
 			>
 			</CommunityTab.Screen>
 			<CommunityTab.Screen
 				name="Result"
-				children={CommunityResult}
+				component={CommunityResult}
 			/>
 		</CommunityTab.Navigator>
 	);

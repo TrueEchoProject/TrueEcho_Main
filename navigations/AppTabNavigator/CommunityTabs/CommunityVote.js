@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 
-const CommunityStart = ({ navigation }) => {
+const CommunityVote = ({ navigation }) => {
 	return (
 		<View style={style.container}>
-			<Text>CommunityResult</Text>
+			<Text>CommunityVote</Text>
 			<Button
-				title="CommunityVote"
-				onPress={() => navigation.navigate("Vote")}
+				title="CommunityResult"
+				onPress={() => navigation.navigate("Result")}
 			/>
 		</View>
 	);
@@ -21,4 +21,4 @@ const style = StyleSheet.create({
 	}
 });
 
-export default CommunityStart;
+export default CommunityVote;

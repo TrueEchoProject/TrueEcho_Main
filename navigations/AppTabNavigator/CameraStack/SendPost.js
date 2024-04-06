@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
 	}
 });
 
-const SendPostStack = ({ navigation, route }) => {
+const SendPost = ({ navigation, route }) => {
 	
 	return (
 		<View style={style.container}>
@@ -89,4 +89,4 @@ const style = StyleSheet.create({
 	}
 });
 
-export default SendPostStack;
+export default SendPost;

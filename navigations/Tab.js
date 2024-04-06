@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"; // 하
 import { MaterialIcons } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
 import { MainPostStackScreen, CommunityStackScreen } from "./Stack"
-import { CameraStackScreen } from "./AppTabNavigatior/CameraStack/CameraStacks"
+import { CameraStackScreen } from "./AppTabNavigator/CameraStack/CameraStacks"
 
 const Tab = createBottomTabNavigator();
 
