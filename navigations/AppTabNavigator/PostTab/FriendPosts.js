@@ -1,8 +1,9 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
+import CardComponent from '../../../components/CardComponent';
 
 const FriendPosts = () => {
 	const [posts, setPosts] = useState([]); // 게시물 상태 초기화
@@ -58,7 +59,7 @@ const FriendPosts = () => {
 			>
 				{posts.map((post) => (
 					<View key={post.id} style={style.container}>
-						<Text>{post.title}</Text>
+						<CardComponent post={post} />
 					</View>
 				))}
 			</PagerView>
