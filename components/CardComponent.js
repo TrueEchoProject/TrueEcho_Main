@@ -13,13 +13,17 @@ const CardComponent = ({ post }) => {
 	const [isLiked, setIsLiked] = useState(false); // 좋아요 상태 관리
 	const [likesCount, setLikesCount] = useState(post.likes_count); // 좋아요 수 관리
 	const [isCommentVisible, setIsCommentVisible] = useState(false); // 댓글 창 표시 상태
+	const [layoutSet, setLayoutSet] = useState(0); // 레이아웃 설정 여부 상태 추가
 	
 	const toggleOptionsVisibility = () => {
 		setIsOptionsVisible(!isOptionsVisible);
 	};
 	const onImageButtonLayout = (event) => {
+		if (layoutSet === 2) return; // 레이아웃이 이미 설정되었다면 추가 업데이트 방지
+		
 		const { height } = event.nativeEvent.layout;
 		setImageButtonHeight(height);
+		setLayoutSet(layoutSet + 1); // 레이아웃 설정 완료 표시
 	};
 	const hideOptions = () => {
 		if (isOptionsVisible) {
@@ -67,13 +71,6 @@ const CardComponent = ({ post }) => {
 						<Text style={{fontSize: 30}}>...</Text>
 					</TouchableOpacity>
 				</View>
-				<View style={styles.imageButtonContainer} onLayout={onImageButtonLayout}>
-					<ImageButton
-						front_image={post.post_front_url}
-						back_image={post.post_back_url}
-						containerHeight={imageButtonHeight}
-					/>
-				</View>
 				{isOptionsVisible && (
 					<View style={[
 						styles.optionsContainer,
@@ -88,6 +85,13 @@ const CardComponent = ({ post }) => {
 						</TouchableOpacity>
 					</View>
 				)}
+				<View style={styles.imageButtonContainer} onLayout={onImageButtonLayout}>
+					<ImageButton
+						front_image={post.post_front_url}
+						back_image={post.post_back_url}
+						containerHeight={imageButtonHeight}
+					/>
+				</View>
 				<View style={{margin: 5}}>
 					<View style={styles.cardItem}>
 						<Text style={styles.title}>{post.title}</Text>
@@ -112,6 +116,7 @@ const CardComponent = ({ post }) => {
 						/>
 					</View>
 				</View>
+			
 			</View>
 		</TouchableWithoutFeedback>
 	);
