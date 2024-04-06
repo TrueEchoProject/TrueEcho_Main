@@ -38,7 +38,7 @@ public class JwtController {
 
     @PostMapping(value = "/accounts/login")
     public ResponseEntity<ResponseForm> login(@RequestBody LoginUserDto loginUserDto) {
-        log.info("login : {}", loginUserDto);
+        log.info("login : {} {}", loginUserDto.getEmail(), loginUserDto.getPassword());
         boolean isEmpty = true;
 
         final TokenDto tokenDto = jwtService.login(loginUserDto);
