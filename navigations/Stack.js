@@ -1,48 +1,50 @@
 import React from 'react';
 import { createStackNavigator } from "@react-navigation/stack";
-import { FriendsTab, MyPageTab, MyOptionsTab } from "./AppTabNavigator"
+import { Friends, MyPage, MyOptions } from "./AppTabNavigatior/ButtonStack"
 import { View } from 'react-native';
 import { Button1, Button2, Button3 } from "../components/Button";
-import { MainFeedTabScreen } from "./AppTabNavigator/MainFeedTab";
-import { CommunityTabScreen } from "./AppTabNavigator/CommunityTab";
+import { MainPostTabScreen } from "./AppTabNavigatior/PostTab/MainPostTab";
+import { CommunityTabScreen } from "./AppTabNavigatior/CommunityTabs/CommunityTab";
 
-const MainFeedStack = createStackNavigator();
+import {FriendPosts} from "./AppTabNavigatior/PostTab";
 
-export const MainFeedStackScreen = () => { // 메인 피드 속 Stack 구성
+const MainPostStack = createStackNavigator();
+
+export const MainPostStackScreen = () => { // 메인 피드 속 Stack 구성
 	return (
-		<MainFeedStack.Navigator>
-			<MainFeedStack.Screen
+		<MainPostStack.Navigator>
+			<MainPostStack.Screen
 				name="FeedTab"
-				component={MainFeedTabScreen}
+				component={MainPostTabScreen}
 				options={({ navigation }) => ({ // 메인 피드 화면에서 상단 네비 구현
 					headerRight: () => (
 						<View style={{flexDirection: 'row'}}>
-							<Button1 onPress={() => navigation.navigate('Friends')} />
-							<Button2 onPress={() => navigation.navigate('MyPage')} />
+							<Button1 onPress={() => navigation.navigate('Fri')} />
+							<Button2 onPress={() => navigation.navigate('MyP')} />
 						</View>
 					)
 				})}
 			/>
-			<MainFeedStack.Screen
-				name="MyPage"
-				component={MyPageTab}
+			<MainPostStack.Screen
+				name="MyP"
+				component={MyPage}
 				options={({ navigation }) => ({ // 마이페이지 화면에서 상단 네비 구현
 					headerRight: () => (
 						<View style={{flexDirection: 'row'}}>
-							<Button3 onPress={() => navigation.navigate('MyOptions')} />
+							<Button3 onPress={() => navigation.navigate('MyOp')} />
 						</View>
 					)
 				})}
 			/>
-			<MainFeedStack.Screen
-				name="Friends"
-				component={FriendsTab}
+			<MainPostStack.Screen
+				name="Fri"
+				component={Friends}
 			/>
-			<MainFeedStack.Screen
-				name="MyOptions"
-				component={MyOptionsTab}
+			<MainPostStack.Screen
+				name="MyOp"
+				component={MyOptions}
 			/>
-		</MainFeedStack.Navigator>
+		</MainPostStack.Navigator>
 	);
 }
 
@@ -57,30 +59,30 @@ export const CommunityStackScreen = () => { // 커뮤니티 속 Stack 구성
 				options={({ navigation }) => ({ // 커뮤니티 화면에서 상단 네비 구현
 					headerRight: () => (
 						<View style={{flexDirection: 'row'}}>
-							<Button1 onPress={() => navigation.navigate('Friends')} />
-							<Button2 onPress={() => navigation.navigate('MyPage')} />
+							<Button1 onPress={() => navigation.navigate('Fri')} />
+							<Button2 onPress={() => navigation.navigate('MyP')} />
 						</View>
 					)
 				})}
 			/>
 			<CommunityStack.Screen
-				name="MyPage"
-				component={MyPageTab}
+				name="MyP"
+				component={MyPage}
 				options={({ navigation }) => ({ // 마이페이지 화면에서 상단 네비 구현
 					headerRight: () => (
 						<View style={{flexDirection: 'row'}}>
-							<Button3 onPress={() => navigation.navigate('MyOptions')} />
+							<Button3 onPress={() => navigation.navigate('MyOp')} />
 						</View>
 					)
 				})}
 			/>
 			<CommunityStack.Screen
-				name="Friends"
-				component={FriendsTab}
+				name="Fri"
+				component={Friends}
 			/>
 			<CommunityStack.Screen
-				name="MyOptions"
-				component={MyOptionsTab}
+				name="MyOp"
+				component={MyOptions}
 			/>
 		</ CommunityStack.Navigator>
 	);

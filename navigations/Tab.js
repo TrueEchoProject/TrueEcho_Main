@@ -2,8 +2,8 @@ import React from 'react';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"; // 하단 Tab 네비게이터
 import { MaterialIcons } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
-import { CommunityStackScreen, MainFeedStackScreen } from "./Stack";
-import { CameraStackScreen } from "./AppTabNavigator/CameraStack/CameraStack"; // 각 화면의 아이콘
+import { MainPostStackScreen, CommunityStackScreen } from "./Stack"
+import { CameraStackScreen } from "./AppTabNavigatior/CameraStack/CameraStacks"
 
 const Tab = createBottomTabNavigator();
 
@@ -11,7 +11,7 @@ const TabIcon = ({ name, color, size }) => { // 화면의 아이콘 설정값 �
 	return <MaterialIcons name={name} size={size} color={color}/>
 }
 
-const TabNav = () => {
+const TabNavigation = () => {
 	return (
 		<NavigationContainer>
 			<Tab.Navigator // 네비게이터 전반의 설정
@@ -24,8 +24,8 @@ const TabNav = () => {
 				}}
 			>
 				<Tab.Screen // 각 tab의 옵션
-					name="MainFeed"
-					component={MainFeedStackScreen} // 메인 피드 속 Stack 연결
+					name="MainPost"
+					component={MainPostStackScreen} // 메인 피드 속 Stack 연결
 					options={{
 						headerShown: false,
 						tabBarIcon: props => { //위의 아이콘 설정값 대입
@@ -57,4 +57,4 @@ const TabNav = () => {
 	);
 };
 
-export default TabNav;
+export default TabNavigation;
