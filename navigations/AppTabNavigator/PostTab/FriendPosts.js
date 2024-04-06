@@ -12,7 +12,7 @@ const MemoizedCardComponent = React.memo(CardComponent, (prevProps, nextProps) =
 
 const FriendPosts = () => {
 	const [posts, setPosts] = useState(null); // 게시물 상태 초기화
-	const [location, setLocation] = useState(""); //
+	const [location, setLocation] = useState("");
 	const [refreshing, setRefreshing] = useState(false); // 새로고침 상태를 관리합니다.
 	const pagerViewRef = useRef(null); // PagerView 컴포넌트를 참조하기 위한 ref입니다.
 	const [currentScope, setCurrentScope] = useState('FRIEND'); // 'FRIEND' 또는 'PUBLIC'
@@ -25,6 +25,7 @@ const FriendPosts = () => {
 	const getPosts = async (scope) => {
 		setRefreshing(true);
 		try {
+			setPosts(null)
 			const response = await axios.get(`http://192.168.0.3:3000/posts?scope=${scope}&_limit=10`);
 			setPosts(response.data); // 상태 업데이트
 			setCurrentScope(scope); // 현재 스코프 상태 업데이트
@@ -43,6 +44,61 @@ const FriendPosts = () => {
 			console.error('Fetching posts failed:', error);
 		}
 	};
+	
+	const getSmallLocation = async () => {
+		setRefreshing(true);
+		try {
+			setPosts(null);
+			const response1 = await axios.get('http://192.168.0.3:3000/user_location');
+			const words = response1.data[0].your_location
+			console.log(words);
+			const response2 = await axios.get(`http://192.168.0.3:3000/posts?scope=${currentScope}&_limit=10&location_contains=${words}`);
+			setPosts(response2.data); // 상태 업데이트
+		} catch (error) {
+			console.error('Fetching posts failed:', error);
+		} finally {
+			setRefreshing(false);
+			setOptionsVisible(false); // 모달 닫기
+		}
+	};
+	
+	const getMiddleLocation = async () => {
+		setRefreshing(true);
+		try {
+			setPosts(null);
+			const response1 = await axios.get('http://192.168.0.3:3000/user_location');
+			const words = response1.data[0].your_location.split(' ');
+			const newLocation = words.slice(0, 2).join(' ');
+			console.log(newLocation)
+			const response2 = await axios.get(`http://192.168.0.3:3000/posts?scope=${currentScope}&_limit=30&location_contains=${newLocation}`);
+			setPosts(response2.data); // 상태 업데이트
+		} catch (error) {
+			console.error('Fetching posts failed:', error);
+		} finally {
+			setRefreshing(false);
+			setOptionsVisible(false); // 모달 닫기
+		}
+	};
+	
+	
+	const getBigLocation = async () => {
+		setRefreshing(true);
+		try {
+			setPosts(null);
+			const response1 = await axios.get('http://192.168.0.3:3000/user_location');
+			const words = response1.data[0].your_location.split(' ');
+			const newLocation = words.slice(0, 1).join(' ');
+			console.log(newLocation)
+			const response2 = await axios.get(`http://192.168.0.3:3000/posts?scope=${currentScope}&_limit=30&location_contains=${newLocation}`);
+			setPosts(response2.data); // 상태 업데이트
+		} catch (error) {
+			console.error('Fetching posts failed:', error);
+		} finally {
+			setRefreshing(false);
+			setOptionsVisible(false); // 모달 닫기
+		}
+	};
+	
 	const getMorePosts = async () => {
 		if (refreshing) return; // 이미 새로고침 중이라면 중복 요청 방지
 		try {
@@ -60,17 +116,13 @@ const FriendPosts = () => {
 	useFocusEffect(
 		useCallback(() => {
 			getPosts('FRIEND');
-			getLocation();
 		}, [])
 	);
 	
 	useEffect(() => {
 		console.log(posts);
-	}, [posts]);
-	
-	useEffect(() => {
 		console.log(location);
-	},[location]);
+	}, [posts], [location]);
 	
 	if (!posts) {
 		return <View style={style.container}><Text>Loading...</Text></View>;
@@ -149,7 +201,7 @@ const FriendPosts = () => {
 												padding: 10,
 												borderRadius: 5,
 											}}
-											onPress={getLocation}
+											onPress={getBigLocation}
 										>
 											<Text style={style.textStyle}>넓은 범위</Text>
 										</TouchableOpacity>
@@ -160,7 +212,7 @@ const FriendPosts = () => {
 												padding: 10,
 												borderRadius: 5,
 											}}
-											onPress={getLocation}
+											onPress={getMiddleLocation}
 										>
 											<Text style={style.textStyle}>중간 범위</Text>
 										</TouchableOpacity>
@@ -171,7 +223,7 @@ const FriendPosts = () => {
 												padding: 10,
 												borderRadius: 5,
 											}}
-											onPress={getLocation}
+											onPress={getSmallLocation}
 										>
 											<Text style={style.textStyle}>작은 범위</Text>
 										</TouchableOpacity>
