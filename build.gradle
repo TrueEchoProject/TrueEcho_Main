@@ -60,7 +60,11 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
 	//mysql
-	runtimeOnly 'com.mysql:mysql-connector-j'
+	//runtimeOnly 'com.mysql:mysql-connector-j'
+
+	//mariaDB
+	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+
 
 
 
