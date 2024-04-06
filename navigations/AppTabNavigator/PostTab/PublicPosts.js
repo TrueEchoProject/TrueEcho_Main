@@ -10,7 +10,7 @@ const MemoizedCardComponent = React.memo(CardComponent, (prevProps, nextProps) =
 	return prevProps.post.id === nextProps.post.id && prevProps.location === nextProps.location;
 });
 
-const PublicPosts = () => {
+const PublicPosts = React.forwardRef((props, ref) => {
 	const [posts, setPosts] = useState([]); // 게시물 상태 초기화
 	const [location, setLocation] = useState("");
 	const [refreshing, setRefreshing] = useState(false); // 새로고침 상태를 관리합니다.
@@ -100,11 +100,15 @@ const PublicPosts = () => {
 		}
 	};
 	
-	
 	const refreshPosts =  () => {
 		getPosts(); // 데이터를 새로고침합니다.
 		setLocation("")
 	};
+	
+	// 외부에서 컴포넌트를 제어할 수 있도록 메서드를 제공합니다.
+	React.useImperativeHandle(ref, () => ({
+		getPosts: getPosts,
+	}));
 	
 	useFocusEffect(
 		useCallback(() => {
@@ -118,7 +122,7 @@ const PublicPosts = () => {
 		console.log(location);
 	}, [posts], [location]);
 	
-	if (!posts) {
+	if (posts.length === 0) {
 		return <View style={style.container}><Text>Loading...</Text></View>;
 	}
 	
@@ -216,7 +220,7 @@ const PublicPosts = () => {
 			</ScrollView>
 		</>
 	);
-};
+});
 
 const style = StyleSheet.create({
 	container: {

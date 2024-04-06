@@ -9,7 +9,7 @@ const MemoizedCardComponent = React.memo(CardComponent, (prevProps, nextProps) =
 	return prevProps.post.id === nextProps.post.id;
 });
 
-const FriendPosts = () => {
+const FriendPosts = React.forwardRef((props, ref) => {
 	const [posts, setPosts] = useState([]); // 게시물 상태 초기화
 	const [refreshing, setRefreshing] = useState(false); // 새로고침 상태를 관리합니다.
 	const pagerViewRef = useRef(null); // PagerView 컴포넌트를 참조하기 위한 ref입니다.
@@ -40,6 +40,11 @@ const FriendPosts = () => {
 		await getPosts(); // 데이터를 새로고침합니다.
 		pagerViewRef.current?.setPageWithoutAnimation(0); // PagerView의 첫 페이지로 이동합니다.
 	};
+	
+	// 외부에서 컴포넌트를 제어할 수 있도록 메서드를 제공합니다.
+	React.useImperativeHandle(ref, () => ({
+		getPosts: getPosts,
+	}));
 	
 	useFocusEffect(
 		useCallback(() => {
@@ -83,7 +88,7 @@ const FriendPosts = () => {
 			</ScrollView>
 		</>
 	);
-};
+});
 
 const styles = StyleSheet.create({
 	container: {
