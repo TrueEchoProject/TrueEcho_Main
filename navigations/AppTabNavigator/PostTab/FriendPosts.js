@@ -36,6 +36,11 @@ const FriendPosts = () => {
 		}
 	};
 	
+	const refreshPosts = async () => {
+		await getPosts(); // 데이터를 새로고침합니다.
+		pagerViewRef.current?.setPageWithoutAnimation(0); // PagerView의 첫 페이지로 이동합니다.
+	};
+	
 	useFocusEffect(
 		useCallback(() => {
 			getPosts(); // 처음 포커스 될 때 게시물 불러오기
@@ -55,7 +60,7 @@ const FriendPosts = () => {
 			<ScrollView
 				contentContainerStyle={styles.scrollViewContent}
 				refreshControl={
-					<RefreshControl refreshing={refreshing} onRefresh={getPosts} />
+					<RefreshControl refreshing={refreshing} onRefresh={refreshPosts} />
 				}
 			>
 				<PagerView

@@ -14,12 +14,12 @@ export const MainPostTabScreen = () => {
 		>
 			<MainPostTab.Screen
 				name="FriendFeed"
-				component={FriendPosts}
+				component={PublicPosts}
 			>
 			</MainPostTab.Screen>
 			<MainPostTab.Screen
 				name="OtherFeed"
-				component={PublicPosts}
+				component={FriendPosts}
 			/>
 		</MainPostTab.Navigator>
 	);
