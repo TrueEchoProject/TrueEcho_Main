@@ -85,6 +85,28 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 			animatedHeight.setValue(windowHeight * 0.6); // 모달 높이 초기화
 		}
 	}, [isVisible, postId]);
+	
+	useEffect(() => {
+		// 키보드 상태 변화 감지
+		const showSubscription = Keyboard.addListener('keyboardDidShow', e => {
+			setKeyboardHeight(e.endCoordinates.height);
+		});
+		const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+			setKeyboardHeight(0);
+		});
+		return () => {
+			showSubscription.remove();
+			hideSubscription.remove();
+		};
+	}, []);
+	
+	useEffect(() => {
+		if (isVisible && inputRef.current) {
+			inputRef.current.focus();
+			animatedHeight.setValue(windowHeight * 0.6); // 모달 높이 초기화
+		}
+	}, [isVisible]);
+	
 	// 답글 표시 상태를 토글하는 함수
 	const toggleUnderComments = (index) => {
 		setShowUnderComments(prevState => ({
@@ -92,6 +114,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 			[index]: !prevState[index]
 		}));
 	};
+	
 	const CommentItem = React.memo(({ comment, toggleUnderComments, showUnderComments, index }) => {
 		return (
 			<View style={styles.commentItem}>
