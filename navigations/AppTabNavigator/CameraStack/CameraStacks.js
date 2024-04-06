@@ -1,5 +1,5 @@
 import { createStackNavigator } from "@react-navigation/stack";
-import { Camera, SendPost } from "./index";
+import { Camera, SendPostStack } from "./index";
 
 const CameraStacks = createStackNavigator();
 
@@ -12,7 +12,7 @@ export const CameraStackScreen = () => {
 			/>
 			<CameraStacks.Screen
 				name="SendPosts"
-				component={SendPost}
+				component={SendPostStack}
 			/>
 		</CameraStacks.Navigator>
 	);

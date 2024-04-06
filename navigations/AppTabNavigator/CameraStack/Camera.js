@@ -52,7 +52,7 @@ const CameraScreen = ({ navigation }) => {
       
       // 모든 사진 촬영이 완료된 후, 각 배열을 다음 화면으로 전달
       if (frontCameraUris.length > 0 || backCameraUris.length > 0) {
-        navigation.navigate("SendPost", { frontCameraUris: frontCameraUris, backCameraUris: backCameraUris }); // SendPost 페이지로 이동하면서 두 배열의 파라미터를 전달
+        navigation.navigate("SendPosts", { frontCameraUris: frontCameraUris, backCameraUris: backCameraUris }); // SendPost 페이지로 이동하면서 두 배열의 파라미터를 전달
       }
     }, 1000);
   };
