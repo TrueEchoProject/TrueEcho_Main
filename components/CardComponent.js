@@ -4,7 +4,7 @@ import { Image } from 'expo-image';
 import { MaterialIcons, Ionicons, Feather } from "@expo/vector-icons";
 import { ImageButton } from "./ImageButton";
 
-export default function CardComponent({ post }) {
+const CardComponent = ({ post }) => {
 	const [isOptionsVisible, setIsOptionsVisible] = useState(false);
 	const [buttonLayout, setButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
 	const [imageButtonHeight, setImageButtonHeight] = useState(0);
@@ -151,3 +151,5 @@ const styles = StyleSheet.create({
 		marginLeft: 'auto',
 	},
 });
+
+export default React.memo(CardComponent)

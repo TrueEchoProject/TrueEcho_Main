@@ -5,6 +5,10 @@ import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
 import CardComponent from '../../../components/CardComponent';
 
+const MemoizedCardComponent = React.memo(CardComponent, (prevProps, nextProps) => {
+	return prevProps.post.id === nextProps.post.id;
+});
+
 const FriendPosts = () => {
 	const [posts, setPosts] = useState(null); // 게시물 상태 초기화
 	const [location, setLocation] = useState(""); //
@@ -44,8 +48,7 @@ const FriendPosts = () => {
 	// 컴포넌트가 마운트될 때 fetchPosts 함수 호출
 	useFocusEffect(
 		useCallback(() => {
-			if (!posts)
-				getPosts();
+			getPosts();
 			getLocation();
 		}, [])
 	);
@@ -79,7 +82,7 @@ const FriendPosts = () => {
 			>
 				{posts.map((post) => (
 					<View key={post.post_id} style={style.container}>
-						<CardComponent post={post} />
+						<MemoizedCardComponent post={post} />
 					</View>
 				))}
 			</PagerView>
