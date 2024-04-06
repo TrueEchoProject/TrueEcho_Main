@@ -44,33 +44,34 @@ const FriendPosts = () => {
 			console.error('Fetching posts failed:', error);
 		}
 	};
-	
-	const getSmallLocation = async () => {
+
+// 범위에 따른 위치 데이터 처리를 위한 통합 함수
+	const getLocationData = async (scope, range) => {
 		setRefreshing(true);
 		try {
 			setPosts(null);
 			const response1 = await axios.get('http://192.168.0.3:3000/user_location');
-			const words = response1.data[0].your_location
-			console.log(words);
-			const response2 = await axios.get(`http://192.168.0.3:3000/posts?scope=${currentScope}&_limit=10&location_contains=${words}`);
-			setPosts(response2.data); // 상태 업데이트
-		} catch (error) {
-			console.error('Fetching posts failed:', error);
-		} finally {
-			setRefreshing(false);
-			setOptionsVisible(false); // 모달 닫기
-		}
-	};
-	
-	const getMiddleLocation = async () => {
-		setRefreshing(true);
-		try {
-			setPosts(null);
-			const response1 = await axios.get('http://192.168.0.3:3000/user_location');
+			let newLocation;
 			const words = response1.data[0].your_location.split(' ');
-			const newLocation = words.slice(0, 2).join(' ');
-			console.log(newLocation)
-			const response2 = await axios.get(`http://192.168.0.3:3000/posts?scope=${currentScope}&_limit=30&location_contains=${newLocation}`);
+			
+			// 범위에 따라 처리
+			switch (range) {
+				case 'small':
+					newLocation = words.join(' '); // 'small'의 경우 전체 위치 사용
+					break;
+				case 'middle':
+					newLocation = words.slice(0, 2).join(' '); // 'middle'은 앞의 두 단어 사용
+					break;
+				case 'big':
+					newLocation = words[0]; // 'big'은 첫 단어만 사용
+					break;
+				default:
+					console.error('Invalid range');
+					return;
+			}
+			
+			console.log(newLocation);
+			const response2 = await axios.get(`http://192.168.0.3:3000/posts?scope=${scope}&_limit=30&location_contains=${newLocation}`);
 			setPosts(response2.data); // 상태 업데이트
 		} catch (error) {
 			console.error('Fetching posts failed:', error);
@@ -80,34 +81,26 @@ const FriendPosts = () => {
 		}
 	};
 	
-	
-	const getBigLocation = async () => {
-		setRefreshing(true);
-		try {
-			setPosts(null);
-			const response1 = await axios.get('http://192.168.0.3:3000/user_location');
-			const words = response1.data[0].your_location.split(' ');
-			const newLocation = words.slice(0, 1).join(' ');
-			console.log(newLocation)
-			const response2 = await axios.get(`http://192.168.0.3:3000/posts?scope=${currentScope}&_limit=30&location_contains=${newLocation}`);
-			setPosts(response2.data); // 상태 업데이트
-		} catch (error) {
-			console.error('Fetching posts failed:', error);
-		} finally {
-			setRefreshing(false);
-			setOptionsVisible(false); // 모달 닫기
-		}
-	};
 	
 	const getMorePosts = async () => {
 		if (refreshing) return; // 이미 새로고침 중이라면 중복 요청 방지
 		try {
-			const response = await axios.get(`http://192.168.0.3:3000/posts?scope=${currentScope}&_start=${posts.length}&_limit=10`);
+			let url = `http://192.168.0.3:3000/posts?scope=${currentScope}&_start=${posts.length}&_limit=10`;
+			// location 상태가 설정되어 있다면 location_contains 쿼리 파라미터 추가
+			if (location) {
+				url += `&location_contains=${encodeURIComponent(location)}`;
+			}
+			const response = await axios.get(url);
 			setPosts(prevPosts => [...prevPosts, ...response.data]); // 기존 데이터에 추가 데이터 병합
+			if (response.data.length === 0) {
+				// 더 불러올 피드가 없으면 여기서 처리
+				console.log("No more posts to load.");
+				return; // 함수를 여기서 종료하여 추가 작업 방지
+			}
 		} catch (error) {
 			console.error('Fetching more posts failed:', error);
 		}
-	}
+	};
 	
 	const refreshPosts = () => {
 		getPosts(currentScope);
@@ -116,6 +109,7 @@ const FriendPosts = () => {
 	useFocusEffect(
 		useCallback(() => {
 			getPosts('FRIEND');
+			setLocation()
 		}, [])
 	);
 	
@@ -201,7 +195,7 @@ const FriendPosts = () => {
 												padding: 10,
 												borderRadius: 5,
 											}}
-											onPress={getBigLocation}
+											onPress={() => getLocationData(currentScope, 'big')}
 										>
 											<Text style={style.textStyle}>넓은 범위</Text>
 										</TouchableOpacity>
@@ -212,7 +206,7 @@ const FriendPosts = () => {
 												padding: 10,
 												borderRadius: 5,
 											}}
-											onPress={getMiddleLocation}
+											onPress={() => getLocationData(currentScope, 'middle')}
 										>
 											<Text style={style.textStyle}>중간 범위</Text>
 										</TouchableOpacity>
@@ -223,7 +217,7 @@ const FriendPosts = () => {
 												padding: 10,
 												borderRadius: 5,
 											}}
-											onPress={getSmallLocation}
+											onPress={() => getLocationData(currentScope, 'small')}
 										>
 											<Text style={style.textStyle}>작은 범위</Text>
 										</TouchableOpacity>
