@@ -4,7 +4,7 @@ import { Image } from 'expo-image';
 import { MaterialIcons, Ionicons, Feather } from "@expo/vector-icons";
 import { ImageButton } from "./ImageButton";
 
-const CardComponent = ({ post }) => {
+const CardComponent = ({ post, location }) => {
 	const [isOptionsVisible, setIsOptionsVisible] = useState(false);
 	const [buttonLayout, setButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
 	const [imageButtonHeight, setImageButtonHeight] = useState(0);
@@ -32,8 +32,11 @@ const CardComponent = ({ post }) => {
 							source={{ uri: post.profile_url }}
 						/>
 						<View style={styles.body}>
-							<Text>{post.username}</Text>
-							<Text note>{new Date(post.created_at).toDateString()}</Text>
+							<Text style={{fontSize: 15, fontWeight: "500"}}>{post.username}</Text>
+							<Text style={{fontSize: 12, fontWeight: "300"}}note>{new Date(post.created_at).toDateString()}</Text>
+							{location && (
+								<Text style={{fontSize: 12, fontWeight: "300"}}>{location.your_location}</Text>
+							)}
 						</View>
 					</View>
 					<TouchableOpacity style={styles.right} onPress={toggleOptionsVisibility} onLayout={(event) => {
@@ -131,9 +134,9 @@ const styles = StyleSheet.create({
 		marginLeft: 10,
 	},
 	thumbnail: {
-		width: 30,
-		height: 30,
-		borderRadius: 15,
+		width: 44,
+		height: 44,
+		borderRadius: 22,
 	},
 	title: {
 		fontWeight: '900',
