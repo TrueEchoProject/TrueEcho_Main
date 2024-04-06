@@ -1,7 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
-import { Image } from "expo-image"
-import axios from "axios";
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import {
+	Modal,
+	View,
+	Text,
+	TouchableOpacity,
+	StyleSheet,
+	Dimensions,
+	ScrollView,
+	TextInput,
+	Keyboard,
+	PanResponder,
+	Animated,
+	Platform,
+	KeyboardAvoidingView,
+} from 'react-native';
+import axios from 'axios';
+import { Image } from 'expo-image';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -10,6 +24,49 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	const [loading, setLoading] = useState(false); // 로딩 상태 추가
 	// 답글 표시 상태를 관리하는 상태. 각 댓글의 답글 표시 여부를 저장합니다.
 	const [showUnderComments, setShowUnderComments] = useState({});
+	const [keyboardHeight, setKeyboardHeight] = useState(0);
+	const [textInputValue, setTextInputValue] = useState('');
+	const inputRef = useRef(null);
+	const animatedHeight = useRef(new Animated.Value(windowHeight * 0.6)).current;
+	const dragThreshold = 175; // 드래그 임계값을 150으로 설정
+	
+	// 드래그에 따른 모달 높이 조정 로직
+	const panResponder = useMemo(() => PanResponder.create({
+		onStartShouldSetPanResponder: () => true,
+		onPanResponderMove: (_, gestureState) => {
+			// 현재 드래그 위치에 따른 높이를 계산합니다.
+			let newHeight = animatedHeight._value - gestureState.dy; // 높이 계산에 dy 값을 빼줍니다.
+			
+			// 드래그 동작이 위로 일어나고 있고 모달이 최대 높이에 도달한 경우
+			// 또는 드래그 동작이 아래로 일어나고 있고 모달이 최소 높이에 도달한 경우
+			// 높이를 변경하지 않습니다.
+			if ((gestureState.dy < 0 && newHeight >= windowHeight) ||
+				(gestureState.dy > 0 && newHeight <= windowHeight * 0.6)) {
+				return; // 높이 변경 없음
+			}
+			
+			// 그렇지 않으면, 계산된 새 높이를 적용합니다.
+			// 높이가 최소 및 최대 범위를 넘지 않도록 합니다.
+			newHeight = Math.min(Math.max(newHeight, windowHeight * 0.6), windowHeight);
+			animatedHeight.setValue(newHeight);
+		},
+		onPanResponderRelease: () => {
+			// 드래그가 끝나고 높이가 임계값 내에 있는지 여부에 따라 높이를 조정합니다.
+			if (animatedHeight._value >= windowHeight - dragThreshold) {
+				// 모달이 거의 최대 높이에 있으면 최대 높이로 설정합니다.
+				Animated.spring(animatedHeight, {
+					toValue: windowHeight,
+					useNativeDriver: false
+				}).start();
+			} else if (animatedHeight._value <= windowHeight * 0.6 + dragThreshold) {
+				// 모달이 거의 원래 높이에 있으면 원래 높이로 설정합니다.
+				Animated.spring(animatedHeight, {
+					toValue: windowHeight * 0.6,
+					useNativeDriver: false
+				}).start();
+			}
+		}
+	}), [keyboardHeight]); // 'animatedHeight'의 값을 직접 사용하므로 의존성 배열에 포함시킬 필요가 없습니다.
 	
 	useEffect(() => {
 		if (isVisible) {
