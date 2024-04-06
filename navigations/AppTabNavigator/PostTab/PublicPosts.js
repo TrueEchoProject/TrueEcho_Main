@@ -128,7 +128,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 	
 	return (
 		<>
-			<View style={{alignItems:"flex-end", backgroundColor: "white", }}>
+			<View style={{ alignItems:"flex-end", backgroundColor: "white", position: "relative", }}>
 				<TouchableOpacity
 					onPress={toggleOptions}
 				>
@@ -137,7 +137,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 						size={28}
 						style={{
 							backgroundColor:"white",
-							marginLeft: 10,
+							marginRight: 10,
 						}}/>
 				</TouchableOpacity>
 			</View>

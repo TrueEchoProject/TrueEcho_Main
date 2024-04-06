@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { Image } from "expo-image"
 import axios from "axios";
 
@@ -77,35 +77,56 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 			visible={isVisible}
 			onRequestClose={onClose}
 		>
-			<View style={styles.modalOverlay}>
-				<View style={styles.modalView}>
-					<TouchableOpacity onPress={onClose} style={styles.closeButton}>
-						<Text>닫기</Text>
-					</TouchableOpacity>
-					<ScrollView style={{ width: "100%" }}>
-						{loading ? (
-							<Text>Loading comments...</Text> // 로딩 인디케이터 표시
-						) : (
-							<>
-								{comments.map((comment, index) => (
-									<CommentItem
-										key={index}
-										comment={comment}
-										toggleUnderComments={toggleUnderComments}
-										showUnderComments={showUnderComments}
-										index={index}
-									/>
-								))}
-							</>
-						)}
-					</ScrollView>
+			<KeyboardAvoidingView
+				style={{ flex: 1 }}
+				behavior={Platform.OS === "ios" ? "padding" : "height"} // 플랫폼에 따라 behavior 조정
+				enabled={true} // Android에서는 필요에 따라 enabled 속성 조정
+			>
+				<View style={styles.modalOverlay}>
+					<View style={styles.modalView}>
+						<TouchableOpacity onPress={onClose} style={styles.closeButton}>
+							<Text>닫기</Text>
+						</TouchableOpacity>
+						<ScrollView
+							style={{ width: "100%" }}
+							keyboardShouldPersistTaps="always" // 스크롤 시 키보드 유지
+						>
+							{loading ? (
+								<Text>Loading comments...</Text> // 로딩 인디케이터 표시
+							) : (
+								<>
+									{comments.map((comment, index) => (
+										<CommentItem
+											key={index}
+											comment={comment}
+											toggleUnderComments={toggleUnderComments}
+											showUnderComments={showUnderComments}
+											index={index}
+										/>
+									))}
+								</>
+							)}
+						</ScrollView>
+						<TextInput
+							style={styles.commentInput}
+							placeholder="댓글 달기..."
+							autoFocus={true} // 컴포넌트가 마운트될 때 자동으로 포커스
+						/>
+					</View>
 				</View>
-			</View>
+			</KeyboardAvoidingView>
 		</Modal>
 	);
 });
 
 const styles = StyleSheet.create({
+	commentInput: {
+		height: 40,
+		width: "100%",
+		margin: 12,
+		borderWidth: 1,
+		padding: 10,
+	},
 	profileImage: {
 		width: 30,
 		height: 30,
@@ -116,7 +137,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-end',
 	},
 	modalView: {
-		height: windowHeight * 0.7,
+		height: windowHeight * 0.4,
 		backgroundColor: "white",
 		borderTopRightRadius: 20,
 		borderTopLeftRadius: 20,
@@ -133,6 +154,7 @@ const styles = StyleSheet.create({
 	},
 	closeButton: {
 		marginTop: 20,
+		padding: 10,
 	},
 	commentItem: {
 		padding: 10,
