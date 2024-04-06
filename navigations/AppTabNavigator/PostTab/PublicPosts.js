@@ -10,163 +10,232 @@ const MemoizedCardComponent = React.memo(CardComponent, (prevProps, nextProps) =
 	return prevProps.post.id === nextProps.post.id && prevProps.location === nextProps.location;
 });
 
-const PublicPosts = React.forwardRef((props, ref) => {
-	const [posts, setPosts] = useState([]);
+const PublicPosts = () => {
+	const [posts, setPosts] = useState(null); // 게시물 상태 초기화
 	const [location, setLocation] = useState("");
-	const [refreshing, setRefreshing] = useState(false);
-	const pagerViewRef = useRef(null);
+	const [refreshing, setRefreshing] = useState(false); // 새로고침 상태를 관리합니다.
+	const pagerViewRef = useRef(null); // PagerView 컴포넌트를 참조하기 위한 ref입니다.
+	const [currentScope, setCurrentScope] = useState('FRIEND'); // 'FRIEND' 또는 'PUBLIC'
 	const [optionsVisible, setOptionsVisible] = useState(false);
 	
 	const toggleOptions = () => {
 		setOptionsVisible(!optionsVisible);
 	};
 	
-	const getPosts = async (range = null, start = 0) => {
+	const getPosts = async (scope) => {
 		setRefreshing(true);
-		const limit = 10; // 한 번에 불러올 게시물 수
-		let url = `http://192.168.0.3:3000/posts?scope=PUBLIC&_start=${start}&_limit=${limit}`;
-		if (start === 0) { // 새로고침이나 초기 로드
-			let newLocation = '';
-			if (range) {
-				try {
-					const locationResponse = await axios.get('http://192.168.0.3:3000/user_location');
-					const words = locationResponse.data[0].your_location.split(' ');
-					switch (range) {
-						case 'small':
-							newLocation = words.join(' ');
-							break;
-						case 'middle':
-							newLocation = words.slice(0, 2).join(' ');
-							break;
-						case 'big':
-							newLocation = words[0];
-							break;
-						default:
-							console.error('Invalid range');
-							return;
-					}
-					setLocation(newLocation);
-				} catch (error) {
-					console.error('Fetching user location failed:', error);
-					setRefreshing(false);
-					return;
-				}
-			} else {
-				setLocation('');
-			}
-			url += newLocation ? `&location_contains=${encodeURIComponent(newLocation)}` : '';
-		} else if (location) {
-			url += `&location_contains=${encodeURIComponent(location)}`;
-		}
-		
 		try {
-			const postsResponse = await axios.get(url);
-			const newPosts = postsResponse.data;
-			if (start === 0) {
-				setPosts(newPosts);
-			} else if (newPosts.length > 0) {
-				setPosts(prevPosts => [...prevPosts, ...newPosts]);
-			} else {
-				console.log("No more posts to load.");
+			setPosts(null)
+			const response = await axios.get(`http://192.168.0.3:3000/posts?scope=${scope}&_limit=10`);
+			setPosts(response.data); // 상태 업데이트
+			setCurrentScope(scope); // 현재 스코프 상태 업데이트
+		} catch (error) {
+			console.error('Fetching posts failed:', error);
+		} finally {
+			setRefreshing(false); // 새로고침 상태를 false로 설정합니다.
+			pagerViewRef.current?.setPageWithoutAnimation(0);
+		}
+	};
+	const getLocation = async () => {
+		try {
+			const response = await axios.get('http://192.168.0.3:3000/user_location');
+			setLocation(response.data[0]); // 상태 업데이트
+		} catch (error) {
+			console.error('Fetching posts failed:', error);
+		}
+	};
+
+// 범위에 따른 위치 데이터 처리를 위한 통합 함수
+	const getLocationData = async (scope, range) => {
+		setRefreshing(true);
+		try {
+			setPosts(null);
+			const response1 = await axios.get('http://192.168.0.3:3000/user_location');
+			let newLocation;
+			const words = response1.data[0].your_location.split(' ');
+			
+			// 범위에 따라 처리
+			switch (range) {
+				case 'small':
+					newLocation = words.join(' '); // 'small'의 경우 전체 위치 사용
+					break;
+				case 'middle':
+					newLocation = words.slice(0, 2).join(' '); // 'middle'은 앞의 두 단어 사용
+					break;
+				case 'big':
+					newLocation = words[0]; // 'big'은 첫 단어만 사용
+					break;
+				default:
+					console.error('Invalid range');
+					return;
 			}
+			
+			console.log(newLocation);
+			setLocation(newLocation);
+			const response2 = await axios.get(`http://192.168.0.3:3000/posts?scope=${scope}&_limit=30&location_contains=${newLocation}`);
+			setPosts(response2.data); // 상태 업데이트
 		} catch (error) {
 			console.error('Fetching posts failed:', error);
 		} finally {
 			setRefreshing(false);
-			if (start === 0) {
-				pagerViewRef.current?.setPageWithoutAnimation(0); // 첫 페이지로 이동
-				setOptionsVisible(false);
-			}
+			setOptionsVisible(false); // 모달 닫기
 		}
 	};
-	const refreshPosts = () => {
-		getPosts(); // 데이터를 새로고침합니다.
+	
+	
+	const getMorePosts = async () => {
+		if (refreshing) return; // 이미 새로고침 중이라면 중복 요청 방지
+		console.log(posts.length);
+		// 요청 URL 준비
+		let url = `http://192.168.0.3:3000/posts?scope=${currentScope}&_start=${posts.length}&_limit=10`;
+		console.log(location)
+		// 위치 정보가 설정되어 있다면 URL에 추가
+		if (location) {
+			url += `&location_contains=${encodeURIComponent(location)}`;
+		}
+		
+		try {
+			const response = await axios.get(url);
+			// 새로운 피드가 없을 경우 로그 출력 및 함수 종료
+			if (response.data.length === 0) {
+				console.log("No more posts to load.");
+				return; // 더 이상 로드할 피드가 없으므로 함수 종료
+			}
+			
+			// 새로운 피드가 있을 경우 상태 업데이트
+			setPosts(prevPosts => [...prevPosts, ...response.data]);
+		} catch (error) {
+			console.error('Fetching more posts failed:', error);
+		}
 	};
-	React.useImperativeHandle(ref, () => ({
-		getPosts: getPosts,
-	}));
+	
+	
+	const refreshPosts = () => {
+		getPosts(currentScope);
+	};
+	
 	useFocusEffect(
 		useCallback(() => {
-			getPosts();
+			getPosts('FRIEND');
+			setLocation()
 		}, [])
 	);
+	
 	useEffect(() => {
 		console.log(posts);
 		console.log(location);
 	}, [posts], [location]);
 	
-	if (posts.length === 0) {
+	if (!posts) {
 		return <View style={style.container}><Text>Loading...</Text></View>;
 	}
 	
 	return (
 		<>
-			<View style={{ alignItems:"flex-end", backgroundColor: "white", position: "relative", }}>
+			<View style={{ flexDirection: "row", height: 30 }}>
 				<TouchableOpacity
-					onPress={toggleOptions}
+					style={{
+						flex: 1,
+						alignItems: "center",
+						justifyContent: "center",
+						backgroundColor: currentScope === 'FRIEND' ? '#4B89DC' : 'white',
+					}}
+					onPress={() => {setCurrentScope('FRIEND'); getPosts('FRIEND');}}
 				>
-					<MaterialIcons
-						name='settings'
-						size={28}
+					<Text
 						style={{
-							backgroundColor:"white",
-							marginRight: 10,
-						}}/>
+							color: currentScope === 'FRIEND' ? 'white' : 'grey'// 조건부 배경색 설정
+						}}
+					>
+						FRIEND</Text>
 				</TouchableOpacity>
-			</View>
-		{optionsVisible && (
-			<Modal
-				animationType="slide"
-				transparent={true}
-				visible={optionsVisible}
-				onRequestClose={toggleOptions} // 안드로이드에서 물리적 '뒤로 가기' 버튼을 눌렀을 때 호출됩니다.
-			>
-				<View style={style.centeredView}>
-					<View style={style.modalView}>
+				<View style={{ flex: 1, flexDirection: "row", backgroundColor: "white" }}>
+					<TouchableOpacity
+						style={{
+							flex: 1,
+							alignItems: "center",
+							justifyContent: "center",
+							backgroundColor: currentScope === 'PUBLIC' ? '#4B89DC' : 'white', // 조건부 배경색 설정
+						}}
+						onPress={() => {setCurrentScope('PUBLIC'); getPosts('PUBLIC');}}
+					>
+						<Text
+							style={{
+								color: currentScope === 'PUBLIC' ? 'white' : 'grey'
+							}}
+						>
+							PUBLIC</Text>
+					</TouchableOpacity>
+					{currentScope === 'PUBLIC' && (
 						<TouchableOpacity
-							style={style.button}
 							onPress={toggleOptions}
 						>
-							<MaterialIcons name="backspace"></MaterialIcons>
+							<MaterialIcons
+								name='settings'
+								size={28}
+								style={{
+									backgroundColor:"white",
+									marginRight:10,
+									marginLeft: 10,
+								}}/>
 						</TouchableOpacity>
-						<View style={{marginTop: 10}}>
-							<TouchableOpacity
-								style={{
-									backgroundColor: "grey",
-									margin: 5,
-									padding: 10,
-									borderRadius: 5,
-								}}
-								onPress={() => getPosts('big')}
-							>
-								<Text style={style.textStyle}>넓은 범위</Text>
-							</TouchableOpacity>
-							<TouchableOpacity
-								style={{
-									backgroundColor: "grey",
-									margin: 5,
-									padding: 10,
-									borderRadius: 5,
-								}}
-								onPress={() => getPosts('middle')}
-							>
-								<Text style={style.textStyle}>중간 범위</Text>
-							</TouchableOpacity>
-							<TouchableOpacity
-								style={{
-									backgroundColor: "grey",
-									margin: 5,
-									padding: 10,
-									borderRadius: 5,
-								}}
-								onPress={() => getPosts('small')}
-							>
-								<Text style={style.textStyle}>작은 범위</Text>
-							</TouchableOpacity>
-						</View>
-					</View>
+					)}
+					{optionsVisible && (
+						<Modal
+							animationType="slide"
+							transparent={true}
+							visible={optionsVisible}
+							onRequestClose={() => setOptionsVisible(!optionsVisible)} // 안드로이드에서 물리적 '뒤로 가기' 버튼을 눌렀을 때 호출됩니다.
+						>
+							<View style={style.centeredView}>
+								<View style={style.modalView}>
+									<TouchableOpacity
+										style={style.button}
+										onPress={() => setOptionsVisible(!optionsVisible)}
+									>
+										<MaterialIcons name="backspace"></MaterialIcons>
+									</TouchableOpacity>
+									<View style={{marginTop: 10}}>
+										<TouchableOpacity
+											style={{
+												backgroundColor: "grey",
+												margin: 5,
+												padding: 10,
+												borderRadius: 5,
+											}}
+											onPress={() => getLocationData(currentScope, 'big')}
+										>
+											<Text style={style.textStyle}>넓은 범위</Text>
+										</TouchableOpacity>
+										<TouchableOpacity
+											style={{
+												backgroundColor: "grey",
+												margin: 5,
+												padding: 10,
+												borderRadius: 5,
+											}}
+											onPress={() => getLocationData(currentScope, 'middle')}
+										>
+											<Text style={style.textStyle}>중간 범위</Text>
+										</TouchableOpacity>
+										<TouchableOpacity
+											style={{
+												backgroundColor: "grey",
+												margin: 5,
+												padding: 10,
+												borderRadius: 5,
+											}}
+											onPress={() => getLocationData(currentScope, 'small')}
+										>
+											<Text style={style.textStyle}>작은 범위</Text>
+										</TouchableOpacity>
+									</View>
+								</View>
+							</View>
+						</Modal>
+					)}
 				</View>
-			</Modal> )}
+			</View>
 			<ScrollView
 				contentContainerStyle={style.scrollViewContent}
 				refreshControl={
@@ -179,8 +248,8 @@ const PublicPosts = React.forwardRef((props, ref) => {
 					ref={pagerViewRef}
 					onPageSelected={e => {
 						const newIndex = e.nativeEvent.position;
-						if (newIndex === posts.length - 3) {
-							getPosts(null, posts.length);
+						if (newIndex === posts.length - 6) {
+							getMorePosts();
 						}
 					}}
 				>
@@ -193,7 +262,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 			</ScrollView>
 		</>
 	);
-});
+};
 
 const style = StyleSheet.create({
 	container: {

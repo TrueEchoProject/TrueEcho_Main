@@ -59,13 +59,9 @@ const CardComponent = ({ post }) => {
 							right: 0
 						}
 					]}>
-						<TouchableOpacity style={{ flexDirection:'row', alignItems: 'center', marginBottom: 10, }}>
-							<Ionicons name='eye-off' style={{ marginLeft: 10 }}/>
-							<Text style={styles.optionItem}>현재 피드 숨기기</Text>
-						</TouchableOpacity>
 						<TouchableOpacity style={{ flexDirection:'row', alignItems: 'center', }}>
 							<Feather name='alert-triangle' style={{ marginLeft: 10, color: 'red' }}/>
-							<Text style={[styles.optionItem, {color: 'red'}]}>사용자 신고하기</Text>
+							<Text style={[styles.optionItem, {color: 'red'}]}>사용자 차단하기</Text>
 						</TouchableOpacity>
 					</View>
 				)}
