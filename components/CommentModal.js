@@ -7,6 +7,9 @@ const windowHeight = Dimensions.get('window').height;
 
 const CommentModal = ({ isVisible, postId, onClose }) => {
 	const [comments, setComments] = useState([]);
+	const [loading, setLoading] = useState(false); // 로딩 상태 추가
+	// 답글 표시 상태를 관리하는 상태. 각 댓글의 답글 표시 여부를 저장합니다.
+	const [showUnderComments, setShowUnderComments] = useState({});
 	
 	useEffect(() => {
 		if (isVisible) {
@@ -16,6 +19,11 @@ const CommentModal = ({ isVisible, postId, onClose }) => {
 					setComments(response.data);
 					setLoading(false); // 데이터 로딩 완료
 					// 초기 상태에서는 모든 답글을 숨깁니다.
+					const initialShowState = response.data.reduce((acc, _, index) => {
+						acc[index] = false; // 모든 답글을 기본적으로 숨깁니다.
+						return acc;
+					}, {});
+					setShowUnderComments(initialShowState);
 				} catch (error) {
 					console.error('Fetching comments failed:', error);
 					setLoading(false); // 오류 발생 시 로딩 완료 처리
@@ -46,6 +54,20 @@ const CommentModal = ({ isVisible, postId, onClose }) => {
 			</View>
 		);
 	};
+	const UnderComments = React.memo(({ underComments, isVisible }) => {
+		return isVisible ? (
+			<View>
+				{underComments.map((underComment, underIndex) => (
+					<View key={underIndex} style={styles.underCommentItem}>
+						<Image style={styles.profileImage} source={{ uri: underComment.profile_url }} />
+						<Text>Date: {underComment.created_at}</Text>
+						<Text style={styles.underCommentText}>{underComment.username}: {underComment.under_comment}</Text>
+					</View>
+				))}
+			</View>
+		) : null;
+	});
+	
 	
 	return (
 		<Modal
@@ -85,6 +107,11 @@ const CommentModal = ({ isVisible, postId, onClose }) => {
 };
 
 const styles = StyleSheet.create({
+	profileImage: {
+		width: 30,
+		height: 30,
+		borderRadius: 15,
+	},
 	modalOverlay: {
 		flex: 1,
 		justifyContent: 'flex-end',
@@ -114,6 +141,8 @@ const styles = StyleSheet.create({
 		borderBottomColor: '#E0E0E0',
 	},
 	underCommentItem: {
+		paddingTop: 10, // 답글에 대한 시각적 구분
+		paddingBottom: 10, // 답글에 대한 시각적 구분
 		paddingLeft: 20, // 답글에 대한 시각적 구분
 	},
 	commentText: {
@@ -122,6 +151,6 @@ const styles = StyleSheet.create({
 	underCommentText: {
 		// 필요한 경우 추가 스타일
 	},
-});
+})
 
-export default CommentModal;
+export default CommentModal
