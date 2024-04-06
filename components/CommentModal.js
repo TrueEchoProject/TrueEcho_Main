@@ -13,10 +13,12 @@ const CommentModal = ({ isVisible, postId, onClose }) => {
 			const fetchCommentsForPost = async () => {
 				try {
 					const response = await axios.get(`http://192.168.0.3:3000/comments?post_id=${postId}`);
-					setComments(response.data); // 서버로부터 받은 데이터를 상태에 저장
-					console.log(response.data); // 받아온 데이터 확인
+					setComments(response.data);
+					setLoading(false); // 데이터 로딩 완료
+					// 초기 상태에서는 모든 답글을 숨깁니다.
 				} catch (error) {
 					console.error('Fetching comments failed:', error);
+					setLoading(false); // 오류 발생 시 로딩 완료 처리
 				}
 			};
 			fetchCommentsForPost();
@@ -50,15 +52,18 @@ const CommentModal = ({ isVisible, postId, onClose }) => {
 									<View key={index+underComment.under_comment} style={styles.underCommentItem}>
 										<Text style={styles.underCommentText}>{underComment.username}: {underComment.under_comment}</Text>
 									</View>
-								))}
+								{loading ? (
+									<Text>Loading comments...</Text> // 로딩 인디케이터 표시
+									) : (
+									))}
+									</View>
+									))}
+							</ScrollView>
 							</View>
-						))}
-					</ScrollView>
-				</View>
-			</View>
-		</Modal>
-	);
-};
+							</View>
+							</Modal>
+							);
+						};
 
 const styles = StyleSheet.create({
 	modalOverlay: {
@@ -101,4 +106,3 @@ const styles = StyleSheet.create({
 });
 
 export default CommentModal;
-

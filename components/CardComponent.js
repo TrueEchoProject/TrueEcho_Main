@@ -99,10 +99,10 @@ const CardComponent = ({ post }) => {
 								<Text>{likesCount}</Text>
 							</TouchableOpacity>
 							<TouchableOpacity style={styles.iconButton}>
-								<Ionicons name='chatbubbles' style={styles.icon} onPress={toggleCommentVisibility}/>
+								<Ionicons name='chatbubbles' style={styles.icon} onPress={toggleCommentVisibility} size={24}/>
 							</TouchableOpacity>
 							<TouchableOpacity onPress={() => Share.share({ message: `${post.title}: http://192.168.0.3:3000/posts?post_id=${post.post_id}/` })}>
-								<MaterialIcons name='send' style={styles.icon}/>
+								<MaterialIcons name='send' style={styles.icon} size={24} />
 							</TouchableOpacity>
 						</View>
 						<CommentModal
