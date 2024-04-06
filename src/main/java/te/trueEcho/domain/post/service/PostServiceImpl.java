@@ -86,7 +86,7 @@ public class PostServiceImpl implements PostService {
                         postGetDto.getIndex(), myFriendsByUser,2, 1);
             }
             case RANDOM -> {
-                List<User> filteredUser = userRepository.filterSelectedUserByLocation(filterLocation, myFriendsByUser);
+                List<User> filteredUser = userRepository.filterNotSelectedUserByLocation(filterLocation, myFriendsByUser);
                 return postRepository.readPost(postGetDto.getPageCount(),
                         postGetDto.getIndex(), filteredUser, 3, 2);
             }
@@ -97,9 +97,9 @@ public class PostServiceImpl implements PostService {
     }
 
     private static String getFilterLocation(PostGetDto postGetDto) {
-        String filterLocation = "%";
+        String filterLocation = "";
         if(postGetDto.getLocation()!=null) filterLocation = postGetDto.getLocation();
-        return filterLocation;
+        return filterLocation+"%";
     }
 
     private User findUser() {

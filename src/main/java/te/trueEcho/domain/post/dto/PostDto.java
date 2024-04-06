@@ -13,6 +13,7 @@ import java.util.List;
 @Builder
 public class PostDto {
         private String username;
+        private Long userId;
         private String profileUrl;
         private Long postId;
         private String title;

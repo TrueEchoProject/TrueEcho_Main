@@ -8,6 +8,4 @@ import lombok.RequiredArgsConstructor;
 public enum FeedType{
     RANDOM,
     FRIEND;
-
-
 }

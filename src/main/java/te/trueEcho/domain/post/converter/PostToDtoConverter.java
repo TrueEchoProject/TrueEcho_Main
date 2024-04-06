@@ -23,6 +23,7 @@ public class PostToDtoConverter {
                 .map(post -> {
                     return PostDto.builder()
                             .postId(post.getId())
+                            .userId(post.getUser().getId())
                             .title(post.getTitle())
                             .postFrontUrl(post.getUrlFront())
                             .postBackUrl(post.getUrlBack())
