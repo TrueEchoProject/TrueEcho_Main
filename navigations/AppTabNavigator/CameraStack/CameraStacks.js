@@ -12,7 +12,7 @@ export const CameraStackScreen = () => {
 			/>
 			<CameraStacks.Screen
 				name="SendPosts"
-				children={SendPostStack}
+				component={SendPostStack}
 			/>
 		</CameraStacks.Navigator>
 	);
