@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-export default class MyPageTab extends Component {
+export default class MyPage extends Component {
 	render() {
 		return (
 			<View style={style.container}>
-				<Text>MyPageTab</Text>
+				<Text>MyPage</Text>
 			</View>
 		);
 	}

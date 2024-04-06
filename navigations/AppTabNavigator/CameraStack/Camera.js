@@ -28,28 +28,31 @@ const CameraScreen = ({ navigation }) => {
   };
   
   const handleCapture = async () => {
-    const photoUris = []; // 사진 URI를 저장할 배열
-    // 첫 번째 사진 촬영
+    const frontCameraUris = []; // 전면 카메라 사진 URI를 저장할 배열
+    const backCameraUris = []; // 후면 카메라 사진 URI를 저장할 배열
+
+    // 카메라 타입 설정(후면)
+    setCameraType(ExpoCamera.Constants.Type.back);
+
+    // 첫 번째 사진 촬영 (후면)
     const firstPictureData = await takePicture();
     if (firstPictureData && firstPictureData.uri) {
-      photoUris.push(firstPictureData.uri); // 첫 번째 사진 URI 배열에 추가
+      backCameraUris.push(firstPictureData.uri); // 후면 카메라 사진 URI 배열에 추가
     }
-    // 카메라 타입 전환
-    setCameraType(
-      cameraType === ExpoCamera.Constants.Type.back
-        ? ExpoCamera.Constants.Type.front
-        : ExpoCamera.Constants.Type.back
-    );
+
+    // 카메라 타입 전환 (전면)
+    setCameraType(ExpoCamera.Constants.Type.front);
+
     // 두 번째 사진 촬영을 위한 지연
     setTimeout(async () => {
-      const secondPictureData = await takePicture(); // 두 번째 사진 촬영
+      const secondPictureData = await takePicture(); // 두 번째 사진 촬영 (전면)
       if (secondPictureData && secondPictureData.uri) {
-        photoUris.push(secondPictureData.uri); // 두 번째 사진 URI 배열에 추가
+        frontCameraUris.push(secondPictureData.uri); // 전면 카메라 사진 URI 배열에 추가
       }
       
-      // 모든 사진 촬영이 완료된 후, 배열을 다음 화면으로 전달
-      if (photoUris.length > 0) {
-        navigation.navigate("SendPost", { photoUris: photoUris }); // SendPost 페이지로 이동하면서 photoUris 배열 파라미터를 전달
+      // 모든 사진 촬영이 완료된 후, 각 배열을 다음 화면으로 전달
+      if (frontCameraUris.length > 0 || backCameraUris.length > 0) {
+        navigation.navigate("SendPost", { frontCameraUris: frontCameraUris, backCameraUris: backCameraUris }); // SendPost 페이지로 이동하면서 두 배열의 파라미터를 전달
       }
     }, 1000);
   };
@@ -105,13 +108,13 @@ const CameraScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.controlPanel}>
-        <TouchableOpacity style={styles.iconButton} onPress={() => setFlashMode(flashMode === ExpoCamera.Constants.FlashMode.off ? ExpoCamera.Constants.FlashMode.on : ExpoCamera.Constants.FlashMode.off)}>
+        <TouchableOpacity style={styles.iconButton} onPress={handleFlashMode}>
           <MaterialIcons name={flashMode === ExpoCamera.Constants.FlashMode.off ? 'flash-off' : 'flash-on'} size={24} color="white" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.captureButton} onPress={handleCapture}>
           <FontAwesome name="camera" size={24} color="white" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton} onPress={() => setCameraType(cameraType === ExpoCamera.Constants.Type.back ? ExpoCamera.Constants.Type.front : ExpoCamera.Constants.Type.back)}>
+        <TouchableOpacity style={styles.iconButton} onPress={handleCameraType}>
           <MaterialIcons name="flip-camera-ios" size={24} color="white" />
         </TouchableOpacity>
       </View>

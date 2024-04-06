@@ -1,0 +1,55 @@
+{
+  "questions": [
+    { "id": 1, "question": "이성 친구가 가장 많을 것 같은 사람!"},
+    { "id": 2, "question": "가장 겁이 많을 것 같은 사람!" },
+    { "id": 3, "question": "결혼 가장 빨리 할 것 같은 사람!" },
+    { "id": 4, "question": "가장 재미있을 것 같은 사람!" },
+    { "id": 5, "question": "가장 예쁠 것 같은 사람!" }
+  ],
+  "users": [
+    {
+      "id": 1, 
+      "user": "박준형",
+      "url": "https://source.unsplash.com/random/200x300"
+    },
+    {
+      "id": 2,
+      "user": "이승우",
+      "url": "https://source.unsplash.com/random/200x300"
+    },
+    {
+      "id": 3,
+      "user": "김영철",
+      "url": "https://source.unsplash.com/random/200x300"
+    },
+    {
+      "id": 4,
+      "user": "장지훈",
+      "url": "https://source.unsplash.com/random/200x300"
+    }
+  ],
+  "refresh": [
+    {
+      "id": 1, 
+      "user": "새로고침",
+      "url": "https://source.unsplash.com/random/200x300"
+    },
+    {
+      "id": 2,
+      "user": "새로고침",
+      "url": "https://source.unsplash.com/random/200x300"
+    },
+    {
+      "id": 3,
+      "user": "새로고침",
+      "url": "https://source.unsplash.com/random/200x300"
+    },
+    {
+      "id": 4,
+      "user": "새로고침",
+      "url": "https://source.unsplash.com/random/200x300"
+    }
+  ]
+}
+
+

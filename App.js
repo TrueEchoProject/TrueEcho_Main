@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import SignUpForm from './SignUp/SignUpForm';
-import Navigation from "./navigations";
+import TabNavigation from "./navigations/Tab";
 import * as SplashScreen from 'expo-splash-screen';
 import { useState, useEffect, useCallback } from'react';
 import LoginForm from './SignUp/LoginForm';
@@ -12,7 +12,7 @@ import LoginForm from './SignUp/LoginForm';
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
-  const [ isReady, setIsReady ] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   
   useEffect(() => {
     async function prepare() {
@@ -32,9 +32,9 @@ export default function App() {
     prepare();
   }, []);
   
-   return (
-       <Navigation />
-   );
+  return (
+    <TabNavigation/>
+  );
 
 //  return (
 //    <View style={styles.container}>
@@ -44,12 +44,3 @@ export default function App() {
 //    </View>
 //  );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

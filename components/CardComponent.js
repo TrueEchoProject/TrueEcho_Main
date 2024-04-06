@@ -1,47 +1,67 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Share } from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Share, Dimensions} from 'react-native';
+import axios from 'axios';
 import { Image } from 'expo-image';
 import { MaterialIcons, Ionicons, Feather } from "@expo/vector-icons";
 import { ImageButton } from "./ImageButton";
+import { CommentModal } from './CommentModal'; // 댓글 창 컴포넌트 임포트
 
-// CardComponent 함수형 컴포넌트를 정의합니다. props로 data 객체를 받습니다.
-export default function CardComponent({ data }) {
-	// isOptionsVisible 상태는 옵션 버튼의 보임/숨김을 관리합니다.
+const CardComponent = ({ post }) => {
 	const [isOptionsVisible, setIsOptionsVisible] = useState(false);
-	// buttonLayout 상태는 옵션 버튼의 레이아웃 정보를 저장합니다.
 	const [buttonLayout, setButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
-	// imageButtonHeight 상태는 ImageButton 컨테이너의 높이를 저장합니다.
 	const [imageButtonHeight, setImageButtonHeight] = useState(0);
-	
-	// 옵션 메뉴의 보임/숨김 상태를 토글하는 함수입니다.
+	const [isLiked, setIsLiked] = useState(false); // 좋아요 상태 관리
+	const [likesCount, setLikesCount] = useState(post.likes_count); // 좋아요 수 관리
+	const [isCommentVisible, setIsCommentVisible] = useState(false); // 댓글 창 표시 상태
+	const [layoutSet, setLayoutSet] = useState(false); // 레이아웃 설정 여부 상태 추가
+	const windowWidth = Dimensions.get('window').width;
 	const toggleOptionsVisibility = () => {
 		setIsOptionsVisible(!isOptionsVisible);
 	};
-	// ImageButton 컨테이너의 높이를 측정하는 함수입니다.
 	const onImageButtonLayout = (event) => {
+		if (layoutSet) return; // 레이아웃이 이미 설정되었다면 추가 업데이트 방지
+		
 		const { height } = event.nativeEvent.layout;
 		setImageButtonHeight(height);
+		setLayoutSet(true); // 레이아웃 설정 완료 표시
 	};
-	// 옵션 메뉴 바깥쪽을 터치했을 때 옵션 메뉴를 숨기는 함수입니다.
 	const hideOptions = () => {
 		if (isOptionsVisible) {
 			setIsOptionsVisible(false);
 		}
 	};
+	const toggleLike = async () => {
+		const newLikesCount = isLiked ? likesCount - 1 : likesCount + 1;
+		setIsLiked(!isLiked);
+		setLikesCount(newLikesCount);
+		console.log(newLikesCount)
+		console.log(post.post_id)
+		try {
+			await axios.patch(`http://192.168.0.3:3000/posts?post_id=${post.post_id}`, {
+				likes_count: newLikesCount
+			});
+			console.log('Likes count updated successfully');
+		} catch (error) {
+			console.error('Error updating likes count:', error);
+		}
+	};
+	const toggleCommentVisibility = () => {
+		setIsCommentVisible(!isCommentVisible);
+	};
 	
 	return (
-		// TouchableWithoutFeedback 컴포넌트로 전체 카드를 감싸 옵션 메뉴 바깥쪽 클릭 감지
 		<TouchableWithoutFeedback onPress={hideOptions}>
 			<View style={styles.cardContainer}>
 				<View style={styles.cardItem}>
 					<View style={styles.left}>
 						<Image
 							style={styles.thumbnail}
-							source={{ uri: `https://steemitimages.com/u/${data.author}/avatar` }} // 사용자 프로필 이미지 URL
+							source={{ uri: post.profile_url }}
 						/>
 						<View style={styles.body}>
-							<Text>{data.author}</Text>
-							<Text note>{new Date(data.created).toDateString()}</Text>
+							<Text style={{fontSize: 15, fontWeight: "500"}}>{post.username}</Text>
+							<Text style={{fontSize: 12, fontWeight: "300"}}note>{new Date(post.created_at).toDateString()}</Text>
+							<Text style={{fontSize: 12, fontWeight: "300"}}>{post.location}</Text>
 						</View>
 					</View>
 					<TouchableOpacity style={styles.right} onPress={toggleOptionsVisibility} onLayout={(event) => {
@@ -51,54 +71,56 @@ export default function CardComponent({ data }) {
 						<Text style={{fontSize: 30}}>...</Text>
 					</TouchableOpacity>
 				</View>
-				<View style={styles.imageButtonContainer} onLayout={onImageButtonLayout}>
-					<ImageButton images={data.images} containerHeight={imageButtonHeight} />
-				</View>
 				{isOptionsVisible && (
 					<View style={[
 						styles.optionsContainer,
 						{
-							top: buttonLayout.y + buttonLayout.height - 5, // 버튼의 하단에 위치
-							right: 0 // 화면의 오른쪽 끝에 위치
+							top: buttonLayout.y + buttonLayout.height - 5,
+							right: 0
 						}
 					]}>
-						<TouchableOpacity style={{ flexDirection:'row', alignItems: 'center', marginBottom: 10, }}>
-							<Ionicons name='eye-off' style={{ marginLeft: 10 }}/>
-							<Text style={styles.optionItem}>현재 피드 숨기기</Text>
-						</TouchableOpacity>
 						<TouchableOpacity style={{ flexDirection:'row', alignItems: 'center', }}>
 							<Feather name='alert-triangle' style={{ marginLeft: 10, color: 'red' }}/>
-							<Text style={[styles.optionItem, {color: 'red'}]}>사용자 신고하기</Text>
+							<Text style={[styles.optionItem, {color: 'red'}]}>사용자 차단하기</Text>
 						</TouchableOpacity>
 					</View>
 				)}
-				<View style={{margin: 5}}>
-					<View style={styles.cardItem}>
-						<Text style={styles.title}>{data.title.slice(0, 15)}</Text>
-					</View>
-					<View style={styles.cardItem}>
-						<Text>{data.body.replace(/\n/g, ' ').slice(0, 15)}</Text>
+				<View style={styles.imageButtonContainer} onLayout={onImageButtonLayout}>
+					<ImageButton
+						front_image={post.post_front_url}
+						back_image={post.post_back_url}
+						containerHeight={imageButtonHeight}
+						windowWidth={windowWidth}
+					/>
+				</View>
+				<View style={{  padding: 5, zIndex: 2, minHeight: 90, backgroundColor: "white", }}>
+					<View style={[styles.cardItem, {padding: 10}]}>
+						<Text style={styles.title}>{post.title}</Text>
 					</View>
 					<View style={styles.cardItem}>
 						<View style={styles.left}>
-							<TouchableOpacity style={styles.iconButton}>
-								<Ionicons name='heart' style={styles.icon}/>
-								<Text>{data.active_votes.length}</Text>
+							<TouchableOpacity style={styles.iconButton} onPress={toggleLike}>
+								<Ionicons name={isLiked ? 'heart' : 'heart-outline'} style={styles.icon} size={24} color={isLiked ? 'red' : 'black'}/>
+								<Text>{likesCount}</Text>
 							</TouchableOpacity>
 							<TouchableOpacity style={styles.iconButton}>
-								<Ionicons name='chatbubbles' style={styles.icon}/>
-								<Text>{data.children}</Text>
+								<Ionicons name='chatbubbles' style={styles.icon} onPress={toggleCommentVisibility} size={24}/>
 							</TouchableOpacity>
-							<TouchableOpacity onPress={() => Share.share({ message: `${data.title}: https://steemit.com/@${data.author}/${data.permlink}` })}>
-								<MaterialIcons name='send' style={styles.icon}/>
+							<TouchableOpacity onPress={() => Share.share({ message: `${post.title}: http://192.168.0.3:3000/posts?post_id=${post.post_id}/` })}>
+								<MaterialIcons name='send' style={styles.icon} size={24} />
 							</TouchableOpacity>
 						</View>
+						<CommentModal
+							isVisible={isCommentVisible}
+							postId={post.post_id}
+							onClose={() => setIsCommentVisible(false)}
+						/>
 					</View>
 				</View>
 			</View>
 		</TouchableWithoutFeedback>
-		);
-	}
+	);
+}
 
 const styles = StyleSheet.create({
 	imageButtonContainer: {
@@ -116,7 +138,7 @@ const styles = StyleSheet.create({
 		shadowRadius: 4,
 		shadowOpacity: 0.3,
 		elevation: 4,
-		marginTop: 10, // '...' 버튼과 옵션 컨테이너 사이의 간격
+		marginTop: 10,
 	},
 	optionItem: {
 		marginLeft: 10,
@@ -124,7 +146,7 @@ const styles = StyleSheet.create({
 		fontSize: 15,
 	},
 	cardContainer: {
-		flex: 1, // 컨테이너가 전체 화면을 차지하도록 설정
+		flex: 1,
 	},
 	cardItem: {
 		padding: 5,
@@ -137,11 +159,12 @@ const styles = StyleSheet.create({
 	},
 	body: {
 		marginLeft: 10,
+		height: 55,
 	},
 	thumbnail: {
-		width: 30,
-		height: 30,
-		borderRadius: 15,
+		width: 44,
+		height: 44,
+		borderRadius: 22,
 	},
 	title: {
 		fontWeight: '900',
@@ -159,3 +182,5 @@ const styles = StyleSheet.create({
 		marginLeft: 'auto',
 	},
 });
+
+export default React.memo(CardComponent)
