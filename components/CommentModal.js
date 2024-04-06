@@ -145,25 +145,20 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	
 	
 	return (
-		<Modal
-			animationType="slide"
-			transparent={true}
-			visible={isVisible}
-			onRequestClose={onClose}
-		>
-			<KeyboardAvoidingView
-				style={{ flex: 1 }}
-				behavior={Platform.OS === "ios" ? "padding" : "height"} // 플랫폼에 따라 behavior 조정
-				enabled={true} // Android에서는 필요에 따라 enabled 속성 조정
+		<View style={{ flex: 1 }}>
+			<Modal
+				animationType="slide"
+				transparent={true}
+				visible={isVisible}
+				onRequestClose={onClose}
 			>
-				<View style={styles.modalOverlay}>
-					<View style={styles.modalView}>
+				<View style={styles.modalOverlay} {...panResponder.panHandlers}>
+					<Animated.View style={[styles.modalView, { height: animatedHeight }]}>
 						<TouchableOpacity onPress={onClose} style={styles.closeButton}>
 							<Text>닫기</Text>
 						</TouchableOpacity>
 						<ScrollView
 							style={{ width: "100%" }}
-							keyboardShouldPersistTaps="always" // 스크롤 시 키보드 유지
 						>
 							{loading ? (
 								<Text>Loading comments...</Text> // 로딩 인디케이터 표시
@@ -181,25 +176,35 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 								</>
 							)}
 						</ScrollView>
-						<TextInput
-							style={styles.commentInput}
-							placeholder="댓글 달기..."
-							autoFocus={true} // 컴포넌트가 마운트될 때 자동으로 포커스
-						/>
-					</View>
+					</Animated.View>
 				</View>
-			</KeyboardAvoidingView>
-		</Modal>
+				{isVisible && (
+					<KeyboardAvoidingView
+						behavior={Platform.OS === "ios" ? "padding" : "height"}
+						style={{ position: 'absolute', left: 0, right: 0, bottom: 0 }}
+					>
+						<TextInput
+							ref={inputRef}
+							value={textInputValue}
+							onChangeText={setTextInputValue}
+							placeholder="댓글 달기..."
+							style={styles.textInput}
+							autoFocus={true}
+						/>
+					</KeyboardAvoidingView>
+				)}
+			</Modal>
+		</View>
 	);
 });
 
 const styles = StyleSheet.create({
-	commentInput: {
+	textInput: {
 		height: 40,
-		width: "100%",
 		margin: 12,
 		borderWidth: 1,
 		padding: 10,
+		backgroundColor: 'white',
 	},
 	profileImage: {
 		width: 30,
@@ -209,15 +214,16 @@ const styles = StyleSheet.create({
 	modalOverlay: {
 		flex: 1,
 		justifyContent: 'flex-end',
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
 	},
 	modalView: {
-		height: windowHeight * 0.4,
-		backgroundColor: "white",
+		height: windowHeight * 0.6,
+		backgroundColor: 'white',
 		borderTopRightRadius: 20,
 		borderTopLeftRadius: 20,
 		padding: 20,
-		alignItems: "center",
-		shadowColor: "#000",
+		alignItems: 'center',
+		shadowColor: '#000',
 		shadowOffset: {
 			width: 0,
 			height: 2,
@@ -243,6 +249,7 @@ const styles = StyleSheet.create({
 	commentText: {
 		fontWeight: 'bold',
 	},
+	
 	underCommentText: {
 		// 필요한 경우 추가 스타일
 	},
