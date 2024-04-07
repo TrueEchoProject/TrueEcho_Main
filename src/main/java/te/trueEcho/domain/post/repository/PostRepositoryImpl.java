@@ -23,7 +23,8 @@ public class PostRepositoryImpl implements PostRepository{
         int currentIndex = index * pageCount;
 
         return em.createQuery("select p from Post p " +
-                        "where  (p.user in : filteredUser) and (p.scope between :low and :high)", Post.class)
+                        "where  (p.user in : filteredUser) and (p.scope between :low and :high)" +
+                        "order by p.createdAt desc", Post.class)
                 .setParameter("filteredUser", filteredUser)
                 .setParameter("low", low)
                 .setParameter("high", high)

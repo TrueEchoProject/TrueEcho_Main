@@ -18,10 +18,10 @@ import java.util.List;
 public class PostController {
     private final   PostService  postService;
 
-    @GetMapping("/read/{type}/{location}")
+    @GetMapping("/read/{type}")
     public ResponseEntity<ResponseForm> readPost(
             @PathVariable FeedType type,
-            @PathVariable String location,
+            @RequestParam String location,
             @RequestParam int index,
             @RequestParam int pageCount){
 
