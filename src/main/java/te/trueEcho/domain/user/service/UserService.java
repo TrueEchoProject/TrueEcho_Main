@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import te.trueEcho.domain.user.dto.EditUserRequest;
 import te.trueEcho.domain.user.dto.EditUserResponse;
 import te.trueEcho.domain.user.entity.User;
-import te.trueEcho.domain.user.repository.UserRepositoryImpl;
+import te.trueEcho.domain.user.repository.UserAuthRepository;
 import te.trueEcho.global.util.AuthUtil;
 
 @Slf4j
@@ -15,7 +15,7 @@ import te.trueEcho.global.util.AuthUtil;
 public class UserService {
 
     private final AuthUtil authUtil;
-    private final UserRepositoryImpl userRepositoryImpl;
+    private final UserAuthRepository userAuthRepository;
 
     public EditUserResponse getEditUser() {
 
@@ -26,7 +26,7 @@ public class UserService {
     public void editUser(EditUserRequest editUserRequest) {
         final User user = authUtil.getLoginUser();
         updateUser(user, editUserRequest);
-        userRepositoryImpl.updateUser(user);
+        userAuthRepository.updateUser(user);
     }
 
     private void updateUser(User user, EditUserRequest editUserRequest) {

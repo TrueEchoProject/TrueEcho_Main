@@ -38,5 +38,6 @@ out/
 
 
 # properties # do not share
-src/main/resources/application.properties
-application.properties
+!src/main/resources/application.properties
+.env
+src/main/resources/.env

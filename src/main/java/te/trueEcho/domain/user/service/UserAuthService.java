@@ -1,7 +1,6 @@
 package te.trueEcho.domain.user.service;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 import te.trueEcho.domain.user.dto.*;
 import te.trueEcho.domain.user.entity.User;
 
@@ -12,6 +11,7 @@ public interface UserAuthService {
     boolean registerUser(SignUpUserDto signUpUserDTO);
 
     boolean isTypeDuplicated(EmailUserDto email, String type) ;
+
 
     // 유저 찾기
     User findUserByID(Long id);

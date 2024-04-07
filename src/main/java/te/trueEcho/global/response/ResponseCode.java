@@ -36,7 +36,9 @@ public enum ResponseCode {
     AUTHENTICATION_FAIL(401, "T001", "사용자 인증에 실패했습니다."),
     AUTHORIZATION_FAIL(403, "T002", "사용자 인가에 실패했습니다."),
     REFRESHMENT_SUCCESS(202, "T002", "토큰 재생성에 성공했습니다."),
-    REFRESHMENT_FAIL(202, "T002", "토큰 재생성에 실패했습니다.");
+    REFRESHMENT_FAIL(202, "T002", "토큰 재생성에 실패했습니다."),
+    GET_POST_SUCCESS(202, "T002", "게시물을 읽기를 성공했습니다."),
+    GET_POST_FAIL(202, "T002", "게시물을 읽기를 실패했습니다.");
 
     private final int status;
     private final String code;

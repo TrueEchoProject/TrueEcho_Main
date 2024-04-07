@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import te.trueEcho.domain.user.dto.EmailUserDto;
 import te.trueEcho.domain.user.repository.EmailMemoryRepository;
-import te.trueEcho.domain.user.repository.UserRepository;
 import te.trueEcho.infra.email.EmailService;
 
 @Slf4j

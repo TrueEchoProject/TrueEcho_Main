@@ -33,7 +33,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
-  //validator
+  	//validator
 	implementation 'org.hibernate.validator:hibernate-validator'
 
 	testImplementation 'org.springframework.security:spring-security-test'
@@ -63,11 +63,14 @@ dependencies {
 	// 개발 편의용
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-//	//mysql
-//	runtimeOnly 'com.mysql:mysql-connector-j'
+	//mysql
+	//runtimeOnly 'com.mysql:mysql-connector-j'
 
 	//mariaDB
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+
+
+
 
 }
 

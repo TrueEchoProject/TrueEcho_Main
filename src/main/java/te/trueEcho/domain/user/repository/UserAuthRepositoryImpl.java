@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class UserRepositoryImpl implements UserRepository{
+public class UserAuthRepositoryImpl implements UserAuthRepository {
 
     private final EntityManager em;
 
@@ -33,11 +33,15 @@ public class UserRepositoryImpl implements UserRepository{
 
     @Override
     public User findUserByEmail(String email) {
-        try{
-            return em.createQuery("select u from User u where u.email=: email" , User.class)
+        try {
+            return em.createQuery(
+                            "select distinct u from User u " +
+                                    "left join fetch u.suspendedUser " +
+                                    "left join fetch u.notiTimeQ " +
+                                    "where u.email = :email", User.class)
                     .setParameter("email", email)
                     .getSingleResult();
-        }catch (NoResultException e){
+        } catch (NoResultException e) {
             return null;
         }
     }
@@ -62,7 +66,6 @@ public class UserRepositoryImpl implements UserRepository{
 
     @Transactional
     @Override
-
     public void updateUser(User user) {
         User existUser = em.find(User.class, user.getId());
         if (existUser == null) {
@@ -99,13 +102,6 @@ public class UserRepositoryImpl implements UserRepository{
        }catch(NoResultException e){
            return null;
        }
-    }
-
-    public boolean existsByUsername(String username) {
-        Long count = em.createQuery("select count(u) from User u where u.username = :username", Long.class)
-                .setParameter("username", username)
-                .getSingleResult();
-        return count > 0;
     }
 
 

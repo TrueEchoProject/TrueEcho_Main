@@ -9,7 +9,7 @@ import te.trueEcho.domain.user.converter.SignUpDtoToUserConverter;
 import te.trueEcho.domain.user.dto.*;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.EmailMemoryRepository;
-import te.trueEcho.domain.user.repository.UserRepository;
+import te.trueEcho.domain.user.repository.UserAuthRepository;
 
 @Slf4j
 @Service
@@ -17,16 +17,14 @@ import te.trueEcho.domain.user.repository.UserRepository;
 public class UserAuthServiceImpl implements UserAuthService {
 
     private final EmailCodeService emailCodeService;
-    private final UserRepository userRepository;
-
-    private final SignUpDtoToUserConverter signUpToUser;
+    private final UserAuthRepository userAuthRepository;
     private final EmailMemoryRepository emailMemoryRepository;
 
     public boolean isTypeDuplicated(EmailUserDto emailUserDto, String target) {
         if( target.equals("email"))
-             return  userRepository.findUserByEmail(emailUserDto.getEmail())!=null;
+             return  userAuthRepository.findUserByEmail(emailUserDto.getEmail())!=null;
         if( target.equals("nickname"))
-            return userRepository.findUserByNickName(emailUserDto.getNickname())!=null;
+            return userAuthRepository.findUserByNickName(emailUserDto.getNickname())!=null;
 
         return false;
     }
@@ -36,10 +34,10 @@ public class UserAuthServiceImpl implements UserAuthService {
         final boolean status =emailMemoryRepository.checkStatusByEmail(signUpUserDTO.getEmail());
         log.info("email status = {}",status);
         if(status){
-            final User newUser = signUpToUser.converter(signUpUserDTO);
-            log.info("user's name = {}",        newUser.getName());
+            final User newUser = SignUpDtoToUserConverter.converter(signUpUserDTO);
+            log.info("user's nickname = {}",        newUser.getNickname());
 
-            userRepository.save(newUser);
+            userAuthRepository.save(newUser);
             emailMemoryRepository.deleteEmail(signUpUserDTO.getEmail());
             return true;
         }else{
@@ -49,7 +47,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Override
     public User findUserByID(Long id) {
-        return userRepository.findUserById(id);
+        return userAuthRepository.findUserById(id);
     }
 
     @Override
@@ -77,8 +75,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
 
     @Override
-    public boolean login(LoginUserDto loginUserDto){
-
+    public boolean  login(LoginUserDto loginUserDto){
       return true;
     }
 

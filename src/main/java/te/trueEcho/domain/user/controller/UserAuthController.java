@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -22,6 +23,7 @@ import te.trueEcho.global.config.Admin;
 import te.trueEcho.global.response.ResponseForm;
 import te.trueEcho.global.security.jwt.dto.TokenDto;
 import te.trueEcho.global.security.jwt.service.JwtService;
+
 import static te.trueEcho.global.response.ResponseCode.*;
 
 @Tag(name = "계정")
@@ -33,29 +35,6 @@ public class UserAuthController {
 
     private final UserAuthService userAuthService;
 
-
-    @Operation(summary = "인증메일 전송", description = "회원의 중복을 확인하기 위해 이메일 인증코드 전송")
-    @Parameters({@Parameter(name = "email", required = true, example = "trueEcho@gmail.com"),
-            @Parameter(name = "nickname", required = true, example = "heejune")
-    })
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            required = true, description = "hihihihi", useParameterTypeSchema = true)
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "M014 - 인증이메일을 전송하였습니다."),
-            @ApiResponse(responseCode = "400", description = """
-                    G003 - 유효하지 않은 입력입니다.
-                    G004 - 입력 타입이 유효하지 않습니다.
-                    M002 - 이미 존재하는 사용자 이름입니다.""")
-    })
-    @GetMapping(value = "/email")
-    public ResponseEntity<ResponseForm> sendEmail(
-            @RequestBody EmailUserDto emailUserDTO) {
-
-        final boolean sent = userAuthService.sendEmailCode(emailUserDTO);
-        return sent ?
-                ResponseEntity.ok(ResponseForm.of(SEND_EMAIL_SUCCESS)) :
-                ResponseEntity.ok(ResponseForm.of(SEND_EMAIL_FAIL));
-    }
 
 
     @Operation(summary = "계정중복 조회", description = """
@@ -80,29 +59,46 @@ public class UserAuthController {
     })
 
     @GetMapping(value = "/{type}/duplication")
-    public ResponseEntity<ResponseForm> checkEmailDuplication(@PathVariable String type,
-            @RequestBody EmailUserDto emailUserDTO) {
+    public ResponseEntity<ResponseForm> checkEmailDuplication(
+            @PathVariable String type,
+            @RequestParam String nickname,
+            @RequestParam String email) {
 
-        final boolean isDuplicated = userAuthService.isTypeDuplicated(emailUserDTO, type);
+        EmailUserDto emailUserDto =  EmailUserDto.builder()
+                .email(email)
+                .nickname(nickname)
+                .build();
+
+        final boolean isDuplicated = userAuthService.isTypeDuplicated(
+                EmailUserDto.builder()
+                .email(email)
+                .nickname(nickname)
+                .build(), type);
 
         if (isDuplicated)
             return ResponseEntity.ok(ResponseForm.of(NOT_DUPLICATED_FAIL, type)); // 중복
 
-      if(type.equals("email")) return sendEmail(emailUserDTO);
+      if(type.equals("email")) return sendEmail(nickname,email);
 
       return ResponseEntity.ok(ResponseForm.of(NOT_DUPLICATED_SUCCESS, type));
     }
 
     @GetMapping(value = "/checkcode")
     public ResponseEntity<ResponseForm> checkCode(
-            @RequestBody EmailCheckCodeDto emailCheckCodeDto) {
-      boolean isVerified =   userAuthService.checkEmailCode(emailCheckCodeDto);
+            @RequestParam String email,
+            @RequestParam String checkCode) {
+
+      boolean isVerified =   userAuthService.checkEmailCode(
+              EmailCheckCodeDto.builder()
+              .email(email)
+              .checkCode(checkCode)
+              .build()
+      );
 
       return isVerified ?
              ResponseEntity.ok(ResponseForm.of(VERIFY_EMAIL_SUCCESS, "")) :
              ResponseEntity.ok(ResponseForm.of(VERIFY_EMAIL_FAIL, ""));
     }
-
 
     @Operation(summary = "회원가입", description = "사용자의 정보를 이용하여 회원가입")
     @Parameters({@Parameter(name = "email", required = true, example = "trueEcho@gmail.com"),
@@ -124,9 +120,40 @@ public class UserAuthController {
     @PostMapping(value = "/register")
     public ResponseEntity<ResponseForm> register(@RequestBody SignUpUserDto signUpUserDTO) {
         final boolean isRegistered = userAuthService.registerUser(signUpUserDTO);
+
         return isRegistered ?
                 ResponseEntity.ok(ResponseForm.of(REGISTER_SUCCESS, true)) :
                 ResponseEntity.ok(ResponseForm.of(VERIFY_EMAIL_FAIL, false));
+    }
+
+    @Operation(summary = "인증메일 전송", description = "회원의 중복을 확인하기 위해 이메일 인증코드 전송")
+    @Parameters({@Parameter(name = "email", required = true, example = "trueEcho@gmail.com"),
+            @Parameter(name = "nickname", required = true, example = "heejune")
+    })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            required = true, description = "hihihihi", useParameterTypeSchema = true)
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "M014 - 인증이메일을 전송하였습니다."),
+            @ApiResponse(responseCode = "400", description = """
+                    G003 - 유효하지 않은 입력입니다.
+                    G004 - 입력 타입이 유효하지 않습니다.
+                    M002 - 이미 존재하는 사용자 이름입니다.""")
+    })
+
+    @GetMapping(value = "/email")
+    public ResponseEntity<ResponseForm> sendEmail(
+            @RequestParam String nickname,
+            @RequestParam String email) {
+
+        EmailUserDto emailUserDto =  EmailUserDto.builder()
+                .email(email)
+                .nickname(nickname)
+                .build();
+
+        final boolean sent = userAuthService.sendEmailCode(emailUserDto);
+        return sent ?
+                ResponseEntity.ok(ResponseForm.of(SEND_EMAIL_SUCCESS)) :
+                ResponseEntity.ok(ResponseForm.of(SEND_EMAIL_FAIL));
     }
 
 }

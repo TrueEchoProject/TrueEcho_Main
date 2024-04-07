@@ -58,28 +58,30 @@ public class User extends CreatedDateAudit {
 
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "user_gender", nullable = true)
     private Gender gender;
 
-    @Column(name = "connect_by_friend")
+    @Column(name = "connect_by_friend", nullable = true)
     private boolean connectByFriend; //친구의 친구에게 내 계정 노출
 
-    @Column(name = "user_noti_time")
+    @Column(name = "user_noti_time", nullable = true)
     @Enumerated(EnumType.STRING)
     private NotiTimeStatus notificationTime;
 
-    @Column(name = "user_noti_setting")
+    @Column(name = "user_noti_setting", nullable = true)
     private boolean notificationSetting;
 
-    @Column(name = "user_birthday")
+    @Column(name = "user_birthday", nullable = true)
     private LocalDate birthday;
 
-    @Column(name = "user_location")
+    @Column(name = "user_location", nullable = true)
     private String location;
 
-    @Column(name = "user_profile_url")
+    @Lob
+    @Column(name = "user_profile_url", nullable = true)
     private String profileURL;
 
-    @Column(name = "user_password", nullable = false)
+    @Column(name = "user_password")
     private String password;
 
     @Column(name = "refresh_token", nullable = true)

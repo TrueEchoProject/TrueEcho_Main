@@ -3,6 +3,7 @@ package te.trueEcho.global.security.jwt.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -56,8 +57,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeRequests) ->
                         authorizeRequests
 //                                .requestMatchers(PathRequest.toH2Console()).permitAll()
-                                .requestMatchers("/swagger-ui/**", "/accounts/**").permitAll()
-                                .requestMatchers("/", "/email/**").hasRole(Role.ADMIN.name()) // 인가 확인
+                                .requestMatchers(HttpMethod.GET, "/accounts/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/accounts/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/email/**").hasRole(Role.ADMIN.name()) // 인가 확인
                                 .anyRequest().authenticated() // 나머지는 인증 필요.
                 ).
                 addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
