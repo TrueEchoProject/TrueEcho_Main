@@ -14,7 +14,7 @@ import te.trueEcho.domain.user.repository.UserAuthRepository;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserAuthServiceImpl implements UserAuthService{
+public class UserAuthServiceImpl implements UserAuthService {
 
     private final EmailCodeService emailCodeService;
     private final UserAuthRepository userAuthRepository;

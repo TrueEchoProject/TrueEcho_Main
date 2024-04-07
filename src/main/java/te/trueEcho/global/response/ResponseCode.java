@@ -18,7 +18,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ResponseCode {
 
-    // user
+    // User
     REGISTER_SUCCESS(200, "U001", "회원가입에 성공했습니다."),
     REGISTER_FAIL(200, "U002", "회원가입에 실패했습니다."),
     NOT_DUPLICATED_SUCCESS(200, "U002", "중복되지 않은 계정입니다."),
@@ -31,6 +31,8 @@ public enum ResponseCode {
     LOGIN_FAIL(200, "U009", "로그인에 성공했습니다."),
     LOGOUT_SUCCESS(200, "U0010", "로그아웃에 성공했습니다."),
     LOGOUT_FAIL(200, "U0011", "로그아웃에 실패했습니다."),
+    GET_EDIT_PROFILE_SUCCESS(200, "U0012", "회원 프로필 수정정보를 조회하였습니다."),
+    EDIT_PROFILE_SUCCESS(200, "U0013", "회원 프로필을 수정하였습니다."),
     AUTHENTICATION_FAIL(401, "T001", "사용자 인증에 실패했습니다."),
     AUTHORIZATION_FAIL(403, "T002", "사용자 인가에 실패했습니다."),
     REFRESHMENT_SUCCESS(202, "T002", "토큰 재생성에 성공했습니다."),

@@ -35,13 +35,17 @@ public class UserAuthController {
 
     private final UserAuthService userAuthService;
 
+
+
     @Operation(summary = "계정중복 조회", description = """
             1. 이메일로 이미 등록된 계정인지를 확인.
             2. 이메일이 중복되지 않은 경우 이메일 주소로 인증코드 전송.
             3. 이메일이 중복된 경우 이메일 중복을 클라이언트에 알림.
             """)
     @Parameters({@Parameter(name = "email", required = true, example = "trueEcho@gmail.com"),
-            @Parameter(name = "username", required = true, example = "heejune")
+
+            @Parameter(name = "username", required = true, example = "heejoon")
+
     })
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             required = true, description = "hihihihi", useParameterTypeSchema = true)

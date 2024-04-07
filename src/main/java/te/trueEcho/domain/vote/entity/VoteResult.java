@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import te.trueEcho.domain.notification.entity.VoteResultNoti;
 import te.trueEcho.domain.user.entity.User;
-import te.trueEcho.global.entity.Audit;
+import te.trueEcho.global.entity.CreatedDateAudit;
+
 
 
 @Getter
@@ -16,7 +17,8 @@ import te.trueEcho.global.entity.Audit;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "vote_results")
-public class VoteResult extends Audit {
+
+public class VoteResult extends CreatedDateAudit {
 
     @Id
     @Column(name = "vote_result_id")
