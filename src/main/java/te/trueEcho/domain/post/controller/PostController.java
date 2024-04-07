@@ -3,6 +3,7 @@ package te.trueEcho.domain.post.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import te.trueEcho.domain.post.dto.FeedType;
 import te.trueEcho.domain.post.dto.PostGetDto;
 import te.trueEcho.domain.post.dto.PostListDto;
 import te.trueEcho.domain.post.service.PostService;
@@ -17,10 +18,21 @@ import java.util.List;
 public class PostController {
     private final   PostService  postService;
 
-    @GetMapping("/read")
-    public ResponseEntity<ResponseForm> readPost( @RequestBody PostGetDto postsGetDto){
+    @GetMapping("/read/{type}/{location}")
+    public ResponseEntity<ResponseForm> readPost(
+            @PathVariable FeedType type,
+            @PathVariable String location,
+            @RequestParam int index,
+            @RequestParam int pageCount){
 
-        PostListDto  postGetDtoList =  postService.getPost(postsGetDto);
+        PostListDto  postGetDtoList =  postService.getPost(
+                PostGetDto.builder()
+                        .index(index)
+                        .pageCount(pageCount)
+                        .type(type)
+                        .location(location)
+                        .build()
+        );
 
         return !postGetDtoList.getPostDtos().isEmpty() ?
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_POST_SUCCESS, postGetDtoList)) :
