@@ -60,14 +60,14 @@ public class User extends CreatedDateAudit {
     private Gender gender;
 
     @Column(name = "connect_by_friend", nullable = true)
-    private boolean connectByFriend; //친구의 친구에게 내 계정 노출
+    private Boolean connectByFriend; //친구의 친구에게 내 계정 노출
 
     @Column(name = "user_noti_time", nullable = true)
     @Enumerated(EnumType.STRING)
     private NotiTimeStatus notificationTime;
 
     @Column(name = "user_noti_setting", nullable = true)
-    private boolean notificationSetting;
+    private Boolean notificationSetting;
 
     @Column(name = "user_birthday", nullable = true)
     private LocalDate birthday;

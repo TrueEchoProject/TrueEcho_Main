@@ -64,6 +64,11 @@ public class UserAuthRepositoryImpl implements UserAuthRepository {
                 .getResultList();
     }
 
+    @Override
+    public void deleteUserById(Long id) throws Exception {
+
+    }
+
     @Transactional
     @Override
     public void updateUser(User user) {
@@ -82,17 +87,6 @@ public class UserAuthRepositoryImpl implements UserAuthRepository {
 
     }
 
-    @Override
-    @Transactional
-    public void deleteUserById(Long id) throws Exception {
-        User userToDelete = em.find(User.class, id);
-        if (userToDelete != null) {
-            em.remove(userToDelete);
-        } else {
-            // 삭제할 사용자가 없는 경우에 대한 처리
-            throw new Exception("User with id " + id + " not found");
-        }
-    }
 
     @Override
     public   String getPasswordByEmail(String email){

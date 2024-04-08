@@ -35,6 +35,8 @@ public enum ResponseCode {
     GET_EDIT_PROFILE_FAIL(200, "U0012", "회원 프로필 수정정보를 실패하였습니다."),
     EDIT_PROFILE_SUCCESS(200, "U0013", "회원 프로필을 수정하였습니다."),
     EDIT_PROFILE_FAIL(200, "U0013", "회원 프로필을 실패하였습니다."),
+    DELETE_USER_SUCCESS(200, "U0014", "회원 탈퇴를 성공했습니다."),
+    DELETE_USER_FAIL(200, "U0014", "회원 탈퇴를 실패하였습니다."),
     AUTHENTICATION_FAIL(401, "T001", "사용자 인증에 실패했습니다."),
     AUTHORIZATION_FAIL(403, "T002", "사용자 인가에 실패했습니다."),
     REFRESHMENT_SUCCESS(202, "T002", "토큰 재생성에 성공했습니다."),

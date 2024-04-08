@@ -9,12 +9,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import te.trueEcho.domain.user.dto.EditUserRequest;
 import te.trueEcho.domain.user.dto.EditUserResponse;
-import te.trueEcho.domain.user.dto.EmailCheckCodeDto;
+import te.trueEcho.domain.user.dto.EmailUserDto;
 import te.trueEcho.domain.user.service.UserService;
 import te.trueEcho.global.response.ResponseForm;
 
 import static te.trueEcho.global.response.ResponseCode.*;
-import static te.trueEcho.global.response.ResponseCode.VERIFY_EMAIL_FAIL;
 
 @Tag(name = "USER API")
 @Slf4j
@@ -29,8 +28,8 @@ public class UserController {
     @PutMapping(value = "/edit") // 회원 정보 수정
     public ResponseEntity<ResponseForm> editUser(@RequestBody @Valid EditUserRequest editUserRequest) {
 
-        boolean isVerified = userService.editUser(editUserRequest);
-        return isVerified ?
+        boolean isEdited = userService.editUser(editUserRequest);
+        return isEdited ?
                 ResponseEntity.ok(ResponseForm.of(EDIT_PROFILE_SUCCESS)) :
                 ResponseEntity.ok(ResponseForm.of(EDIT_PROFILE_FAIL));
     }
@@ -38,12 +37,21 @@ public class UserController {
     @GetMapping(value = "/edit") // 수정 정보를 조회
     public ResponseEntity<ResponseForm> getMemberEdit() {
 
-        boolean isVerified = userService.getBoolEditUser();
+        boolean isEdited = userService.getBoolEditUser();
         EditUserResponse editUserResponse = userService.getEditUser();
 
-        return isVerified ?
+        return isEdited ?
                 ResponseEntity.ok(ResponseForm.of(GET_EDIT_PROFILE_SUCCESS, editUserResponse)) :
                 ResponseEntity.ok(ResponseForm.of(GET_EDIT_PROFILE_FAIL, ""));
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<ResponseForm> deleteUser(@RequestParam String email) {
+
+        boolean isDeleted = userService.deleteUser(email);
+        return isDeleted ?
+                ResponseEntity.ok(ResponseForm.of(DELETE_USER_SUCCESS)) :
+                ResponseEntity.ok(ResponseForm.of(DELETE_USER_FAIL));
     }
 }
     

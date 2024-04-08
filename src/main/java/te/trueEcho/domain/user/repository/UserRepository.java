@@ -2,6 +2,7 @@ package te.trueEcho.domain.user.repository;
 
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -15,7 +16,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserRepository {
     private final EntityManager em;
-
 
     @Transactional
     public List<User> filterSelectedUserByLocation(String location, List<User> selectedUsers ){
@@ -38,4 +38,5 @@ public class UserRepository {
             return null;
         }
     }
+
 }
