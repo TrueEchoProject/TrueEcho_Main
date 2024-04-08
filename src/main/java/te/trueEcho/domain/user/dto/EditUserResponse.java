@@ -16,8 +16,6 @@ public class EditUserResponse {
 
     private String name;
 
-    private String password;
-
     private Gender gender;
 
     private NotiTimeStatus notificationTime;
@@ -31,7 +29,6 @@ public class EditUserResponse {
 
     public EditUserResponse(User user) {
         this.name = user.getName();
-        this.password = user.getPassword();
         this.gender = user.getGender();
         this.notificationTime = user.getNotificationTime();
         this.notificationSetting = user.getNotificationSetting();

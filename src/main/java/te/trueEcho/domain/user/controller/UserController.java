@@ -25,18 +25,18 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping(value = "/edit") // 수정 정보를 조회
-    public ResponseEntity<ResponseForm> getMemberEdit() {
-
-        final EditUserResponse editUserResponse = userService.getEditUser();
-        return ResponseEntity.ok(ResponseForm.of(GET_EDIT_PROFILE_SUCCESS, editUserResponse));
-    }
-
     @PutMapping(value = "/edit") // 회원 정보 수정
     public ResponseEntity<ResponseForm> editUser(@RequestBody @Valid EditUserRequest editUserRequest) {
 
         userService.editUser(editUserRequest);
         return ResponseEntity.ok(ResponseForm.of(EDIT_PROFILE_SUCCESS));
+    }
+
+    @GetMapping(value = "/edit") // 수정 정보를 조회
+    public ResponseEntity<ResponseForm> getMemberEdit() {
+
+        final EditUserResponse editUserResponse = userService.getEditUser();
+        return ResponseEntity.ok(ResponseForm.of(GET_EDIT_PROFILE_SUCCESS, editUserResponse));
     }
 }
     
