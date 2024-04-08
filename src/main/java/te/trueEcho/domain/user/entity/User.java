@@ -24,7 +24,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "users")
-
 public class User extends CreatedDateAudit {
 
     /**
@@ -55,7 +54,6 @@ public class User extends CreatedDateAudit {
     @Column(name = "user_nick_name", nullable = false, length = 20, unique = true)
 
     private String nickname; // user 구분하는 식별자
-
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_gender", nullable = true)

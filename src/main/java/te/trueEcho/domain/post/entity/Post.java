@@ -39,9 +39,6 @@ public class Post extends CreatedDateAudit {
     @Enumerated(EnumType.STRING)
     private PostStatus status;
 
-    @Column(name = "post_scope") // 공개 범위
-    private int scope;
-
     @OneToOne(mappedBy = "post")
     private Pin pin;
 
@@ -61,7 +58,6 @@ public class Post extends CreatedDateAudit {
         this.urlFront = urlFront;
         this.urlBack = urlBack;
         this.status = status;
-        this.scope = scope;
         this.user = user;
     }
 }
