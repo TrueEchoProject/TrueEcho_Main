@@ -20,7 +20,6 @@ public class ResponseForm {
     @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "응답 데이터")
     final  private Object data;
 
-
     private ResponseForm(ResponseCode resultCode, Object data) {
         this.status = resultCode.getStatus();
         this.code = resultCode.getCode();

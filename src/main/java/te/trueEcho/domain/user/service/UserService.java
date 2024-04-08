@@ -2,6 +2,7 @@ package te.trueEcho.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.stereotype.Service;
 import te.trueEcho.domain.user.dto.EditUserRequest;
 import te.trueEcho.domain.user.dto.EditUserResponse;
@@ -23,10 +24,24 @@ public class UserService {
         return new EditUserResponse(user);
     }
 
-    public void editUser(EditUserRequest editUserRequest) {
+    public boolean editUser(EditUserRequest editUserRequest) {
+
         final User user = authUtil.getLoginUser();
         updateUser(user, editUserRequest);
         userAuthRepository.updateUser(user);
+        if (user.getName() == userAuthRepository.findUserById(user.getId()).getName()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean getBoolEditUser() {
+        final User user = authUtil.getLoginUser();
+        if (user == null) {
+            return false;
+        }
+        return true;
     }
 
     private void updateUser(User user, EditUserRequest editUserRequest) {

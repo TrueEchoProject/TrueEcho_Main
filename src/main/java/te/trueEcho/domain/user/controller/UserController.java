@@ -9,11 +9,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import te.trueEcho.domain.user.dto.EditUserRequest;
 import te.trueEcho.domain.user.dto.EditUserResponse;
+import te.trueEcho.domain.user.dto.EmailCheckCodeDto;
 import te.trueEcho.domain.user.service.UserService;
 import te.trueEcho.global.response.ResponseForm;
 
-import static te.trueEcho.global.response.ResponseCode.EDIT_PROFILE_SUCCESS;
-import static te.trueEcho.global.response.ResponseCode.GET_EDIT_PROFILE_SUCCESS;
+import static te.trueEcho.global.response.ResponseCode.*;
+import static te.trueEcho.global.response.ResponseCode.VERIFY_EMAIL_FAIL;
 
 @Tag(name = "USER API")
 @Slf4j
@@ -28,15 +29,21 @@ public class UserController {
     @PutMapping(value = "/edit") // 회원 정보 수정
     public ResponseEntity<ResponseForm> editUser(@RequestBody @Valid EditUserRequest editUserRequest) {
 
-        userService.editUser(editUserRequest);
-        return ResponseEntity.ok(ResponseForm.of(EDIT_PROFILE_SUCCESS));
+        boolean isVerified = userService.editUser(editUserRequest);
+        return isVerified ?
+                ResponseEntity.ok(ResponseForm.of(EDIT_PROFILE_SUCCESS)) :
+                ResponseEntity.ok(ResponseForm.of(EDIT_PROFILE_FAIL));
     }
 
     @GetMapping(value = "/edit") // 수정 정보를 조회
     public ResponseEntity<ResponseForm> getMemberEdit() {
 
-        final EditUserResponse editUserResponse = userService.getEditUser();
-        return ResponseEntity.ok(ResponseForm.of(GET_EDIT_PROFILE_SUCCESS, editUserResponse));
+        boolean isVerified = userService.getBoolEditUser();
+        EditUserResponse editUserResponse = userService.getEditUser();
+
+        return isVerified ?
+                ResponseEntity.ok(ResponseForm.of(GET_EDIT_PROFILE_SUCCESS, editUserResponse)) :
+                ResponseEntity.ok(ResponseForm.of(GET_EDIT_PROFILE_FAIL, ""));
     }
 }
     
