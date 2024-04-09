@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class CommentListDto {
-    private Long id;
-    List<CommentListDto> comments;
+public class CommentListResponse {
+    private Long postId;
+    List<CommentResponse> comments;
 }
