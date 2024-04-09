@@ -180,4 +180,8 @@ public class User extends CreatedDateAudit {
         this.location = location;
     }
 
+    public void removeSuspendedUser() {
+        this.suspendedUser = null;
+    }
+
 }

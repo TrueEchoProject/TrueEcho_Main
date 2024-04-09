@@ -9,9 +9,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import te.trueEcho.domain.user.dto.EditUserRequest;
 import te.trueEcho.domain.user.dto.EditUserResponse;
-import te.trueEcho.domain.user.dto.EmailUserDto;
 import te.trueEcho.domain.user.service.UserService;
 import te.trueEcho.global.response.ResponseForm;
+import te.trueEcho.global.security.jwt.service.JwtService;
 
 import static te.trueEcho.global.response.ResponseCode.*;
 
@@ -24,6 +24,7 @@ import static te.trueEcho.global.response.ResponseCode.*;
 public class UserController {
 
     private final UserService userService;
+    private final JwtService jwtService;
 
     @PutMapping(value = "/edit") // 회원 정보 수정
     public ResponseEntity<ResponseForm> editUser(@RequestBody @Valid EditUserRequest editUserRequest) {
@@ -45,11 +46,15 @@ public class UserController {
                 ResponseEntity.ok(ResponseForm.of(GET_EDIT_PROFILE_FAIL, ""));
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<ResponseForm> deleteUser(@RequestParam String email) {
+    @DeleteMapping("/deleteUser")
+    public ResponseEntity<ResponseForm> deleteUser(@RequestHeader("Authorization") String token, @RequestParam String email) {
 
-        boolean isDeleted = userService.deleteUser(email);
-        return isDeleted ?
+        boolean isDeletedUser = userService.deleteUser(email);
+        boolean isDeleted = jwtService.deleteRefreshToken();
+
+        log.info("token: {} ", token);
+
+        return isDeleted && isDeletedUser?
                 ResponseEntity.ok(ResponseForm.of(DELETE_USER_SUCCESS)) :
                 ResponseEntity.ok(ResponseForm.of(DELETE_USER_FAIL));
     }

@@ -11,6 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import te.trueEcho.domain.user.dto.LoginUserDto;
+import te.trueEcho.domain.user.entity.SuspendedUser;
+import te.trueEcho.domain.user.repository.SuspendedUserRepository;
+import te.trueEcho.domain.user.service.UserService;
 import te.trueEcho.global.response.ResponseForm;
 import te.trueEcho.global.security.jwt.dto.TokenDto;
 import te.trueEcho.global.security.jwt.service.JwtService;
@@ -22,6 +25,8 @@ import static te.trueEcho.global.response.ResponseCode.*;
 @RequiredArgsConstructor
 public class JwtController {
     private final JwtService jwtService;
+    private final SuspendedUserRepository suspendedUserRepository;
+    private final UserService userService;
 
     @Operation(summary = "로그인", description ="회원가입시 입력했던 유저이름과 패스워드 입력")
     @Parameters({@Parameter(name = "username", required = true, example = "heejune"),
@@ -42,11 +47,20 @@ public class JwtController {
         boolean isEmpty = true;
 
         final TokenDto tokenDto = jwtService.login(loginUserDto);
-        isEmpty= tokenDto.getRefreshToken().isBlank() || tokenDto.getAccessToken().isBlank();
+        isEmpty = tokenDto.getRefreshToken().isBlank() || tokenDto.getAccessToken().isBlank();
+
+        SuspendedUser suspendedUser = suspendedUserRepository.findSuspendedUserByEmail(loginUserDto.getEmail());
+        if (suspendedUser != null) {
+            // If the user is in the SuspendedUser table, delete the user
+            boolean isCanceled = userService.cancelDeleteUser(suspendedUser);
+            return isCanceled ?
+                    ResponseEntity.ok(ResponseForm.of(CANCEL_DELETE_USER_SUCCESS, tokenDto)) :
+                    ResponseEntity.ok(ResponseForm.of(CANCEL_DELETE_USER_FAIL));
+        }
 
         return isEmpty ?
-                ResponseEntity.ok(ResponseForm.of(LOGIN_SUCCESS)):
-                ResponseEntity.ok(ResponseForm.of(LOGIN_FAIL,tokenDto));
+                ResponseEntity.ok(ResponseForm.of(LOGIN_SUCCESS)) :
+                ResponseEntity.ok(ResponseForm.of(LOGIN_FAIL, tokenDto));
 
     }
 
