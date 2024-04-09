@@ -8,23 +8,19 @@ public interface UserAuthService {
 
     //회원가입
     @Transactional
-    boolean registerUser(SignUpUserDto signUpUserDTO);
+    boolean registerUser(RegisterRequest registerRequest);
 
-    boolean isTypeDuplicated(EmailUserDto email, String type) ;
-
+    boolean isTypeDuplicated(EmailRequest email, String type) ;
 
     // 유저 찾기
     User findUserByID(Long id);
 
     // 이메일 인증코드 확인
-    boolean checkEmailCode(EmailCheckCodeDto emailCheckCodeDto);
+    boolean checkEmailCode(CheckCodeRequest emailCheckCodeDto);
 
     @Transactional
     // 이메일 인증코드 전송
-    boolean sendEmailCode(EmailUserDto emailUserDto);
+    boolean sendEmailCode(EmailRequest emailRequestDto);
     //개인정보 수정
-    @Transactional
-    User updateUser(EditUserDto editUserDTO);
-
-    boolean login(LoginUserDto loginUserDto);
+    boolean login(LoginRequest loginRequest);
 }
