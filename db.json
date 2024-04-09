@@ -1,6 +1,8 @@
 {
   "user_location": [
-    { "your_location": "서울특별시 용산구 서빙고동" }
+    {
+      "your_location": "서울특별시 용산구 서빙고동"
+    }
   ],
   "users": [
     {

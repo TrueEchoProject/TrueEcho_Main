@@ -37,7 +37,7 @@ const CardComponent = ({ post }) => {
 		console.log(newLikesCount)
 		console.log(post.post_id)
 		try {
-			await axios.patch(`http://192.168.0.3:3000/posts?post_id=${post.post_id}`, {
+			await axios.patch(`http://192.168.0.3:3000/posts/${post.post_id}`, {
 				likes_count: newLikesCount
 			});
 			console.log('Likes count updated successfully');
