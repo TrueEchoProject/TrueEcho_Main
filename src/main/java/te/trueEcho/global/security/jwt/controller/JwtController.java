@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import te.trueEcho.domain.user.dto.LoginUserDto;
+import te.trueEcho.domain.user.dto.LoginRequest;
 import te.trueEcho.global.response.ResponseForm;
 import te.trueEcho.global.security.jwt.dto.TokenDto;
 import te.trueEcho.global.security.jwt.service.JwtService;
@@ -37,11 +37,11 @@ public class JwtController {
     })
 
     @PostMapping(value = "/accounts/login")
-    public ResponseEntity<ResponseForm> login(@RequestBody LoginUserDto loginUserDto) {
-        log.info("login : {} {}", loginUserDto.getEmail(), loginUserDto.getPassword());
+    public ResponseEntity<ResponseForm> login(@RequestBody LoginRequest loginRequest) {
+        log.info("login : {} {}", loginRequest.getEmail(), loginRequest.getPassword());
         boolean isEmpty = true;
 
-        final TokenDto tokenDto = jwtService.login(loginUserDto);
+        final TokenDto tokenDto = jwtService.login(loginRequest);
         isEmpty= tokenDto.getRefreshToken().isBlank() || tokenDto.getAccessToken().isBlank();
 
         return isEmpty ?

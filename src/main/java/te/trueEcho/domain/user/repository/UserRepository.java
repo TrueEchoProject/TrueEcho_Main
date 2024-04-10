@@ -16,21 +16,9 @@ import java.util.List;
 public class UserRepository {
     private final EntityManager em;
 
-
-    @Transactional
-    public List<User> filterSelectedUserByLocation(String location, List<User> selectedUsers ){
-      return  em.createQuery("select u from User u where u  in : selectedUsers and u.location like :location", User.class)
-                .setParameter("selectedUsers",selectedUsers)
-                .setParameter("location",location)
-                .getResultList();
-    }
-
-    @Transactional
-    public List<User> filterNotSelectedUserByLocation(String location, List<User> selectedUsers ){
+    public List<User> findUsersByLocation(String location, User selectedUsers ){
         try {
-            return em.createQuery("select u from User u where (u not in : selectedUsers) " +
-                            "and u.location like :location", User.class)
-                    .setParameter("selectedUsers", selectedUsers)
+            return em.createQuery("select u from User u where u.location like :location", User.class)
                     .setParameter("location", location)
                     .getResultList();
         }catch (Exception e){

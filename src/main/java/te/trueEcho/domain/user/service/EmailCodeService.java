@@ -10,7 +10,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import te.trueEcho.domain.user.dto.EmailUserDto;
+import te.trueEcho.domain.user.dto.EmailRequest;
 import te.trueEcho.domain.user.repository.EmailMemoryRepository;
 import te.trueEcho.infra.email.EmailService;
 
@@ -29,15 +29,15 @@ public class EmailCodeService {
     private final EmailService emailService;
     private String confirmEmailUI;
 
-    public void sendRegisterCode(EmailUserDto emailUserDto) {
+    public void sendRegisterCode(EmailRequest emailRequestDto) {
         final String code = generateRandomCode(); // 랜덤 번호 생성
 
         emailService.sendHtmlTextEmail(
-                emailUserDto.getNickname() + REGISTER_EMAIL_SUBJECT_POSTFIX,
-                getRegisterEmailText(emailUserDto.getEmail(), code),
-                emailUserDto.getEmail()); // 메일 전송
+                emailRequestDto.getNickname() + REGISTER_EMAIL_SUBJECT_POSTFIX,
+                getRegisterEmailText(emailRequestDto.getEmail(), code),
+                emailRequestDto.getEmail()); // 메일 전송
 
-        emailMemoryRepository.saveCheckCode(emailUserDto.getEmail(),code); // 랜덤 번호/이메일 저장.
+        emailMemoryRepository.saveCheckCode(emailRequestDto.getEmail(),code); // 랜덤 번호/이메일 저장.
     }
 
     public boolean checkRegisterCode( String email, String code) {

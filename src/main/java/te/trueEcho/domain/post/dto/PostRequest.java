@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class PostGetDto {
+public class PostRequest {
     private int pageCount;
     private int index;
     private String location;

@@ -6,23 +6,15 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import te.trueEcho.domain.user.dto.EmailCheckCodeDto;
-import te.trueEcho.domain.user.dto.LoginUserDto;
-import te.trueEcho.domain.user.dto.SignUpUserDto;
-import te.trueEcho.domain.user.dto.EmailUserDto;
-import te.trueEcho.domain.user.entity.User;
+import te.trueEcho.domain.user.dto.CheckCodeRequest;
+import te.trueEcho.domain.user.dto.RegisterRequest;
+import te.trueEcho.domain.user.dto.EmailRequest;
 import te.trueEcho.domain.user.service.UserAuthService;
-import te.trueEcho.global.config.Admin;
 import te.trueEcho.global.response.ResponseForm;
-import te.trueEcho.global.security.jwt.dto.TokenDto;
-import te.trueEcho.global.security.jwt.service.JwtService;
 
 import static te.trueEcho.global.response.ResponseCode.*;
 
@@ -64,13 +56,13 @@ public class UserAuthController {
             @RequestParam String nickname,
             @RequestParam String email) {
 
-        EmailUserDto emailUserDto =  EmailUserDto.builder()
+        EmailRequest emailRequestDto =  EmailRequest.builder()
                 .email(email)
                 .nickname(nickname)
                 .build();
 
         final boolean isDuplicated = userAuthService.isTypeDuplicated(
-                EmailUserDto.builder()
+                EmailRequest.builder()
                 .email(email)
                 .nickname(nickname)
                 .build(), type);
@@ -89,7 +81,7 @@ public class UserAuthController {
             @RequestParam String checkCode) {
 
       boolean isVerified =   userAuthService.checkEmailCode(
-              EmailCheckCodeDto.builder()
+              CheckCodeRequest.builder()
               .email(email)
               .checkCode(checkCode)
               .build()
@@ -118,8 +110,8 @@ public class UserAuthController {
     })
 
     @PostMapping(value = "/register")
-    public ResponseEntity<ResponseForm> register(@RequestBody SignUpUserDto signUpUserDTO) {
-        final boolean isRegistered = userAuthService.registerUser(signUpUserDTO);
+    public ResponseEntity<ResponseForm> register(@RequestBody RegisterRequest registerRequest) {
+        final boolean isRegistered = userAuthService.registerUser(registerRequest);
 
         return isRegistered ?
                 ResponseEntity.ok(ResponseForm.of(REGISTER_SUCCESS, true)) :
@@ -145,12 +137,12 @@ public class UserAuthController {
             @RequestParam String nickname,
             @RequestParam String email) {
 
-        EmailUserDto emailUserDto =  EmailUserDto.builder()
+        EmailRequest emailRequestDto =  EmailRequest.builder()
                 .email(email)
                 .nickname(nickname)
                 .build();
 
-        final boolean sent = userAuthService.sendEmailCode(emailUserDto);
+        final boolean sent = userAuthService.sendEmailCode(emailRequestDto);
         return sent ?
                 ResponseEntity.ok(ResponseForm.of(SEND_EMAIL_SUCCESS)) :
                 ResponseEntity.ok(ResponseForm.of(SEND_EMAIL_FAIL));

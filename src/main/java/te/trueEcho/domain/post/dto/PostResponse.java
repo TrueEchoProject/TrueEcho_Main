@@ -2,16 +2,14 @@ package te.trueEcho.domain.post.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.web.bind.annotation.GetMapping;
 import te.trueEcho.domain.post.entity.PostStatus;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 
 @Getter
 @Builder
-public class PostDto {
+public class PostResponse {
         private String username;
         private Long userId;
         private String profileUrl;

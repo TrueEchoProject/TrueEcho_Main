@@ -1,14 +1,10 @@
 package te.trueEcho.domain.post.converter;
 
 import lombok.NoArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-import te.trueEcho.domain.post.dto.PostDto;
-import te.trueEcho.domain.post.dto.PostListDto;
+import te.trueEcho.domain.post.dto.PostResponse;
+import te.trueEcho.domain.post.dto.PostListResponse;
 import te.trueEcho.domain.post.entity.Post;
-import te.trueEcho.domain.user.dto.SignUpUserDto;
-import te.trueEcho.domain.user.entity.Role;
-import te.trueEcho.domain.user.entity.User;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,11 +13,11 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class PostToDtoConverter {
 
-    public static PostListDto converter(List<Post> postList, String yourLocation) {
+    public static PostListResponse converter(List<Post> postList, String yourLocation) {
 
-        List<PostDto> postDtoList = postList.stream()
+        List<PostResponse> postResponseList = postList.stream()
                 .map(post -> {
-                    return PostDto.builder()
+                    return PostResponse.builder()
                             .postId(post.getId())
                             .userId(post.getUser().getId())
                             .title(post.getTitle())
@@ -37,6 +33,9 @@ public class PostToDtoConverter {
                 .collect(Collectors.toList());
 
 
-        return  PostListDto.builder().yourLocation(yourLocation).postDtos(postDtoList).build();
+        return  PostListResponse.builder()
+                .yourLocation(yourLocation)
+                .postResponses(postResponseList)
+                .postCount(postResponseList.size()).build();
     }
 }

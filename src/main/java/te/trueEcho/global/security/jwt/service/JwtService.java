@@ -8,7 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import te.trueEcho.domain.user.dto.LoginUserDto;
+import te.trueEcho.domain.user.dto.LoginRequest;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.UserAuthRepository;
 import te.trueEcho.global.security.jwt.Repository.RefreshTokenRepository;
@@ -27,18 +27,18 @@ public class JwtService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @Transactional
-    public TokenDto login(LoginUserDto loginUserDto){
-        setAuthentication(loginUserDto); // 인증 & 인가
+    public TokenDto login(LoginRequest loginRequest){
+        setAuthentication(loginRequest); // 인증 & 인가
 
         return createToken();
     }
 
-    private void setAuthentication(LoginUserDto loginUserDto) {
+    private void setAuthentication(LoginRequest loginRequest) {
 
         // 1. Login ID/PW 를 기반으로 Authentication 객체 생성
         // 이때 authentication 는 인증 여부를 확인하는 authenticated 값이 false
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(loginUserDto.getEmail(), loginUserDto.getPassword());
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
 
         // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
         // authenticate 매서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행
