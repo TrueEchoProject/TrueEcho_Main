@@ -10,10 +10,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import te.trueEcho.domain.user.dto.LoginUserDto;
 import te.trueEcho.domain.user.entity.SuspendedUser;
 import te.trueEcho.domain.user.repository.SuspendedUserRepository;
 import te.trueEcho.domain.user.service.UserService;
+import te.trueEcho.domain.user.dto.LoginRequest;
 import te.trueEcho.global.response.ResponseForm;
 import te.trueEcho.global.security.jwt.dto.TokenDto;
 import te.trueEcho.global.security.jwt.service.JwtService;
@@ -42,11 +42,11 @@ public class JwtController {
     })
 
     @PostMapping(value = "/accounts/login")
-    public ResponseEntity<ResponseForm> login(@RequestBody LoginUserDto loginUserDto) {
-        log.info("login : {} {}", loginUserDto.getEmail(), loginUserDto.getPassword());
+    public ResponseEntity<ResponseForm> login(@RequestBody LoginRequest loginRequest) {
+        log.info("login : {} {}", loginRequest.getEmail(), loginRequest.getPassword());
         boolean isEmpty = true;
 
-        final TokenDto tokenDto = jwtService.login(loginUserDto);
+        final TokenDto tokenDto = jwtService.login(loginRequest);
         isEmpty = tokenDto.getRefreshToken().isBlank() || tokenDto.getAccessToken().isBlank();
 
         SuspendedUser suspendedUser = suspendedUserRepository.findSuspendedUserByEmail(loginUserDto.getEmail());
@@ -57,11 +57,9 @@ public class JwtController {
                     ResponseEntity.ok(ResponseForm.of(CANCEL_DELETE_USER_SUCCESS, tokenDto)) :
                     ResponseEntity.ok(ResponseForm.of(CANCEL_DELETE_USER_FAIL));
         }
-
         return isEmpty ?
                 ResponseEntity.ok(ResponseForm.of(LOGIN_SUCCESS)) :
                 ResponseEntity.ok(ResponseForm.of(LOGIN_FAIL, tokenDto));
-
     }
 
 

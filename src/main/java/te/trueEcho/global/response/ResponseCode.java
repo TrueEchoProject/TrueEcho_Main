@@ -44,7 +44,13 @@ public enum ResponseCode {
     REFRESHMENT_SUCCESS(202, "T002", "토큰 재생성에 성공했습니다."),
     REFRESHMENT_FAIL(202, "T002", "토큰 재생성에 실패했습니다."),
     GET_POST_SUCCESS(202, "T002", "게시물을 읽기를 성공했습니다."),
-    GET_POST_FAIL(202, "T002", "게시물을 읽기를 실패했습니다.");
+    GET_POST_FAIL(202, "T002", "게시물을 읽기를 실패했습니다."),
+    GET_COMMENT_SUCCESS(202, "T002", "해당 게시물의 댓글 읽기를 성공했습니다."),
+    GET_COMMENT_FAIL(202, "T002", "해당 게시물의 댓글 읽기를 실패했습니다."),
+    GET_VOTE_CONTENT_SUCCESS(202, "T002", "투표지 읽기를 성공했습니다."),
+    GET_VOTE_CONTENT_FAIL(202, "T002", "투표지 읽기를 실패했습니다."),
+    GET_VOTE_TARGET_SUCCESS(202, "T002", "투표 인원 뽑기를 성공했습니다."),
+    GET_VOTE_TARGET_FAIL(202, "T002","투표 인원 뽑기를 실패했습니다.");
 
     private final int status;
     private final String code;

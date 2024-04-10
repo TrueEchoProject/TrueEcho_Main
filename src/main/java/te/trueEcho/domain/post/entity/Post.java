@@ -53,7 +53,7 @@ public class Post extends CreatedDateAudit {
     private List<Comment> comments;
 
     @Builder
-    public Post(String title, String urlFront, String urlBack, PostStatus status, int scope, User user) {
+    public Post(String title, String urlFront, String urlBack, PostStatus status, User user) {
         this.title = title;
         this.urlFront = urlFront;
         this.urlBack = urlBack;

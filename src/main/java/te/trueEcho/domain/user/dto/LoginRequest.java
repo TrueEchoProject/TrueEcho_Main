@@ -8,7 +8,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class LoginUserDto {
+public class LoginRequest {
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY, name = "이메일", example = "trueEcho@gmail.com",requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull

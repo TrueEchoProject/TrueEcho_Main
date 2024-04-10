@@ -3,7 +3,7 @@ package te.trueEcho.domain.user.converter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-import te.trueEcho.domain.user.dto.SignUpUserDto;
+import te.trueEcho.domain.user.dto.RegisterRequest;
 import te.trueEcho.domain.user.entity.Role;
 import te.trueEcho.domain.user.entity.User;
 
@@ -11,19 +11,19 @@ import te.trueEcho.domain.user.entity.User;
 @Component
 @NoArgsConstructor
 public class SignUpDtoToUserConverter {
-    public static User converter(SignUpUserDto signUpUserDto) {
+    public static User converter(RegisterRequest registerRequest) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String encryptedPassword = passwordEncoder.encode(signUpUserDto.getPassword());
+        String encryptedPassword = passwordEncoder.encode(registerRequest.getPassword());
         return User.builder()
                 .role(Role.USER) //default 권한
-                .nickname(signUpUserDto.getNickname())
-                .name(signUpUserDto.getName())
+                .nickname(registerRequest.getNickname())
+                .name(registerRequest.getName())
                 .password(encryptedPassword)
-                .email(signUpUserDto.getEmail())
-                .birthday(signUpUserDto.getDob())
-                .gender(signUpUserDto.getGender())
-                .location(signUpUserDto.getLocation())
-                .notificationTime(signUpUserDto.getNotificationTime())
+                .email(registerRequest.getEmail())
+                .birthday(registerRequest.getDob())
+                .gender(registerRequest.getGender())
+                .location(registerRequest.getLocation())
+                .notificationTime(registerRequest.getNotificationTime())
                 .build();
     }
 }

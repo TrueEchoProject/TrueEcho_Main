@@ -20,25 +20,25 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final UserAuthRepository userAuthRepository;
     private final EmailMemoryRepository emailMemoryRepository;
 
-    public boolean isTypeDuplicated(EmailUserDto emailUserDto, String target) {
+    public boolean isTypeDuplicated(EmailRequest emailRequestDto, String target) {
         if( target.equals("email"))
-             return  userAuthRepository.findUserByEmail(emailUserDto.getEmail())!=null;
+             return  userAuthRepository.findUserByEmail(emailRequestDto.getEmail())!=null;
         if( target.equals("nickname"))
-            return userAuthRepository.findUserByNickName(emailUserDto.getNickname())!=null;
+            return userAuthRepository.findUserByNickName(emailRequestDto.getNickname())!=null;
 
         return false;
     }
 
     @Transactional
-    public boolean registerUser(SignUpUserDto signUpUserDTO) {
-        final boolean status =emailMemoryRepository.checkStatusByEmail(signUpUserDTO.getEmail());
+    public boolean registerUser(RegisterRequest registerRequest) {
+        final boolean status =emailMemoryRepository.checkStatusByEmail(registerRequest.getEmail());
         log.info("email status = {}",status);
         if(status){
-            final User newUser = SignUpDtoToUserConverter.converter(signUpUserDTO);
+            final User newUser = SignUpDtoToUserConverter.converter(registerRequest);
             log.info("user's nickname = {}",        newUser.getNickname());
 
             userAuthRepository.save(newUser);
-            emailMemoryRepository.deleteEmail(signUpUserDTO.getEmail());
+            emailMemoryRepository.deleteEmail(registerRequest.getEmail());
             return true;
         }else{
             return false;
@@ -51,7 +51,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     }
 
     @Override
-    public boolean checkEmailCode(EmailCheckCodeDto emailCheckCodeDto) {
+    public boolean checkEmailCode(CheckCodeRequest emailCheckCodeDto) {
         final String registerdCode =emailMemoryRepository.findCheckCodeByEmail(emailCheckCodeDto.getEmail());
 
        if (emailCheckCodeDto.getCheckCode().equals(registerdCode)){
@@ -63,19 +63,16 @@ public class UserAuthServiceImpl implements UserAuthService {
     }
 
     @Override
-    public boolean sendEmailCode(EmailUserDto emailUserDto) {
-        emailCodeService.sendRegisterCode(emailUserDto);
+    public boolean sendEmailCode(EmailRequest emailRequestDto) {
+        emailCodeService.sendRegisterCode(emailRequestDto);
         return true;
     }
 
-    @Override
-    public User updateUser(EditUserDto editUserDTO) {
-        return null;
-    }
+
 
 
     @Override
-    public boolean  login(LoginUserDto loginUserDto){
+    public boolean  login(LoginRequest loginRequest){
       return true;
     }
 
