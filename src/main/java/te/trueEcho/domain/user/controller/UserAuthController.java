@@ -27,8 +27,6 @@ public class UserAuthController {
 
     private final UserAuthService userAuthService;
 
-
-
     @Operation(summary = "계정중복 조회", description = """
             1. 이메일로 이미 등록된 계정인지를 확인.
             2. 이메일이 중복되지 않은 경우 이메일 주소로 인증코드 전송.

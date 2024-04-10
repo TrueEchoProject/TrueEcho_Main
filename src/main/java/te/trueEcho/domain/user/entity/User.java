@@ -24,7 +24,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "users")
-
 public class User extends CreatedDateAudit {
 
     /**
@@ -56,20 +55,19 @@ public class User extends CreatedDateAudit {
 
     private String nickname; // user 구분하는 식별자
 
-
     @Enumerated(EnumType.STRING)
     @Column(name = "user_gender", nullable = true)
     private Gender gender;
 
     @Column(name = "connect_by_friend", nullable = true)
-    private boolean connectByFriend; //친구의 친구에게 내 계정 노출
+    private Boolean connectByFriend; //친구의 친구에게 내 계정 노출
 
     @Column(name = "user_noti_time", nullable = true)
     @Enumerated(EnumType.STRING)
     private NotiTimeStatus notificationTime;
 
     @Column(name = "user_noti_setting", nullable = true)
-    private boolean notificationSetting;
+    private Boolean notificationSetting;
 
     @Column(name = "user_birthday", nullable = true)
     private LocalDate birthday;
@@ -180,6 +178,10 @@ public class User extends CreatedDateAudit {
     public void updateLocation(String location) {
         // 위치 갱신하는 로직을 새로 작성
         this.location = location;
+    }
+
+    public void removeSuspendedUser() {
+        this.suspendedUser = null;
     }
 
 }

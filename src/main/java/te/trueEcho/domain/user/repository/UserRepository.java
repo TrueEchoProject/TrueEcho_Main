@@ -2,6 +2,7 @@ package te.trueEcho.domain.user.repository;
 
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -26,4 +27,5 @@ public class UserRepository {
             return null;
         }
     }
+
 }

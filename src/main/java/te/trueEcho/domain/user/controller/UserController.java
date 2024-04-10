@@ -11,9 +11,9 @@ import te.trueEcho.domain.user.dto.EditUserRequest;
 import te.trueEcho.domain.user.dto.EditUserResponse;
 import te.trueEcho.domain.user.service.UserService;
 import te.trueEcho.global.response.ResponseForm;
+import te.trueEcho.global.security.jwt.service.JwtService;
 
-import static te.trueEcho.global.response.ResponseCode.EDIT_PROFILE_SUCCESS;
-import static te.trueEcho.global.response.ResponseCode.GET_EDIT_PROFILE_SUCCESS;
+import static te.trueEcho.global.response.ResponseCode.*;
 
 @Tag(name = "USER API")
 @Slf4j
@@ -24,19 +24,39 @@ import static te.trueEcho.global.response.ResponseCode.GET_EDIT_PROFILE_SUCCESS;
 public class UserController {
 
     private final UserService userService;
-
-    @GetMapping(value = "/edit") // 수정 정보를 조회
-    public ResponseEntity<ResponseForm> getMemberEdit() {
-
-        final EditUserResponse editUserResponse = userService.getEditUser();
-        return ResponseEntity.ok(ResponseForm.of(GET_EDIT_PROFILE_SUCCESS, editUserResponse));
-    }
+    private final JwtService jwtService;
 
     @PutMapping(value = "/edit") // 회원 정보 수정
     public ResponseEntity<ResponseForm> editUser(@RequestBody @Valid EditUserRequest editUserRequest) {
 
-        userService.editUser(editUserRequest);
-        return ResponseEntity.ok(ResponseForm.of(EDIT_PROFILE_SUCCESS));
+        boolean isEdited = userService.editUser(editUserRequest);
+        return isEdited ?
+                ResponseEntity.ok(ResponseForm.of(EDIT_PROFILE_SUCCESS)) :
+                ResponseEntity.ok(ResponseForm.of(EDIT_PROFILE_FAIL));
+    }
+
+    @GetMapping(value = "/edit") // 수정 정보를 조회
+    public ResponseEntity<ResponseForm> getMemberEdit() {
+
+        boolean isEdited = userService.getBoolEditUser();
+        EditUserResponse editUserResponse = userService.getEditUser();
+
+        return isEdited ?
+                ResponseEntity.ok(ResponseForm.of(GET_EDIT_PROFILE_SUCCESS, editUserResponse)) :
+                ResponseEntity.ok(ResponseForm.of(GET_EDIT_PROFILE_FAIL, ""));
+    }
+
+    @DeleteMapping("/deleteUser")
+    public ResponseEntity<ResponseForm> deleteUser(@RequestHeader("Authorization") String token, @RequestParam String email) {
+
+        boolean isDeletedUser = userService.deleteUser(email);
+        boolean isDeleted = jwtService.deleteRefreshToken();
+
+        log.info("token: {} ", token);
+
+        return isDeleted && isDeletedUser?
+                ResponseEntity.ok(ResponseForm.of(DELETE_USER_SUCCESS)) :
+                ResponseEntity.ok(ResponseForm.of(DELETE_USER_FAIL));
     }
 }
     

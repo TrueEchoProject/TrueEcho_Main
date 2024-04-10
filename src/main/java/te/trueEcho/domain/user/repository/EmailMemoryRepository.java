@@ -22,7 +22,7 @@ public class EmailMemoryRepository {
     }
 
     @Transactional
-    public void saveCheckCode(String email, String  checkCode) { // CREATE
+    public void saveCheckCode(String email, String checkCode) { // CREATE
 
         log.info("saved email&code = {}&{}",email,checkCode);
         checkCodeMap.put(email,checkCode);
