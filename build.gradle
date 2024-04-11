@@ -69,9 +69,8 @@ dependencies {
 	//mariaDB
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
-
-
-
+	//env
+	implementation 'io.github.cdimascio:java-dotenv:5.2.2'
 }
 
 tasks.named('test') {
