@@ -2,7 +2,9 @@ package te.trueEcho.domain.friend.repository;
 
 
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import te.trueEcho.domain.friend.entity.Friend;
 import te.trueEcho.domain.friend.entity.FriendStatus;
@@ -11,9 +13,11 @@ import te.trueEcho.domain.user.entity.User;
 import java.util.List;
 
 
-@RequiredArgsConstructor
 @Repository
-public class FriendRepositoryImpl {
+@Slf4j
+@RequiredArgsConstructor
+public class FriendRepositoryImpl implements FriendRepository {
+
     private final EntityManager em;
 
     public List<User> findMyFriendsByUser(User user) {
@@ -21,5 +25,10 @@ public class FriendRepositoryImpl {
                 .setParameter("user", user)
                 .setParameter("friendStatus", FriendStatus.FRIEND)
                 .getResultList();
+    }
+
+    @Transactional
+    public void save(Friend friend) {
+        em.persist(friend);
     }
 }

@@ -1,5 +1,5 @@
 package te.trueEcho.domain.friend.entity;
 
 public enum FriendStatus {
-    FRIEND,  REQUEST
+    FRIEND, NOT_FRIEND
 }
