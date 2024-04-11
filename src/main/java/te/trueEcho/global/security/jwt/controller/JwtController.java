@@ -49,7 +49,7 @@ public class JwtController {
         final TokenDto tokenDto = jwtService.login(loginRequest);
         isEmpty = tokenDto.getRefreshToken().isBlank() || tokenDto.getAccessToken().isBlank();
 
-        SuspendedUser suspendedUser = suspendedUserRepository.findSuspendedUserByEmail(loginUserDto.getEmail());
+        SuspendedUser suspendedUser = suspendedUserRepository.findSuspendedUserByEmail(loginRequest.getEmail());
         if (suspendedUser != null) {
             // If the user is in the SuspendedUser table, delete the user
             boolean isCanceled = userService.cancelDeleteUser(suspendedUser);
