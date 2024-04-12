@@ -1,8 +1,6 @@
 package te.trueEcho.domain.post.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import te.trueEcho.domain.friend.repository.FriendRepositoryImpl;
 import te.trueEcho.domain.post.converter.CommentToDtoConverter;
@@ -15,7 +13,6 @@ import te.trueEcho.domain.post.entity.Comment;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.post.repository.PostRepository;
 import te.trueEcho.domain.user.entity.User;
-import te.trueEcho.domain.user.repository.UserAuthRepository;
 import te.trueEcho.domain.user.repository.UserRepository;
 import te.trueEcho.global.util.AuthUtil;
 

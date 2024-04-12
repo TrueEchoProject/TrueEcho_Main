@@ -2,9 +2,7 @@ package te.trueEcho.domain.post.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import te.trueEcho.domain.post.entity.Comment;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

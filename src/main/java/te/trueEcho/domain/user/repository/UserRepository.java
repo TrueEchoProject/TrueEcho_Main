@@ -28,4 +28,16 @@ public class UserRepository {
         }
     }
 
+    public List<User> getRandomUsersWithLimit(int limit) {
+      try {
+          return em.createQuery("select u from User u order by rand()", User.class)
+                  .setMaxResults(limit)
+                  .getResultList();
+
+      }catch(Exception e){
+          log.info("query exception = {}", e);
+          return null;
+      }
+    }
+
 }
