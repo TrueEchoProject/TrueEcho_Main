@@ -1,61 +1,62 @@
-//package te.trueEcho.domain.user.controller;
-//
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.validation.annotation.Validated;
-//import org.springframework.web.bind.annotation.DeleteMapping;
-//import org.springframework.web.bind.annotation.PathVariable;
-//import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.bind.annotation.RestController;
-//
-//@RestController
-//@RequiredArgsConstructor
-//@Validated
-//public class BlockController {
-//
-//    private final BlockService blockService;
-//
-//    @ApiOperation(value = "차단")
-//    @PostMapping("/{blockMemberUsername}/block")
-//    @ApiImplicitParam(name = "blockMemberUsername", value = "차단할 계정의 username", required = true, example = "dlwlrma")
-//    public ResponseEntity<ResultResponse> block(@PathVariable("blockMemberUsername") String blockMemberUsername) {
-//        final boolean success = blockService.block(blockMemberUsername);
-//
-//        return ResponseEntity.ok(ResultResponse.of(BLOCK_SUCCESS, success));
-//    }
-//
-//    @ApiOperation(value = "차단해제")
-//    @DeleteMapping("/{blockMemberUsername}/block")
-//    @ApiImplicitParam(name = "blockMemberUsername", value = "차단해제할 계정의 username", required = true, example = "dlwlrma")
-//    public ResponseEntity<ResultResponse> unblock(@PathVariable("blockMemberUsername") String blockMemberUsername) {
-//        final boolean success = blockService.unblock(blockMemberUsername);
-//
-//        return ResponseEntity.ok(ResultResponse.of(UNBLOCK_SUCCESS, success));
-//    }
-//
-//}@RestController
-//@RequiredArgsConstructor
-//@Validated
-//public class BlockController {
-//
-//    private final BlockService blockService;
-//
-//    @ApiOperation(value = "차단")
-//    @PostMapping("/{blockMemberUsername}/block")
-//    @ApiImplicitParam(name = "blockMemberUsername", value = "차단할 계정의 username", required = true, example = "dlwlrma")
-//    public ResponseEntity<ResultResponse> block(@PathVariable("blockMemberUsername") String blockMemberUsername) {
-//        final boolean success = blockService.block(blockMemberUsername);
-//
-//        return ResponseEntity.ok(ResultResponse.of(BLOCK_SUCCESS, success));
-//    }
-//
-//    @ApiOperation(value = "차단해제")
-//    @DeleteMapping("/{blockMemberUsername}/block")
-//    @ApiImplicitParam(name = "blockMemberUsername", value = "차단해제할 계정의 username", required = true, example = "dlwlrma")
-//    public ResponseEntity<ResultResponse> unblock(@PathVariable("blockMemberUsername") String blockMemberUsername) {
-//        final boolean success = blockService.unblock(blockMemberUsername);
-//
-//        return ResponseEntity.ok(ResultResponse.of(UNBLOCK_SUCCESS, success));
-//    }
-//
-//}
+package te.trueEcho.domain.user.controller;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import te.trueEcho.domain.friend.dto.FriendListResponse;
+import te.trueEcho.domain.user.dto.BlockListResponse;
+import te.trueEcho.domain.user.dto.EditUserResponse;
+import te.trueEcho.domain.user.service.BlockService;
+import te.trueEcho.domain.user.service.UserService;
+import te.trueEcho.global.response.ResponseForm;
+
+import java.util.List;
+
+import static te.trueEcho.global.response.ResponseCode.*;
+import static te.trueEcho.global.response.ResponseCode.DELETE_FRIEND_FAIL;
+
+
+@Slf4j
+@RestController
+@RequestMapping("/blocks")
+@RequiredArgsConstructor
+public class BlockController {
+
+    private final BlockService blockService;
+
+    @PostMapping("/add")
+    public ResponseEntity<ResponseForm> block(@RequestParam Long blockUserId) {
+
+        boolean isBlocked = blockService.addBlock(blockUserId);
+
+        return isBlocked ?
+                ResponseEntity.ok(ResponseForm.of(PUT_BLOCK_SUCCESS)) :
+                ResponseEntity.ok(ResponseForm.of(PUT_BLOCK_FAIL, ""));
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<ResponseForm> delete(@RequestParam(value = "blockUserIds") List<Long> blockUserIds){
+        try {
+            for (Long blockUserId : blockUserIds) {
+                boolean isAccepted = blockService.removeBlock(blockUserId);
+                if (!isAccepted) {
+                    return ResponseEntity.ok(ResponseForm.of(DELETE_BLCOK_FAIL));
+                }
+            }
+            return ResponseEntity.ok(ResponseForm.of(DELETE_BLCOK_SUCCESS));
+        } catch (Exception e) {
+            log.error("Error occurred while removing blocks", e);
+            return ResponseEntity.ok(ResponseForm.of(DELETE_BLCOK_FAIL));
+        }
+    }
+
+    @GetMapping("/read")
+    public ResponseEntity<ResponseForm> getFriendList(){
+
+        List<BlockListResponse> blockListResponses = blockService.getBlockList();
+        return !blockListResponses.isEmpty() ?
+                ResponseEntity.ok(ResponseForm.of(READ_FRIENDLIST_SUCCESS, blockListResponses)) :
+                ResponseEntity.ok(ResponseForm.of(READ_FRIENDLIST_FAIL));
+    }
+}

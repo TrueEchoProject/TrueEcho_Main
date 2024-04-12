@@ -25,8 +25,6 @@ public class Block {
     @JoinColumn(name = "block_user_id")
     private User blockUser;
 
-    @Column(name = "block_level")
-    private int blockLevel;
     @Builder
     public Block(User user, User blockUser) {
         this.user = user;

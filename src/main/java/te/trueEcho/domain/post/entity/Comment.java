@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import te.trueEcho.domain.notification.entity.CommentNoti;
 import te.trueEcho.domain.user.entity.User;
-import te.trueEcho.global.entity.FullAudit;
-
+import te.trueEcho.global.entity.CreatedDateAudit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +17,8 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "comments")
-public class Comment extends FullAudit {
+public class Comment extends CreatedDateAudit {
+
 
     @Id
     @Column(name = "comment_id")

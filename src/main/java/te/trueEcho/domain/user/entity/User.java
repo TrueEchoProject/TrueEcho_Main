@@ -85,7 +85,7 @@ public class User extends CreatedDateAudit {
     @Column(name = "refresh_token", nullable = true)
     private String refreshToken;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "sendUser", cascade = CascadeType.ALL)
     private List<Friend> friend;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

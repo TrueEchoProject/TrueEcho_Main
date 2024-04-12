@@ -49,7 +49,4 @@ public class PostController {
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_COMMENT_SUCCESS, commentListResponse)) :
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_COMMENT_FAIL));
     }
-
-
-
 }

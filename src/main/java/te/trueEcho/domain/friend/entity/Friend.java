@@ -10,12 +10,12 @@ import te.trueEcho.domain.user.entity.User;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "friends",   uniqueConstraints={
-        @UniqueConstraint(
-                name= "one-way-friendship",
-                columnNames={"target_user_id", "user_id"}
-        )
-})
+//@Table(name = "friends",   uniqueConstraints={
+//        @UniqueConstraint(
+//                name= "one-way-friendship",
+//                columnNames={"target_user_id", "user_id"}
+//        )
+//})
 
 public class Friend {
 
@@ -29,17 +29,17 @@ public class Friend {
     private FriendStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "send_user_id")
+    private User sendUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "target_user_id")
     private User targetUser;
 
     @Builder
-    public Friend(FriendStatus status, User user, User targetUser) {
+    public Friend(FriendStatus status, User sendUser, User targetUser) {
         this.status = status;
-        this.user = user;
+        this.sendUser = sendUser;
         this.targetUser = targetUser;
     }
 }

@@ -39,14 +39,42 @@ public enum ResponseCode {
     DELETE_USER_FAIL(200, "U0014", "회원 탈퇴 및 로그아웃에 실패하였습니다."),
     CANCEL_DELETE_USER_SUCCESS(200, "U0014", "회원 탈퇴 취소 및 로그인에 성공했습니다."),
     CANCEL_DELETE_USER_FAIL(200, "U0014", "회원 탈퇴 취소 및 로그인에 실패했습니다."),
+
+    // 로그인
     AUTHENTICATION_FAIL(401, "T001", "사용자 인증에 실패했습니다."),
     AUTHORIZATION_FAIL(403, "T002", "사용자 인가에 실패했습니다."),
     REFRESHMENT_SUCCESS(202, "T002", "토큰 재생성에 성공했습니다."),
     REFRESHMENT_FAIL(202, "T002", "토큰 재생성에 실패했습니다."),
+
+    // 친구
+    ADD_FRIEND_SUCCESS(202, "T002", "친구 추가에 성공했습니다."),
+    ADD_FRIEND_FAIL(202, "T002", "친구 추가에 실패했습니다."),
+    CONFIRM_RECEIVE_REQUEST_SUCCESS(202, "T002", "받은 친구 요청 확인에 성공했습니다."),
+    CONFIRM_RECEIVE_REQUEST_FAIL(202, "T002", "받은 친구 요청 확인에 실패했습니다."),
+    CONFIRM_SEND_REQUEST_SUCCESS(202, "T002", "보낸 친구 요청 확인에 성공했습니다."),
+    CONFIRM_SEND_REQUEST_FAIL(202, "T002", "보낸 친구 요청 확인에 실패했습니다."),
+    ACCEPT_FRIEND_SUCCESS(202, "T002", "친구 요청 수락에 성공했습니다."),
+    ACCEPT_FRIEND_FAIL(202, "T002", "친구 요청 수락에 실패했습니다."),
+    REJECT_FRIEND_SUCCESS(202, "T002", "친구 요청 거절에 성공했습니다."),
+    REJECT_FRIEND_FAIL(202, "T002", "친구 요청 거절에 실패했습니다."),
+    DELETE_FRIEND_SUCCESS(202, "T002", "친구 삭제에 성공했습니다."),
+    DELETE_FRIEND_FAIL(202, "T002", "친구 삭제에 실패했습니다."),
+    READ_FRIENDLIST_SUCCESS(202, "T002", "친구 목록 조회에 성공했습니다."),
+    READ_FRIENDLIST_FAIL(202, "T002", "친구 목록 조회에 실패했습니다."),
+
+    // 차단
+    PUT_BLOCK_SUCCESS(202, "T002", "차단에 성공했습니다."),
+    PUT_BLOCK_FAIL(202, "T002", "차단에 실패했습니다."),
+    DELETE_BLCOK_SUCCESS(202, "T002", "차단 해제에 성공했습니다."),
+    DELETE_BLCOK_FAIL(202, "T002", "차단 해제에 실패했습니다."),
+
+    // 게시물
     GET_POST_SUCCESS(202, "T002", "게시물을 읽기를 성공했습니다."),
     GET_POST_FAIL(202, "T002", "게시물을 읽기를 실패했습니다."),
     GET_COMMENT_SUCCESS(202, "T002", "해당 게시물의 댓글 읽기를 성공했습니다."),
     GET_COMMENT_FAIL(202, "T002", "해당 게시물의 댓글 읽기를 실패했습니다."),
+
+    // 커뮤니티
     GET_VOTE_CONTENT_SUCCESS(202, "T002", "투표지 읽기를 성공했습니다."),
     GET_VOTE_CONTENT_FAIL(202, "T002", "투표지 읽기를 실패했습니다."),
     GET_VOTE_TARGET_SUCCESS(202, "T002", "투표 인원 뽑기를 성공했습니다."),
