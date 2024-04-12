@@ -49,6 +49,24 @@ public enum ResponseCode {
     // 친구
     ADD_FRIEND_SUCCESS(202, "T002", "친구 추가에 성공했습니다."),
     ADD_FRIEND_FAIL(202, "T002", "친구 추가에 실패했습니다."),
+    CONFIRM_RECEIVE_REQUEST_SUCCESS(202, "T002", "받은 친구 요청 확인에 성공했습니다."),
+    CONFIRM_RECEIVE_REQUEST_FAIL(202, "T002", "받은 친구 요청 확인에 실패했습니다."),
+    CONFIRM_SEND_REQUEST_SUCCESS(202, "T002", "보낸 친구 요청 확인에 성공했습니다."),
+    CONFIRM_SEND_REQUEST_FAIL(202, "T002", "보낸 친구 요청 확인에 실패했습니다."),
+    ACCEPT_FRIEND_SUCCESS(202, "T002", "친구 요청 수락에 성공했습니다."),
+    ACCEPT_FRIEND_FAIL(202, "T002", "친구 요청 수락에 실패했습니다."),
+    REJECT_FRIEND_SUCCESS(202, "T002", "친구 요청 거절에 성공했습니다."),
+    REJECT_FRIEND_FAIL(202, "T002", "친구 요청 거절에 실패했습니다."),
+    DELETE_FRIEND_SUCCESS(202, "T002", "친구 삭제에 성공했습니다."),
+    DELETE_FRIEND_FAIL(202, "T002", "친구 삭제에 실패했습니다."),
+    READ_FRIENDLIST_SUCCESS(202, "T002", "친구 목록 조회에 성공했습니다."),
+    READ_FRIENDLIST_FAIL(202, "T002", "친구 목록 조회에 실패했습니다."),
+
+    // 차단
+    PUT_BLOCK_SUCCESS(202, "T002", "차단에 성공했습니다."),
+    PUT_BLOCK_FAIL(202, "T002", "차단에 실패했습니다."),
+    DELETE_BLCOK_SUCCESS(202, "T002", "차단 해제에 성공했습니다."),
+    DELETE_BLCOK_FAIL(202, "T002", "차단 해제에 실패했습니다."),
 
     // 게시물
     GET_POST_SUCCESS(202, "T002", "게시물을 읽기를 성공했습니다."),
