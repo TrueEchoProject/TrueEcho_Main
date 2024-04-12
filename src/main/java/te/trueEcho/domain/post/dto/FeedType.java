@@ -2,7 +2,6 @@ package te.trueEcho.domain.post.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import te.trueEcho.domain.friend.entity.Friend;
 
 
 @Getter

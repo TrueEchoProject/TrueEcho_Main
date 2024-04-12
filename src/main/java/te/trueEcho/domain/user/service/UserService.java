@@ -16,6 +16,7 @@ import te.trueEcho.global.util.AuthUtil;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -37,19 +38,12 @@ public class UserService {
         final User user = authUtil.getLoginUser();
         updateUser(user, editUserRequest);
         userAuthRepository.updateUser(user);
-        if (user.getName() == userAuthRepository.findUserById(user.getId()).getName()) {
-            return true;
-        } else {
-            return false;
-        }
+        return Objects.equals(user.getName(), userAuthRepository.findUserById(user.getId()).getName());
     }
 
     public boolean getBoolEditUser() {
         final User user = authUtil.getLoginUser();
-        if (user == null) {
-            return false;
-        }
-        return true;
+        return user != null;
     }
     @Transactional
     public boolean deleteUser(String email) {
