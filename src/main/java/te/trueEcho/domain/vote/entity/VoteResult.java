@@ -16,7 +16,12 @@ import te.trueEcho.global.entity.CreatedDateAudit;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "vote_results")
+@Table(name = "vote_results", uniqueConstraints={
+        @UniqueConstraint(
+                name= "only-one-result",
+                columnNames={"user_id_target", "user_id_voter", "vote_id"}
+        )
+})
 
 public class VoteResult extends CreatedDateAudit {
 

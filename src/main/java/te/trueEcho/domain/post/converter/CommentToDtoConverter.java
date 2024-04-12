@@ -21,6 +21,7 @@ public class CommentToDtoConverter {
 
         commentList.forEach(comment -> {
             List<CommentResponse> underComments = new ArrayList<>();
+
             CommentResponse dto = CommentResponse.builder()
                     .commentId(comment.getId())
                     .content(comment.getContent())
