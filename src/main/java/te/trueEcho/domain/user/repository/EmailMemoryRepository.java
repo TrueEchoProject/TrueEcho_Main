@@ -6,11 +6,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Repository
 public class EmailMemoryRepository {
-    private static final Map<String, String> checkCodeMap = new HashMap<>();
+    private static final ConcurrentHashMap<String, String> checkCodeMap = new ConcurrentHashMap<>();
 
     public String findCheckCodeByEmail(String email){ //READ
 
