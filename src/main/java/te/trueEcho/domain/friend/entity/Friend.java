@@ -10,12 +10,12 @@ import te.trueEcho.domain.user.entity.User;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "friends",   uniqueConstraints={
-        @UniqueConstraint(
-                name= "one-way-friendship",
-                columnNames={"target_user_id", "user_id"}
-        )
-})
+//@Table(name = "friends",   uniqueConstraints={
+//        @UniqueConstraint(
+//                name= "one-way-friendship",
+//                columnNames={"target_user_id", "user_id"}
+//        )
+//})
 
 public class Friend {
 
