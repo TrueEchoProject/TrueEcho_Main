@@ -1,6 +1,6 @@
 package te.trueEcho.domain.vote.repository;
 
-import org.apache.catalina.User;
+import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.vote.entity.Vote;
 import te.trueEcho.domain.vote.entity.VoteResult;
 

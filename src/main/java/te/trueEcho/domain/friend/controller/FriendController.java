@@ -24,76 +24,75 @@ public class FriendController {
     private final FriendService friendService;
 
     @PostMapping("/add")
-        public ResponseEntity<ResponseForm> addFriend(@RequestParam Long targetUserId){ {
+    public ResponseEntity<ResponseForm> addFriend(@RequestParam Long targetUserId) {
 
-            boolean isAdded = friendService.addFriend(targetUserId);
-            return isAdded ?
-                    ResponseEntity.ok(ResponseForm.of(ADD_FRIEND_SUCCESS)) :
-                    ResponseEntity.ok(ResponseForm.of(ADD_FRIEND_FAIL));
-        }
+        boolean isAdded = friendService.addFriend(targetUserId);
+        return isAdded ?
+                ResponseEntity.ok(ResponseForm.of(ADD_FRIEND_SUCCESS)) :
+                ResponseEntity.ok(ResponseForm.of(ADD_FRIEND_FAIL));
+
     }
 
-    @GetMapping("/confirmReceiveRequest")
-    public ResponseEntity<ResponseForm> confirmReceiveRequest(){ {
+    @GetMapping("/confirmRequest/{type}")
+    public ResponseEntity<ResponseForm> confirmRequest(@PathVariable String type) {
 
-        List<ConfirmFriendResponse> confirmFriendResponses = friendService.confirmReceiveRequest();
+        List<ConfirmFriendResponse> confirmFriendResponses = friendService.confirmRequest(type);
         return !confirmFriendResponses.isEmpty() ?
-                ResponseEntity.ok(ResponseForm.of(CONFIRM_RECEIVE_REQUEST_SUCCESS, confirmFriendResponses)) :
-                ResponseEntity.ok(ResponseForm.of(CONFIRM_RECEIVE_REQUEST_FAIL));
-        }
+                ResponseEntity.ok(ResponseForm.of(CONFIRM_REQUEST_SUCCESS, confirmFriendResponses)) :
+                ResponseEntity.ok(ResponseForm.of(CONFIRM_REQUEST_SUCCESS));
+
     }
 
-    @GetMapping("/confirmSendRequest")
-    public ResponseEntity<ResponseForm> confirmSendRequest(){ {
-
-        List<ConfirmFriendResponse> confirmFriendResponses = friendService.confirmSendRequest();
-        return !confirmFriendResponses.isEmpty() ?
-                ResponseEntity.ok(ResponseForm.of(CONFIRM_SEND_REQUEST_SUCCESS,confirmFriendResponses)) :
-                ResponseEntity.ok(ResponseForm.of(CONFIRM_SEND_REQUEST_FAIL));
-        }
-    }
 
     @PutMapping("/accept")
-    public ResponseEntity<ResponseForm> acceptRequest(@RequestParam Long sendUserId){ {
+    public ResponseEntity<ResponseForm> acceptRequest(@RequestParam Long sendUserId) {
 
         boolean isAccepted = friendService.acceptRequest(sendUserId);
 
         return isAccepted ?
                 ResponseEntity.ok(ResponseForm.of(ACCEPT_FRIEND_SUCCESS)) :
                 ResponseEntity.ok(ResponseForm.of(ACCEPT_FRIEND_FAIL));
-        }
+
     }
 
     @DeleteMapping("/reject")
-    public ResponseEntity<ResponseForm> rejectRequest(@RequestParam Long sendUserId){ {
+    public ResponseEntity<ResponseForm> rejectRequest(@RequestParam Long sendUserId) {
 
         boolean isAccepted = friendService.removeFriend(sendUserId);
 
         return isAccepted ?
                 ResponseEntity.ok(ResponseForm.of(REJECT_FRIEND_SUCCESS)) :
                 ResponseEntity.ok(ResponseForm.of(REJECT_FRIEND_FAIL));
-        }
+
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<ResponseForm> delete(@RequestParam Long friendId){ {
+    public ResponseEntity<ResponseForm> delete(@RequestParam Long friendId) {
 
         boolean isAccepted = friendService.removeFriend(friendId);
 
         return isAccepted ?
                 ResponseEntity.ok(ResponseForm.of(DELETE_FRIEND_SUCCESS)) :
                 ResponseEntity.ok(ResponseForm.of(DELETE_FRIEND_FAIL));
-        }
+
     }
 
     @GetMapping("/read")
-    public ResponseEntity<ResponseForm> getFriendList(){ {
+    public ResponseEntity<ResponseForm> getFriendList() {
 
         List<FriendListResponse> friendListResponses = friendService.getFriendList();
         return !friendListResponses.isEmpty() ?
                 ResponseEntity.ok(ResponseForm.of(READ_FRIENDLIST_SUCCESS, friendListResponses)) :
                 ResponseEntity.ok(ResponseForm.of(READ_FRIENDLIST_FAIL));
-        }
+    }
+
+    @GetMapping("/recommend")
+    public ResponseEntity<ResponseForm> recommendFriend() {
+
+        List<FriendListResponse> recommendFriendLists = friendService.recommendFriends();
+        return !recommendFriendLists.isEmpty() ?
+                ResponseEntity.ok(ResponseForm.of(RECOMMEND_FRIEND_SUCCESS, recommendFriendLists)) :
+                ResponseEntity.ok(ResponseForm.of(RECOMMEND_FRIEND_FAIL));
     }
 }
 

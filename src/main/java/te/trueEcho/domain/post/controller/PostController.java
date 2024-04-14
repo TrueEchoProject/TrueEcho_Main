@@ -3,10 +3,8 @@ package te.trueEcho.domain.post.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import te.trueEcho.domain.post.dto.CommentListResponse;
-import te.trueEcho.domain.post.dto.FeedType;
-import te.trueEcho.domain.post.dto.PostRequest;
-import te.trueEcho.domain.post.dto.PostListResponse;
+import org.springframework.web.multipart.MultipartFile;
+import te.trueEcho.domain.post.dto.*;
 import te.trueEcho.domain.post.service.PostService;
 import te.trueEcho.global.response.ResponseCode;
 import te.trueEcho.global.response.ResponseForm;
@@ -15,7 +13,29 @@ import te.trueEcho.global.response.ResponseForm;
 @RequiredArgsConstructor
 @RequestMapping("/post")
 public class PostController {
-    private final   PostService  postService;
+    private final  PostService  postService;
+
+    @PostMapping("/write")
+    public ResponseEntity<ResponseForm> writePost(
+            @RequestParam FeedType type,
+            @RequestParam MultipartFile postFront,
+            @RequestParam MultipartFile postBack,
+            @RequestParam String title,
+            @RequestParam int postStatus
+            ){
+        boolean isWritten = postService.writePost(
+                AddPostRequest.builder()
+                .feedType(type)
+                .postFront(postFront)
+                .postBack(postBack)
+                .title(title)
+                .postStatus(postStatus)
+                .build());
+
+        return isWritten ?
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.WRITE_POST_SUCCESS)) :
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.WRITE_POST_FAIL));
+    }
 
     @GetMapping("/read/{type}")
     public ResponseEntity<ResponseForm> readPost(
@@ -25,7 +45,7 @@ public class PostController {
             @RequestParam int pageCount){
 
         PostListResponse postGetDtoList =  postService.getPost(
-                PostRequest.builder()
+                ReadPostRequest.builder()
                         .index(index)
                         .pageCount(pageCount)
                         .type(FeedType.values()[type])
@@ -33,7 +53,7 @@ public class PostController {
                         .build()
         );
 
-        return !postGetDtoList.getPostResponses().isEmpty() ?
+        return !postGetDtoList.getReadPostRespons().isEmpty() ?
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_POST_SUCCESS, postGetDtoList)) :
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_POST_FAIL));
     }

@@ -71,6 +71,11 @@ dependencies {
 
 	//env
 	implementation 'io.github.cdimascio:java-dotenv:5.2.2'
+
+	//MS Azure
+	implementation 'com.azure:azure-storage-blob:12.25.1'
+	implementation 'io.projectreactor.netty:reactor-netty-http:1.1.18'  // Replace '1.1.x' with the specific minor version you prefer
+	implementation 'io.projectreactor:reactor-core:3.6.5'
 }
 
 tasks.named('test') {

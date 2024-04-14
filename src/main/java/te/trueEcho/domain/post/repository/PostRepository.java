@@ -10,4 +10,6 @@ public interface PostRepository {
     List<Post> readPost(int pageCount, int index,  List<User> filteredUser);
 
     List<Comment> readCommentWithUnderComments(Long postId);
+
+    void save(Post post);
 }

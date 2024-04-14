@@ -49,10 +49,8 @@ public enum ResponseCode {
     // 친구
     ADD_FRIEND_SUCCESS(202, "T002", "친구 추가에 성공했습니다."),
     ADD_FRIEND_FAIL(202, "T002", "친구 추가에 실패했습니다."),
-    CONFIRM_RECEIVE_REQUEST_SUCCESS(202, "T002", "받은 친구 요청 확인에 성공했습니다."),
-    CONFIRM_RECEIVE_REQUEST_FAIL(202, "T002", "받은 친구 요청 확인에 실패했습니다."),
-    CONFIRM_SEND_REQUEST_SUCCESS(202, "T002", "보낸 친구 요청 확인에 성공했습니다."),
-    CONFIRM_SEND_REQUEST_FAIL(202, "T002", "보낸 친구 요청 확인에 실패했습니다."),
+    CONFIRM_REQUEST_SUCCESS(202, "T002", "친구 요청 확인에 성공했습니다."),
+    CONFIRM_REQUEST_FAIL(202, "T002", "친구 요청 확인에 실패했습니다."),
     ACCEPT_FRIEND_SUCCESS(202, "T002", "친구 요청 수락에 성공했습니다."),
     ACCEPT_FRIEND_FAIL(202, "T002", "친구 요청 수락에 실패했습니다."),
     REJECT_FRIEND_SUCCESS(202, "T002", "친구 요청 거절에 성공했습니다."),
@@ -61,6 +59,8 @@ public enum ResponseCode {
     DELETE_FRIEND_FAIL(202, "T002", "친구 삭제에 실패했습니다."),
     READ_FRIENDLIST_SUCCESS(202, "T002", "친구 목록 조회에 성공했습니다."),
     READ_FRIENDLIST_FAIL(202, "T002", "친구 목록 조회에 실패했습니다."),
+    RECOMMEND_FRIEND_SUCCESS(202, "T002", "친구 추천에 성공했습니다."),
+    RECOMMEND_FRIEND_FAIL(202, "T002", "친구 추천에 실패했습니다."),
 
     // 차단
     PUT_BLOCK_SUCCESS(202, "T002", "차단에 성공했습니다."),
@@ -73,6 +73,8 @@ public enum ResponseCode {
     GET_POST_FAIL(202, "T002", "게시물을 읽기를 실패했습니다."),
     GET_COMMENT_SUCCESS(202, "T002", "해당 게시물의 댓글 읽기를 성공했습니다."),
     GET_COMMENT_FAIL(202, "T002", "해당 게시물의 댓글 읽기를 실패했습니다."),
+    WRITE_POST_SUCCESS(202, "T002", "게시물 작성을 성공했습니다."),
+    WRITE_POST_FAIL(202, "T002", "게시물 작성을 실패했습니다."),
 
     // 커뮤니티
     GET_VOTE_CONTENT_SUCCESS(202, "T002", "투표지 읽기를 성공했습니다."),
