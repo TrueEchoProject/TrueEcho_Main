@@ -39,7 +39,7 @@ public class FriendRepositoryImpl implements FriendRepository {
     }
 
     public List<User> findMyFriendsByUser(User user) {
-        return em.createQuery("select f.targetUser from Friend f where f.user = :user and f.status= :friendStatus", User.class)
+        return em.createQuery("select f.targetUser from Friend f where (f.sendUser = :user or f.targetUser =:user)and f.status= :friendStatus", User.class)
                 .setParameter("user", user)
                 .setParameter("friendStatus", FRIEND)
                 .getResultList();
@@ -77,19 +77,21 @@ public class FriendRepositoryImpl implements FriendRepository {
 
     public List<User> getFriendList(User loginUser) {
         try {
-            List<User> targetUsers = em.createQuery("select f.targetUser from Friend f where f.sendUser = :loginUser and f.status = :friendStatus", User.class)
-                    .setParameter("loginUser", loginUser)
-                    .setParameter("friendStatus", FRIEND)
-                    .getResultList();
 
-            List<User> sendUsers = em.createQuery("select f.sendUser from Friend f where f.targetUser = :loginUser and f.status = :friendStatus", User.class)
+            List<Friend> friends = em.createQuery("select f from Friend f join fetch f.sendUser join fetch f.targetUser where (f.sendUser = :loginUser or f.targetUser = :loginUser) and f.status = :friendStatus", Friend.class)
                     .setParameter("loginUser", loginUser)
                     .setParameter("friendStatus", FRIEND)
                     .getResultList();
 
             List<User> allUsers = new ArrayList<>();
-            allUsers.addAll(targetUsers);
-            allUsers.addAll(sendUsers);
+            for (Friend friend : friends) {
+                if (friend.getSendUser().equals(loginUser)) {
+                    allUsers.add(friend.getTargetUser());
+                } else {
+                    allUsers.add(friend.getSendUser());
+                }
+            }
+
             return allUsers;
         } catch (Exception e) {
             log.error("Error occurred while getting friend list", e);
