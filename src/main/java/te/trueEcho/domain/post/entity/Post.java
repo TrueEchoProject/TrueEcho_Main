@@ -29,10 +29,12 @@ public class Post extends CreatedDateAudit {
     @Column(name = "post_title")
     private String title;
 
-    @Column(name = "post_url_front")
+    @Lob
+    @Column(name = "post_url_front", columnDefinition = "TEXT")
     private String urlFront;
 
-    @Column(name = "post_url_back")
+    @Lob
+    @Column(name = "post_url_back", columnDefinition = "TEXT")
     private String urlBack;
 
     @Column(name = "post_status") // 2분 이내 답장 여부

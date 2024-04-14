@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class PostResponse {
+public class ReadPostResponse {
         private String username;
         private Long userId;
         private String profileUrl;

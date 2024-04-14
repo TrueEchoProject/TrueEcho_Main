@@ -48,4 +48,14 @@ public class PostRepositoryImpl implements PostRepository{
                 .setParameter("postId", postId)
                 .getResultList();
     }
+
+    @Transactional
+    @Override
+    public void save(Post post) {
+        if (post.getId() == null) {
+            em.persist(post);
+        } else {
+            em.merge(post);
+        }
+    }
 }

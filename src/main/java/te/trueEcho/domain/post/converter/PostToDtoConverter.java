@@ -2,7 +2,7 @@ package te.trueEcho.domain.post.converter;
 
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
-import te.trueEcho.domain.post.dto.PostResponse;
+import te.trueEcho.domain.post.dto.ReadPostResponse;
 import te.trueEcho.domain.post.dto.PostListResponse;
 import te.trueEcho.domain.post.entity.Post;
 
@@ -15,9 +15,9 @@ public class PostToDtoConverter {
 
     public static PostListResponse converter(List<Post> postList, String yourLocation) {
 
-        List<PostResponse> postResponseList = postList.stream()
+        List<ReadPostResponse> readPostResponseList = postList.stream()
                 .map(post -> {
-                    return PostResponse.builder()
+                    return ReadPostResponse.builder()
                             .postId(post.getId())
                             .userId(post.getUser().getId())
                             .title(post.getTitle())
@@ -35,7 +35,7 @@ public class PostToDtoConverter {
 
         return  PostListResponse.builder()
                 .yourLocation(yourLocation)
-                .postResponses(postResponseList)
-                .postCount(postResponseList.size()).build();
+                .readPostRespons(readPostResponseList)
+                .postCount(readPostResponseList.size()).build();
     }
 }
