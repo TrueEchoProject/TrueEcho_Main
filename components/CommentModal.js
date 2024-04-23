@@ -17,6 +17,7 @@ import {
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import axios from 'axios';
 import { Image } from 'expo-image';
+import { AntDesign } from "@expo/vector-icons";
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
@@ -29,6 +30,31 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	const [showUnderComments, setShowUnderComments] = useState({});
 	const [textInputValue, setTextInputValue] = useState('');
 	const animatedHeight = useRef(new Animated.Value(initialMarginTop)).current;
+	
+	const handleSubmitComment = async () => {
+		// 입력된 텍스트가 비어 있는지 확인
+		if (!textInputValue.trim()) {
+			alert("댓글을 입력해주세요."); // 또는 사용자에게 피드백을 제공하는 다른 방법 사용
+			return; // 함수 실행을 여기서 중단
+		}
+		try {
+			const response = await axios.post('http://192.168.0.3:3000/comments', {
+				comment: textInputValue, // 사용자가 입력한 댓글 내용
+				username: "신형",
+				profile_url: "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+				created_at: "2024-03-25",
+				under_comments: [],
+				post_id: postId, // 댓글이 추가될 게시글의 ID
+				id: postId + Date.now(),
+				reply_count: 0,
+			});
+			const newCommentObject = response.data; // 가정: 서버가 추가된 댓글의 정보를 반환
+			setComments([newCommentObject, ...comments]); // 새 댓글을 목록 최상단에 추가
+			setTextInputValue("")
+		} catch (error) {
+			console.error('댓글 추가 실패:', error);
+		}
+	};
 	
 	const handleInputFocus = () => {
 		// 키보드가 올라올 때 모달을 상단으로 이동시키는 애니메이션
@@ -45,11 +71,10 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 			const dragResponse = gestureState.dy * 0.1;
 			let newMarginTop = animatedHeight._value + dragResponse;
 			
-			
 			newMarginTop = Math.min(Math.max(newMarginTop, marginTopLimit), windowHeight);
 			animatedHeight.setValue(newMarginTop);
 		},
-		onPanResponderRelease: (_, gestureState) => {
+		onPanResponderRelease: (_) => {
 			// 아래로 충분한 거리 슬라이드 시 모달 닫기
 			if (animatedHeight._value >= windowHeight * 0.5) { // 150은 임계값, 조정 가능
 				onClose(); // 모달 닫기 함수 호출
@@ -92,9 +117,16 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 				<Image style={styles.profileImage} source={{ uri: comment.profile_url }} />
 				<Text>Date: {comment.created_at}</Text>
 				<Text style={styles.commentText}>{comment.username}: {comment.comment}</Text>
-				<TouchableOpacity onPress={() => toggleUnderComments(index)}>
-					<Text>답글 {comment.reply_count}개 더보기</Text>
+				<TouchableOpacity>
+					<Text>답글 달기</Text>
 				</TouchableOpacity>
+				{ comment.reply_count === 0 ? (
+					<></>
+				) : (
+					<TouchableOpacity onPress={() => toggleUnderComments(index)}>
+						<Text>답글 {comment.reply_count}개 더보기</Text>
+					</TouchableOpacity>
+				)}
 				<UnderComments underComments={comment.under_comments} isVisible={showUnderComments[index]} />
 			</View>
 		);
@@ -166,7 +198,24 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 									onChangeText={setTextInputValue}
 									placeholder="댓글 추가..."
 									onFocus={handleInputFocus}
+									onSubmitEditing={handleSubmitComment} // 엔터 키를 눌러 댓글 제출
 								/>
+								<TouchableOpacity onPress={handleSubmitComment}>
+									<View style={{
+										justifyContent: "center",
+										alignItems: "center",
+										borderRadius: 5,
+										borderWidth: 1,
+										borderColor: "gray",
+										paddingTop: 5,
+										marginLeft:10,
+										width: 40,
+										height: 40,
+										backgroundColor: "#ccc"
+									}}>
+										<AntDesign name='caretup' size={25} style={{ color: 'white' }}/>
+									</View>
+								</TouchableOpacity>
 							</View>
 						</Animated.View>
 					</KeyboardAvoidingView>
@@ -234,8 +283,9 @@ const styles = StyleSheet.create({
 	},
 	inputContainer: {
 		flexDirection: 'row',
-		paddingHorizontal: 8,
-		paddingVertical: 8,
+		alignItems: "center",
+		paddingHorizontal: 10,
+		paddingVertical: 10,
 		borderTopWidth: StyleSheet.hairlineWidth,
 		borderTopColor: '#ccc',
 	},
