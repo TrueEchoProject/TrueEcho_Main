@@ -4,20 +4,16 @@ import { Image } from 'expo-image';
 
 const ImageButton = React.memo(({ front_image, back_image, containerHeight, windowWidth }) => {
 	const [isFrontShowing, setIsFrontShowing] = useState(true); // 현재 보여지는 이미지가 전면 이미지인지 추적하는 상태
-	const [myStatus, setMyStatus] = useState("none")
+	const [myStatus, setMyStatus] = useState("back")
 	const changeImage = () => {
-		// 둘 다 null이 아닐 때만 이미지 전환 가능
-		if (front_image && back_image) {
-			setIsFrontShowing(!isFrontShowing); // 이미지 전환
-		}
+		setIsFrontShowing(!isFrontShowing);
 	};
 	
 	const ImageHeight = Math.floor(containerHeight);
 	const SmallHeight = Math.floor(ImageHeight / 3);
 	const SmallWidth = Math.floor(windowWidth / 3);
 	
-	// 둘 중 하나라도 null이 아닌 경우를 위한 로직
-	const displayImage = front_image || back_image; // 둘 중 하나가 null이면, 다른 하나 사용
+	const defaultImage = "https://ppss.kr/wp-content/uploads/2020/07/01-4-540x304.png";
 	
 	return (
 		<View style={{ position: 'relative' }}>
@@ -28,40 +24,28 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
 					</Text>
 				</View>
 			)}
-			{front_image && back_image ? (
-				<>
-					<TouchableOpacity onPress={changeImage} style={{ zIndex: 2, position: 'absolute', top: 10, left: 10 }}>
-						<Image
-							source={{ uri: isFrontShowing ? back_image : front_image }}
-							style={{
-								borderColor: '#ffffff',
-								borderWidth: 2,
-								height: SmallHeight,
-								width: SmallWidth
-							}}
-							blurRadius = { myStatus === "back" ? 5 : 0 || myStatus === "front" ? 0 : 5 || myStatus === "none" ? 5 : 5 }
-						/>
-					</TouchableOpacity>
-					<TouchableOpacity onPress={changeImage} style={{ zIndex: 1, position: 'relative' }}>
-						<Image
-							source={{ uri: isFrontShowing ? front_image : back_image }}
-							style={{
-								height: ImageHeight,
-								width: windowWidth,
-							}}
-							blurRadius = { myStatus === "front" ? 5 : 0 || myStatus === "back" ? 0 : 5 || myStatus === "none" ? 5 : 5 }
-						/>
-					</TouchableOpacity>
-				</>
-			) : (
+			<TouchableOpacity onPress={changeImage} style={{ zIndex: 2, position: 'absolute', top: 10, left: 10 }}>
 				<Image
-					source={{ uri: displayImage }}
+					source={{ uri: isFrontShowing ? (back_image || defaultImage) : (front_image || defaultImage) }}
+					style={{
+						borderColor: '#ffffff',
+						borderWidth: 2,
+						height: SmallHeight,
+						width: SmallWidth
+					}}
+					blurRadius = { myStatus === "back" ? 5 : 0 || myStatus === "front" ? 0 : 5 || myStatus === "none" ? 5 : 5 }
+				/>
+			</TouchableOpacity>
+			<TouchableOpacity onPress={changeImage} style={{ zIndex: 1, position: 'relative' }}>
+				<Image
+					source={{ uri: isFrontShowing ? (front_image || defaultImage) : (back_image || defaultImage) }}
 					style={{
 						height: ImageHeight,
 						width: windowWidth,
 					}}
+					blurRadius = { myStatus === "front" ? 5 : 0 || myStatus === "back" ? 0 : 5 || myStatus === "none" ? 5 : 5 }
 				/>
-			)}
+			</TouchableOpacity>
 		</View>
 	)
 })
@@ -87,6 +71,5 @@ const styles = StyleSheet.create({
 });
 
 export { ImageButton };
-
 
 
