@@ -10,11 +10,49 @@ const windowHeight = Dimensions.get('window').height;
 
 const FriendPosts = React.forwardRef((props, ref) => {
 	const [currentPage, setCurrentPage] = useState(0);
-	const [optionsVisibleStates, setOptionsVisibleStates] = useState({});  // 객체로 초기화
+	const [optionsVisibleStates, setOptionsVisibleStates] = useState({});
 	const [contentList, setContentList] = useState([]);
 	const [refreshing, setRefreshing] = useState(false);
 	const [friendStatus, setFriendStatus] = useState([]);
 	const pagerViewRef = useRef(null);
+	const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
+	
+	const [lastFetchedIndex, setLastFetchedIndex] = useState(0);
+	
+	const fetchPostsAndRecommendations = async (start) => {
+		if (start <= lastFetchedIndex && contentList.length > 0) return;  // 이미 불러온 데이터 범위 내라면 요청 중지
+		setIsLoading(true); // 로딩 시작
+		const postLimit = 8;
+		const recommendationLimit = 4;
+		try {
+			const postResponse = await axios.get(`http://192.168.0.3:3000/posts?scope=FRIEND&_start=${start}&_limit=${postLimit}`);
+			const newPosts = postResponse.data;
+			
+			const updatedContentList = [...contentList, ...newPosts.map(post => ({ type: 'post', data: post }))];
+			setOptionsVisibleStates(newOptionsVisibleStates => {
+				const newOptions = { ...newOptionsVisibleStates };
+				newPosts.forEach(post => {
+					newOptions[post.post_id] = false;
+				});
+				return newOptions;
+			});
+			
+			if (newPosts.length === postLimit) {
+				const recsResponse = await axios.get(`http://192.168.0.3:3000/recommendations?_start=${contentList.filter(item => item.type === 'recommendation').length}&_limit=${recommendationLimit}`);
+				const newRecs = recsResponse.data;
+				if (newRecs && newRecs.length > 0) {
+					updatedContentList.push({ type: 'recommendation', data: newRecs });
+					setFriendStatus(friendStatus => [...friendStatus, ...new Array(newRecs.length).fill(false)]);
+				}
+			}
+			setContentList(updatedContentList);
+		} catch (error) {
+			console.error('Error fetching posts and recommendations:', error);
+		} finally {
+			setLastFetchedIndex(start + postLimit); // 가져온 마지막 게시물 인덱스 업데이트
+			setIsLoading(false);
+		}
+	};
 	
 	const getPosts = async (start = 0) => {
 		if (start === 0) {
@@ -23,59 +61,38 @@ const FriendPosts = React.forwardRef((props, ref) => {
 			setOptionsVisibleStates({});
 			setFriendStatus([]);
 		}
-		const postLimit = 10;
-		try {
-			const postResponse = await axios.get(`http://192.168.0.3:3000/posts?scope=FRIEND&_start=${start}&_limit=${postLimit}`);
-			const newPosts = postResponse.data;
-			
-			let newOptionsVisibleStates = {};
-			newPosts.forEach(post => {
-				newOptionsVisibleStates[post.post_id] = false;  // 초기값을 false로 설정
-			});
-			
-			let updatedContentList = [...contentList, ...newPosts.map(post => ({ type: 'post', data: post }))];
-			if (newPosts.length === postLimit) {
-				const recsResponse = await axios.get(`http://192.168.0.3:3000/recommendations?_limit=4`);
-				const newRecs = recsResponse.data;
-				updatedContentList.push({ type: 'recommendation', data: newRecs });
-				setFriendStatus(newRecs.map(() => false));
-			}
-			setContentList(updatedContentList);
-			setOptionsVisibleStates(newOptionsVisibleStates);
-		} catch (error) {
-			console.error('Fetching posts failed:', error);
-		} finally {
-			setRefreshing(false);
-			if (start === 0) {
-				pagerViewRef.current?.setPageWithoutAnimation(0);
-			}
+		await fetchPostsAndRecommendations(start);
+		setRefreshing(false);
+		if (start === 0) {
+			pagerViewRef.current?.setPageWithoutAnimation(0);
 		}
 	};
 	
-	const handlePageChange = (e) => {
+	const handlePageChange = useCallback((e) => {
 		const newIndex = e.nativeEvent.position;
+		if (newIndex === currentPage) return; // 페이지가 실제로 변경되지 않았다면 종료
 		
-		// 이전 페이지의 옵션 비활성화
-		if (currentPage !== newIndex && contentList[currentPage] && contentList[currentPage].type === 'post') {
-			setOptionsVisibleStates(prevStates => ({
-				...prevStates,
-				[contentList[currentPage].data.post_id]: false  // 이전 페이지의 게시물 ID에 해당하는 옵션을 false로 설정
-			}));
-		}
-		
-		// 현재 페이지 업데이트
 		setCurrentPage(newIndex);
-	};
+		// 페이지 변경 시 이전 페이지 옵션 비활성화
+		setOptionsVisibleStates(prev => ({
+			...prev,
+			[contentList[currentPage]?.data?.post_id]: false
+		}));
+	}, [currentPage]);
 	
 	useEffect(() => {
-		// 상태 업데이트가 완료되고 나서 UI 업데이트를 보장하기 위한 useEffect
-		if (contentList[currentPage] && contentList[currentPage].type === 'post') {
-			setOptionsVisibleStates(prevStates => ({
-				...prevStates,
-				[contentList[currentPage].data.post_id]: false  // 현재 페이지만 다시 설정
-			}));
-		}
-	}, [currentPage, contentList]);
+		console.log(contentList);
+	}, [contentList]);
+	
+	React.useImperativeHandle(ref, () => ({
+		getPosts: getPosts,
+	}));
+	
+	useFocusEffect(
+		useCallback(() => {
+			getPosts();
+		}, [])
+	);
 	
 	const toggleFriendSend = async (index, item) => {
 		try {
@@ -90,22 +107,17 @@ const FriendPosts = React.forwardRef((props, ref) => {
 		}
 	};
 	
-	React.useImperativeHandle(ref, () => ({
-		getPosts: getPosts,
-	}));
-	
-	useFocusEffect(
-		useCallback(() => {
-			getPosts();
-		}, [])
-	);
+	useEffect(() => {
+		const thresholdIndex = contentList.length - 5; // 데이터를 더 불러오기 시작할 임계점
+		if (currentPage >= thresholdIndex && !isLoading) {
+			fetchPostsAndRecommendations(contentList.length);
+		}
+	}, [currentPage, isLoading, contentList]);
 	
 	return (
 		<ScrollView
 			contentContainerStyle={styles.scrollViewContent}
-			refreshControl={
-				<RefreshControl refreshing={refreshing} onRefresh={() => getPosts(0)} />
-			}
+			refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => getPosts(0)} />}
 		>
 			<PagerView
 				style={styles.pagerView}
@@ -122,7 +134,7 @@ const FriendPosts = React.forwardRef((props, ref) => {
 								setIsOptionsVisibleExternal={(visible) => setOptionsVisibleStates(prev => ({ ...prev, [item.data.post_id]: visible }))}
 							/>
 						) : (
-							item.data.map((rec, recIndex) => (
+							Array.isArray(item.data) && item.data.map((rec, recIndex) => (  // Check if item.data is an array
 								<View key={rec.Recommendation_id} style={styles.recommendationContainer}>
 									<Image source={{ uri: rec.profile_url }} style={styles.profileImage} />
 									<Text style={styles.username}>{rec.username}</Text>
