@@ -234,6 +234,12 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 			fetchComments(1); // 초기 페이지 로드
 			setTextInputValue(''); // 입력 필드 초기화
 			setShowUnderComments({})
+			setReplyingTo(null);
+			Animated.timing(animatedHeight, {
+				toValue: initialMarginTop, // 모달을 초기 높이로 설정
+				duration: 0, // 즉시 변경되도록 시간을 0으로 설정
+				useNativeDriver: false
+			}).start();
 		} else {
 			setComments([]);
 			setCurrentPage(1);
