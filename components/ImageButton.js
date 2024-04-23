@@ -4,7 +4,7 @@ import { Image } from 'expo-image';
 
 const ImageButton = React.memo(({ front_image, back_image, containerHeight, windowWidth }) => {
 	const [isFrontShowing, setIsFrontShowing] = useState(true); // 현재 보여지는 이미지가 전면 이미지인지 추적하는 상태
-	const [myStatus, setMyStatus] = useState("")
+	const [myPicture, setMyPicture] = useState("")
 	const changeImage = () => {
 		setIsFrontShowing(!isFrontShowing);
 	};
@@ -16,8 +16,8 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
 	const defaultImage = "https://ppss.kr/wp-content/uploads/2020/07/01-4-540x304.png";
 	// Calculate blurRadius for each image based on myStatus
 	const getBlurRadius = (isFront) => {
-		if (myStatus === "none") return 20;
-		if ((myStatus === "front" && !isFront) || (myStatus === "back" && isFront)) {
+		if (myPicture === "none") return 20;
+		if ((myPicture === "front" && !isFront) || (myPicture === "back" && isFront)) {
 			return 20;
 		}
 		return 0;
@@ -25,7 +25,7 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
 	
 	return (
 		<View style={{ position: 'relative' }}>
-			{ myStatus === "none" && (
+			{ myPicture === "none" && (
 				<View style={styles.overlayTextContainer}>
 					<Text style={styles.overlayText}>
 						게시물을 작성해보세요!
@@ -43,7 +43,7 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
 					}}
 					blurRadius={getBlurRadius(isFrontShowing)}
 				/>
-				{isFrontShowing && myStatus === "back" && (
+				{isFrontShowing && myPicture === "back" && (
 					<View style={styles.overlayTextContainer}>
 						<Text style={{
 							color: 'white',
@@ -54,7 +54,7 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
 							당신의 얼굴을{'\n'}보고싶어요!</Text>
 					</View>
 				)}
-				{!isFrontShowing && myStatus === "front" && (
+				{!isFrontShowing && myPicture === "front" && (
 					<View style={styles.overlayTextContainer}>
 						<Text style={{
 							color: 'white',
@@ -75,12 +75,12 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
 					}}
 					blurRadius={getBlurRadius(!isFrontShowing)}
 				/>
-				{!isFrontShowing && myStatus === "back" && (
+				{!isFrontShowing && myPicture === "back" && (
 					<View style={styles.overlayTextContainer}>
 						<Text style={styles.overlayText}>당신의 얼굴을 보고싶어요!</Text>
 					</View>
 				)}
-				{isFrontShowing && myStatus === "front" && (
+				{isFrontShowing && myPicture === "front" && (
 					<View style={styles.overlayTextContainer}>
 						<Text style={styles.overlayText}>당신이 바라보는{'\n'}풍경이 궁금해요!</Text>
 					</View>
@@ -111,5 +111,6 @@ const styles = StyleSheet.create({
 });
 
 export { ImageButton };
+
 
 

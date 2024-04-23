@@ -52,8 +52,14 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 						try {
 							await axios.delete(`http://192.168.0.3:3000/comments/${commentId}`);
 							setComments(comments.filter(comment => comment.id !== commentId)); // UI에서 댓글 제거
+							setTextInputValue(''); // 입력 필드 초기화
+							setShowUnderComments({})
+							setReplyingTo(null);
 						} catch (error) {
 							console.error('댓글 삭제 실패:', error);
+							setTextInputValue(''); // 입력 필드 초기화
+							setShowUnderComments({})
+							setReplyingTo(null);
 						}
 					}
 				}
@@ -122,7 +128,8 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 				console.error('댓글 추가 실패:', error);
 			}
 		}
-		setTextInputValue('');
+		setTextInputValue(''); // 입력 필드 초기화
+		setShowUnderComments({})
 		setReplyingTo(null);
 	};
 	
@@ -156,6 +163,9 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 									return comment;
 								}));
 							}
+							setTextInputValue(''); // 입력 필드 초기화
+							setShowUnderComments({})
+							setReplyingTo(null);
 						} catch (error) {
 							console.error('답글 삭제 실패:', error);
 						}

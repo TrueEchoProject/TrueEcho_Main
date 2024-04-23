@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Share, Dimensions} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Share, Dimensions } from 'react-native';
 import axios from 'axios';
 import { Image } from 'expo-image';
 import { MaterialIcons, Ionicons, Feather, SimpleLineIcons } from "@expo/vector-icons";
@@ -53,6 +53,7 @@ const CardComponent = ({ post }) => {
 				blocked_user: post.username  // 이제 post.username을 직접 사용합니다.
 			});
 			console.log('blocked_users updated successfully');
+			hideOptions()
 		} catch (error) {
 			console.error('Error updating blocked_users:', error);
 		}
@@ -143,7 +144,7 @@ const CardComponent = ({ post }) => {
 						styles.optionsContainer,
 						post.friend === 1 ?
 							{ top: buttonLayout.y + buttonLayout.height, right: 0 } :
-							{ top: buttonLayout.y + buttonLayout.height + 15, right: 0 }
+							{ top: buttonLayout.y + buttonLayout.height + 30, right: 0 }
 					]}>
 						<TouchableOpacity onPress={toggleBlock} style={{ flexDirection:'row', alignItems: 'center', }}>
 							<Feather name='alert-triangle' style={{ marginLeft: 10, color: 'red' }}/>
@@ -181,6 +182,25 @@ const CardComponent = ({ post }) => {
 							postId={post.post_id}
 							onClose={() => setIsCommentVisible(false)}
 						/>
+						{post.post_status === 1 || post.post_status === 2 ? (
+							<View style={[
+								styles.right,
+								{
+									marginLeft: 'auto',
+									padding: 5,
+									paddingLeft: 30,
+									paddingRight: 30,
+									backgroundColor: "#3B4664",
+									borderRadius: 10,}
+							]}>
+								{post.post_status === 1 && (
+									<Text style={{ color: "white", fontSize: 25}}>free</Text>
+								)}
+								{post.post_status === 2 && (
+									<Text style={{ color: "white", fontSize: 25}}>late</Text>
+								)}
+							</View>
+						) : null}
 					</View>
 				</View>
 			</View>
