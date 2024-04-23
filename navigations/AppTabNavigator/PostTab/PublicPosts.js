@@ -84,29 +84,19 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		}
 	};
 	const refreshPosts = () => {
-		setLocation(''); // 위치 초기화
-		setRange(null); // 범위 초기화
-		setIsRefreshing(true); // 새로고침 플래그 설정
-		getPosts(null, 0); // start를 0으로 설정하여 전체 게시물을 새로 불러옵니다.
+		setLocation('');
+		setRange(null);
+		setIsRefreshing(true);
+		getPosts(null, 0);
 	};
 	
 	React.useImperativeHandle(ref, () => ({
 		getPosts: refreshPosts,
 	}));
 	
-	useFocusEffect(
-		useCallback(() => {
-			setLocation('');
-			setRange(null);
-			getPosts();
-		}, [])
-	);
-	
-	useEffect(() => {
-		if (location === '' && range === null) {
-			getPosts(null, 0);
-		}
-	}, [location, range]);
+	useFocusEffect(useCallback(() => {
+		refreshPosts();
+	}, []));
 	
 	useEffect(() => {
 		console.log(posts);
@@ -223,7 +213,6 @@ const PublicPosts = React.forwardRef((props, ref) => {
 						<View key={post.post_id} style={style.container}>
 							<MemoizedCardComponent
 								post={post}
-								location={location}
 								isOptionsVisibleExternal={optionsVisibleStates[post.post_id]}
 								setIsOptionsVisibleExternal={(visible) => setOptionsVisibleStates(prev => ({ ...prev, [post.post_id]: visible }))}
 							/>
