@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Share, Dimensions } from 'react-native';
 import axios from 'axios';
 import { Image } from 'expo-image';
@@ -6,8 +6,8 @@ import { MaterialIcons, Ionicons, Feather, SimpleLineIcons } from "@expo/vector-
 import { ImageButton } from "./ImageButton";
 import { CommentModal } from './CommentModal'; // 댓글 창 컴포넌트 임포트
 
-const CardComponent = ({ post }) => {
-	const [isOptionsVisible, setIsOptionsVisible] = useState(false);
+const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExternal }) => {
+	const [isOptionsVisible, setIsOptionsVisible] = useState(isOptionsVisibleExternal || false);
 	const [buttonLayout, setButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
 	const [imageButtonHeight, setImageButtonHeight] = useState(0);
 	const [isLiked, setIsLiked] = useState(false); // 좋아요 상태 관리
@@ -16,8 +16,16 @@ const CardComponent = ({ post }) => {
 	const [layoutSet, setLayoutSet] = useState(false); // 레이아웃 설정 여부 상태 추가
 	const windowWidth = Dimensions.get('window').width;
 	const [friendLook, setFriendLook] = useState(true); // 좋아요 수 관리
+	
+	useEffect(() => {
+		setIsOptionsVisible(isOptionsVisibleExternal);
+		console.log(`Options Visible for ${post.post_id}: ${isOptionsVisibleExternal}`);
+	}, [isOptionsVisibleExternal]); // 이제 외부에서 받은 props가 변경될 때마다 로그를 찍고 상태를 업데이트합니다.
+	
 	const toggleOptionsVisibility = () => {
-		setIsOptionsVisible(!isOptionsVisible);
+		const newVisibility = !isOptionsVisible;
+		setIsOptionsVisible(newVisibility); // 내부 상태 업데이트
+		setIsOptionsVisibleExternal(newVisibility); // 외부 상태 업데이트로 전파
 	};
 	const onImageButtonLayout = (event) => {
 		if (layoutSet) return; // 레이아웃이 이미 설정되었다면 추가 업데이트 방지
@@ -29,6 +37,7 @@ const CardComponent = ({ post }) => {
 	const hideOptions = () => {
 		if (isOptionsVisible) {
 			setIsOptionsVisible(false);
+			setIsOptionsVisibleExternal(false); // 외부 상태도 업데이트
 		}
 	};
 	const toggleLike = async () => {
