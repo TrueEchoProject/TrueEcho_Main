@@ -35,6 +35,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	const commentRefs = useRef({});
 	const [currentPage, setCurrentPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
+	const scrollPositionRef = useRef(0); // 스크롤 위치 저장용
 	
 	const handleEditComment = (comment) => {
 		setEditingCommentId(comment.id); // 편집 중인 댓글 ID 설정
@@ -85,12 +86,12 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 			return;
 		}
 		const currentDate = new Date();
-		const year = currentDate.getFullYear(); // 연도
-		const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // 월
-		const day = currentDate.getDate().toString().padStart(2, '0'); // 일
-		const hours = currentDate.getHours().toString().padStart(2, '0'); // 시간
-		const minutes = currentDate.getMinutes().toString().padStart(2, '0'); // 분
-		const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}`;
+		const formattedDate =
+			`${currentDate.getFullYear()}
+			-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}
+			-${currentDate.getDate().toString().padStart(2, '0')}
+			${currentDate.getHours().toString().padStart(2, '0')}:
+			${currentDate.getMinutes().toString().padStart(2, '0')}`;
 		// 수정 중인 경우
 		if (editingCommentId) {
 			// 댓글 수정 로직
@@ -168,6 +169,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	
 	const fetchComments = async (page) => {
 		setLoading(true);
+		const currentPosition = scrollPositionRef.current; // 로딩 전 스크롤 위치 저장
 		try {
 			const response = await axios.get(`http://192.168.0.3:3000/comments`, {
 				params: {
@@ -179,6 +181,9 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 			if (response.data.length > 0) {
 				setComments(prevComments => [...prevComments, ...response.data]);
 				setCurrentPage(page);
+				setTimeout(() => {
+					scrollViewRef.current?.scrollTo({ y: currentPosition, animated: false }); // 스크롤 위치 복원
+				}, 0); // setTimeout으로 지연하여 스크롤 위치를 정확하게 복원
 			} else {
 				setHasMore(false);
 			}
@@ -201,6 +206,8 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	
 	// 스크롤 이벤트 처리
 	const handleScroll = ({ nativeEvent }) => {
+		const { contentOffset } = nativeEvent;
+		scrollPositionRef.current = contentOffset.y; // 현재 스크롤 위치 저장
 		if (nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
 			nativeEvent.contentSize.height - 20) {
 			if (hasMore && !loading) {
