@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Share, Dimensions} from 'react-native';
 import axios from 'axios';
 import { Image } from 'expo-image';
-import { MaterialIcons, Ionicons, Feather } from "@expo/vector-icons";
+import { MaterialIcons, Ionicons, Feather, SimpleLineIcons } from "@expo/vector-icons";
 import { ImageButton } from "./ImageButton";
 import { CommentModal } from './CommentModal'; // 댓글 창 컴포넌트 임포트
 
@@ -15,6 +15,7 @@ const CardComponent = ({ post }) => {
 	const [isCommentVisible, setIsCommentVisible] = useState(false); // 댓글 창 표시 상태
 	const [layoutSet, setLayoutSet] = useState(false); // 레이아웃 설정 여부 상태 추가
 	const windowWidth = Dimensions.get('window').width;
+	const [friendLook, setFriendLook] = useState(true); // 좋아요 수 관리
 	const toggleOptionsVisibility = () => {
 		setIsOptionsVisible(!isOptionsVisible);
 	};
@@ -56,6 +57,18 @@ const CardComponent = ({ post }) => {
 			console.error('Error updating blocked_users:', error);
 		}
 	};
+	const toggleFriendSend = async () => {
+		console.log(post.username);  // 이것은 여전히 정상적으로 작동합니다.
+		try {
+			await axios.post(`http://192.168.0.3:3000/friendSend`, {
+				friendSendUser: post.username
+			});
+			console.log('Send updated successfully');
+			setFriendLook(false);
+		} catch (error) {
+			console.error('Error updating Send:', error);
+		}
+	};
 	const toggleCommentVisibility = () => {
 		setIsCommentVisible(!isCommentVisible);
 	};
@@ -75,20 +88,62 @@ const CardComponent = ({ post }) => {
 							<Text style={{fontSize: 12, fontWeight: "300"}}>{post.location}</Text>
 						</View>
 					</View>
-					<TouchableOpacity style={styles.right} onPress={toggleOptionsVisibility} onLayout={(event) => {
-						const layout = event.nativeEvent.layout;
-						setButtonLayout(layout);
+					<View style={{
+						flexDirection: "column",
+						marginLeft: "auto",
 					}}>
-						<Text style={{fontSize: 30}}>...</Text>
-					</TouchableOpacity>
+						{ post.friend === 1 && ( friendLook === true ? (
+								<View style={[
+									styles.right,
+									{
+										backgroundColor: "#3B4664",
+										padding: 5,
+										marginBottom: 5,
+										borderRadius: 3,
+									}
+								]}>
+									<TouchableOpacity onPress={toggleFriendSend}>
+										<Text style={{
+											fontSize: 15,
+											color: "white",
+										}}>
+											친구 추가
+										</Text>
+									</TouchableOpacity>
+								</View>
+							) : (
+								<View style={[
+									styles.right,
+									{
+										backgroundColor: "#3B4664",
+										padding: 5,
+										marginBottom: 5,
+										borderRadius: 3,
+									}
+								]}>
+									<Text style={{
+										fontSize: 15,
+										color: "white",
+									}}>
+										추가 완료
+									</Text>
+								</View>
+							)
+						)}
+						<TouchableOpacity style={styles.right} onPress={toggleOptionsVisibility} onLayout={(event) => {
+							const layout = event.nativeEvent.layout;
+							setButtonLayout(layout);
+						}}>
+							<SimpleLineIcons name="options-vertical" size={20} color="black" />
+						</TouchableOpacity>
+					</View>
 				</View>
 				{isOptionsVisible && (
 					<View style={[
 						styles.optionsContainer,
-						{
-							top: buttonLayout.y + buttonLayout.height - 5,
-							right: 0
-						}
+						post.friend === 1 ?
+							{ top: buttonLayout.y + buttonLayout.height, right: 0 } :
+							{ top: buttonLayout.y + buttonLayout.height + 15, right: 0 }
 					]}>
 						<TouchableOpacity onPress={toggleBlock} style={{ flexDirection:'row', alignItems: 'center', }}>
 							<Feather name='alert-triangle' style={{ marginLeft: 10, color: 'red' }}/>
