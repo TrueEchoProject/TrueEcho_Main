@@ -128,24 +128,41 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	
 	
 	const handleDeleteUnderComment = async (commentId, underCommentId) => {
-		try {
-			const response = await axios.delete(`http://192.168.0.3:3000/comments/${commentId}/under_comments/${underCommentId}`);
-			if (response.status === 204) {
-				setComments(prevComments => prevComments.map(comment => {
-					if (comment.id === commentId) {
-						const updatedUnderComments = comment.under_comments.filter(uc => uc.id !== underCommentId);
-						return {
-							...comment,
-							under_comments: updatedUnderComments,
-							reply_count: Math.max(0, updatedUnderComments.length) // 답글 수 감소
-						};
+		// 삭제 확인을 요청하는 Alert 추가
+		Alert.alert(
+			"답글 삭제", // 알림 제목
+			"이 답글을 삭제하시겠습니까?", // 메시지
+			[
+				{
+					text: "취소",
+					onPress: () => console.log("답글 삭제 취소"),
+					style: "cancel"
+				},
+				{
+					text: "삭제",
+					onPress: async () => {
+						try {
+							const response = await axios.delete(`http://192.168.0.3:3000/comments/${commentId}/under_comments/${underCommentId}`);
+							if (response.status === 204) {
+								setComments(prevComments => prevComments.map(comment => {
+									if (comment.id === commentId) {
+										const updatedUnderComments = comment.under_comments.filter(uc => uc.id !== underCommentId);
+										return {
+											...comment,
+											under_comments: updatedUnderComments,
+											reply_count: Math.max(0, updatedUnderComments.length) // 답글 수 감소
+										};
+									}
+									return comment;
+								}));
+							}
+						} catch (error) {
+							console.error('답글 삭제 실패:', error);
+						}
 					}
-					return comment;
-				}));
-			}
-		} catch (error) {
-			console.error('답글 삭제 실패:', error);
-		}
+				}
+			]
+		);
 	};
 	
 	const handleInputFocus = () => {
@@ -301,7 +318,10 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 			[index]: !prevState[index]
 		}));
 	};
-	
+	const handleCancelReply = () => {
+		setReplyingTo(null);
+		setTextInputValue('');  // 입력 필드 초기화
+	};
 	return (
 		<SafeAreaProvider>
 			<Modal
@@ -343,6 +363,11 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 									</>
 								)}
 							</ScrollView>
+							{replyingTo && (
+								<TouchableOpacity onPress={handleCancelReply}>
+									<Text style={styles.cancelButton}> 답글 취소</Text>
+								</TouchableOpacity>
+							)}
 							<View style={styles.inputContainer}>
 								<TextInput
 									style={styles.input}
@@ -353,18 +378,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 									onSubmitEditing={handleSubmitComment} // 엔터 키를 눌러 댓글 제출
 								/>
 								<TouchableOpacity onPress={handleSubmitComment}>
-									<View style={{
-										justifyContent: "center",
-										alignItems: "center",
-										borderRadius: 5,
-										borderWidth: 1,
-										borderColor: "gray",
-										paddingTop: 5,
-										marginLeft:10,
-										width: 40,
-										height: 40,
-										backgroundColor: "#ccc"
-									}}>
+									<View style={styles.submitButton}>
 										<AntDesign name='caretup' size={25} style={{ color: 'white' }}/>
 									</View>
 								</TouchableOpacity>
@@ -378,6 +392,27 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 })
 
 const styles = StyleSheet.create({
+	cancelButton: {
+		color: 'red',
+		paddingHorizontal: 10,
+		paddingVertical: 5,
+		marginHorizontal: 5,
+		borderWidth: 1,
+		borderColor: 'red',
+		borderRadius: 5,
+	},
+	submitButton: {
+		justifyContent: "center",
+		alignItems: "center",
+		borderRadius: 5,
+		borderWidth: 1,
+		borderColor: "gray",
+		paddingTop: 5,
+		marginLeft: 10,
+		width: 40,
+		height: 40,
+		backgroundColor: "#ccc"
+	},
 	modalOverlay: {
 		flex: 1,
 		alignItems: 'center',
