@@ -105,12 +105,12 @@ const FriendPosts = React.forwardRef((props, ref) => {
 					ref={pagerViewRef}
 					onPageSelected={handlePageChange}
 				>
-					{posts.map((item) => (
-						<View key={item.post_id} style={styles.container}>
+					{posts.map((post) => (
+						<View key={post.post_id} style={styles.container}>
 							<MemoizedCardComponent
-								post={item}
-								isOptionsVisibleExternal={optionsVisibleStates[item.post_id]}
-								setIsOptionsVisibleExternal={(visible) => setOptionsVisibleStates(prev => ({ ...prev, [item.post_id]: visible }))}
+								post={post}
+								isOptionsVisibleExternal={optionsVisibleStates[post.post_id]}
+								setIsOptionsVisibleExternal={(visible) => setOptionsVisibleStates(prev => ({ ...prev, [post.post_id]: visible }))}
 							/>
 						</View>
 					))}

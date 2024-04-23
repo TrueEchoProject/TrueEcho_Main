@@ -11,13 +11,11 @@ const MemoizedCardComponent = React.memo(CardComponent, (prevProps, nextProps) =
 });
 
 const PublicPosts = React.forwardRef((props, ref) => {
-	const [range, setRange] = useState(null);
 	const [currentPage, setCurrentPage] = useState(0);
 	const [optionsVisibleStates, setOptionsVisibleStates] = useState({});
 	const [posts, setPosts] = useState([]);
 	const [location, setLocation] = useState("");
 	const [refreshing, setRefreshing] = useState(false);
-	const [isRefreshing, setIsRefreshing] = useState(false);
 	const pagerViewRef = useRef(null);
 	const [optionsVisible, setOptionsVisible] = useState(false);
 	
@@ -25,37 +23,40 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		setOptionsVisible(!optionsVisible);
 	};
 	
-	const getPosts = async (selectedRange = range, start = 0) => {
+	const getPosts = async (range = null, start = 0) => {
 		setRefreshing(true);
 		const limit = 10; // 한 번에 불러올 게시물 수
 		let url = `http://192.168.0.3:3000/posts?scope=PUBLIC&_start=${start}&_limit=${limit}`;
-		if (selectedRange) {
-			try {
-				const locationResponse = await axios.get('http://192.168.0.3:3000/user_location');
-				const words = locationResponse.data[0].your_location.split(' ');
-				let newLocation = '';
-				switch (selectedRange) {
-					case 'small':
-						newLocation = words.join(' ');
-						break;
-					case 'middle':
-						newLocation = words.slice(0, 2).join(' ');
-						break;
-					case 'big':
-						newLocation = words[0];
-						break;
-					default:
-						console.log('Invalid range');
-						setRefreshing(false);
-						return;
+		if (start === 0) { // 새로고침이나 초기 로드
+			let newLocation = '';
+			if (range) {
+				try {
+					const locationResponse = await axios.get('http://192.168.0.3:3000/user_location');
+					const words = locationResponse.data[0].your_location.split(' ');
+					switch (range) {
+						case 'small':
+							newLocation = words.join(' ');
+							break;
+						case 'middle':
+							newLocation = words.slice(0, 2).join(' ');
+							break;
+						case 'big':
+							newLocation = words[0];
+							break;
+						default:
+							console.error('Invalid range');
+							return;
+					}
+					setLocation(newLocation);
+				} catch (error) {
+					console.error('Fetching user location failed:', error);
+					setRefreshing(false);
+					return;
 				}
-				setLocation(newLocation);
-				url += `&location_contains=${encodeURIComponent(newLocation)}`;
-			} catch (error) {
-				console.error('Fetching user location failed:', error);
-				setRefreshing(false);
-				return;
+			} else {
+				setLocation('');
 			}
+			url += newLocation ? `&location_contains=${encodeURIComponent(newLocation)}` : '';
 		} else if (location) {
 			url += `&location_contains=${encodeURIComponent(location)}`;
 		}
@@ -63,41 +64,39 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		try {
 			const postsResponse = await axios.get(url);
 			const newPosts = postsResponse.data;
-			setPosts(prevPosts => start === 0 ? newPosts : [...prevPosts, ...newPosts]);
 			if (start === 0) {
-				setIsRefreshing(true); // 새로고침이 발생하면 이 플래그를 설정
-			}
-			if (newPosts.length === 0) {
+				setPosts(newPosts);
+				const initialVisibleStates = {};
+				newPosts.forEach(post => {
+					initialVisibleStates[post.id] = false;  // 확실한 초기화
+				});
+				setOptionsVisibleStates(initialVisibleStates);
+			} else if (newPosts.length > 0) {
+				setPosts(prevPosts => [...prevPosts, ...newPosts]);
+			} else {
 				console.log("No more posts to load.");
 			}
 		} catch (error) {
 			console.error('Fetching posts failed:', error);
 		} finally {
 			setRefreshing(false);
-			setOptionsVisible(false);
 			if (start === 0) {
-				setTimeout(() => {
-					pagerViewRef.current?.setPageWithoutAnimation(0);
-					setIsRefreshing(false);
-				}, 50); // 소폭의 지연을 추가하여 컴포넌트의 상태가 안정화되도록 합니다.
+				pagerViewRef.current?.setPageWithoutAnimation(0); // 첫 페이지로 이동
+				setOptionsVisible(false);
 			}
 		}
 	};
 	const refreshPosts = () => {
-		setLocation('');
-		setRange(null);
-		setIsRefreshing(true);
-		getPosts(null, 0);
+		getPosts(); // 데이터를 새로고침합니다.
 	};
-	
 	React.useImperativeHandle(ref, () => ({
-		getPosts: refreshPosts,
+		getPosts: getPosts,
 	}));
-	
-	useFocusEffect(useCallback(() => {
-		refreshPosts();
-	}, []));
-	
+	useFocusEffect(
+		useCallback(() => {
+			getPosts();
+		}, [])
+	);
 	useEffect(() => {
 		console.log(posts);
 		console.log(location);
@@ -125,7 +124,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		
 		// 추가 데이터 로딩
 		if (newIndex === posts.length - 4) {
-			getPosts(range, posts.length);
+			getPosts(posts.length);
 		}
 	};
 	
@@ -213,6 +212,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 						<View key={post.post_id} style={style.container}>
 							<MemoizedCardComponent
 								post={post}
+								location={location}
 								isOptionsVisibleExternal={optionsVisibleStates[post.post_id]}
 								setIsOptionsVisibleExternal={(visible) => setOptionsVisibleStates(prev => ({ ...prev, [post.post_id]: visible }))}
 							/>
