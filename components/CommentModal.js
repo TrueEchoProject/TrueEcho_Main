@@ -11,8 +11,8 @@ import {
 	PanResponder,
 	Animated,
 	Platform,
-	Keyboard,
 	KeyboardAvoidingView,
+	Alert,
 } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import axios from 'axios';
@@ -30,29 +30,78 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	const [showUnderComments, setShowUnderComments] = useState({});
 	const [textInputValue, setTextInputValue] = useState('');
 	const animatedHeight = useRef(new Animated.Value(initialMarginTop)).current;
+	const [editingCommentId, setEditingCommentId] = useState(null);
+	
+	const handleEditComment = (comment) => {
+		setEditingCommentId(comment.id); // 편집 중인 댓글 ID 설정
+		setTextInputValue(comment.comment); // TextInput에 댓글 내용 설정
+	};
+	
+	const handleDeleteComment = async (commentId) => {
+		Alert.alert(
+			"댓글 삭제", // 알림 제목
+			"이 댓글을 삭제하시겠습니까?", // 메시지
+			[
+				{
+					text: "취소",
+					onPress: () => console.log("삭제 취소"),
+					style: "cancel"
+				},
+				{
+					text: "삭제",
+					onPress: async () => {
+						try {
+							await axios.delete(`http://192.168.0.3:3000/comments/${commentId}`);
+							setComments(comments.filter(comment => comment.id !== commentId)); // UI에서 댓글 제거
+						} catch (error) {
+							console.error('댓글 삭제 실패:', error);
+						}
+					}
+				}
+			]
+		);
+	};
 	
 	const handleSubmitComment = async () => {
-		// 입력된 텍스트가 비어 있는지 확인
 		if (!textInputValue.trim()) {
-			alert("댓글을 입력해주세요."); // 또는 사용자에게 피드백을 제공하는 다른 방법 사용
-			return; // 함수 실행을 여기서 중단
+			alert("댓글을 입력해주세요.");
+			return;
 		}
-		try {
-			const response = await axios.post('http://192.168.0.3:3000/comments', {
-				comment: textInputValue, // 사용자가 입력한 댓글 내용
-				username: "신형",
-				profile_url: "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
-				created_at: "2024-03-25",
-				under_comments: [],
-				post_id: postId, // 댓글이 추가될 게시글의 ID
-				id: postId + Date.now(),
-				reply_count: 0,
-			});
-			const newCommentObject = response.data; // 가정: 서버가 추가된 댓글의 정보를 반환
-			setComments([newCommentObject, ...comments]); // 새 댓글을 목록 최상단에 추가
-			setTextInputValue("")
-		} catch (error) {
-			console.error('댓글 추가 실패:', error);
+		
+		// 수정 중인 경우
+		if (editingCommentId) {
+			// 댓글 수정 로직
+			try {
+				const response = await axios.patch(`http://192.168.0.3:3000/comments/${editingCommentId}`, {
+					comment: textInputValue,
+					// 여기에 필요한 다른 필드 추가
+				});
+				const updatedComment = response.data;
+				setComments(comments.map(comment => comment.id === editingCommentId ? updatedComment : comment));
+				setEditingCommentId(null);
+				setTextInputValue("");
+			} catch (error) {
+				console.error('댓글 수정 실패:', error);
+			}
+		} else {
+			// 새 댓글 추가 로직
+			try {
+				const response = await axios.post('http://192.168.0.3:3000/comments', {
+					comment: textInputValue, // 사용자가 입력한 댓글 내용
+					username: "신형",
+					profile_url: "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+					created_at: new Date().toISOString(),
+					under_comments: [],
+					post_id: postId, // 댓글이 추가될 게시글의 ID
+					id: postId + Date.now(),
+					reply_count: 0,
+				});
+				const newComment = response.data;
+				setComments([...comments, newComment]);
+				setTextInputValue("");
+			} catch (error) {
+				console.error('댓글 추가 실패:', error);
+			}
 		}
 	};
 	
@@ -107,16 +156,40 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 				});
 		} else {
 			setComments([]); // 모달이 닫힐 때 댓글 상태 초기화
+			setTextInputValue('');
+			setEditingCommentId(null);
 			animatedHeight.setValue(windowHeight * 0.3); // 모달 높이 초기화
 		}
 	}, [isVisible, postId]);
 	
 	const CommentItem = React.memo(({ comment, toggleUnderComments, showUnderComments, index }) => {
+		const isEditing = comment.id === editingCommentId;
+		const commentItemStyle = isEditing
+			? [styles.commentItem, styles.editingCommentItem]
+			: styles.commentItem;
+		
 		return (
-			<View style={styles.commentItem}>
+			<View style={commentItemStyle}>
 				<Image style={styles.profileImage} source={{ uri: comment.profile_url }} />
 				<Text>Date: {comment.created_at}</Text>
 				<Text style={styles.commentText}>{comment.username}: {comment.comment}</Text>
+				{isEditing &&
+					<>
+						<TouchableOpacity onPress={() => {
+							setEditingCommentId(null); // 수정 모드 종료
+							setTextInputValue(''); // 입력 필드 초기화
+						}}>
+							<Text>수정 취소</Text>
+						</TouchableOpacity>
+						<Text style={styles.editingLabel}>수정 중...</Text>
+					</>
+				}
+				<TouchableOpacity onPress={() => handleEditComment(comment)}>
+					<Text>수정</Text>
+				</TouchableOpacity>
+				<TouchableOpacity onPress={() => handleDeleteComment(comment.id)}>
+					<Text>삭제</Text>
+				</TouchableOpacity>
 				<TouchableOpacity>
 					<Text>답글 달기</Text>
 				</TouchableOpacity>
@@ -296,5 +369,17 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 8,
 		borderRadius: 4,
 		height: 40,
+	},
+	editingCommentItem: {
+		backgroundColor: '#f0f0f0', // 하이라이트 색상, 적절하게 조정
+		borderColor: '#007bff',
+		borderWidth: 1,
+		borderRadius: 5,
+	},
+	editingLabel: {
+		fontStyle: 'italic',
+		color: '#007bff',
+		textAlign: 'right',
+		marginRight: 10,
 	},
 });
