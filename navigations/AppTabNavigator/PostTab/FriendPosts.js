@@ -1,127 +1,150 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl, Text, } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, RefreshControl, Dimensions } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
 import CardComponent from '../../../components/CardComponent';
 
-const MemoizedCardComponent = React.memo(CardComponent, (prevProps, nextProps) => {
-	return prevProps.post.id === nextProps.post.id && prevProps.isOptionsVisibleExternal === nextProps.isOptionsVisibleExternal;
-});
-
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 const FriendPosts = React.forwardRef((props, ref) => {
 	const [currentPage, setCurrentPage] = useState(0);
-	const [optionsVisibleStates, setOptionsVisibleStates] = useState({});
-	const [posts, setPosts] = useState([]); // 게시물 상태 초기화
-	const [refreshing, setRefreshing] = useState(false); // 새로고침 상태를 관리합니다.
-	const pagerViewRef = useRef(null); // PagerView 컴포넌트를 참조하기 위한 ref입니다.
+	const [optionsVisibleStates, setOptionsVisibleStates] = useState(false);
+	const [contentList, setContentList] = useState([]);
+	const [refreshing, setRefreshing] = useState(false);
+	const [friendStatus, setFriendStatus] = useState([]);
+	const pagerViewRef = useRef(null);
+	
 	const getPosts = async (start = 0) => {
-		if (start === 0) setRefreshing(true);
-		
-		const limit = 10; // 한 번에 불러올 게시물 수
+		if (start === 0) {
+			setRefreshing(true);
+			setContentList([]);
+			setOptionsVisibleStates({});
+			setFriendStatus([]);
+		}
+		const postLimit = 10;
 		try {
-			const response = await axios.get(`http://192.168.0.3:3000/posts?scope=FRIEND&_start=${start}&_limit=${limit}`);
-			const newPosts = response.data;
+			const postResponse = await axios.get(`http://192.168.0.3:3000/posts?scope=FRIEND&_start=${start}&_limit=${postLimit}`);
+			const newPosts = postResponse.data;
 			
-			// 각 배치 끝에 새로운 ExtraComponent를 추가
-			if (start === 0) {
-				setPosts(newPosts);
-				const initialVisibleStates = {};
-				newPosts.forEach(post => {
-					initialVisibleStates[post.id] = false;  // 확실한 초기화
-				});
-				setOptionsVisibleStates(initialVisibleStates);
-			} else {
-				// 이전 ExtraComponent를 유지하면서 새로운 ExtraComponent 추가
-				setPosts(prevPosts => [...prevPosts, ...newPosts]);
+			// 옵션 가시성 상태 초기화
+			let newOptionsVisibleStates = {...optionsVisibleStates};
+			newPosts.forEach(post => {
+				newOptionsVisibleStates[post.post_id] = false;  // 각 게시물의 옵션을 false로 설정
+			});
+			
+			let updatedContentList = [...contentList, ...newPosts.map(post => ({ type: 'post', data: post }))];
+			if (newPosts.length === postLimit) {
+				const recsResponse = await axios.get(`http://192.168.0.3:3000/recommendations?_limit=4`);
+				const newRecs = recsResponse.data;
+				updatedContentList.push({ type: 'recommendation', data: newRecs });
+				setFriendStatus(newRecs.map(() => false));
 			}
+			setContentList(updatedContentList);
+			setOptionsVisibleStates(newOptionsVisibleStates);
 		} catch (error) {
-			console.error(start === 0 ? 'Fetching posts failed:' : 'Fetching more posts failed:', error);
+			console.error('Fetching posts failed:', error);
 		} finally {
+			setRefreshing(false);
 			if (start === 0) {
-				setRefreshing(false);
 				pagerViewRef.current?.setPageWithoutAnimation(0);
 			}
 		}
 	};
 	
-	const refreshPosts = async () => {
-		await getPosts(); // 데이터를 새로고침합니다.
-		pagerViewRef.current?.setPageWithoutAnimation(0); // PagerView의 첫 페이지로 이동합니다.
+	const handlePageChange = (e) => {
+		const newIndex = e.nativeEvent.position;
+		setCurrentPage(newIndex);
+		
+		// 먼저 모든 옵션을 숨깁니다.
+		setOptionsVisibleStates(prevStates => {
+			const newStates = {...prevStates};
+			Object.keys(newStates).forEach(key => {
+				newStates[key] = false;  // 모든 옵션을 비활성화
+			});
+			return newStates;
+		});
+	};
+	useEffect(() => {
+		// 상태 업데이트가 완료되고 나서 UI 업데이트를 보장하기 위한 useEffect
+		if (contentList[currentPage] && contentList[currentPage].type === 'post') {
+			setOptionsVisibleStates(prevStates => ({
+				...prevStates,
+				[contentList[currentPage].data.post_id]: false  // 현재 페이지만 다시 설정
+			}));
+		}
+	}, [currentPage, contentList]);
+	const toggleFriendSend = async (index, item) => {
+		try {
+			await axios.post(`http://192.168.0.3:3000/friendSend`, {
+				friendSendUser: item.username
+			});
+			const newFriendStatus = [...friendStatus];
+			newFriendStatus[index] = true;
+			setFriendStatus(newFriendStatus);
+		} catch (error) {
+			console.error('Error sending friend request:', error);
+		}
 	};
 	
-	// 외부에서 컴포넌트를 제어할 수 있도록 메서드를 제공합니다.
 	React.useImperativeHandle(ref, () => ({
 		getPosts: getPosts,
 	}));
 	
 	useFocusEffect(
 		useCallback(() => {
-			getPosts(); // 처음 포커스 될 때 게시물 불러오기
+			getPosts();
 		}, [])
 	);
 	
-	useEffect(() => {
-		console.log(posts);
-	}, [posts]);
-	
-	if (posts.length === 0) {
-		return <View style={styles.container}><Text>Loading...</Text></View>;
-	}
-	const handlePageChange = (e) => {
-		const newIndex = e.nativeEvent.position;
-		setCurrentPage(newIndex);
-		
-		// 상태 초기화 로그 확인
-		console.log("Resetting option visibility states due to page change.");
-		
-		// 모든 옵션을 숨깁니다.
-		setOptionsVisibleStates(prevStates => {
-			const newStates = {};
-			posts.forEach(post => {
-				newStates[post.post_id] = false;
-			});
-			return newStates;
-		});
-		
-		// 추가 데이터 로딩
-		if (newIndex === posts.length - 4) {
-			getPosts(posts.length);
-		}
-	};
-	
 	return (
-		<>
-			<ScrollView
-				contentContainerStyle={styles.scrollViewContent}
-				refreshControl={
-					<RefreshControl refreshing={refreshing} onRefresh={refreshPosts} />
-				}
+		<ScrollView
+			contentContainerStyle={styles.scrollViewContent}
+			refreshControl={
+				<RefreshControl refreshing={refreshing} onRefresh={() => getPosts(0)} />
+			}
+		>
+			<PagerView
+				style={styles.pagerView}
+				initialPage={0}
+				ref={pagerViewRef}
+				onPageSelected={handlePageChange}
 			>
-				<PagerView
-					style={styles.pagerView}
-					initialPage={0}
-					ref={pagerViewRef}
-					onPageSelected={handlePageChange}
-				>
-					{posts.map((post) => (
-						<View key={post.post_id} style={styles.container}>
-							<MemoizedCardComponent
-								post={post}
-								isOptionsVisibleExternal={optionsVisibleStates[post.post_id]}
-								setIsOptionsVisibleExternal={(visible) => setOptionsVisibleStates(prev => ({ ...prev, [post.post_id]: visible }))}
+				{contentList.map((item, index) => (
+					<View key={index} style={styles.postContainer}>
+						{item.type === 'post' ? (
+							<CardComponent
+								post={item.data}
+								isOptionsVisibleExternal={optionsVisibleStates[item.data.post_id]}
+								setIsOptionsVisibleExternal={(visible) => setOptionsVisibleStates(prev => ({ ...prev, [item.data.post_id]: visible }))}
 							/>
-						</View>
-					))}
-				</PagerView>
-			</ScrollView>
-		</>
+						) : (
+							item.data.map((rec, recIndex) => (
+								<View key={rec.Recommendation_id} style={styles.recommendationContainer}>
+									<Image source={{ uri: rec.profile_url }} style={styles.profileImage} />
+									<Text style={styles.username}>{rec.username}</Text>
+									{!friendStatus[recIndex] ? (
+										<TouchableOpacity onPress={() => toggleFriendSend(recIndex, rec)} style={styles.button}>
+											<Text style={styles.buttonText}>친구 추가</Text>
+										</TouchableOpacity>
+									) : (
+										<View style={styles.button}>
+											<Text style={styles.buttonText}>추가 완료</Text>
+										</View>
+									)}
+								</View>
+							))
+						)}
+					</View>
+				))}
+			</PagerView>
+		</ScrollView>
 	);
 });
 
 const styles = StyleSheet.create({
-	container: {
+	postContainer: {
 		flex: 1,
 		backgroundColor: 'white',
 		alignItems: 'center',
@@ -133,7 +156,47 @@ const styles = StyleSheet.create({
 	pagerView: {
 		flex: 1,
 		backgroundColor: 'white',
-	}
+	},
+	recommendationContainer: {
+		width: windowWidth * 0.8,
+		height: windowHeight * 0.17,
+		justifyContent: "center",
+		backgroundColor: 'white',
+		borderRadius: 8,
+		padding: 10,
+		marginBottom: 10,
+		alignItems: 'center',
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 2,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 3.84,
+		elevation: 5,
+	},
+	profileImage: {
+		width: 45,
+		height: 45,
+		borderRadius: 45,
+		marginTop: 10,
+	},
+	username: {
+		marginTop: 10,
+		marginBottom: 10,
+	},
+	button: {
+		backgroundColor: "#3B4664",
+		padding: 5,
+		marginBottom: 10,
+		borderRadius: 3,
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	buttonText: {
+		fontSize: 15,
+		color: "white",
+	},
 });
 
 export default FriendPosts;
