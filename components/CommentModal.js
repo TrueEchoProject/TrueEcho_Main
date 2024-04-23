@@ -33,6 +33,8 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	const [editingCommentId, setEditingCommentId] = useState(null);
 	const scrollViewRef = useRef(null);
 	const commentRefs = useRef({});
+	const [currentPage, setCurrentPage] = useState(1);
+	const [hasMore, setHasMore] = useState(true);
 	
 	const handleEditComment = (comment) => {
 		setEditingCommentId(comment.id); // 편집 중인 댓글 ID 설정
@@ -164,25 +166,48 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 		},
 	}), [insets.top]); // 의존성 배열 업데이트
 	
+	const fetchComments = async (page) => {
+		setLoading(true);
+		try {
+			const response = await axios.get(`http://192.168.0.3:3000/comments`, {
+				params: {
+					post_id: postId,
+					_page: page,
+					_limit: 5
+				}
+			});
+			if (response.data.length > 0) {
+				setComments(prevComments => [...prevComments, ...response.data]);
+				setCurrentPage(page);
+			} else {
+				setHasMore(false);
+			}
+		} catch (error) {
+			console.error('Fetching comments failed:', error);
+		}
+		setLoading(false);
+	};
+	
+	// 초기 데이터 및 추가 데이터 불러오기
 	useEffect(() => {
 		if (isVisible) {
-			setLoading(true);
-			axios.get(`http://192.168.0.3:3000/comments?post_id=${postId}&limit=3`)
-				.then(response => {
-					setComments(response.data);
-					setLoading(false);
-				})
-				.catch(error => {
-					console.error('Fetching comments failed:', error);
-					setLoading(false);
-				});
+			fetchComments(1); // 초기 페이지 로드
 		} else {
-			setComments([]); // 모달이 닫힐 때 댓글 상태 초기화
-			setTextInputValue('');
-			setEditingCommentId(null);
-			animatedHeight.setValue(windowHeight * 0.3); // 모달 높이 초기화
+			setComments([]);
+			setCurrentPage(1);
+			setHasMore(true);
 		}
 	}, [isVisible, postId]);
+	
+	// 스크롤 이벤트 처리
+	const handleScroll = ({ nativeEvent }) => {
+		if (nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
+			nativeEvent.contentSize.height - 20) {
+			if (hasMore && !loading) {
+				fetchComments(currentPage + 1);
+			}
+		}
+	};
 	
 	const CommentItem = React.memo(({ comment, toggleUnderComments, showUnderComments, index }) => {
 		const isEditing = comment.id === editingCommentId;
@@ -278,6 +303,8 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 								contentContainerStyle={{ paddingBottom: 20 }} // ScrollView의 paddingBottom 조정
 								keyboardShouldPersistTaps="handled"
 								ref={scrollViewRef}
+								onScroll={handleScroll}
+								scrollEventThrottle={150} // 이벤트 발생 간격 조정
 							>
 								{loading ? (
 									<Text>Loading comments...</Text> // 로딩 인디케이터 표시
