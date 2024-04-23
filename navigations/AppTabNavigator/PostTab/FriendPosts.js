@@ -10,7 +10,7 @@ const windowHeight = Dimensions.get('window').height;
 
 const FriendPosts = React.forwardRef((props, ref) => {
 	const [currentPage, setCurrentPage] = useState(0);
-	const [optionsVisibleStates, setOptionsVisibleStates] = useState(false);
+	const [optionsVisibleStates, setOptionsVisibleStates] = useState({});  // 객체로 초기화
 	const [contentList, setContentList] = useState([]);
 	const [refreshing, setRefreshing] = useState(false);
 	const [friendStatus, setFriendStatus] = useState([]);
@@ -28,10 +28,9 @@ const FriendPosts = React.forwardRef((props, ref) => {
 			const postResponse = await axios.get(`http://192.168.0.3:3000/posts?scope=FRIEND&_start=${start}&_limit=${postLimit}`);
 			const newPosts = postResponse.data;
 			
-			// 옵션 가시성 상태 초기화
-			let newOptionsVisibleStates = {...optionsVisibleStates};
+			let newOptionsVisibleStates = {};
 			newPosts.forEach(post => {
-				newOptionsVisibleStates[post.post_id] = false;  // 각 게시물의 옵션을 false로 설정
+				newOptionsVisibleStates[post.post_id] = false;  // 초기값을 false로 설정
 			});
 			
 			let updatedContentList = [...contentList, ...newPosts.map(post => ({ type: 'post', data: post }))];
@@ -55,17 +54,19 @@ const FriendPosts = React.forwardRef((props, ref) => {
 	
 	const handlePageChange = (e) => {
 		const newIndex = e.nativeEvent.position;
-		setCurrentPage(newIndex);
 		
-		// 먼저 모든 옵션을 숨깁니다.
-		setOptionsVisibleStates(prevStates => {
-			const newStates = {...prevStates};
-			Object.keys(newStates).forEach(key => {
-				newStates[key] = false;  // 모든 옵션을 비활성화
-			});
-			return newStates;
-		});
+		// 이전 페이지의 옵션 비활성화
+		if (currentPage !== newIndex && contentList[currentPage] && contentList[currentPage].type === 'post') {
+			setOptionsVisibleStates(prevStates => ({
+				...prevStates,
+				[contentList[currentPage].data.post_id]: false  // 이전 페이지의 게시물 ID에 해당하는 옵션을 false로 설정
+			}));
+		}
+		
+		// 현재 페이지 업데이트
+		setCurrentPage(newIndex);
 	};
+	
 	useEffect(() => {
 		// 상태 업데이트가 완료되고 나서 UI 업데이트를 보장하기 위한 useEffect
 		if (contentList[currentPage] && contentList[currentPage].type === 'post') {
@@ -75,6 +76,7 @@ const FriendPosts = React.forwardRef((props, ref) => {
 			}));
 		}
 	}, [currentPage, contentList]);
+	
 	const toggleFriendSend = async (index, item) => {
 		try {
 			await axios.post(`http://192.168.0.3:3000/friendSend`, {
