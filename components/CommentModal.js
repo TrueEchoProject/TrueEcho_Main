@@ -31,12 +31,14 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	const [textInputValue, setTextInputValue] = useState('');
 	const animatedHeight = useRef(new Animated.Value(initialMarginTop)).current;
 	const [editingCommentId, setEditingCommentId] = useState(null);
+	const [editingUnderCommentId, setEditingUnderCommentId] = useState(null); // 현재 수정 중인 답글의 ID
 	const scrollViewRef = useRef(null);
 	const commentRefs = useRef({});
 	const [currentPage, setCurrentPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
 	const scrollPositionRef = useRef(0); // 스크롤 위치 저장용
 	const [replyingTo, setReplyingTo] = useState(null); // 답글을 다는 댓글의 ID
+	const [originalUnderComment, setOriginalUnderComment] = useState(null); // 원본 답글 내용 저장
 	
 	const handleEditComment = (comment) => {
 		setEditingCommentId(comment.id); // 편집 중인 댓글 ID 설정
@@ -45,7 +47,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 		if (commentRef && scrollViewRef.current) {
 			commentRef.measureLayout(
 				scrollViewRef.current,
-				(x, y, width, height) => {
+				(x, y,) => {
 					const yOffset = y - 50; // 50은 추가적인 여백
 					scrollViewRef.current.scrollTo({ y: yOffset, animated: true });
 				},
@@ -87,8 +89,34 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 			return;
 		}
 		const currentDate = new Date();
-		const formattedDate =
-			`${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}${currentDate.getHours().toString().padStart(2, '0')}:${currentDate.getMinutes().toString().padStart(2, '0')}`;
+		const formattedDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}${currentDate.getHours().toString().padStart(2, '0')}:${currentDate.getMinutes().toString().padStart(2, '0')}`;
+		if (editingUnderCommentId) {
+			console.log(editingCommentId)
+			try {
+				const response = await axios.patch(`http://192.168.0.3:3000/comments/${editingCommentId}/under_comments/${editingUnderCommentId}`, {
+					under_comment: textInputValue,
+					// 필요하면 여기에 추가 필드를 포함시킬 수 있습니다.
+				});
+				const updatedUnderComment = response.data;
+				setComments(prevComments => prevComments.map(comment => {
+					if (comment.id === editingCommentId) {
+						return {
+							...comment,
+							under_comments: comment.under_comments.map(uc => uc.id === editingUnderCommentId ? updatedUnderComment : uc)
+						};
+					}
+					return comment;
+				}));
+				setEditingCommentId(null);
+				setEditingUnderCommentId(null);
+				setTextInputValue("");
+			} catch (error) {
+				console.error('답글 수정 실패:', error);
+			}
+			return; // 함수 종료
+		}
+		
+		
 		if (replyingTo) {
 			console.log(replyingTo)
 			// 답글 제출 로직
@@ -117,7 +145,6 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 				console.error('답글 추가 실패:', error);
 			}
 		}
-		
 		
 		// 수정 중인 경우
 		if (editingCommentId) {
@@ -157,6 +184,39 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 		}
 		setTextInputValue('');
 		setReplyingTo(null);
+	};
+	
+	const handleEditUnderComment = (commentId, underComment) => {
+		setEditingCommentId(commentId);  // 상위 댓글 ID 설정
+		setEditingUnderCommentId(underComment.id);  // 수정하고자 하는 답글의 ID 설정
+		setTextInputValue(underComment.under_comment);  // TextInput에 답글 내용 불러오기
+		setOriginalUnderComment(underComment); // 수정 전 원본 답글 내용 저장
+	};
+	const handleCancelEdit = () => {
+		setEditingCommentId(null);
+		setEditingUnderCommentId(null);
+		setTextInputValue(''); // 입력 필드 초기화
+	};
+	const handleCancelEditUnderComment = () => {
+		if (originalUnderComment !== null) {
+			// 원래 내용으로 되돌림
+			setTextInputValue(originalUnderComment);
+		}
+		handleCancelEdit();
+	};
+	
+	const handleDeleteUnderComment = async (commentId, underCommentId) => {
+		try {
+			await axios.delete(`http://192.168.0.3:3000/comments/${commentId}/under_comments/${underCommentId}`);
+			setComments(prevComments => prevComments.map(comment => {
+				if (comment.id === commentId) {
+					return { ...comment, under_comments: comment.under_comments.filter(uc => uc.id !== underCommentId) };
+				}
+				return comment;
+			}));
+		} catch (error) {
+			console.error('답글 삭제 실패:', error);
+		}
 	};
 	
 	const handleInputFocus = () => {
@@ -226,6 +286,10 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	useEffect(() => {
 		if (isVisible) {
 			fetchComments(1); // 초기 페이지 로드
+			setEditingCommentId(null);
+			setEditingUnderCommentId(null);
+			setTextInputValue(''); // 입력 필드 초기화
+			setShowUnderComments({})
 		} else {
 			setComments([]);
 			setCurrentPage(1);
@@ -236,7 +300,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	// 스크롤 이벤트 처리
 	const handleScroll = ({ nativeEvent }) => {
 		const { contentOffset } = nativeEvent;
-		scrollPositionRef.current = contentOffset.y; // 현재 스크롤 위치 저장
+		scrollPositionRef.current = contentOffset.y;
 		if (nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
 			nativeEvent.contentSize.height - 20) {
 			if (hasMore && !loading) {
@@ -246,10 +310,9 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	};
 	
 	const CommentItem = React.memo(({ comment, toggleUnderComments, showUnderComments, index }) => {
-		const isEditing = comment.id === editingCommentId;
-		const commentItemStyle = isEditing
-			? [styles.commentItem, styles.editingCommentItem]
-			: styles.commentItem;
+		const isEditingComment = editingCommentId === comment.id;
+		const commentItemStyle = isEditingComment ?
+			[styles.commentItem, styles.editingCommentItem] : styles.commentItem;
 		const commentItemRef = useRef(null);
 		
 		useEffect(() => {
@@ -264,17 +327,14 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 				<Image style={styles.profileImage} source={{ uri: comment.profile_url }} />
 				<Text>Date: {comment.created_at}</Text>
 				<Text style={styles.commentText}>{comment.username}: {comment.comment}</Text>
-				{isEditing &&
+				{isEditingComment && (
 					<>
-						<TouchableOpacity onPress={() => {
-							setEditingCommentId(null); // 수정 모드 종료
-							setTextInputValue(''); // 입력 필드 초기화
-						}}>
+						<TouchableOpacity onPress={handleCancelEdit}>
 							<Text>수정 취소</Text>
 						</TouchableOpacity>
 						<Text style={styles.editingLabel}>수정 중...</Text>
 					</>
-				}
+				)}
 				<TouchableOpacity onPress={() => handleEditComment(comment)}>
 					<Text>수정</Text>
 				</TouchableOpacity>
@@ -291,20 +351,42 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 						<Text>답글 {comment.reply_count}개 더보기</Text>
 					</TouchableOpacity>
 				)}
-				<UnderComments underComments={comment.under_comments} isVisible={showUnderComments[index]} />
+				<UnderComments commentId={comment.id} underComments={comment.under_comments} isVisible={showUnderComments[index]} />
 			</View>
 		);
 	});
 	
-	const UnderComments = React.memo(({ underComments, isVisible }) => {
+	
+	const UnderCommentItem = ({ underComment, commentId }) => {
+		const isEditingUnderComment = editingUnderCommentId === underComment.id;
+		const underCommentItemStyle = isEditingUnderComment ?
+			[styles.underCommentItem, styles.editingUnderCommentItem] : styles.underCommentItem;
+		
+		return (
+			<View style={underCommentItemStyle}>
+				<Image style={styles.profileImage} source={{uri: underComment.profile_url}}/>
+				<Text>Date: {underComment.created_at}</Text>
+				<Text style={styles.underCommentText}>{underComment.username}: {underComment.under_comment}</Text>
+				<TouchableOpacity onPress={() => handleEditUnderComment(commentId, underComment)}>
+					<Text>수정</Text>
+				</TouchableOpacity>
+				{editingUnderCommentId === underComment.id && (
+					<TouchableOpacity onPress={handleCancelEditUnderComment}>
+						<Text>수정 취소</Text>
+					</TouchableOpacity>
+				)}
+				<TouchableOpacity onPress={() => handleDeleteUnderComment(commentId, underComment.id)}>
+					<Text>삭제</Text>
+				</TouchableOpacity>
+			</View>
+		);
+	};
+	
+	const UnderComments = React.memo(({ underComments, isVisible, commentId }) => {
 		return isVisible ? (
 			<View>
-				{underComments.map((underComment, underIndex) => (
-					<View key={underIndex} style={styles.underCommentItem}>
-						<Image style={styles.profileImage} source={{ uri: underComment.profile_url }} />
-						<Text>Date: {underComment.created_at}</Text>
-						<Text style={styles.underCommentText}>{underComment.username}: {underComment.under_comment}</Text>
-					</View>
+				{underComments.map((underComment, index) => (
+					<UnderCommentItem key={index} underComment={underComment} commentId={commentId} />
 				))}
 			</View>
 		) : null;
@@ -463,6 +545,12 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 8,
 		borderRadius: 4,
 		height: 40,
+	},
+	editingUnderCommentItem: {
+		backgroundColor: '#f0f0f0', // 하이라이트 색상, 적절하게 조정
+		borderColor: '#007bff',
+		borderWidth: 1,
+		borderRadius: 5,
 	},
 	editingCommentItem: {
 		backgroundColor: '#f0f0f0', // 하이라이트 색상, 적절하게 조정
