@@ -4,7 +4,7 @@ import { Image } from 'expo-image';
 
 const ImageButton = React.memo(({ front_image, back_image, containerHeight, windowWidth }) => {
 	const [isFrontShowing, setIsFrontShowing] = useState(true); // 현재 보여지는 이미지가 전면 이미지인지 추적하는 상태
-	const [myStatus, setMyStatus] = useState("back")
+	const [myStatus, setMyStatus] = useState("front")
 	const changeImage = () => {
 		setIsFrontShowing(!isFrontShowing);
 	};
@@ -14,6 +14,14 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
 	const SmallWidth = Math.floor(windowWidth / 3);
 	
 	const defaultImage = "https://ppss.kr/wp-content/uploads/2020/07/01-4-540x304.png";
+	// Calculate blurRadius for each image based on myStatus
+	const getBlurRadius = (isFront) => {
+		if (myStatus === "none") return 5;
+		if ((myStatus === "front" && !isFront) || (myStatus === "back" && isFront)) {
+			return 5;
+		}
+		return 0;
+	};
 	
 	return (
 		<View style={{ position: 'relative' }}>
@@ -33,7 +41,7 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
 						height: SmallHeight,
 						width: SmallWidth
 					}}
-					blurRadius = { myStatus === "back" ? 5 : 0 || myStatus === "front" ? 0 : 5 || myStatus === "none" ? 5 : 5 }
+					blurRadius={getBlurRadius(isFrontShowing)}
 				/>
 			</TouchableOpacity>
 			<TouchableOpacity onPress={changeImage} style={{ zIndex: 1, position: 'relative' }}>
@@ -43,7 +51,7 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
 						height: ImageHeight,
 						width: windowWidth,
 					}}
-					blurRadius = { myStatus === "front" ? 5 : 0 || myStatus === "back" ? 0 : 5 || myStatus === "none" ? 5 : 5 }
+					blurRadius={getBlurRadius(!isFrontShowing)}
 				/>
 			</TouchableOpacity>
 		</View>
