@@ -36,6 +36,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
 	const scrollPositionRef = useRef(0); // 스크롤 위치 저장용
+	const [replyingTo, setReplyingTo] = useState(null); // 답글을 다는 댓글의 ID
 	
 	const handleEditComment = (comment) => {
 		setEditingCommentId(comment.id); // 편집 중인 댓글 ID 설정
@@ -82,16 +83,42 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	
 	const handleSubmitComment = async () => {
 		if (!textInputValue.trim()) {
-			alert("댓글을 입력해주세요.");
+			alert("글을 입력해주세요.");
 			return;
 		}
 		const currentDate = new Date();
 		const formattedDate =
-			`${currentDate.getFullYear()}
-			-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}
-			-${currentDate.getDate().toString().padStart(2, '0')}
-			${currentDate.getHours().toString().padStart(2, '0')}:
-			${currentDate.getMinutes().toString().padStart(2, '0')}`;
+			`${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}${currentDate.getHours().toString().padStart(2, '0')}:${currentDate.getMinutes().toString().padStart(2, '0')}`;
+		if (replyingTo) {
+			console.log(replyingTo)
+			// 답글 제출 로직
+			try {
+				const response = await axios.post(`http://192.168.0.3:3000/comments/${replyingTo}/under_comments`, {
+					under_comment: textInputValue,
+					username: "신형",
+					profile_url: "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+					created_at: formattedDate,
+					id: formattedDate,
+				});
+				const newUnderComment = response.data;
+				setComments(prevComments => {
+					return prevComments.map(comment => {
+						if (comment.id === replyingTo) {
+							return { ...comment, under_comments: [...comment.under_comments, newUnderComment] };
+						} else {
+							return comment;
+						}
+					});
+				});
+				setTextInputValue("");
+				setReplyingTo(null);
+				return;  // 함수 실행 종료
+			} catch (error) {
+				console.error('답글 추가 실패:', error);
+			}
+		}
+		
+		
 		// 수정 중인 경우
 		if (editingCommentId) {
 			// 댓글 수정 로직
@@ -128,6 +155,8 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 				console.error('댓글 추가 실패:', error);
 			}
 		}
+		setTextInputValue('');
+		setReplyingTo(null);
 	};
 	
 	const handleInputFocus = () => {
@@ -252,7 +281,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 				<TouchableOpacity onPress={() => handleDeleteComment(comment.id)}>
 					<Text>삭제</Text>
 				</TouchableOpacity>
-				<TouchableOpacity>
+				<TouchableOpacity onPress={() => setReplyingTo(comment.id)}>
 					<Text>답글 달기</Text>
 				</TouchableOpacity>
 				{ comment.reply_count === 0 ? (
