@@ -17,6 +17,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 	const [posts, setPosts] = useState([]);
 	const [location, setLocation] = useState("");
 	const [refreshing, setRefreshing] = useState(false);
+	const [isRefreshing, setIsRefreshing] = useState(false);
 	const pagerViewRef = useRef(null);
 	const [optionsVisible, setOptionsVisible] = useState(false);
 	
@@ -28,17 +29,11 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		setRefreshing(true);
 		const limit = 10; // 한 번에 불러올 게시물 수
 		let url = `http://192.168.0.3:3000/posts?scope=PUBLIC&_start=${start}&_limit=${limit}`;
-		
-		// range 상태 업데이트
-		if (start === 0 && selectedRange !== range) {
-			setRange(selectedRange);
-		}
-		
-		let newLocation = '';
 		if (selectedRange) {
 			try {
 				const locationResponse = await axios.get('http://192.168.0.3:3000/user_location');
 				const words = locationResponse.data[0].your_location.split(' ');
+				let newLocation = '';
 				switch (selectedRange) {
 					case 'small':
 						newLocation = words.join(' ');
@@ -69,6 +64,9 @@ const PublicPosts = React.forwardRef((props, ref) => {
 			const postsResponse = await axios.get(url);
 			const newPosts = postsResponse.data;
 			setPosts(prevPosts => start === 0 ? newPosts : [...prevPosts, ...newPosts]);
+			if (start === 0) {
+				setIsRefreshing(true); // 새로고침이 발생하면 이 플래그를 설정
+			}
 			if (newPosts.length === 0) {
 				console.log("No more posts to load.");
 			}
@@ -76,16 +74,20 @@ const PublicPosts = React.forwardRef((props, ref) => {
 			console.error('Fetching posts failed:', error);
 		} finally {
 			setRefreshing(false);
+			setOptionsVisible(false);
 			if (start === 0) {
-				pagerViewRef.current?.setPageWithoutAnimation(0);
-				setOptionsVisible(false);
+				setTimeout(() => {
+					pagerViewRef.current?.setPageWithoutAnimation(0);
+					setIsRefreshing(false);
+				}, 50); // 소폭의 지연을 추가하여 컴포넌트의 상태가 안정화되도록 합니다.
 			}
 		}
 	};
 	const refreshPosts = () => {
 		setLocation(''); // 위치 초기화
 		setRange(null); // 범위 초기화
-		getPosts(null, 0); // 전체 게시물을 새로 불러옵니다.
+		setIsRefreshing(true); // 새로고침 플래그 설정
+		getPosts(null, 0); // start를 0으로 설정하여 전체 게시물을 새로 불러옵니다.
 	};
 	
 	React.useImperativeHandle(ref, () => ({
@@ -99,6 +101,12 @@ const PublicPosts = React.forwardRef((props, ref) => {
 			getPosts();
 		}, [])
 	);
+	
+	useEffect(() => {
+		if (location === '' && range === null) {
+			getPosts(null, 0);
+		}
+	}, [location, range]);
 	
 	useEffect(() => {
 		console.log(posts);
@@ -127,7 +135,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		
 		// 추가 데이터 로딩
 		if (newIndex === posts.length - 4) {
-			getPosts(null, posts.length);
+			getPosts(range, posts.length);
 		}
 	};
 	
