@@ -31,10 +31,25 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	const [textInputValue, setTextInputValue] = useState('');
 	const animatedHeight = useRef(new Animated.Value(initialMarginTop)).current;
 	const [editingCommentId, setEditingCommentId] = useState(null);
+	const scrollViewRef = useRef(null);
+	const commentRefs = useRef({});
 	
 	const handleEditComment = (comment) => {
 		setEditingCommentId(comment.id); // 편집 중인 댓글 ID 설정
 		setTextInputValue(comment.comment); // TextInput에 댓글 내용 설정
+		const commentRef = commentRefs.current[comment.id];
+		if (commentRef && scrollViewRef.current) {
+			commentRef.measureLayout(
+				scrollViewRef.current,
+				(x, y, width, height) => {
+					const yOffset = y - 50; // 50은 추가적인 여백
+					scrollViewRef.current.scrollTo({ y: yOffset, animated: true });
+				},
+				error => {
+					console.error("Failed to measure comment layout:", error);
+				}
+			);
+		}
 	};
 	
 	const handleDeleteComment = async (commentId) => {
@@ -67,7 +82,13 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 			alert("댓글을 입력해주세요.");
 			return;
 		}
-		
+		const currentDate = new Date();
+		const year = currentDate.getFullYear(); // 연도
+		const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // 월
+		const day = currentDate.getDate().toString().padStart(2, '0'); // 일
+		const hours = currentDate.getHours().toString().padStart(2, '0'); // 시간
+		const minutes = currentDate.getMinutes().toString().padStart(2, '0'); // 분
+		const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}`;
 		// 수정 중인 경우
 		if (editingCommentId) {
 			// 댓글 수정 로직
@@ -90,15 +111,16 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 					comment: textInputValue, // 사용자가 입력한 댓글 내용
 					username: "신형",
 					profile_url: "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
-					created_at: new Date().toISOString(),
+					created_at: formattedDate,
 					under_comments: [],
 					post_id: postId, // 댓글이 추가될 게시글의 ID
 					id: postId + Date.now(),
 					reply_count: 0,
 				});
 				const newComment = response.data;
-				setComments([...comments, newComment]);
+				setComments(prevComments => [newComment, ...prevComments]); // 새 댓글을 배열의 시작 부분에 추가
 				setTextInputValue("");
+				scrollViewRef.current?.scrollTo({ y: 0, animated: false }); // 스크롤을 최상단으로 이동
 			} catch (error) {
 				console.error('댓글 추가 실패:', error);
 			}
@@ -145,7 +167,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	useEffect(() => {
 		if (isVisible) {
 			setLoading(true);
-			axios.get(`http://192.168.0.3:3000/comments?post_id=${postId}`)
+			axios.get(`http://192.168.0.3:3000/comments?post_id=${postId}&limit=3`)
 				.then(response => {
 					setComments(response.data);
 					setLoading(false);
@@ -167,9 +189,17 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 		const commentItemStyle = isEditing
 			? [styles.commentItem, styles.editingCommentItem]
 			: styles.commentItem;
+		const commentItemRef = useRef(null);
+		
+		useEffect(() => {
+			commentRefs.current[comment.id] = commentItemRef.current;
+			return () => {
+				delete commentRefs.current[comment.id]; // Cleanup on unmount
+			};
+		}, [comment.id]);
 		
 		return (
-			<View style={commentItemStyle}>
+			<View style={commentItemStyle} ref={commentItemRef}>
 				<Image style={styles.profileImage} source={{ uri: comment.profile_url }} />
 				<Text>Date: {comment.created_at}</Text>
 				<Text style={styles.commentText}>{comment.username}: {comment.comment}</Text>
@@ -247,6 +277,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 								style={styles.commentsList}
 								contentContainerStyle={{ paddingBottom: 20 }} // ScrollView의 paddingBottom 조정
 								keyboardShouldPersistTaps="handled"
+								ref={scrollViewRef}
 							>
 								{loading ? (
 									<Text>Loading comments...</Text> // 로딩 인디케이터 표시
