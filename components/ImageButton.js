@@ -1,61 +1,114 @@
 import React, { useState } from 'react';
-import { TouchableOpacity, View, Dimensions } from 'react-native';
+import { TouchableOpacity, View, StyleSheet, Text } from 'react-native';
 import { Image } from 'expo-image';
 
 const ImageButton = React.memo(({ front_image, back_image, containerHeight, windowWidth }) => {
 	const [isFrontShowing, setIsFrontShowing] = useState(true); // 현재 보여지는 이미지가 전면 이미지인지 추적하는 상태
-	
+	const [myPicture, setMyPicture] = useState("")
 	const changeImage = () => {
-		// 둘 다 null이 아닐 때만 이미지 전환 가능
-		if (front_image && back_image) {
-			setIsFrontShowing(!isFrontShowing); // 이미지 전환
-		}
+			setIsFrontShowing(!isFrontShowing);
 	};
 	
 	const ImageHeight = Math.floor(containerHeight);
 	const SmallHeight = Math.floor(ImageHeight / 3);
 	const SmallWidth = Math.floor(windowWidth / 3);
-	
-	// 둘 중 하나라도 null이 아닌 경우를 위한 로직
-	const displayImage = front_image || back_image; // 둘 중 하나가 null이면, 다른 하나 사용
+
+	const defaultImage = "https://ppss.kr/wp-content/uploads/2020/07/01-4-540x304.png";
+	// Calculate blurRadius for each image based on myStatus
+	const getBlurRadius = (isFront) => {
+		if (myPicture === "none") return 20;
+		if ((myPicture === "front" && !isFront) || (myPicture === "back" && isFront)) {
+			return 20;
+		}
+		return 0;
+	};
 	
 	return (
 		<View style={{ position: 'relative' }}>
-			{front_image && back_image ? (
-				<>
-					<TouchableOpacity onPress={changeImage} style={{ zIndex: 2, position: 'absolute', top: 10, left: 10 }}>
-						<Image
-							source={{ uri: isFrontShowing ? back_image : front_image }}
-							style={{
-								borderColor: '#ffffff',
-								borderWidth: 2,
-								height: SmallHeight,
-								width: SmallWidth
-							}}
-						/>
-					</TouchableOpacity>
-					<TouchableOpacity onPress={changeImage} style={{ zIndex: 1 }}>
-						<Image
-							source={{ uri: isFrontShowing ? front_image : back_image }}
-							style={{
-								height: ImageHeight,
-								width: windowWidth,
-							}}
-						/>
-					</TouchableOpacity>
-				</>
-			) : (
-				<Image
-					source={{ uri: displayImage }}
-					style={{
-						height: ImageHeight,
-						width: windowWidth,
-					}}
-				/>
+			{ myPicture === "none" && (
+				<View style={styles.overlayTextContainer}>
+					<Text style={styles.overlayText}>
+						게시물을 작성해보세요!
+					</Text>
+				</View>
 			)}
-		</View>
+				<TouchableOpacity onPress={changeImage} style={{ zIndex: 2, position: 'absolute', top: 10, left: 10 }}>
+					<Image
+						source={{ uri: isFrontShowing ? (back_image || defaultImage) : (front_image || defaultImage) }}
+						style={{
+							borderColor: '#ffffff',
+							borderWidth: 2,
+							height: SmallHeight,
+							width: SmallWidth
+						}}
+						blurRadius={getBlurRadius(isFrontShowing)}
+					/>
+					{isFrontShowing && myPicture === "back" && (
+						<View style={styles.overlayTextContainer}>
+							<Text style={{
+								color: 'white',
+								fontSize: 12,
+								fontWeight: 'bold',
+								textAlign: 'center'
+							}}>
+								당신의 얼굴을{'\n'}보고싶어요!</Text>
+						</View>
+					)}
+					{!isFrontShowing && myPicture === "front" && (
+						<View style={styles.overlayTextContainer}>
+							<Text style={{
+								color: 'white',
+								fontSize: 12,
+								fontWeight: 'bold',
+								textAlign: 'center'
+							}}>
+								당신이 바라보는{'\n'}풍경이 궁금해요!</Text>
+						</View>
+					)}
+				</TouchableOpacity>
+				<TouchableOpacity onPress={changeImage} style={{ zIndex: 1, position: 'relative' }}>
+					<Image
+						source={{ uri: isFrontShowing ? (front_image || defaultImage) : (back_image || defaultImage) }}
+						style={{
+							height: ImageHeight,
+							width: windowWidth,
+						}}
+						blurRadius={getBlurRadius(!isFrontShowing)}
+					/>
+					{!isFrontShowing && myPicture === "back" && (
+						<View style={styles.overlayTextContainer}>
+							<Text style={styles.overlayText}>당신의 얼굴을 보고싶어요!</Text>
+						</View>
+					)}
+					{isFrontShowing && myPicture === "front" && (
+						<View style={styles.overlayTextContainer}>
+							<Text style={styles.overlayText}>당신이 바라보는{'\n'}풍경이 궁금해요!</Text>
+						</View>
+					)}
+				</TouchableOpacity>
+			</View>
 	)
 })
+
+const styles = StyleSheet.create({
+	overlayTextContainer: {
+		zIndex: 5,
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		right: 0,
+		bottom: 0,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: 'rgba(0, 0, 0, 0.5)', // 투명 배경을 추가하여 이미지와의 구분을 쉽게 할 수 있습니다.
+	},
+	overlayText: {
+		color: 'white',
+		fontSize: 24,
+		fontWeight: 'bold',
+		textAlign: 'center'
+	}
+});
 
 export { ImageButton };
 

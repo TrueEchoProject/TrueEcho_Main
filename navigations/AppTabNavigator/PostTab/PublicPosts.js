@@ -7,13 +7,17 @@ import CardComponent from '../../../components/CardComponent';
 import { MaterialIcons } from "@expo/vector-icons";
 
 const MemoizedCardComponent = React.memo(CardComponent, (prevProps, nextProps) => {
-	return prevProps.post.id === nextProps.post.id && prevProps.location === nextProps.location;
+	return prevProps.post.id === nextProps.post.id && prevProps.location === nextProps.location && prevProps.isOptionsVisibleExternal === nextProps.isOptionsVisibleExternal;
 });
 
 const PublicPosts = React.forwardRef((props, ref) => {
+	const [range, setRange] = useState(null);
+	const [currentPage, setCurrentPage] = useState(0);
+	const [optionsVisibleStates, setOptionsVisibleStates] = useState({});
 	const [posts, setPosts] = useState([]);
 	const [location, setLocation] = useState("");
 	const [refreshing, setRefreshing] = useState(false);
+	const [isRefreshing, setIsRefreshing] = useState(false);
 	const pagerViewRef = useRef(null);
 	const [optionsVisible, setOptionsVisible] = useState(false);
 	
@@ -21,40 +25,37 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		setOptionsVisible(!optionsVisible);
 	};
 	
-	const getPosts = async (range = null, start = 0) => {
+	const getPosts = async (selectedRange = range, start = 0) => {
 		setRefreshing(true);
 		const limit = 10; // 한 번에 불러올 게시물 수
 		let url = `http://192.168.0.3:3000/posts?scope=PUBLIC&_start=${start}&_limit=${limit}`;
-		if (start === 0) { // 새로고침이나 초기 로드
-			let newLocation = '';
-			if (range) {
-				try {
-					const locationResponse = await axios.get('http://192.168.0.3:3000/user_location');
-					const words = locationResponse.data[0].your_location.split(' ');
-					switch (range) {
-						case 'small':
-							newLocation = words.join(' ');
-							break;
-						case 'middle':
-							newLocation = words.slice(0, 2).join(' ');
-							break;
-						case 'big':
-							newLocation = words[0];
-							break;
-						default:
-							console.error('Invalid range');
-							return;
-					}
-					setLocation(newLocation);
-				} catch (error) {
-					console.error('Fetching user location failed:', error);
-					setRefreshing(false);
-					return;
+		if (selectedRange) {
+			try {
+				const locationResponse = await axios.get('http://192.168.0.3:3000/user_location');
+				const words = locationResponse.data[0].your_location.split(' ');
+				let newLocation = '';
+				switch (selectedRange) {
+					case 'small':
+						newLocation = words.join(' ');
+						break;
+					case 'middle':
+						newLocation = words.slice(0, 2).join(' ');
+						break;
+					case 'big':
+						newLocation = words[0];
+						break;
+					default:
+						console.log('Invalid range');
+						setRefreshing(false);
+						return;
 				}
-			} else {
-				setLocation('');
+				setLocation(newLocation);
+				url += `&location_contains=${encodeURIComponent(newLocation)}`;
+			} catch (error) {
+				console.error('Fetching user location failed:', error);
+				setRefreshing(false);
+				return;
 			}
-			url += newLocation ? `&location_contains=${encodeURIComponent(newLocation)}` : '';
 		} else if (location) {
 			url += `&location_contains=${encodeURIComponent(location)}`;
 		}
@@ -62,34 +63,41 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		try {
 			const postsResponse = await axios.get(url);
 			const newPosts = postsResponse.data;
+			setPosts(prevPosts => start === 0 ? newPosts : [...prevPosts, ...newPosts]);
 			if (start === 0) {
-				setPosts(newPosts);
-			} else if (newPosts.length > 0) {
-				setPosts(prevPosts => [...prevPosts, ...newPosts]);
-			} else {
+				setIsRefreshing(true); // 새로고침이 발생하면 이 플래그를 설정
+			}
+			if (newPosts.length === 0) {
 				console.log("No more posts to load.");
 			}
 		} catch (error) {
 			console.error('Fetching posts failed:', error);
 		} finally {
 			setRefreshing(false);
+			setOptionsVisible(false);
 			if (start === 0) {
-				pagerViewRef.current?.setPageWithoutAnimation(0); // 첫 페이지로 이동
-				setOptionsVisible(false);
+				setTimeout(() => {
+					pagerViewRef.current?.setPageWithoutAnimation(0);
+					setIsRefreshing(false);
+				}, 50); // 소폭의 지연을 추가하여 컴포넌트의 상태가 안정화되도록 합니다.
 			}
 		}
 	};
 	const refreshPosts = () => {
-		getPosts(); // 데이터를 새로고침합니다.
+		setLocation('');
+		setRange(null);
+		setIsRefreshing(true);
+		getPosts(null, 0);
 	};
+	
 	React.useImperativeHandle(ref, () => ({
-		getPosts: getPosts,
+		getPosts: refreshPosts,
 	}));
-	useFocusEffect(
-		useCallback(() => {
-			getPosts();
-		}, [])
-	);
+	
+	useFocusEffect(useCallback(() => {
+		refreshPosts();
+	}, []));
+	
 	useEffect(() => {
 		console.log(posts);
 		console.log(location);
@@ -98,6 +106,28 @@ const PublicPosts = React.forwardRef((props, ref) => {
 	if (posts.length === 0) {
 		return <View style={style.container}><Text>Loading...</Text></View>;
 	}
+	
+	const handlePageChange = (e) => {
+		const newIndex = e.nativeEvent.position;
+		setCurrentPage(newIndex);
+		
+		// 상태 초기화 로그 확인
+		console.log("Resetting option visibility states due to page change.");
+		
+		// 모든 옵션을 숨깁니다.
+		setOptionsVisibleStates(prevStates => {
+			const newStates = {};
+			posts.forEach(post => {
+				newStates[post.post_id] = false;
+			});
+			return newStates;
+		});
+		
+		// 추가 데이터 로딩
+		if (newIndex === posts.length - 4) {
+			getPosts(range, posts.length);
+		}
+	};
 	
 	return (
 		<>
@@ -177,16 +207,15 @@ const PublicPosts = React.forwardRef((props, ref) => {
 					style={style.pagerView}
 					initialPage={0}
 					ref={pagerViewRef}
-					onPageSelected={e => {
-						const newIndex = e.nativeEvent.position;
-						if (newIndex === posts.length - 3) {
-							getPosts(null, posts.length);
-						}
-					}}
+					onPageSelected={handlePageChange}
 				>
 					{posts.map((post) => (
 						<View key={post.post_id} style={style.container}>
-							<MemoizedCardComponent post={post} location={location}/>
+							<MemoizedCardComponent
+								post={post}
+								isOptionsVisibleExternal={optionsVisibleStates[post.post_id]}
+								setIsOptionsVisibleExternal={(visible) => setOptionsVisibleStates(prev => ({ ...prev, [post.post_id]: visible }))}
+							/>
 						</View>
 					))}
 				</PagerView>
