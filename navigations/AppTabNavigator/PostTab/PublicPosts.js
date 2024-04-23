@@ -11,6 +11,7 @@ const MemoizedCardComponent = React.memo(CardComponent, (prevProps, nextProps) =
 });
 
 const PublicPosts = React.forwardRef((props, ref) => {
+	const [range, setRange] = useState(null);
 	const [currentPage, setCurrentPage] = useState(0);
 	const [optionsVisibleStates, setOptionsVisibleStates] = useState({});
 	const [posts, setPosts] = useState([]);
@@ -23,40 +24,43 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		setOptionsVisible(!optionsVisible);
 	};
 	
-	const getPosts = async (range = null, start = 0) => {
+	const getPosts = async (selectedRange = range, start = 0) => {
 		setRefreshing(true);
 		const limit = 10; // 한 번에 불러올 게시물 수
 		let url = `http://192.168.0.3:3000/posts?scope=PUBLIC&_start=${start}&_limit=${limit}`;
-		if (start === 0) { // 새로고침이나 초기 로드
-			let newLocation = '';
-			if (range) {
-				try {
-					const locationResponse = await axios.get('http://192.168.0.3:3000/user_location');
-					const words = locationResponse.data[0].your_location.split(' ');
-					switch (range) {
-						case 'small':
-							newLocation = words.join(' ');
-							break;
-						case 'middle':
-							newLocation = words.slice(0, 2).join(' ');
-							break;
-						case 'big':
-							newLocation = words[0];
-							break;
-						default:
-							console.error('Invalid range');
-							return;
-					}
-					setLocation(newLocation);
-				} catch (error) {
-					console.error('Fetching user location failed:', error);
-					setRefreshing(false);
-					return;
+		
+		// range 상태 업데이트
+		if (start === 0 && selectedRange !== range) {
+			setRange(selectedRange);
+		}
+		
+		let newLocation = '';
+		if (selectedRange) {
+			try {
+				const locationResponse = await axios.get('http://192.168.0.3:3000/user_location');
+				const words = locationResponse.data[0].your_location.split(' ');
+				switch (selectedRange) {
+					case 'small':
+						newLocation = words.join(' ');
+						break;
+					case 'middle':
+						newLocation = words.slice(0, 2).join(' ');
+						break;
+					case 'big':
+						newLocation = words[0];
+						break;
+					default:
+						console.log('Invalid range');
+						setRefreshing(false);
+						return;
 				}
-			} else {
-				setLocation('');
+				setLocation(newLocation);
+				url += `&location_contains=${encodeURIComponent(newLocation)}`;
+			} catch (error) {
+				console.error('Fetching user location failed:', error);
+				setRefreshing(false);
+				return;
 			}
-			url += newLocation ? `&location_contains=${encodeURIComponent(newLocation)}` : '';
 		} else if (location) {
 			url += `&location_contains=${encodeURIComponent(location)}`;
 		}
@@ -64,16 +68,8 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		try {
 			const postsResponse = await axios.get(url);
 			const newPosts = postsResponse.data;
-			if (start === 0) {
-				setPosts(newPosts);
-				const initialVisibleStates = {};
-				newPosts.forEach(post => {
-					initialVisibleStates[post.id] = false;  // 확실한 초기화
-				});
-				setOptionsVisibleStates(initialVisibleStates);
-			} else if (newPosts.length > 0) {
-				setPosts(prevPosts => [...prevPosts, ...newPosts]);
-			} else {
+			setPosts(prevPosts => start === 0 ? newPosts : [...prevPosts, ...newPosts]);
+			if (newPosts.length === 0) {
 				console.log("No more posts to load.");
 			}
 		} catch (error) {
@@ -81,22 +77,29 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		} finally {
 			setRefreshing(false);
 			if (start === 0) {
-				pagerViewRef.current?.setPageWithoutAnimation(0); // 첫 페이지로 이동
+				pagerViewRef.current?.setPageWithoutAnimation(0);
 				setOptionsVisible(false);
 			}
 		}
 	};
 	const refreshPosts = () => {
-		getPosts(); // 데이터를 새로고침합니다.
+		setLocation(''); // 위치 초기화
+		setRange(null); // 범위 초기화
+		getPosts(null, 0); // 전체 게시물을 새로 불러옵니다.
 	};
+	
 	React.useImperativeHandle(ref, () => ({
-		getPosts: getPosts,
+		getPosts: refreshPosts,
 	}));
+	
 	useFocusEffect(
 		useCallback(() => {
+			setLocation('');
+			setRange(null);
 			getPosts();
 		}, [])
 	);
+	
 	useEffect(() => {
 		console.log(posts);
 		console.log(location);
@@ -124,7 +127,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		
 		// 추가 데이터 로딩
 		if (newIndex === posts.length - 4) {
-			getPosts(posts.length);
+			getPosts(null, posts.length);
 		}
 	};
 	
