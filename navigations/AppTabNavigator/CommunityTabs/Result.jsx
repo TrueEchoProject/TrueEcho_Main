@@ -14,7 +14,7 @@ const fetchData = async () => {
 	}
 };
 
-const Result = React.memo(() => {
+const Result = React.memo(({ navigation }) => {
 	const [questions, setQuestions] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const pagerRef = useRef(null);
@@ -41,6 +41,12 @@ const Result = React.memo(() => {
 	if (loading) {
 		return (
 			<View style={styles.emptyPage}>
+				<TouchableOpacity
+					onPress={() => navigation.navigate('투표')}
+					style={{padding: 20, backgroundColor: "grey"}}
+				>
+					<Text>Back</Text>
+				</TouchableOpacity>
 				<Text style={styles.emptyText}>Loading...</Text>
 			</View>
 		);

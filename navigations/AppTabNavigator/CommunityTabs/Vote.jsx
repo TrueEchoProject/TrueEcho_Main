@@ -7,7 +7,7 @@ import VotePage from './VotePage';
 
 const { height } = Dimensions.get('window');
 
-const Vote = () => {
+const Vote = ({ navigation }) => {
     const [questions, setQuestions] = useState([]);
     const [arrowAnimation] = useState(new Animated.Value(0));
     const [selectedInfo, setSelectedInfo] = useState(null);
@@ -69,10 +69,6 @@ const Vote = () => {
         }
     };
     
-    const handleViewResults = () => {
-        console.log('Viewing voting results...');
-    };
-    
     return (
       <PagerView
         style={{ flex: 1 }}
@@ -102,7 +98,7 @@ const Vote = () => {
           <View key="end" style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
               <Text style={styles.endTitle}>투표를 모두 마치셨어요!</Text>
               <Animated.View style={{ transform: [{ translateY: arrowAnimation }] }} />
-              <TouchableOpacity onPress={handleViewResults} style={styles.resultButton}>
+              <TouchableOpacity onPress={() => navigation.navigate('결과')} style={styles.resultButton}>
                   <Text style={styles.resultButtonText}>랭킹 보러 가기</Text>
               </TouchableOpacity>
           </View>
