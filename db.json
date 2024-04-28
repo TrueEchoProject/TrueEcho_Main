@@ -1,686 +1,1114 @@
 {
-  "user_location": [
-    { "your_location": "서울특별시 용산구 서빙고동" }
+  "questions": [
+    {
+      "id": 1,
+      "question": "이성 친구가 가장 많을 것 같은 사람!"
+    },
+    {
+      "id": 2,
+      "question": "가장 겁이 많을 것 같은 사람!"
+    },
+    {
+      "id": 3,
+      "question": "결혼 가장 빨리 할 것 같은 사람!"
+    },
+    {
+      "id": 4,
+      "question": "가장 재미있을 것 같은 사람!"
+    },
+    {
+      "id": 5,
+      "question": "가장 예쁠 것 같은 사람!"
+    }
   ],
   "users": [
     {
       "id": 1,
-      "userId": "user1"
+      "userName": "박준형",
+      "userID": 9999,
+      "profileUrl": "https://source.unsplash.com/random/200x300",
+      "photoFrontUrl": "https://cdn.discordapp.com/attachments/990816789246124032/1224155184150876200/barcaopeth1989_Construct_an_ultra-realistic_architectural_maque_527699cc-3ff0-4874-99b7-3649ca5263bc.png?ex=661c765b&is=660a015b&hm=63009c74d20cda821e25cc649449ee62ced83449355c47eb11fb0b6b96a980e5&",
+      "photoBackUrl": "https://cdn.discordapp.com/attachments/990816789246124032/1224153729058734193/barcaopeth1989_Construct_an_ultra-realistic_architectural_maque_407acb6a-327b-47b6-9754-b09acf5a0521.png?ex=661c7500&is=660a0000&hm=11a0136076ffa9d64243c19368a152682e474c4aa5d59b3c36ea5e4190dd251c&"
     },
     {
       "id": 2,
-      "userId": "user2"
+      "userName": "이승우",
+      "userID": 8888,
+      "profileUrl": "https://source.unsplash.com/random/200x300",
+      "photoFrontUrl": "https://cdn.discordapp.com/attachments/990816789246124032/1224152435585585253/barcaopeth1989_Develop_an_ultra-realistic_architectural_maquett_214eaae1-58bc-4f96-94b4-df1034f9cc3d.png?ex=661c73cc&is=6609fecc&hm=c965bdef307512dc00846097a8264c97d1dd9556f83b3736abad881476766c42&",
+      "photoBackUrl": "https://cdn.discordapp.com/attachments/990816789246124032/1224152423291944980/barcaopeth1989_Develop_an_ultra-realistic_architectural_maquett_248cbf41-818f-4883-a1f6-0c171ec46d6a.png?ex=661c73c9&is=6609fec9&hm=8ae54f5db7c6ad6504ee3bb623a13b93c2ddbfc77514d0ba6a32c8e457e45149&"
     },
     {
       "id": 3,
-      "userId": "user3"
+      "userName": "김영철",
+      "userID": 7777,
+      "profileUrl": "https://source.unsplash.com/random/200x300",
+      "photoFrontUrl": "https://cdn.discordapp.com/attachments/990816789246124032/1224152027282673805/barcaopeth1989_Craft_an_ultra-realistic_architectural_maquette__e4bdd90a-8f6c-4df7-bd8a-3d92f92d2bcc.png?ex=661c736a&is=6609fe6a&hm=2f03a076ba77b0c8a3989cf48b3e8b94b64b91530008c95ac0a9cbd1981969e9&",
+      "photoBackUrl": "https://cdn.discordapp.com/attachments/990816789246124032/1224149890926510162/urbanpot_A_Piper_Dakota_PA-28-236_parked_on_a_cliffside_overloo_1102e9ef-a296-441f-8187-0c2df4034fa7.png?ex=661c716d&is=6609fc6d&hm=38986ace23b5f4d7d19d11de286b97ca292d88a1c39e838533c0a2ef5cf6a967&"
+    },
+    {
+      "id": 4,
+      "userName": "장지훈",
+      "userID": 6666,
+      "profileUrl": "https://source.unsplash.com/random/200x300",
+      "photoFrontUrl": "https://cdn.discordapp.com/attachments/990816789246124032/1224149497693736991/barcaopeth1989_Construct_an_ultra-realistic_architectural_maque_17e99f81-c637-4850-af0f-09e7117dd113.png?ex=661c710f&is=6609fc0f&hm=288f5f456d7f78437a6de51ef901b7bb12eaae1d266d18fde7249452a85e8bdd&",
+      "photoBackUrl": "https://cdn.discordapp.com/attachments/990816789246124032/1224148813665800343/sheabutterlunch_black_female._dark_brown_skinned._Braids_hangin_2f9437b4-c673-46dd-ab16-1905755de883.png?ex=661c706c&is=6609fb6c&hm=30b2287328f67e49fbe752ce12fae0bcab4abb4264ff01b9f0eadc083d3a0428&"
     }
   ],
-  "codes": [
+  "rank": [
     {
       "id": 1,
-      "code": "1111"
+      "question": "이성 친구가 가장 많을 것 같은 사람!",
+      "week": [
+        4,
+        1
+      ],
+      "rank": {
+        "1st": {
+          "userName": "데미안",
+          "poll": 25
+        },
+        "2nd": {
+          "userName": "손흥민",
+          "poll": 13
+        },
+        "3nd": {
+          "userName": "서희준",
+          "poll": 2
+        }
+      }
     },
     {
       "id": 2,
-      "code": "2222"
+      "question": "가장 겁이 많을 것 같은 사람!",
+      "week": [
+        4,
+        2
+      ],
+      "rank": {
+        "1st": {
+          "userName": "메시",
+          "poll": 18
+        },
+        "2nd": {
+          "userName": "즐라탄",
+          "poll": 15
+        },
+        "3nd": {
+          "userName": "황희찬",
+          "poll": 6
+        }
+      }
     },
     {
       "id": 3,
-      "code": "3333"
+      "question": "결혼 가장 빨리 할 것 같은 사람!",
+      "week": [
+        4,
+        3
+      ],
+      "rank": {
+        "1st": {
+          "userName": "이천수",
+          "poll": 22
+        },
+        "2nd": {
+          "userName": "오타니",
+          "poll": 12
+        },
+        "3nd": {
+          "userName": "이정후",
+          "poll": 4
+        }
+      }
+    },
+    {
+      "id": 4,
+      "question": "가장 재미있을 것 같은 사람!",
+      "week": [
+        4,
+        4
+      ],
+      "rank": {
+        "1st": {
+          "userName": "송호근",
+          "poll": 30
+        },
+        "2nd": {
+          "userName": "정준호",
+          "poll": 20
+        },
+        "3nd": {
+          "userName": "김인기",
+          "poll": 10
+        }
+      }
+    },
+    {
+      "id": 5,
+      "question": "가장 예쁠 것 같은 사람!",
+      "week": [
+        5,
+        1
+      ],
+      "rank": {
+        "1st": {
+          "userName": "심종익",
+          "poll": 26
+        },
+        "2nd": {
+          "userName": "김도헌",
+          "poll": 14
+        },
+        "3nd": {
+          "userName": "윤석열",
+          "poll": 5
+        }
+      }
     }
   ],
-  "blocked_users": [],
+  "user_calendar": [
+    {
+      "calendar_id": 1,
+      "created_at": "2024-04-05",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "calendar_id": 2,
+      "created_at": "2024-04-10",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "calendar_id": 3,
+      "created_at": "2024-04-15",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "calendar_id": 4,
+      "created_at": "2024-04-20",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "calendar_id": 5,
+      "created_at": "2024-04-25",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "calendar_id": 6,
+      "created_at": "2024-04-27",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "calendar_id": 7,
+      "created_at": "2024-04-07",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    }
+  ],
+  "user_pin": [
+    {
+      "pin_id": 1,
+      "created_at": "2024-04-15",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "pin_id": 2,
+      "created_at": "2024-04-25",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    }
+  ],
+  "user_me": [
+    {
+      "username": "박신형",
+      "user_Id": "sin10920",
+      "user_vote": "이성 친구가 제일 많을 거 같은 친구",
+      "profile_url": "https://i.ibb.co/wwfqn6V/DALL-E-2024-04-26-20-08-20-A-realistic-image-capturing-the-essence-of-a-photo-taken-by-a-young-man-i.webp",
+      "your_location": "서울특별시 용산구 서빙고동"
+    }
+  ],
+  "user_location": [
+    {
+      "your_location": "서울특별시 용산구 서빙고동"
+    }
+  ],
+  "blocked_users": [
+    {
+      "blocked_user": "",
+      "id": 1
+    },
+    {
+      "blocked_user": "",
+      "id": 2
+    },
+    {
+      "blocked_user": "",
+      "id": 3
+    },
+    {
+      "blocked_user": "윤서_free_FRIEND_서빙고동",
+      "id": 4
+    },
+    {
+      "blocked_user": "예린_free_FRIEND_장안구",
+      "id": 5
+    },
+    {
+      "blocked_user": "혜진_onTime_FRIEND_서빙고동",
+      "id": 6
+    },
+    {
+      "blocked_user": "혜진_onTime_FRIEND_서빙고동",
+      "id": 7
+    },
+    {
+      "blocked_user": "윤서_free_FRIEND_서빙고동",
+      "id": 8
+    },
+    {
+      "blocked_user": "시우_late_FRIEND_서빙고동",
+      "id": 9
+    },
+    {
+      "blocked_user": "진우_late_PUBLIC_일산동구",
+      "id": 10
+    },
+    {
+      "blocked_user": "예린_free_FRIEND_장안구",
+      "id": 11
+    },
+    {
+      "blocked_user": "예린_free_FRIEND_장안구",
+      "id": 12
+    },
+    {
+      "blocked_user": "시우_late_FRIEND_서빙고동",
+      "id": 13
+    }
+  ],
+  "friendSend": [
+    {
+      "friendSendUser": "시우_late_FRIEND_서빙고동",
+      "id": 1
+    },
+    {
+      "friendSendUser": "혜진_onTime_FRIEND_서빙고동",
+      "id": 2
+    },
+    {
+      "friendSendUser": "지아_late_FRIEND_일산동구",
+      "id": 3
+    },
+    {
+      "friendSendUser": "서준_onTime_FRIEND_서빙고동",
+      "id": 4
+    },
+    {
+      "friendSendUser": "지민_onTime_FRIEND_서빙고동",
+      "id": 5
+    },
+    {
+      "friendSendUser": "민서_free_PUBLIC_일산동구",
+      "id": 6
+    },
+    {
+      "friendSendUser": "진우_late_PUBLIC_일산동구",
+      "id": 7
+    },
+    {
+      "friendSendUser": "민서_free_PUBLIC_일산동구",
+      "id": 8
+    },
+    {
+      "friendSendUser": "시우_late_FRIEND_서빙고동",
+      "id": 9
+    },
+    {
+      "friendSendUser": "시우_late_FRIEND_서빙고동",
+      "id": 10
+    },
+    {
+      "friendSendUser": "진우_late_PUBLIC_일산동구",
+      "id": 11
+    },
+    {
+      "friendSendUser": "진우_late_PUBLIC_일산동구",
+      "id": 12
+    },
+    {
+      "friendSendUser": "나은_onTime_PUBLIC_일산동구",
+      "id": 13
+    },
+    {
+      "friendSendUser": "민서_free_PUBLIC_일산동구",
+      "id": 14
+    },
+    {
+      "friendSendUser": "진우_late_PUBLIC_일산동구",
+      "id": 15
+    },
+    {
+      "friendSendUser": "서준_onTime_FRIEND_서빙고동",
+      "id": 16
+    }
+  ],
+  "recommendations": [
+    {
+      "Recommendation_id": 1,
+      "username": "진우_late_PUBLIC_일산동구",
+      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224155380670529666/barcaopeth1989_Construct_an_ultra-realistic_architectural_maque_bc564ebc-342a-490e-b142-f4b62ab1caad.png?ex=661c768a&is=660a018a&hm=39423115c81c929cfef9effb9af94bb5a16dbed617a83dad7380802defd29dc1&",
+      "friend": 0
+    },
+    {
+      "Recommendation_id": 2,
+      "username": "민서_free_PUBLIC_일산동구",
+      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224141591980146708/journeyrhodes_70223_coloring_page_thin_lines_silly_doodles_a_sm_44427d02-4637-4f81-a2ee-4ea87a161632.png?ex=661c69b2&is=6609f4b2&hm=6db82c847dcbd44b3f683fa1032595dbda5facff0915a241338b35839de4de6f&",
+      "friend": 0
+    },
+    {
+      "Recommendation_id": 3,
+      "username": "나은_onTime_PUBLIC_일산동구",
+      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224105150780543216/starfire4777_psychadelic_Easter_egg_25d346ea-9b57-4b36-8574-3b8271010f89.png?ex=661c47c2&is=6609d2c2&hm=1604573f6fde060920bb62348f1391b677e73f300bdab1a92feb48d3062d5171&",
+      "friend": 0
+    },
+    {
+      "Recommendation_id": 4,
+      "username": "예린_free_FRIEND_장안구",
+      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224152435585585253/barcaopeth1989_Develop_an_ultra-realistic_architectural_maquett_214eaae1-58bc-4f96-94b4-df1034f9cc3d.png?ex=661c73cc&is=6609fecc&hm=c965bdef307512dc00846097a8264c97d1dd9556f83b3736abad881476766c42&",
+      "friend": 0
+    },
+    {
+      "Recommendation_id": 5,
+      "username": "서진_free_FRIEND_일산동구",
+      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224150352602071102/lloydfaulkner_the_shard_photo_realistic_59f150c6-2659-4f84-b3fa-a45aef25af63.png?ex=661c71db&is=6609fcdb&hm=6b84c11ff3ad2b3eb59245c95f9453014303acca5d337c0ad31be9cd3cc94678&",
+      "friend": 0
+    },
+    {
+      "Recommendation_id": 6,
+      "username": "서준_onTime_FRIEND_서빙고동",
+      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224155184150876200/barcaopeth1989_Construct_an_ultra-realistic_architectural_maque_527699cc-3ff0-4874-99b7-3649ca5263bc.png?ex=661c765b&is=660a015b&hm=63009c74d20cda821e25cc649449ee62ced83449355c47eb11fb0b6b96a980e5&",
+      "friend": 0
+    },
+    {
+      "Recommendation_id": 7,
+      "username": "하윤_free_PUBLIC_이태원1동",
+      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218795193361502208/buba_dubz_None_0_23345371-03ff-477b-83df-eaea6d31fb65.png?ex=661b6b7a&is=6608f67a&hm=86e209f02d81c95891127d4d60959750c1662d7bbd9393d734f08efb1368e250&",
+      "friend": 0
+    },
+    {
+      "Recommendation_id": 8,
+      "username": "현우_late_FRIEND_고덕1동",
+      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222352859882983474/buba_dubz_None_2_0417fb00-9631-495e-b738-6b19bbdec99e.png?ex=6615e7d0&is=660372d0&hm=113ea541e0034594c216134cbaa846536ac132683b3524fa3de572a2b063004d&",
+      "friend": 0
+    }
+  ],
   "posts": [
     {
       "post_id": 1,
       "username": "진우_late_PUBLIC_일산동구",
       "post_status": 2,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224155380670529666/barcaopeth1989_Construct_an_ultra-realistic_architectural_maque_bc564ebc-342a-490e-b142-f4b62ab1caad.png?ex=661c768a&is=660a018a&hm=39423115c81c929cfef9effb9af94bb5a16dbed617a83dad7380802defd29dc1&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 199,
-      "post_front_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224155337184116836/barcaopeth1989_Construct_an_ultra-realistic_architectural_maque_d3f4c095-14f7-46f8-94b2-6b4171c6b9ce.png?ex=661c7680&is=660a0180&hm=d6203b9cfb4dd2b25c155ed879a552a489d81ad8ffa3358203d55e6468515f50&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224155214257459200/ace039371_On_a_quiet_night_as_moonlight_bathed_an_ordinary_indi_44bf9dab-063c-4393-ab8a-5d212c4880d1.png?ex=661c7662&is=660a0162&hm=2b9a8c3a939c03ff169fd70fbbaf71381c4a2c52d44ab42104e3cf21bad67cb2&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-04-01",
       "title": "오늘의 일상 #힐링",
-      "location": "경기도 고양시 일산동구"
+      "location": "경기도 고양시 일산동구",
+      "friend": 1
     },
     {
       "post_id": 2,
       "username": "윤서_free_FRIEND_서빙고동",
       "post_status": 1,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224152435585585253/barcaopeth1989_Develop_an_ultra-realistic_architectural_maquett_214eaae1-58bc-4f96-94b4-df1034f9cc3d.png?ex=661c73cc&is=6609fecc&hm=c965bdef307512dc00846097a8264c97d1dd9556f83b3736abad881476766c42&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 234,
-      "post_front_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224152423291944980/barcaopeth1989_Develop_an_ultra-realistic_architectural_maquett_248cbf41-818f-4883-a1f6-0c171ec46d6a.png?ex=661c73c9&is=6609fec9&hm=8ae54f5db7c6ad6504ee3bb623a13b93c2ddbfc77514d0ba6a32c8e457e45149&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224152027282673805/barcaopeth1989_Craft_an_ultra-realistic_architectural_maquette__e4bdd90a-8f6c-4df7-bd8a-3d92f92d2bcc.png?ex=661c736a&is=6609fe6a&hm=2f03a076ba77b0c8a3989cf48b3e8b94b64b91530008c95ac0a9cbd1981969e9&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-31",
       "title": "먹스타그램: 오늘의 점심",
-      "location": "서울특별시 용산구 서빙고동"
+      "location": "서울특별시 용산구 서빙고동",
+      "friend": 0
     },
     {
       "post_id": 3,
       "username": "민서_free_PUBLIC_일산동구",
       "post_status": 1,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224149890926510162/urbanpot_A_Piper_Dakota_PA-28-236_parked_on_a_cliffside_overloo_1102e9ef-a296-441f-8187-0c2df4034fa7.png?ex=661c716d&is=6609fc6d&hm=38986ace23b5f4d7d19d11de286b97ca292d88a1c39e838533c0a2ef5cf6a967&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 118,
-      "post_front_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224149497693736991/barcaopeth1989_Construct_an_ultra-realistic_architectural_maque_17e99f81-c637-4850-af0f-09e7117dd113.png?ex=661c710f&is=6609fc0f&hm=288f5f456d7f78437a6de51ef901b7bb12eaae1d266d18fde7249452a85e8bdd&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224149487933591643/barcaopeth1989_Construct_an_ultra-realistic_architectural_maque_72bdef9a-6af9-4015-882b-95bab63edc34.png?ex=661c710d&is=6609fc0d&hm=a5ed29f6cf615f0376c43854e5605419af1af639016a866db1be13561e9a5aa7&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-30",
       "title": "운동 끝! #헬스타그램",
-      "location": "경기도 고양시 일산동구"
+      "location": "경기도 고양시 일산동구",
+      "friend": 1
     },
     {
       "post_id": 4,
       "username": "나은_onTime_PUBLIC_일산동구",
       "post_status": 3,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224148813665800343/sheabutterlunch_black_female._dark_brown_skinned._Braids_hangin_2f9437b4-c673-46dd-ab16-1905755de883.png?ex=661c706c&is=6609fb6c&hm=30b2287328f67e49fbe752ce12fae0bcab4abb4264ff01b9f0eadc083d3a0428&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 96,
-      "post_front_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224148811023257650/jennifer_64572_baby_owlet_great_horned_owlet_with_white_feather_189e61dd-b4b1-40ea-940f-c7ca9c555add.png?ex=661c706c&is=6609fb6c&hm=fdc37397b20f0e65865b0707e53ec994e23c1d6d83fe8a97263f76f06b0e1976&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224148128433963208/barcaopeth1989_Create_an_ultra-realistic_architectural_maquette_4feb1c5b-8dae-4e78-9628-7b02f0adeda3.png?ex=661c6fc9&is=6609fac9&hm=b7554347a7d2670cd944ac4890ca4afb9d7baeff0a90b8b9788f27a6ffec47d7&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-29",
       "title": "이번 주말 여행 계획!",
-      "location": "경기도 고양시 일산동구"
+      "location": "경기도 고양시 일산동구",
+      "friend": 0
     },
     {
       "post_id": 5,
       "username": "서현_late_PUBLIC_장안구",
       "post_status": 2,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224141591980146708/journeyrhodes_70223_coloring_page_thin_lines_silly_doodles_a_sm_44427d02-4637-4f81-a2ee-4ea87a161632.png?ex=661c69b2&is=6609f4b2&hm=6db82c847dcbd44b3f683fa1032595dbda5facff0915a241338b35839de4de6f&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 11,
-      "post_front_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224141268662096032/journeyrhodes_70223_coloring_page_silly_doodles_of_a_kid_white__6b6b4cee-dd86-4805-bbb1-88d888ff2ffb.png?ex=661c6965&is=6609f465&hm=ea307d2a7fa71444ab11a9cc88cf857bd4da2312546529af4a7072ed1d3a0567&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224140970455470221/journeyrhodes_70223_coloring_page_thin_lines_white_background_s_5823f8e7-24e2-4f65-9fac-8935f18f25ef.png?ex=661c691e&is=6609f41e&hm=8cede31d3b09d17e406c3013c379501e75eacd0debfb1bf74864e2ffbf41b264&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-28",
       "title": "집꾸미기 프로젝트 시작",
-      "location": "경기도 수원시 장안구"
+      "location": "경기도 수원시 장안구",
+      "friend": 1
     },
     {
       "post_id": 6,
       "username": "시우_late_FRIEND_서빙고동",
       "post_status": 2,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224155337184116836/barcaopeth1989_Construct_an_ultra-realistic_architectural_maque_d3f4c095-14f7-46f8-94b2-6b4171c6b9ce.png?ex=661c7680&is=660a0180&hm=d6203b9cfb4dd2b25c155ed879a552a489d81ad8ffa3358203d55e6468515f50&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 232,
-      "post_front_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224137818830409790/tempestissimo_A_subway_station_characterized_by_its_absence_of_4644007c-39eb-4b93-bded-6a078b82441e.png?ex=661c662f&is=6609f12f&hm=df047763ddf5c0c81bc67805c8bea3dcfc4222ae8a55a049fd05e1a518184d19&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224136840467058750/blackswan79_dampness_in_a_living_room_window_0c14bb9d-0826-4032-a468-e13e76047cd6.png?ex=661c6546&is=6609f046&hm=7cb5aa0106052e7c362285a40bf3e0e703dba8a15d7d4517162a666a42981f24&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-27",
       "title": "책 추천해주세요 #독서",
-      "location": "서울특별시 용산구 서빙고동"
+      "location": "서울특별시 용산구 서빙고동",
+      "friend": 1
     },
     {
       "post_id": 7,
       "username": "지영_late_PUBLIC_서빙고동",
       "post_status": 2,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224133048765780050/journeyrhodes_70223_colored_coloring_page_pastel_soft_colors_wh_730c1ebe-a9cd-4d28-9558-d7dd2ba1a982.png?ex=661c61be&is=6609ecbe&hm=8baccc7d06ce46e965a1a02cdec9d45a8c2f66b7a13ac4c6bde84255bd348b81&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 173,
-      "post_front_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224131564007591966/ju_saraiva86_2_happy_kids_with_backpack_in_airport_cartoon_65095329-faaf-4dca-af1f-4045fe6e5f7e.png?ex=661c605c&is=6609eb5c&hm=ca3cad352b0a8e48a7c939d86ef3f710f90f4bc71177724d48582c27c0ebd2f7&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224130686630232144/journeyrhodes_70223_coloring_page_bold_lines_white_background_s_e5bca9c1-8fe4-47ac-8d8a-1aaa31b193e1.png?ex=661c5f8a&is=6609ea8a&hm=0be985fd7bcf384459434064308382035fe076a34e6344ebadeb7db7e68c4663&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-26",
       "title": "오늘의 OOTD #패션",
-      "location": "서울특별시 용산구 서빙고동"
+      "location": "서울특별시 용산구 서빙고동",
+      "friend": 0
     },
     {
       "post_id": 8,
       "username": "예린_free_FRIEND_장안구",
       "post_status": 1,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224128033632423946/snikolaienko_a_girl_is_wearing_a_mens_oversized_shirt_with_volu_6dcabc74-ea2e-4c5e-9a00-6f35fd718c93.png?ex=661c5d12&is=6609e812&hm=757184158403de546e4633e2d9a06673823851a76b05e7f8a5c7457299448146&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 14,
-      "post_front_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224127086306791494/spanglishito_art_oil_painting_portrait_Brahim_Diaz_fb6e22eb-8cf7-4d8a-a4f2-14f1137886c0.png?ex=661c5c30&is=6609e730&hm=009a39bb94444eea5795c4bf0200b7c9bbb9199a12e9d56f04f56f2c0009ab2f&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126983676362833/snikolaienko_a_girl_is_wearing_a_mens_oversized_shirt_with_volu_d0791bb8-bd10-40ba-92ee-4603264661ff.png?ex=661c5c18&is=6609e718&hm=2be435ca9d0ae46c6d8648942a2058093526d3e1d77fc6844ed05dcaf00c6a61&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-25",
       "title": "커피 한 잔의 여유 #카페투어",
-      "location": "경기도 수원시 장안구"
+      "location": "경기도 수원시 장안구",
+      "friend": 0
     },
     {
       "post_id": 9,
       "username": "민재_free_PUBLIC_장안구",
       "post_status": 1,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224120755294572676/meegant_Imagine_a_cozy_home_office_bathed_in_warm_golden_light__df17f740-e240-495f-b200-2badc0dd5417.png?ex=661c564b&is=6609e14b&hm=10080df25a23f6080d2dda3d8467230c0256c76e232ead5f9089807ef8b3f842&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 92,
-      "post_front_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224121581664600104/tronsylvania_incredibly_beautiful_women_lined_up_outside_of_a_d_70bb9a28-4561-4072-8349-52d770d84bf1.png?ex=661c5710&is=6609e210&hm=17357294a287bd748ce71fd4e48699251cf607ff2a7fdca431e6fa75e09a788c&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224120646867488788/onnaoneill_two_young_and_beautiful_nuns_have_a_long_black_veil__b2758a54-cb07-4562-9412-44ae227f69ec.png?ex=661c5631&is=6609e131&hm=b76a09591bf923defd475a1b77edcff4d35a216b5b96412522926c16a7cb47bc&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-24",
       "title": "새로운 취미 생활 #포토그래피",
-      "location": "경기도 수원시 장안구"
+      "location": "경기도 수원시 장안구",
+      "friend": 1
     },
     {
       "post_id": 10,
       "username": "혜진_onTime_FRIEND_서빙고동",
       "post_status": 3,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224117359137128498/meegant_Imagine_a_cozy_home_office_bathed_in_warm_golden_light__a01313f6-881f-4c5f-bd59-da78355c4ebe.png?ex=661c5321&is=6609de21&hm=cafca28c5488d34acf2784aea225e05d2c28351ce8c23e04cbab68e448e21df3&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 197,
-      "post_front_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224117086389927966/onnaoneill_two_young_and_beautiful_frightened_nuns_have_a_semi-_9d8710f1-009f-4377-9282-d2be4f67a7bc.png?ex=661c52e0&is=6609dde0&hm=f3acfd7b15101ab07ebd754ee427a5e26c209a621dc3e2b08ae7e8974648d2c4&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224116293787975863/meegant_Picture_a_quaint_suburban_neighborhood_street_lined_wit_ee856671-dfa9-4922-99d5-6ef88941563c.png?ex=661c5223&is=6609dd23&hm=36de4392cdd0c4e737939c39130fe298ef8e2d8ae57a1c36d328e56ffeb9e398&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-23",
       "title": "일상 속 작은 행복 찾기",
-      "location": "서울특별시 용산구 서빙고동"
+      "location": "서울특별시 용산구 서빙고동",
+      "friend": 1
     },
     {
       "post_id": 11,
       "username": "수민_free_PUBLIC_서빙고동",
       "post_status": 1,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224112729426493530/meegant_cartoon_image_in_vivid_colors_showing_a_woman_suspcious_fcecce9e-00da-4be6-a86d-e27ea239ae44.png?ex=661c4ed1&is=6609d9d1&hm=24ad520cfb23a23506f3b3c7ac024306a6f8d3465a0ebd3b37612070970a6a2d&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 299,
-      "post_front_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224112464828825644/tinker_and_blanket_cartoon_style_of_rick_and_morty_1b974372-a3f5-466e-829b-0e816b3ab226.png?ex=661c4e92&is=6609d992&hm=e779fc1eb04ac64ae7a7f10d53c93bce008dae41c532ef9e3d8f341b72e276d1&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224112417303302174/meegant_cartoon_image_in_vivid_colors_showing_a_woman_suspcious_b715d6e5-3dde-46d8-b3d6-55150a32b658.png?ex=661c4e87&is=6609d987&hm=7e6e54288b4bdfe549e40f4cf094eba52026e424bec401117dc42950abd96085&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-22",
       "title": "맛집 탐방 #먹방",
-      "location": "서울특별시 용산구 서빙고동"
+      "location": "서울특별시 용산구 서빙고동",
+      "friend": 1
     },
     {
       "post_id": 12,
       "username": "예준_onTime_PUBLIC_서빙고동",
       "post_status": 3,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224111036593082368/tinker_and_blanket_orange_fur_cockapoo_84dec137-9c49-4acd-84b8-234cd81c5ab8.png?ex=661c4d3e&is=6609d83e&hm=1f93ab18016076edd96c86f573c8e8418384bcb7e2cb577117baaee2dafb01b0&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 65,
-      "post_front_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224110306029076560/meegant_cartoon_image_of_a_neighborhood_you_might_find_in_a_coz_1d940c4b-f45d-4f59-9939-a65dfb457918.png?ex=661c4c8f&is=6609d78f&hm=e03286526f691d6d65456b9b069ee9bf631ee4ccc69466cfac873ad6a02d290f&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224109814586675290/onnaoneill_five_sad_nuns_two_nuns_are_pretty_and_young_Aubrey_B_f2f6f114-7efb-425b-ab6e-129d44024df4.png?ex=661c4c1a&is=6609d71a&hm=e3b99f84d616fd592856593fab6c9b9e01401e92b1fdf4579de10c8b785e9ba5&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-21",
       "title": "오늘의 운세 #별자리",
-      "location": "서울특별시 용산구 서빙고동"
+      "location": "서울특별시 용산구 서빙고동",
+      "friend": 0
     },
     {
       "post_id": 13,
       "username": "도훈_free_FRIEND_일산동구",
       "post_status": 1,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224108198898831501/hyx945_apple_4ad3062b-1e32-4474-abe3-b5d9cae64cf8.png?ex=661c4a99&is=6609d599&hm=a2cf204f477c214d39f52db696aa19b9f13c549da986aa3e8be98c3d0100d8d2&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 5,
-      "post_front_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224108024776626217/starfire4777_purple_fire_breathing_dragon_with_a_waterfall_in_t_8323b697-1da2-4def-81b5-9afbc8cba4e7.png?ex=661c4a6f&is=6609d56f&hm=2a0fc23e178e23bc093047584420228afeffccb35d13aa9d9ed15c1faf5fe085&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224107360482496653/meegant_high_quality_photo_of_folded_laundry_in_a_sunny_laundry_616396d8-719b-4f21-97e3-923024b1ba0c.png?ex=661c49d1&is=6609d4d1&hm=aa83f706edac7551fbcd57d9bf470445bbcb93a3c47cac465f6c4496ed773c94&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-20",
       "title": "새로운 언어 학습하기",
-      "location": "경기도 고양시 일산동구"
+      "location": "경기도 고양시 일산동구",
+      "friend": 0
     },
     {
       "post_id": 14,
       "username": "지아_late_FRIEND_일산동구",
       "post_status": 2,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224105150780543216/starfire4777_psychadelic_Easter_egg_25d346ea-9b57-4b36-8574-3b8271010f89.png?ex=661c47c2&is=6609d2c2&hm=1604573f6fde060920bb62348f1391b677e73f300bdab1a92feb48d3062d5171&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 56,
-      "post_front_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224105035361681580/starfire4777_Easter_b154a3fb-b547-4164-a340-c053a553d242.png?ex=661c47a7&is=6609d2a7&hm=b8012ddddbe8c73f04e21b0372db76fe6c2b6951f7c310ef9e5ed6451d1146ed&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224104672764362802/belladonna2013_a_drawed_scene_of_the_pagan_harvest_of_easter_adfcb49f-0750-4e30-b03c-85bb7bca7f08.png?ex=661c4750&is=6609d250&hm=04574fd5708f7e7a5520f6607e76a3fb621764c4775dfb1285c6483284446ac4&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-19",
       "title": "영화 추천 받아요 #영화",
-      "location": "경기도 고양시 일산동구"
+      "location": "경기도 고양시 일산동구",
+      "friend": 1
     },
     {
       "post_id": 15,
       "username": "나윤_onTime_PUBLIC_서빙고동",
       "post_status": 3,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224100978039717949/sam_tasstic_realistic_photograph_hamster_inside_of_a_hamster_wh_76ebb781-183e-4e55-bae5-7855c92cde46.png?ex=661c43df&is=6609cedf&hm=50e19d315be0af3d8a8d97becb1a5ff02beb4557b9ad306ac795f2117a3f50be&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 121,
-      "post_front_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224101298429890681/meegant_high_quality_commercial_style_photograph_of_golden_gate_75e63c39-af4f-458c-8451-2641e37b117f.png?ex=661c442c&is=6609cf2c&hm=ba8787330b84cac566dfe1dd95c23eb13201708697e169086e288d78201c9102&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224100133168218345/meegant_high_quality_photo_of_a_teapot_with_a_matching_cup_on_a_30343311-7b41-4309-a410-caf3c95ddaaa.png?ex=661c4316&is=6609ce16&hm=954c9dc628a2dc0eaf7abd069c2ce63afe654d202a1a365b480c597b7932e8ea&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-18",
       "title": "게임 추천해주세요 #게임",
-      "location": "서울특별시 용산구 서빙고동"
+      "location": "서울특별시 용산구 서빙고동",
+      "friend": 0
     },
     {
       "post_id": 16,
       "username": "서진_free_FRIEND_일산동구",
       "post_status": 1,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224098263418802278/sam_tasstic_hand_holding_silver_can_of_paint_pouring_black_pain_b2383b8d-9051-4631-b9e4-735beb982d98.png?ex=661c4158&is=6609cc58&hm=d323f720a0d2b7c442a3d70248452755766754754249eedea33bd21f6176c2e6&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 296,
-      "post_front_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224097778406527016/sam_tasstic_realistc_photograh_picture_of_a_sliver_can_of_paint_a72b535f-23e2-4142-aab7-3567a39e3c44.png?ex=661c40e5&is=6609cbe5&hm=02786dc08800adb6b3e1f49138ad0f5632452c811e62fb64609abf39045901ca&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224097615428325426/andviven_a_plain_vector_of_a_wave_of_sparkling_coca_cola_minima_9a462a08-4a97-4733-900d-8fb2157da5d5.png?ex=661c40be&is=6609cbbe&hm=d4876c0b2555f64cde28dd076803da7ad2c09d81a1ed55242913d44abcab2bcd&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-17",
       "title": "요리 레시피 공유 #홈쿡",
-      "location": "경기도 고양시 일산동구"
+      "location": "경기도 고양시 일산동구",
+      "friend": 1
     },
     {
       "post_id": 17,
       "username": "다은_onTime_FRIEND_서빙고동",
       "post_status": 3,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224172199414595584/127.png?ex=661c8634&is=660a1134&hm=69453e727908753b93dda42e1e24ae9e0a3fb6f0ce7f7e93f3ad246685b3d339&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 144,
-      "post_front_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224170898320396410/126.png?ex=661c84fe&is=660a0ffe&hm=c080fc7a2044ea7f1fd2a145757017c06b7eefba87935ab8e5b9a3b28dee8dd2&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224167899548090480/bones211_Generate_an_image_for_a_logo_that_contains_wolf_playin_30b37085-d96d-48a7-80a7-43e87b279ad5.png?ex=661c8233&is=660a0d33&hm=58a2e3632c2807a6b8bf5c398550346e4c6f9eab68cc5456e6a43bf4a120c112&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-16",
       "title": "피트니스 도전기 #운동",
-      "location": "서울특별시 용산구 서빙고동"
+      "location": "서울특별시 용산구 서빙고동",
+      "friend": 0
     },
     {
       "post_id": 18,
       "username": "지민_onTime_FRIEND_서빙고동",
       "post_status": 3,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/ephemeral-attachments/1092492867185950852/1224151530177953912/5686ed48f089d034d4a251c7091503c8.jpg?ex=661c72f4&is=6609fdf4&hm=816f7766bbe0748b10143c8183ebd0c028fefba38fe702aad6ddb23805e7bde9&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 60,
-      "post_front_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224150520923426886/jb055224_the_sign_in_the_background_reads_WOLFPACK_LOUNGE_136d5533-81b0-48ba-b6a1-d8dafadc784a.png?ex=661c7203&is=6609fd03&hm=e801b9bac13ed9f33efd5ebf1222f2431dc99a5d0f5b3d7db2a6f7655a9e6bea&",
-      "post_back_url": "https://cdn.discordapp.com/ephemeral-attachments/1092492867185950852/1224150303150968892/429790365_718531470100016_2625833666807612376_n.jpg?ex=661c71cf&is=6609fccf&hm=5f63174779db080504430e733ac8590dad007731e4694efae4fd45def2c868ff&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-15",
       "title": "DIY 프로젝트 #수제",
-      "location": "서울특별시 용산구 서빙고동"
+      "location": "서울특별시 용산구 서빙고동",
+      "friend": 1
     },
     {
       "post_id": 19,
       "username": "하은_late_PUBLIC_서빙고동",
       "post_status": 2,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224144195963322522/gpaul4_a_healthy_keto_diet_plate_showing_34_of_the_plate_with_a_e5cc9d60-f0e9-4ddb-8d9b-0a5149e6a835.png?ex=661c6c1f&is=6609f71f&hm=a3faeef19908321ac997074a1a51d797aaf0d6967dc1dbc03d3ee9e88ff5d660&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 41,
-      "post_front_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224135140507385936/kurumi_7825_Korean_beauty_style_woman_looking_happy_looking_at__d1b44155-9e43-47df-a5e7-11887f63a771.png?ex=661c63b0&is=6609eeb0&hm=7c59da3228ca17879e8cd25485895046f7a1b8de7b1ad4914ac20d5a5552c8a1&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224134931219746857/xreichardx_in_the_forest_tradition_of_buddhism_in_cubist_style__7ca4e1f3-14ef-49f7-990b-9ad7fd3d07c4.png?ex=661c637e&is=6609ee7e&hm=05d13a8b01fed414b1c62078b7ddc4f395f43b72adf8f1877da4a9c4619d7d3b&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-14",
       "title": "여행 계획과 팁 #여행스타그램",
-      "location": "서울특별시 용산구 서빙고동"
+      "location": "서울특별시 용산구 서빙고동",
+      "friend": 0
     },
     {
       "post_id": 20,
       "username": "현준_late_FRIEND_서빙고동",
       "post_status": 2,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224134596770267260/kurumi_7825_Korean_beauty_style_woman_looking_happy_looking_at__bd21b467-bc95-436d-9ddc-502748a9cf19.png?ex=661c632f&is=6609ee2f&hm=c967c513fff0b49e1dd1960942879ae6277264d497a0d591f53e47290e9abca2&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 70,
-      "post_front_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224126918190829568/bmg_giver_Buff_fitness_arms_logo_both_arms_only_green_celtic_ru_8303d7a8-84a7-47e4-a57c-852d06f0cc08.png?ex=661c5c08&is=6609e708&hm=5d448d51f5a17d0ac790887bacd680f938c2226501f619820fea7031429d48b5&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224124784342994955/bmg_giver_Anime_Anthropomorphic_American_Eagle_hulk_muscular_fu_e1fa2627-5705-40ae-9380-a2fb5774e7bb.png?ex=661c5a0b&is=6609e50b&hm=720c99bc3951990250ca12bae74d19d8d09e2576f1dde37eef290650216a1809&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-13",
       "title": "개발 공부 기록 #개발자",
-      "location": "서울특별시 용산구 서빙고동"
+      "location": "서울특별시 용산구 서빙고동",
+      "friend": 0
     },
     {
       "post_id": 21,
       "username": "도윤_onTime_PUBLIC_일산서구",
       "post_status": 3,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/997267880276136037/1224171530036969472/meropan1016_springFluffy_anthropomorphic_body_in_ninja_outfit_w_0b8f4262-4a76-4d86-a0cd-29b0acee5d31.png?ex=661c8594&is=660a1094&hm=b21a2f84c699e04c712b1dce93d5507df391e66859ee0a9874524e8b60f505d3&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 57,
-      "post_front_url": "https://cdn.discordapp.com/attachments/997267880276136037/1224169091716091904/meropan1016_springFluffy_anthropomorphic_body_in_ninja_outfit_w_fb4f82a1-0fdc-4b80-9d6c-1581d7aad4ac.png?ex=661c834f&is=660a0e4f&hm=3a0765e03f88840f6f81ca90ee782ef223434650dbb7d819d020eec97fdd2708&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/997267880276136037/1224168504052416552/meropan1016_springFluffy_anthropomorphic_body_in_ninja_outfit_w_a515ce58-8f5a-40d7-8d75-175492b7020d.png?ex=661c82c3&is=660a0dc3&hm=7bf54acc26d10f6d8c07935d08411644a9292fada343209eb63dc8c01f2913c3&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-12",
       "title": "일러스트 연습 작품 #드로잉",
-      "location": "경기도 고양시 일산서구"
+      "location": "경기도 고양시 일산서구",
+      "friend": 1
     },
     {
       "post_id": 22,
       "username": "서준_onTime_FRIEND_서빙고동",
       "post_status": 3,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1223823220566655057/buba_dubz_Inside_the_living_room_of_a_beach_mansion_1_65501dfa-a910-496f-84f9-7674240f6ddc.png?ex=661b4131&is=6608cc31&hm=4ee8b2a3eb67cd95bbc60ff9f101134dca2449a3a0577da59fd740969318a6bd&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 152,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1223813276941549679/qiaominxu_httpss.mj.run3BGEKnHubjs_a_woman_sexy_pose_in_the_sty_076ec908-fc55-4e9e-9f0e-0b6d683349cb.png?ex=661b37ee&is=6608c2ee&hm=b6981bea91f9b16420e23c9ad1c5e2d960ee8407264bf417ee53945713840c7e&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1223797115440861244/buba_dubz_None_514841b2-8b1b-415a-adb8-309905149e7e.png?ex=661b28e1&is=6608b3e1&hm=70342cc49a6d63a676ec460a64c02ae4af18909eaffa45b52d60aefd6330d8cd&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-11",
       "title": "오늘의 명언 #인스피레이션",
-      "location": "서울특별시 용산구 서빙고동"
+      "location": "서울특별시 용산구 서빙고동",
+      "friend": 1
     },
     {
       "post_id": 23,
       "username": "하늘_free_PUBLIC_서빙고동",
       "post_status": 1,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1223632964458512404/akari1243__50918d3b-4602-44de-b667-5aa053a364a2.png?ex=661a9000&is=66081b00&hm=2296dc16f9a035baad89627a6dbebc295274cc439beee0a8a3b01422976302a1&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 243,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1223454558781575198/buba_dubz_Inside_the_living_room_of_a_beach_mansion_0_c3afc60a-27b5-4b7e-842f-86b51d3958db.png?ex=6619e9d9&is=660774d9&hm=e1259304e15df8e709d634b9e42278d897beede7ef6b49164c53e8a734cb14ff&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1223203215584264222/buba_dubz_None_3_8de16e59-c161-499e-a79f-75a26635c14d.png?ex=6618ffc4&is=66068ac4&hm=776a9ddb7f66f7e302fc5fb86496b58c3ad56a003d37c9126ae9d12f8b135b6a&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-10",
       "title": "실내 정원 가꾸기 #가드닝",
-      "location": "서울특별시 용산구 서빙고동"
+      "location": "서울특별시 용산구 서빙고동",
+      "friend": 0
     },
     {
       "post_id": 24,
       "username": "수아_late_FRIEND_일산서구",
       "post_status": 2,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1223077834713595964/2.jpg?ex=66188aff&is=660615ff&hm=96e253f66778cbd745e96a96aaa5cd07cc2cf71577c906da180930c07f918c61&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 137,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1223049904906178581/i.png?ex=661870fc&is=6605fbfc&hm=9e710c8aa66af89f794e9efbfe5cb07edf6171a59518ef09406ad554c67685d4&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222944269162250270/giulio7039_httpss.mj.runlqM0-lHG76c_httpss.mj.runt1wQ7P9mZjE_--_b896500f-9cea-453b-8668-e40258345de3.png?ex=66180e9a&is=6605999a&hm=3adf4c6f5ea73b8dda75b9ba87df9468475df0968283541a3e9fe7124f0c7ad0&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-09",
       "title": "나만의 레시피 공개 #요리",
-      "location": "경기도 고양시 일산서구"
+      "location": "경기도 고양시 일산서구",
+      "friend": 1
     },
     {
       "post_id": 25,
       "username": "준수_free_FRIEND_일산서구",
       "post_status": 1,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222753884275998780/i.png?ex=66175d4b&is=6604e84b&hm=f3f11ccda5fb59472bed3acc5028d8d40e63fdefc3fdbc2546a7780be7783400&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 86,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222643817375858820/bammerson_None_34a68bc2-1557-434b-8860-592a0d90c0cc.png?ex=6616f6c9&is=660481c9&hm=04930a690185c581c937c7fa10f040c9f8e68da59bcf54e43b8d86c6b807a562&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222524069971234878/tylermorgan23_Create_a_digital_artwork_featuring_a_modern-day_m_b3df0417-fce1-4948-a245-9aacee2153ac.png?ex=66168743&is=66041243&hm=0a9ed329801e110fa8bc848f28af800f2b9c2547ba20cd6837cdf6e7918dd336&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-08",
       "title": "최근 읽은 책 리뷰 #독서",
-      "location": "경기도 고양시 일산서구"
+      "location": "경기도 고양시 일산서구",
+      "friend": 0
     },
     {
       "post_id": 26,
       "username": "서영_free_PUBLIC_장안구",
       "post_status": 1,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222433025887834122/buba_dubz_None_2_1385d62e-4dfb-4cf2-8e56-451e7464a407.png?ex=66163279&is=6603bd79&hm=4563d26c886a8e72366f4659033d8d4570fbabfbe8b5a1685cd7c9c8619bcb7e&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 165,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222432748178771968/buba_dubz_None_0_e853d9cd-bc7e-4d5f-9f79-ce467a284b7c.png?ex=66163236&is=6603bd36&hm=16ea7c9cc230c02b90492dd8d5ceab07572e969700718b7b0c11d485219e54c9&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222432747507941477/buba_dubz_None_bbadd63d-e43a-41c2-93b2-2c1bca3c766e.png?ex=66163236&is=6603bd36&hm=21649519053eaa894af3d68b988efd327893f536b773eda8f4e5317c8b810a48&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-07",
       "title": "하루를 되돌아보며 #일기",
-      "location": "경기도 수원시 장안구"
+      "location": "경기도 수원시 장안구",
+      "friend": 0
     },
     {
       "post_id": 27,
       "username": "예나_onTime_FRIEND_서빙고동",
       "post_status": 3,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222371529820606514/2.jpg?ex=6615f933&is=66038433&hm=805aed59b0bbed67f3d1c4849c07c845c09c5ada4ac36da4330191f83e3500b6&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 248,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222371492717658168/3.jpg?ex=6615f92a&is=6603842a&hm=6ca26d4fe1f3ee86d4b74331720f0c111d7ae1539a3e626ca06681143484872f&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222352859882983474/buba_dubz_None_2_0417fb00-9631-495e-b738-6b19bbdec99e.png?ex=6615e7d0&is=660372d0&hm=113ea541e0034594c216134cbaa846536ac132683b3524fa3de572a2b063004d&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-06",
       "title": "최애 드라마 소개 #드라마",
-      "location": "서울특별시 용산구 서빙고동"
+      "location": "서울특별시 용산구 서빙고동",
+      "friend": 1
     },
     {
       "post_id": 28,
       "username": "지율_late_PUBLIC_서빙고동",
       "post_status": 2,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222245817910427839/buba_dubz_None_2_ea0b672f-b460-49ab-8188-ab9a8711bace.png?ex=6615841f&is=66030f1f&hm=31531ed0baaa38653fe449ca2620848803c15e5d80ae66e07ade207c81ac5b99&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 211,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222203442555261018/buba_dubz_None_3_b0b9f94f-42c6-49c7-ad82-a957482ccca5.png?ex=66155ca8&is=6602e7a8&hm=9264b7cc79e38071d495017fc492ec1a87bf23f022bbd29df6a2812a1429ff8d&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222026137903960175/buba_dubz_None_0_280b0e00-a5d8-462d-bf1b-b7c57c603621.png?ex=6614b787&is=66024287&hm=4a6aa06e4450deb7a7999dbcde75bcf354028315e202ff913ef81f65c36e86fa&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-05",
       "title": "음악 추천해요 #음악",
-      "location": "서울특별시 용산구 서빙고동"
+      "location": "서울특별시 용산구 서빙고동",
+      "friend": 1
     },
     {
       "post_id": 29,
       "username": "하윤_free_PUBLIC_이태원1동",
       "post_status": 1,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1221864965745414236/buba_dubz_None_0_147a9c99-d979-494c-a6b8-349b2e0bcea7.png?ex=6614216c&is=6601ac6c&hm=9cd40a6a60ad74af0f27ba00078e83175e0ddea981c20c87f38e7584a9b3525b&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 96,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1221751232608338011/buba_dubz_None_2_16669e34-3850-4a27-9d5d-b9d94f54434c.png?ex=6613b780&is=66014280&hm=3fbc0a8043c0a3f06bd8ef3e14c6e137acfe76983daed01de08dee0d2a3b3b3e&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1221753345757413457/buba_dubz_None_2_17ce3972-f3ef-4f35-8f1b-759dde847432.png?ex=6613b978&is=66014478&hm=c4990f1a831cb9c33e3e76708c94fa1df4c3cbab402657c99bfa1a5eb82eb89b&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-04",
       "title": "퍼스널 트레이닝 #피트니스",
-      "location": "서울특별시 용산구 이태원1동"
+      "location": "서울특별시 용산구 이태원1동",
+      "friend": 0
     },
     {
       "post_id": 30,
       "username": "민호_onTime_PUBLIC_일산서구",
       "post_status": 3,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1221314750160568320/buba_dubz_None_3_25e28abc-e847-4a40-a508-6509c48bc0d7.png?ex=661b5b7f&is=6608e67f&hm=ee24298fb796d1351bf9e42553512495a17548c8a201e7f52f1da8377c236560&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 44,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1221283259367821372/ab936_cinematic_view_of_an_anthropomorphic_fly_creature_Baxter__ba186698-69b3-479a-861c-af04411b8014.png?ex=661b3e2b&is=6608c92b&hm=86fb15a45316d4c5d5e940691798309a001ba0c852492d8565d55e7438393f61&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1220931489068486706/buba_dubz_None_0_8497781c-7c9c-43c7-819a-33fc423ad749.png?ex=6619f68e&is=6607818e&hm=30ac2a8ccbcce39b6fc632f305aa9ed6f1e99d715a8471fcd5752dd6ea19d126&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-03",
       "title": "오늘의 스케치 #스케치",
-      "location": "경기도 고양시 일산서구"
+      "location": "경기도 고양시 일산서구",
+      "friend": 0
     },
     {
       "post_id": 31,
       "username": "지훈_late_FRIEND_이태원1동",
       "post_status": 2,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1220931364640002119/buba_dubz_None_2_3860decd-0507-4c44-8f88-130ab846f39e.png?ex=6619f671&is=66078171&hm=d5a776918a11b98e33f7b41929a29175702f2c582f58e7b71ef0eb761fb9f8ba&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 18,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1220593104395173958/buba_dubz_None_1_46e0b5a4-71e0-43bd-a867-dd45c18d91a1.png?ex=6618bb69&is=66064669&hm=642553847dd8f8e4f0a0ea61bc452361a5cb83bb3d565da47550030905659f8c&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1220534071567056936/buba_dubz_None_2_fc441a51-ef68-4e65-acd9-3dbec4c7372e.png?ex=6618846f&is=66060f6f&hm=98275f4bf7c07fabce32b34e9b45f58bf3f66dacbce7d65ef63a7a909f95ffe2&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-02",
       "title": "자연에서 찾은 아름다움 #자연",
-      "location": "서울특별시 용산구 이태원1동"
+      "location": "서울특별시 용산구 이태원1동",
+      "friend": 1
     },
     {
       "post_id": 32,
       "username": "준호_free_FRIEND_이태원1동",
       "post_status": 1,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1220470060863193138/buba_dubz_None_3_aaafa1e1-a3d8-4d71-be21-72c5a636f98b.png?ex=661848d1&is=6605d3d1&hm=1028b77efffff36ce7f2d0338f81246788c647414b5254bd4c066a88327c3e97&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 152,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1220371003557941278/0002_Top_Other_01.png?ex=6617ec90&is=66057790&hm=5d1d4bd5342a3dba4e0918fc66731cff4cfc4c9426baf9e3ccd8f3d880f41885&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1220139670621655111/buba_dubz_None_2_9dafdab8-6f25-4bd0-bd95-4239826874a0.png?ex=6617151e&is=6604a01e&hm=ef6e0545e674b2a9ec42809ee28772dd7fd64b4de60661972ca0fc39bf0b1207&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-03-01",
       "title": "집에서 즐기는 문화 생활 #홈캉스",
-      "location": "서울특별시 용산구 이태원1동"
+      "location": "서울특별시 용산구 이태원1동",
+      "friend": 1
     },
     {
       "post_id": 33,
       "username": "진호_onTime_PUBLIC_이태원1동",
       "post_status": 3,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219867865075679242/buba_dubz_None_1_f2b6f04a-da24-431d-9bbc-0636c414a30e.png?ex=661617fb&is=6603a2fb&hm=67dc8016e84b5dc906a09852d4311f84c42ada132656d949e43e7ec3011a287c&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 247,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219744039700664444/turbomancer4235_Charcoal_portrait_of_an_oracle_enraptured_in_a__ad00144a-6784-4f1c-988e-1c1defb1d4eb.png?ex=6615a4a8&is=66032fa8&hm=c40a2457c1230e6ccb2c83b01e361f1e8942a8ba3c66f2bfb2b7f4888136b8cd&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219693528431726712/yu1worm_httpss.mj.runq8jtSrbLmAM_httpss.mj.runcxxm7PaClNU_10916c41-351d-426d-8a04-152caaa0a99b.png?ex=6615759d&is=6603009d&hm=0ea1d155974ef9ef71058910945103e764c19cfca398d55c391af5fcd6accdba&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-02-29",
       "title": "새로운 기술 습득 #테크",
-      "location": "서울특별시 용산구 이태원1동"
+      "location": "서울특별시 용산구 이태원1동",
+      "friend": 1
     },
     {
       "post_id": 34,
       "username": "태민_late_PUBLIC_영통구",
       "post_status": 2,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219445514173419660/michelangelomioni__613af65a-6877-4e71-9984-678e5b715268.webp?ex=66148ea2&is=660219a2&hm=5fe47b504519d344cc277d625d7e84522ef486b09ea11260f76332fcedc60499&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 209,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219444407712088114/buba_dubz_None_9bfc9db3-7cf3-459c-93be-1b613a651017.png?ex=66148d9a&is=6602189a&hm=d263d8bbe9b3e504ed8d199d9306d3ffc55ca7dd65c97e877342fa428d2f64d0&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219515355089600613/yu1worm_httpss.mj.runcxxm7PaClNU_httpss.mj.runfgAjnrlFur8_https_3ae85547-8dbc-49a6-9dbb-83740b0f7553.png?ex=6614cfae&is=66025aae&hm=0effafe9c1f582c862198a6f5eb89179ea6d1a967c9aa3ae7ebea00a6e1b80f7&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-02-28",
       "title": "펫과의 일상 #펫스타그램",
-      "location": "경기도 수원시 영통구"
+      "location": "경기도 수원시 영통구",
+      "friend": 0
     },
     {
       "post_id": 35,
       "username": "은우_free_FRIEND_이태원1동",
       "post_status": 1,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219336153661181952/cedric225825_tiny_mini_dark_Vador_cartoon_like_with_a_head_bigg_9d55b0c2-6598-4a2d-a6af-bdae0126197d.png?ex=661428c9&is=6601b3c9&hm=0efda5e4df868cf1dc08d21f8f983288c36e5089fa785a34e699ec0bd0898513&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 1,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219336121486671973/cedric225825_walking_Big_bibendum_dans_une_ville_dans_les_nuage_3bb34323-7622-4331-8877-891a211de278-1.png?ex=661428c1&is=6601b3c1&hm=2c9bc5ab21945b9ddaa90af10779c9328868e1ad9ba7efd9e4f2d76346330073&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219336077764988958/cedric225825_a_car_race_in_2130_in_a_dystopique_city_UP_to_the__72a16325-d113-46d0-a1d8-03bf382beb64.png?ex=661428b7&is=6601b3b7&hm=4818fba2f2c5f7e54921609307fae11c06551c41f66504f2cfde00ed7a591076&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-02-27",
       "title": "명상과 요가 #요가",
-      "location": "서울특별시 용산구 이태원1동"
+      "location": "서울특별시 용산구 이태원1동",
+      "friend": 0
     },
     {
       "post_id": 36,
       "username": "유빈_free_PUBLIC_이태원1동",
       "post_status": 1,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219335906733985952/cedric225825_un_storyboard_de_clip_Vue_sous-marine_dun_ocean_cl_1d9dedb2-ad0d-4e9c-87c0-ba21c9349822.png?ex=6614288e&is=6601b38e&hm=9a0ed53324f60a7c18122b924bd40117556648c337d2410476724f80c1e03448&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 171,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219335770398265478/cedric225825_un_storyboard_de_clip_Un_couple_se_tient_la_main_d_24307686-0469-4fa7-afb8-d9ddf8e935ad.png?ex=6614286d&is=6601b36d&hm=c692440b53815a2c7efd23ca6768b08fd9be7d399fd013fb9059974764b43239&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219335768858951761/cedric225825_un_storyboard_pour_un_clip_Un_personnage_solitaire_a47374a1-298e-4cb5-a4e3-3fe109c6276f.png?ex=6614286d&is=6601b36d&hm=3dbc8df4400c07f029268720948b7ad64122b4a8e7662febefb6018e5d865e2c&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-02-26",
       "title": "긍정의 힘 #포지티브",
-      "location": "서울특별시 용산구 이태원1동"
+      "location": "서울특별시 용산구 이태원1동",
+      "friend": 1
     },
     {
       "post_id": 37,
       "username": "지우_free_PUBLIC_고덕1동",
       "post_status": 1,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219057544383692841/turbomancer4235__915de9e0-780e-4f99-97e3-9c004d2d5780.png?ex=661c5fcf&is=6609eacf&hm=393fbb11448436daf74eb31668e3778ca198926172e5a3910349762426f138b8&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 213,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219057544891465769/turbomancer4235__0a949e82-cf31-459b-995a-7bb9fbf31ada.png?ex=661c5fcf&is=6609eacf&hm=7803408d4cf398815c31b62da2aaea71ce881a8474317327239ec837b4166b14&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218817059396390983/vxruza_tall_thin_woman_in_black_suit_with_red_accents_high_fash_07c9e7d1-e9ee-4b0a-992e-c791e526df58.png?ex=661b7fd7&is=66090ad7&hm=d06b8e499ad0b849b0510476e564919cd1ac6fbe58dfacec16635f22aa1cffbe&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-02-25",
       "title": "사진 촬영 팁 #사진",
-      "location": "서울특별시 강동구 고덕1동"
+      "location": "서울특별시 강동구 고덕1동",
+      "friend": 1
     },
     {
       "post_id": 38,
       "username": "현우_late_FRIEND_고덕1동",
       "post_status": 2,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218795193361502208/buba_dubz_None_0_23345371-03ff-477b-83df-eaea6d31fb65.png?ex=661b6b7a&is=6608f67a&hm=86e209f02d81c95891127d4d60959750c1662d7bbd9393d734f08efb1368e250&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 49,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218795191633448981/buba_dubz_None_2_b15f0054-ff09-4a37-8184-05d6e3a9e4c8.png?ex=661b6b79&is=6608f679&hm=d72b5f1df6056c24f4297e89539671437deb4c167c22b5e33fa4569e87821421&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218795191352164443/buba_dubz_None_0_c8f2b0d3-5824-4258-b17c-63f93c21f1e7.png?ex=661b6b79&is=6608f679&hm=753ae6b60172a358acbd87976c86fc77de3903b9b7791f5bd7240e38d38d15c6&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-02-24",
       "title": "매일의 운동 루틴 #건강",
-      "location": "서울특별시 강동구 고덕1동"
+      "location": "서울특별시 강동구 고덕1동",
+      "friend": 0
     },
     {
       "post_id": 39,
       "username": "유진_onTime_PUBLIC_영통구",
       "post_status": 3,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218692160623345714/buba_dubz_None_2_736ff284-cc62-46ab-8b93-85da5d5f18a9.png?ex=661b0b85&is=66089685&hm=ab2d45c234309ac619b68955b6d2a66a0fbc3c4025dd191b1692af3d20037372&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 110,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218682883716288662/buba_dubz_None_1_ad3e0ec2-0b65-4c20-9a29-dadf9a941a82.png?ex=661b02e1&is=66088de1&hm=af2f90819729fde8e94b2cf13795e7488bebfc412f67607cfc388f2bdcdf5b81&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218654893997297745/buba_dubz_None_0_6e6f1162-0946-44ef-8c2d-244f23bbe43d.png?ex=661ae8d0&is=660873d0&hm=5a1344772cccf1cfac4be3135cb5b76bf7a29425dd9b5e7ae4e4933f629f461e&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-02-23",
       "title": "자기 개발 노트 #자기개발",
-      "location": "경기도 수원시 영통구"
+      "location": "경기도 수원시 영통구",
+      "friend": 1
     },
     {
       "post_id": 40,
       "username": "준희_late_FRIEND_고덕1동",
       "post_status": 2,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218466914528006164/buba_dubz_None_2_fd6eeb7e-43ae-43f1-9af2-038f9c0e4dec.png?ex=661a39be&is=6607c4be&hm=c37e7b80328932ee6421ab8ffd45fc0ba3857544f32f1ff5325d3b8ccc9782d9&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 171,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218465972202111026/buba_dubz_None_3_f3e9c94c-fbd5-47d9-8301-680c8093461e.png?ex=661a38dd&is=6607c3dd&hm=b57b7ce8f4f97dba525f5e30eec71152c3e734a05cb885e23f5b215210eefcb6&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218465104547418212/buba_dubz_None_1_2de8d1be-e951-4455-9193-00b85434a6fd.png?ex=661a380e&is=6607c30e&hm=409187c85a2ce7ba093d3f6c3806c0ea0a37c1134b192b3b28d9a8693c36dd92&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-02-22",
       "title": "새벽 감성 #새벽",
-      "location": "서울특별시 강동구 고덕1동"
+      "location": "서울특별시 강동구 고덕1동",
+      "friend": 1
     },
     {
       "post_id": 41,
       "username": "하림_late_PUBLIC_고덕1동",
       "post_status": 2,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218379880463335434/buba_dubz_female_0_d0469923-01e3-40ad-a234-852441e0d43f.png?ex=6619e8af&is=660773af&hm=fef552e586ac028204042e64b3d5253123e46f66dc2d76f605679102492999dd&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 119,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218371327606653039/buba_dubz_Female_1_51dd4160-153b-43cc-a67c-8063a5a1cba7.png?ex=6619e0b8&is=66076bb8&hm=e7666cfc16e23e0c1d0b2d93b1fbf234f6ffe38547adca60713b70830b354680&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218369857523941376/buba_dubz_None_2_391739ff-b9da-4374-a232-522f6561e03f.png?ex=6619df5a&is=66076a5a&hm=0fbf54c958a25b4586731034ba2115f9091203621f812239f9aec8cdd25a866e&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-02-21",
       "title": "일상에서 찾은 소소한 기쁨 #행복",
-      "location": "서울특별시 강동구 고덕1동"
+      "location": "서울특별시 강동구 고덕1동",
+      "friend": 1
     },
     {
       "post_id": 42,
       "username": "지환_late_PUBLIC_일산서구",
       "post_status": 2,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218273028014608424/buba_dubz_None_0_c23cbcf5-ca9b-4e72-997c-283d23ef8364.png?ex=6619852c&is=6607102c&hm=f66fa283b0040c472b440056289d25c92802f472f9eeefb23a789819744e2af7&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 211,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218272297165652018/buba_dubz_None_2_3ed5b195-d0aa-4edb-96c1-9e6329cfa827.png?ex=6619847e&is=66070f7e&hm=801b2fb8ff37ec2d08e10942e4a56ead201470ff68e23ce8cd59298483a5b8b6&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218269159687983184/buba_dubz_None_0_c5614e36-e523-4372-bc75-2d32db6f7f6e.png?ex=66198192&is=66070c92&hm=28743da99c084c126243aedb2ae7a538be48f35507bd7a5a23c718c69b4ec349&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-02-20",
       "title": "오늘의 메이크업 #뷰티",
-      "location": "경기도 고양시 일산서구"
+      "location": "경기도 고양시 일산서구",
+      "friend": 0
     },
     {
       "post_id": 43,
       "username": "예서_late_FRIEND_고덕1동",
       "post_status": 2,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218122867762401352/DA44545D-3721-469E-B585-87B219E5777C.jpg?ex=6618f953&is=66068453&hm=f74ce618d1fa92f8bbc225e1df0f2e274def0f2d109a7d043c0c83d1089dc26b&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 177,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218057551757967440/krskross_realistic_sketch_style_woman_portrait_close_up_in_vivi_c9391e69-e666-4ee3-9340-18f2c3b21c3d.png?ex=6618bc7e&is=6606477e&hm=99b99a2861ec81a64c04b3fa157f0dcc5689bc4065cbf5f9eb10aafcab88ac22&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218054319895609456/buba_dubz_None_931db23c-4760-4d7d-a7d7-427b8805746a.png?ex=6618b97c&is=6606447c&hm=21fe47c4602d1b1f0ce37110bc745286fdaef515e6d6043b59b332e84b8541de&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-02-19",
       "title": "손편지 쓰기 #레터링",
-      "location": "서울특별시 강동구 고덕1동"
+      "location": "서울특별시 강동구 고덕1동",
+      "friend": 1
     },
     {
       "post_id": 44,
       "username": "서연_onTime_FRIEND_영통구",
       "post_status": 3,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218018195882119248/i.png?ex=661897d7&is=660622d7&hm=098f89131a712451e7cda02b318c41a01a053b18dc1be3ca856108cc92a5f6cc&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 272,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218011742374854756/buba_dubz_None_2_98564c0c-989a-4118-9a3a-77154b35a643.png?ex=661891d4&is=66061cd4&hm=ebc21e4071672bd73b034c8efea9388f70c41353fff31edbb374bcf533c658b0&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218035231903318106/buba_dubz_None_0_ad4c1e71-fac5-458b-93ed-96a44ee2145e.png?ex=6618a7b5&is=660632b5&hm=c1c3fdf7d81b71b4365f138df3261c8fc6ac1c4a3eca6ff5ce90c577b41aed05&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-02-18",
       "title": "나의 여행 이야기 #백패커",
-      "location": "경기도 수원시 영통구"
+      "location": "경기도 수원시 영통구",
+      "friend": 1
     },
     {
       "post_id": 45,
       "username": "소연_free_FRIEND_영통구",
       "post_status": 1,
       "scope": "FRIEND",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218008444314062868/buba_dubz_None_1_d2c29378-5a50-4d51-81d1-916ede101392.png?ex=66188ec2&is=660619c2&hm=1bfb2d98a53419041def08b9f089ad2fb68afb3b9d7e437f081cdb5f9c747123&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 217,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218008431261384775/buba_dubz_None_2_ab0d7057-9d40-4a67-8502-167bb4dfb79b.png?ex=66188ebf&is=660619bf&hm=7da26224055a60dcef4908c93f9932020cd1a4bc11a02bf6ae5e5d43fd0d147b&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218008406737293352/buba_dubz_None_3_09bd59da-a55e-4781-baeb-7d91afe8661e.png?ex=66188eb9&is=660619b9&hm=2ee8b77812b76a21cfb99092d582b62168df3a82ae45704d7b3935469e569fee&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-02-17",
       "title": "최근에 본 전시회 #전시",
-      "location": "경기도 수원시 영통구"
+      "location": "경기도 수원시 영통구",
+      "friend": 0
     },
     {
       "post_id": 46,
       "username": "민준_onTime_PUBLIC_고덕1동",
       "post_status": 3,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1217803853702103172/buba_dubz_None_0_03e691f3-a28d-463d-89bf-bea18d15b4ba.PNG?ex=6617d038&is=66055b38&hm=a08aa688668715fba74e2de3682131bf51c0eb0c98d23e6da5720875990b22d1&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 8,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1217723428438544435/buba_dubz_None_88c24147-363e-45e8-ab2f-0c8d2ed6b065.png?ex=66178551&is=66051051&hm=75cb20f66562b7832c5c9fa148d348e7b9f0067821142eef41633821e323521c&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1217720715034493028/buba_dubz_None_d6898217-75ac-41dc-9a99-7517e9a54a61.png?ex=661782ca&is=66050dca&hm=e6ae77e29f3bba3ae2b294a7c455b39bc3a574f3fea78d909a4ae84e4cf70977&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-02-16",
       "title": "프로그래밍 공부법 #코딩",
-      "location": "서울특별시 강동구 고덕1동"
+      "location": "서울특별시 강동구 고덕1동",
+      "friend": 1
     },
     {
       "post_id": 47,
       "username": "예지_onTime_PUBLIC_고덕1동",
       "post_status": 3,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1217696138724118558/buba_dubz_None_84e736d6-64f0-42b7-aff1-19fa5e1f48d3.png?ex=66176be7&is=6604f6e7&hm=f1c49cfea66c41fd787088bf82ba177a9cd564838d02a32037c9098955d848f2&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 148,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1217691966720966656/buba_dubz_None_30b46c7d-b3de-465b-b65b-a5289e9df0f8.png?ex=66176804&is=6604f304&hm=3b82e8c15d848291443770878df5bbee8fec9846dcb2dcc7b756d104d35e91ad&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1217691918973276380/buba_dubz_None_dae8bc21-b081-4c7a-a4b1-ae6c3cabfe23.png?ex=661767f9&is=6604f2f9&hm=0ae47626fda26c23a0983db1da38e5c6b9367bf6b1079be05360d3efe5af3704&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-02-15",
       "title": "영양 만점 아침 식사 #건강식",
-      "location": "서울특별시 강동구 고덕1동"
+      "location": "서울특별시 강동구 고덕1동",
+      "friend": 0
     },
     {
       "post_id": 48,
       "username": "예은_onTime_PUBLIC_고덕1동",
       "post_status": 3,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1217146200307007588/taintedsasquatch_Puppet_strings_c4cecd36-a2f9-4414-828c-b40025f61bb1.png?ex=66156bbb&is=6602f6bb&hm=e5386e400ebd7a1ab14f2eef3c34dc2ce31e0626b98bd452aa4ff9384769346b&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 195,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1216823670580711504/buba_dubz_None_922b8a91-56d0-461d-8ab3-1ec8486fb5ce.png?ex=66143f5a&is=6601ca5a&hm=de7953b1e7ff4cb22fd8464be12cd9435498abe1a53bd1df5f85f7924495a6da&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1216767135997624430/buba_dubz_None_47b6a4fd-8fac-43ee-85b8-179f24640c9f.png?ex=66140ab3&is=660195b3&hm=55644a364ac217efd288da59efe1686145a6364d0319b7f168f87e756167b313&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-02-14",
       "title": "시간 관리 팁 #프로덕티비티",
-      "location": "서울특별시 강동구 고덕1동"
+      "location": "서울특별시 강동구 고덕1동",
+      "friend": 0
     },
     {
       "post_id": 49,
       "username": "태윤_free_PUBLIC_일산서구",
       "post_status": 1,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/1084908866921300080/1216710106444595300/wuschel.stefan_Dark_Academia_hand_in_a_hand_kiss_a_bear_vivid_e_9874dc4a-7db5-4d3f-aaff-2533cf6d6828.png?ex=6613d596&is=66016096&hm=7e07573ef3b29d7adcf23ffd293dc47d254b700ed476a0b31c6c8af23e9fc10e&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 267,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1216666640415064185/0_2.png?ex=6613ad1b&is=6601381b&hm=522a61195665ad64af9cad8ea388e68876202546eb2811c222d081599c33a239&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1084908866921300080/1216321335702065152/wuschel.stefan_psychedelic_city_in_italy_sea_style_jungle_style_7615c8a6-d579-496c-91ca-65f418b25dcb.png?ex=661ba604&is=66093104&hm=ea50d31bddf1be424a0a7fe184783bb5155a8ed0a489edeabd49a026c19d8001&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-02-13",
       "title": "책상 정리법 #정리정돈",
-      "location": "경기도 고양시 일산서구"
+      "location": "경기도 고양시 일산서구",
+      "friend": 1
     },
     {
       "post_id": 50,
       "username": "지안_free_PUBLIC_고덕1동",
       "post_status": 1,
       "scope": "PUBLIC",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1216171600681107577/grnkrby__67e5acca-fcde-4d57-b610-4be223c5192c.png?ex=661b1a90&is=6608a590&hm=c9eb0eb9533d262996743e1ebaf998f5f03c25fa3b725a7dcdf76f5238ceb8c5&",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
       "likes_count": 125,
-      "post_front_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1216132632962793492/buba_dubz_None_4e257871-66ab-44ea-acd2-866241b26eef.png?ex=661af646&is=66088146&hm=245498bd4a0690bd1071915f30d4ff606d3c48abdfc534feccacc4d278b94882&",
-      "post_back_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1216130966972665976/buba_dubz_None_4a9d677c-b473-4b55-b81a-8e0019e0dc79.png?ex=661af4b9&is=66087fb9&hm=a0f710d53d22dd10a1b7f6bbb2bb399e25a816f26b39c3cdfa81815a77b0f6fc&",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
       "created_at": "2024-02-12",
       "title": "나만의 비밀 장소 #탐험",
-      "location": "서울특별시 강동구 고덕1동"
+      "location": "서울특별시 강동구 고덕1동",
+      "friend": 1
     }
   ],
   "comments": [
@@ -703,11 +1131,25 @@
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224153851956035776/barcaopeth1989_Construct_an_ultra-realistic_architectural_maque_7da5b513-3390-4e28-92d8-46a2de1ac612.png?ex=661c751d&is=660a001d&hm=64d4cf50a2d0864a839ffbc9e1b72c70b27cd729361fa1857a9318e8f0fdbe48&",
           "created_at": "2024-04-01",
           "id": 2
+        },
+        {
+          "id": "2024-04-1320:39",
+          "under_comment": "dkssud",
+          "username": "신형",
+          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+          "created_at": "2024-04-1320:39"
+        },
+        {
+          "id": "2024-04-1409:51",
+          "under_comment": "hello",
+          "username": "신형",
+          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+          "created_at": "2024-04-1409:51"
         }
       ],
       "post_id": 1,
       "id": 1,
-      "reply_count": 2
+      "reply_count": 4
     },
     {
       "comment": "패션 센스 진짜 좋다!",
@@ -863,25 +1305,32 @@
       "created_at": "2024-03-31",
       "under_comments": [
         {
-          "under_comment": "사진 찍는 걸 좋아해요, 감사합니다!",
-          "username": "하율",
-          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224151142578258040/jennifer_64572_baby_owlet_fuzzy_white_feathers_in_a_brown_bin_w_1095f4a5-59cd-4d85-82fd-ff21cde7b591.png?ex=661c7298&is=6609fd98&hm=d95404ad0c29ad3d8cd96af970119ec0b47845777a57f0894e8d73d43c53e859&",
-          "created_at": "2024-03-31",
-          "id": 13
-        },
-        {
-          "under_comment": "네, 꼭 가보세요! 추천해요!",
+          "under_comment": "네, 꼭 가보세요! 추천해요!aaaa",
           "username": "태윤",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224150738905595924/barcaopeth1989_Craft_an_ultra-realistic_architectural_maquette__65765d39-8e7a-401a-abcf-6954b6e42aa3.png?ex=661c7237&is=6609fd37&hm=3b45499857ab22bb01b1480a38ee81f832b6602fdf606af17d6fcd4b9e93dd19&",
           "created_at": "2024-03-31",
           "id": 14
         },
         {
-          "under_comment": "너무 행복한 말씀 감사합니다!",
-          "username": "예나",
-          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224150600648753234/jennifer_64572_baby_owlet_fuzzy_white_feathers_in_a_brown_bin_w_e93aae88-d615-47e5-91a8-7d1fddcc9903.png?ex=661c7216&is=6609fd16&hm=592061d1f6f263b3605ef993ba6ac3bef3b9e174319db94fcda8000eaa6263ec&",
-          "created_at": "2024-03-31",
-          "id": 15
+          "id": "2024-04-1319:26",
+          "under_comment": "apfhd",
+          "username": "유저 이름",
+          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+          "created_at": "2024-04-13T19:26:02.830Z"
+        },
+        {
+          "id": "2024-04-1319:30",
+          "under_comment": "afafaddkssudgktpdy",
+          "username": "유저 이름",
+          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+          "created_at": "2024-04-1319:30"
+        },
+        {
+          "id": "2024-04-1320:45",
+          "under_comment": "fafafaaf",
+          "username": "신형",
+          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+          "created_at": "2024-04-1320:45"
         }
       ],
       "post_id": 2,
@@ -889,17 +1338,38 @@
       "reply_count": 3
     },
     {
-      "comment": "화이팅, 오늘도 힘내자!",
+      "comment": "저도 바로 그 생각이었어요!fafaaaaaa",
       "username": "예진",
       "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224150352602071102/lloydfaulkner_the_shard_photo_realistic_59f150c6-2659-4f84-b3fa-a45aef25af63.png?ex=661c71db&is=6609fcdb&hm=6b84c11ff3ad2b3eb59245c95f9453014303acca5d337c0ad31be9cd3cc94678&",
       "created_at": "2024-03-31",
       "under_comments": [
         {
-          "under_comment": "저도 바로 그 생각이었어요!",
-          "username": "윤호",
-          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224149911109636096/nm00000_extreme_close_up_tomato_skin_texture_cinematic_lighting_caf8e851-0d7e-4920-b40d-1402d7ef53e7.png?ex=661c7172&is=6609fc72&hm=6a29a8cf18607e04276989794e2803ff681b2aaeab44d3a4ab4750495164e10f&",
-          "created_at": "2024-03-31",
-          "id": 16
+          "id": "2024-04-1319:24",
+          "under_comment": "afaf",
+          "username": "유저 이름",
+          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+          "created_at": "2024-04-13T19:24:17.914Z"
+        },
+        {
+          "id": "2024-04-1319:30",
+          "under_comment": "dkssudgktpdy",
+          "username": "유저 이름",
+          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+          "created_at": "2024-04-1319:30"
+        },
+        {
+          "id": "2024-04-1319:42",
+          "under_comment": "저도 바로 그 생각이었afa",
+          "username": "신형",
+          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+          "created_at": "2024-04-1319:42"
+        },
+        {
+          "id": "2024-04-1320:30",
+          "under_comment": "저도 바로 그 생각이었어요!fafaAAAA",
+          "username": "신형",
+          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+          "created_at": "2024-04-1320:30"
         }
       ],
       "post_id": 2,
@@ -1550,11 +2020,18 @@
           "profile_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224144291874738176/bmg_giver_anthropomorphic_anime_American_Eagle_hiking_up_a_trai_bd78eae1-79ab-4b4d-8446-531f3026c85b.png?ex=661c6c36&is=6609f736&hm=a6fa3d5309d11a9a5ecce5b769e5a2eb846985a5f61903e783dac52bfccbe87f&",
           "created_at": "2024-03-15",
           "id": 68
+        },
+        {
+          "id": "2024-04-1409:10",
+          "under_comment": "fafaf",
+          "username": "신형",
+          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+          "created_at": "2024-04-1409:10"
         }
       ],
       "post_id": 18,
       "id": 50,
-      "reply_count": 2
+      "reply_count": 3
     },
     {
       "comment": "사랑스러워요!!️",
@@ -1616,24 +2093,6 @@
       "post_id": 21,
       "id": 53,
       "reply_count": 2
-    },
-    {
-      "comment": "처음 보는 풍경이야.",
-      "username": "예진",
-      "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1223794081159712778/i.png?ex=661b260d&is=6608b10d&hm=f0abcb982fe9581d6c13c7310424cc3d6528818ed78f32bb7ed891932f22b376&",
-      "created_at": "2024-03-11",
-      "under_comments": [
-        {
-          "under_comment": "정보 공유해드릴게요! DM 확인해주세요.",
-          "username": "지안",
-          "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1223792322005700628/i.png?ex=661b246a&is=6608af6a&hm=b5e060555c20c1f211b04649337d328239101e6c17a5ea057784847da9920d93&",
-          "created_at": "2024-03-11",
-          "id": 73
-        }
-      ],
-      "post_id": 22,
-      "id": 54,
-      "reply_count": 1
     },
     {
       "comment": "아, 나도 가고 싶다!",
@@ -2618,6 +3077,194 @@
       "post_id": 50,
       "id": 97,
       "reply_count": 2
+    },
+    {
+      "comment": "fdfd",
+      "username": "신형",
+      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+      "created_at": "2024\n\t\t\t-04\n\t\t\t-13\n\t\t\t19:\n\t\t\t11",
+      "under_comments": [],
+      "post_id": 14,
+      "id": 1713035474659,
+      "reply_count": 0
+    },
+    {
+      "comment": "aaff",
+      "username": "신형",
+      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+      "created_at": "2024-04-1319:12",
+      "under_comments": [],
+      "post_id": 14,
+      "id": 1713035532399,
+      "reply_count": 0
+    },
+    {
+      "comment": "fff",
+      "username": "신형",
+      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+      "created_at": "2024-04-1319:12",
+      "under_comments": [],
+      "post_id": 14,
+      "id": 1713035579363,
+      "reply_count": 0
+    },
+    {
+      "comment": "fdfdf",
+      "username": "신형",
+      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+      "created_at": "2024-04-1319:19",
+      "under_comments": [
+        {
+          "id": "2024-04-1319:45",
+          "under_comment": "저도 바로 그 생각이었어요!aaaaaaaaaaaaa",
+          "username": "신형",
+          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+          "created_at": "2024-04-1319:45"
+        }
+      ],
+      "post_id": 2,
+      "id": 1713035987573,
+      "reply_count": 0
+    },
+    {
+      "comment": "fdfdfaaaaaaafffff",
+      "username": "신형",
+      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+      "created_at": "2024-04-1319:20",
+      "under_comments": [
+        {
+          "id": "2024-04-1319:24",
+          "under_comment": "apfhd",
+          "username": "유저 이름",
+          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+          "created_at": "2024-04-13T19:24:56.964Z"
+        }
+      ],
+      "post_id": 2,
+      "id": 1713036002077,
+      "reply_count": 0
+    },
+    {
+      "comment": "apfhd",
+      "username": "신형",
+      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+      "created_at": "2024-04-1319:24",
+      "under_comments": [],
+      "post_id": 2,
+      "id": 1713036297461,
+      "reply_count": 0
+    },
+    {
+      "comment": "apfhd",
+      "username": "신형",
+      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+      "created_at": "2024-04-1319:26",
+      "under_comments": [],
+      "post_id": 2,
+      "id": 1713036363426,
+      "reply_count": 0
+    },
+    {
+      "comment": "저도 바로 그 생각이었어요!aaaaaaaaaa",
+      "username": "신형",
+      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+      "created_at": "2024-04-1319:44",
+      "under_comments": [],
+      "post_id": 2,
+      "id": 1713037459151,
+      "reply_count": 0
+    },
+    {
+      "comment": "afafafafafafa",
+      "username": "신형",
+      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+      "created_at": "2024-04-1319:44",
+      "under_comments": [],
+      "post_id": 2,
+      "id": 1713037473016,
+      "reply_count": 0
+    },
+    {
+      "comment": "afafagagagagag",
+      "username": "신형",
+      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+      "created_at": "2024-04-1319:45",
+      "under_comments": [],
+      "post_id": 2,
+      "id": 1713037552183,
+      "reply_count": 0
+    },
+    {
+      "comment": "dkssud",
+      "username": "신형",
+      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+      "created_at": "2024-04-1320:52",
+      "under_comments": [],
+      "post_id": 3,
+      "id": 1713041577899,
+      "reply_count": 0
+    },
+    {
+      "comment": "apfhd",
+      "username": "신형",
+      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+      "created_at": "2024-04-1320:53",
+      "under_comments": [
+        {
+          "id": "2024-04-1320:53",
+          "under_comment": "답글을 작성 중입니다: 신형 daafaf by",
+          "username": "신형",
+          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+          "created_at": "2024-04-1320:53"
+        },
+        {
+          "id": "2024-04-1320:54",
+          "under_comment": "afafaf",
+          "username": "신형",
+          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+          "created_at": "2024-04-1320:54"
+        },
+        {
+          "id": "2024-04-1320:54",
+          "under_comment": "afafafaf",
+          "username": "신형",
+          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+          "created_at": "2024-04-1320:54"
+        }
+      ],
+      "post_id": 3,
+      "id": 1713041580799,
+      "reply_count": 0
+    },
+    {
+      "comment": "dkssud",
+      "username": "신형",
+      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+      "created_at": "2024-04-1320:53",
+      "under_comments": [],
+      "post_id": 3,
+      "id": 1713041582915,
+      "reply_count": 0
+    },
+    {
+      "comment": "hello",
+      "username": "신형",
+      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+      "created_at": "2024-04-1409:49",
+      "under_comments": [],
+      "post_id": 2,
+      "id": 1713088149267,
+      "reply_count": 0
+    },
+    {
+      "comment": "메롱",
+      "username": "신형",
+      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+      "created_at": "2024-04-1916:55",
+      "under_comments": [],
+      "post_id": 10,
+      "id": 1713513338527,
+      "reply_count": 0
     }
   ]
 }

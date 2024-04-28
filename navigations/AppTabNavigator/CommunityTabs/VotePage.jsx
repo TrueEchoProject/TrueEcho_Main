@@ -1,55 +1,71 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, Button } from 'react-native';
+import { View, Text, TouchableOpacity, Button, Image, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import axios from 'axios';
-
-const fetchUserData = async () => {
-    try {
-        const response = await axios.get('http://192.168.123.121:3000/users');
-        console.log('Data fetched successfully'); // 데이터 성공적으로 받아왔을 때 로그 출력
-        return response.data || [];
-    } catch (error) {
-        console.error('Error refreshing user data: ', error);
-        return [];
-    }
-};
 
 const VotePage = ({ question, onUserSelect }) => {
     const [userData, setUserData] = useState([]);
-
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [selectedUserImgUrls, setSelectedUserImgUrls] = useState(null);
+    const [isFrontShowing, setIsFrontShowing] = useState(true);
+    
     useEffect(() => {
-        // console.log('Received question prop:', question); // 테스트용 콘솔. 부모로부터 프롭스를 잘 받아오는지.
-
-        const initFetch = async () => { // 컴포넌트가 마운트되면 데이터 받아옴. 또는
-            const data = await fetchUserData();
-            setUserData(data);
-        };
-
-        initFetch();
-    }, [question]); // question 값이 변경될 때마다 
-
-    const refreshUserData = async () => { // 새로고침시 유저 데이터 새로 받아옴. 
-        const data = await fetchUserData();
-        setUserData(data);
-        console.log('User data refreshed.'); // 데이터 새로고침 시 콘솔 로그 출력
+        fetchUserData();
+    }, [question]);
+    
+    const fetchUserData = async () => {
+        try {
+            const response = await axios.get('http://192.168.123.121:3000/users');
+            setUserData(response.data || []);
+            setSelectedUser(null);
+            setSelectedUserImgUrls(null); // 이미지 상태 초기화
+        } catch (error) {
+            console.error('Error fetching user data: ', error);
+        }
     };
-
-    const handleUserPress = (selectedUser) => { // 콜백 함수. 선택된 유저와 질문이 부모컴포넌트로 이동. 
-        onUserSelect(question.id, selectedUser);
+    
+    const handleUserPress = (user) => {
+        const selectedUserData = userData.find((userData) => userData.userName === user);
+        setSelectedUser(user);
+        setSelectedUserImgUrls({
+            front: selectedUserData.photoFrontUrl,
+            back: selectedUserData.photoBackUrl
+        });
+        setIsFrontShowing(true);
+        onUserSelect(question.id, selectedUserData.userID);
     };
-
+    
+    const toggleImage = () => {
+        setIsFrontShowing(!isFrontShowing);
+    };
+    
     return (
-        <View style={styles.container}>
-            <Text style={styles.questionText}>{question.question}</Text>
-            <Button title="Refresh Users" onPress={refreshUserData} />
-            <View style={styles.buttonContainer}>
-                {userData.map((user, index) => (
-                    <TouchableOpacity key={index} style={styles.optionButton} onPress={() => handleUserPress(user.user)}>
-                        <Image source={{ uri: user.url || 'https://via.placeholder.com/150' }} style={styles.userImage} />
-                        <Text>{user.user}</Text>
-                    </TouchableOpacity>
-                ))}
-            </View>
-        </View>
+      <View style={styles.container}>
+          <Text style={styles.questionText}>{question.question}</Text>
+          <TouchableWithoutFeedback onPress={toggleImage}>
+              <View style={styles.selectedUserImageContainer}>
+                  <Image
+                    source={selectedUserImgUrls ? { uri: isFrontShowing ? selectedUserImgUrls.front : selectedUserImgUrls.back } : require('../../../assets/emoji.png')}
+                    style={styles.selectedUserImage}
+                  />
+              </View>
+          </TouchableWithoutFeedback>
+          <View style={styles.usersContainer}>
+              {userData.map((user, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                      styles.userButton,
+                      selectedUser === user.userName ? styles.selectedButton : null
+                  ]}
+                  onPress={() => handleUserPress(user.userName)}
+                >
+                    <Text>{user.userName}</Text>
+                    <Image source={{ uri: user.profileUrl }} style={styles.profileImage} />
+                </TouchableOpacity>
+              ))}
+          </View>
+          <Button title="Refresh Users" onPress={fetchUserData} />
+      </View>
     );
 };
 
@@ -62,22 +78,42 @@ const styles = StyleSheet.create({
     questionText: {
         fontSize: 20,
         fontWeight: 'bold',
-        marginBottom: 20,
+        marginBottom: 10,
     },
-    buttonContainer: {
+    usersContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-    },
-    optionButton: {
-        padding: 10,
-        margin: 5,
-        backgroundColor: '#eee',
-        borderRadius: 5,
+        justifyContent: 'center',
         alignItems: 'center',
     },
-    userImage: {
-        width: 50, 
+    userButton: {
+        width: '45%',
+        padding: 10,
+        margin: '2.5%',
+        backgroundColor: '#eee',
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    selectedButton: {
+        backgroundColor: 'blue',
+    },
+    profileImage: {
+        width: 50,
         height: 50,
+        borderRadius: 25,
+        marginTop: 5,
+    },
+    selectedUserImageContainer: {
+        marginTop: 20,
+        alignItems: 'center',
+        width: 300,
+        height: 300,
+    },
+    selectedUserImage: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'contain',
     },
 });
 
