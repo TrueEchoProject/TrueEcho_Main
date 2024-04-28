@@ -1,5 +1,5 @@
 {
-  "name": "trueecho",
+  "name": "rn-chat",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
@@ -31,7 +31,9 @@
     "prop-types": "^15.8.1",
     "react": "18.2.0",
     "react-native": "0.73.4",
+    "react-native-calendars": "^1.1304.1",
     "react-native-gesture-handler": "~2.14.0",
+    "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-modal-datetime-picker": "^17.1.0",
     "react-native-multi-slider": "^0.3.6",
     "react-native-pager-view": "^6.2.3",

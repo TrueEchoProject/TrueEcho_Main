@@ -5,7 +5,27 @@ const middlewares = jsonServer.defaults();
 
 server.use(middlewares);
 server.use(jsonServer.bodyParser); // 요청 본문을 파싱하기 위해 추가
-
+// DELETE /user_pin - 전체 user_pin 데이터를 삭제합니다.
+// 모든 user_pin 데이터를 삭제하는 DELETE 라우트
+server.delete('/user_pin', (req, res) => {
+	// user_pin 배열을 빈 배열로 설정
+	router.db.set('user_pin', []).write();
+	res.sendStatus(200);
+});
+server.post('/user_pin', (req, res) => {
+	const pins = req.body.pins;
+	pins.forEach((pin, index) => {
+		console.log("Receiving pin:", pin); // 로깅 추가
+		router.db.get('user_pin').push({
+			pin_id: index + 1,
+			created_at: pin.created_at,
+			post_front_url: pin.post_front_url,
+			post_back_url: pin.post_back_url
+		}).write();
+	});
+	
+	res.send({ status: 'success', message: 'Pins added successfully' });
+});
 server.post('/comments/:commentId/under_comments', (req, res) => {
 	const commentId = parseInt(req.params.commentId);
 	const newUnderComment = {

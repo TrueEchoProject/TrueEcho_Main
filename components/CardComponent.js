@@ -102,7 +102,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 						flexDirection: "column",
 						marginLeft: "auto",
 					}}>
-						{ post.friend === 1 && ( friendLook === true ? (
+						{post.friend === 1 && ( friendLook === true ? (
 								<View style={[
 									styles.right,
 									{

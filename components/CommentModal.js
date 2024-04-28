@@ -338,19 +338,19 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 		setReplyingTo(null);
 		setTextInputValue('');  // 입력 필드 초기화
 	};
-	return (
-		<SafeAreaProvider>
-			<Modal
-				animationType="slide"
-				visible={isVisible}
-				onRequestClose={onClose}
-				transparent={true}
-			>
-				<View style={styles.modalOverlay}>
-					<KeyboardAvoidingView
-						behavior={Platform.OS === "ios" ? "padding" : undefined}
-						{...panResponder.panHandlers}
-					>
+		return (
+			<SafeAreaProvider>
+				<Modal
+					animationType="slide"
+					visible={isVisible}
+					onRequestClose={onClose}
+					transparent={true}
+				>
+					<View style={styles.modalOverlay}>
+						<KeyboardAvoidingView
+							behavior={Platform.OS === "ios" ? "padding" : undefined}
+							{...panResponder.panHandlers}
+						>
 						<Animated.View style={[styles.modalView, { marginTop: animatedHeight }]}>
 							<TouchableOpacity style={styles.closeButton} onPress={onClose}>
 								<Text>닫기</Text>
@@ -367,15 +367,15 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 									<Text>Loading comments...</Text> // 로딩 인디케이터 표시
 								) : (
 									<>
-										{comments.map((comment, index) => (
-											<CommentItem
-												key={index}
-												comment={comment}
-												toggleUnderComments={toggleUnderComments}
-												showUnderComments={showUnderComments}
-												index={index}
-											/>
-										))}
+									{comments.map((comment, index) => (
+										<CommentItem
+											key={index}
+											comment={comment}
+											toggleUnderComments={toggleUnderComments}
+											showUnderComments={showUnderComments}
+											index={index}
+										/>
+									))}
 									</>
 								)}
 							</ScrollView>
@@ -401,10 +401,10 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 							</View>
 						</Animated.View>
 					</KeyboardAvoidingView>
-				</View>
-			</Modal>
-		</SafeAreaProvider>
-	);
+					</View>
+				</Modal>
+			</SafeAreaProvider>
+		);
 })
 
 const styles = StyleSheet.create({
