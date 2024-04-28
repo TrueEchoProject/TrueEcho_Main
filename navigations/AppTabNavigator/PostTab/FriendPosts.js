@@ -114,6 +114,10 @@ const FriendPosts = React.forwardRef((props, ref) => {
 		}
 	}, [currentPage, isLoading, contentList]);
 	
+	if (contentList.length === 0) {
+		return <View style={styles.container}><Text>Loading...</Text></View>;
+	}
+	
 	return (
 		<ScrollView
 			contentContainerStyle={styles.scrollViewContent}
