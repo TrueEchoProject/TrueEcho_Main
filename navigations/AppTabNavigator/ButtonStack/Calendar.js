@@ -8,6 +8,7 @@ import {
 	ImageBackground,
 	Modal,
 	Dimensions,
+	ScrollView,
 } from 'react-native';
 import axios from "axios";
 import { Image } from "expo-image"
@@ -21,7 +22,12 @@ const Calendar = () => {
 	const [specificDates, setSpecificDates] = useState({});
 	const [isImageVisible, setIsImageVisible] = useState(false);
 	const [currentImageUrls, setCurrentImageUrls] = useState({ front: null, back: null });
+	const [selectedPins, setSelectedPins] = useState([]);  // 선택된 핀들의 정보를 저장할 상태
+	const [selectFront, setSelectFront] = useState(true);
 	
+	const changeSelectFront = () => {
+		setSelectFront(!selectFront);
+	};
 	const fetchCalendar = async () => {
 		try {
 			const response = await axios.get(`http://192.168.0.3:3000/user_calendar`);
@@ -40,8 +46,8 @@ const Calendar = () => {
 		fetchCalendar();
 	}, []);
 	
-	const toggleImageVisibility = (imageUrl, imageBackUrl) => {
-		setCurrentImageUrls({ front: imageUrl, back: imageBackUrl });
+	const toggleImageVisibility = (imageUrl, imageBackUrl, date) => {
+		setCurrentImageUrls({ front: imageUrl, back: imageBackUrl, date: date });
 		setIsImageVisible(!isImageVisible);
 	};
 	
@@ -62,14 +68,15 @@ const Calendar = () => {
 					day,
 					isInCurrentMonth: day !== '',
 					imageUrl: specificDates[dateKey]?.front,
-					imageBackUrl: specificDates[dateKey]?.back
+					imageBackUrl: specificDates[dateKey]?.back,
+					date: dateKey  // 날짜 정보 추가
 				};
 			}
 		}
 		return matrix;
 	};
 	
-	const ImageModal = ({ isVisible, postFront, postBack, onClose }) => {
+	const ImageModal = ({ isVisible, postFront, postBack, onClose, onSelectPin }) => {
 		const [isFrontShowing, setIsFrontShowing] = useState(true);
 		const changeImage = () => {
 			setIsFrontShowing(!isFrontShowing);
@@ -111,10 +118,8 @@ const Calendar = () => {
 							/>
 						</TouchableOpacity>
 					</View>
-					<TouchableOpacity onPress={onClose} style={styles.selectButton}>
-						<Text style={styles.buttonText}>
-							Pin 지정
-						</Text>
+					<TouchableOpacity onPress={onSelectPin} style={styles.selectButton}>
+						<Text style={styles.buttonText}>Pin 지정</Text>
 					</TouchableOpacity>
 				</View>
 			</Modal>
@@ -132,7 +137,7 @@ const Calendar = () => {
 								<TouchableOpacity
 									key={colIndex}
 									style={styles.cell}
-									onPress={() => toggleImageVisibility(item.imageUrl, item.imageBackUrl)}
+									onPress={() => toggleImageVisibility(item.imageUrl, item.imageBackUrl, item.date)}
 								>
 									<ImageBackground source={{ uri: item.imageBackUrl }} style={styles.backgroundImage}>
 										<Text style={styles.dateImageText}>{item.day}</Text>
@@ -152,6 +157,66 @@ const Calendar = () => {
 			</View>
 		);
 	};
+	const handleSelectPin = () => {
+		// 중복된 날짜의 핀이 있는지 확인
+		if (selectedPins.some(pin => pin.date === currentImageUrls.date)) {
+			alert("이 날짜에 이미 핀이 지정되어 있습니다.");
+			setIsImageVisible(false); // 모달 닫기
+			return;
+		}
+		// 새로운 핀 추가
+		const newPin = {
+			frontUrl: currentImageUrls.front,
+			backUrl: currentImageUrls.back,
+			date: currentImageUrls.date,
+			isFrontShowing: true // 초기 전면 이미지 상태 설정
+		};
+		setSelectedPins(prevPins => [...prevPins, newPin].sort((a, b) => new Date(a.date) - new Date(b.date)));
+		setIsImageVisible(false);
+	};
+	const togglePinImage = (index) => {
+		const updatedPins = [...selectedPins];
+		updatedPins[index].isFrontShowing = !updatedPins[index].isFrontShowing;
+		setSelectedPins(updatedPins);
+	};
+	// 선택된 핀을 화면에 표시하는 컴포넌트
+	const SelectedPinsList = () => {
+		// 최대 6개의 칸을 가정
+		const maxSlots = 5;
+		const emptySlots = maxSlots - selectedPins.length;
+		const allSlots = [...selectedPins];
+		// 빈 칸을 채워넣기
+		for (let i = 0; i < emptySlots; i++) {
+			allSlots.push({ empty: true });
+		}
+		
+		return (
+			<View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
+				<View style={{ flexDirection: 'row', justifyContent: 'space-around', flexWrap: 'wrap' }}>
+					{allSlots.map((pin, index) => (
+						<TouchableOpacity onPress={() => togglePinImage(index)} key={index} style={styles.selectedImageContainer}>
+							{pin.empty ? (
+								<Text style={styles.emptyText}>핀을 선택하세요</Text>
+							) : (
+								<>
+									<Image
+										source={{ uri: pin.isFrontShowing ? pin.backUrl : pin.frontUrl }}
+										style={styles.selectedImage} />
+									<Text style={styles.pinDateText}>Date: {pin.date}</Text>
+								</>
+							)}
+						</TouchableOpacity>
+					))}
+				</View>
+			</View>
+		);
+	};
+	
+	useEffect(() => {
+		if (selectedPins) {
+			console.log(selectedPins);
+		}
+	}, [selectedPins]); // userData 변화 감지
 	
 	return (
 		<SafeAreaView style={styles.bg}>
@@ -166,19 +231,13 @@ const Calendar = () => {
 						postFront={currentImageUrls.front}
 						postBack={currentImageUrls.back}
 						onClose={() => setIsImageVisible(false)}
+						onSelectPin={handleSelectPin}
 					/>
 				)}
-				<View style={{
-					position: "absolute",
-					bottom: 1,
-					marginHorizontal: "10%",
-					marginBottom: "1%",
-				}}>
-					<Text>
-						hello
-					</Text>
-				</View>
 			</View>
+			<ScrollView style={{ flex: 1, backgroundColor: "white"}}>
+				<SelectedPinsList />
+			</ScrollView>
 		</SafeAreaView>
 	);
 };
@@ -187,10 +246,9 @@ const styles = StyleSheet.create({
 	bg: {
 		backgroundColor: 'rgba(0,0,0,0.3)',
 		flex: 1,
-		justifyContent: "center",
 	},
 	container: {
-		flex: 1,
+		width: windowWidth,
 		backgroundColor: "#FFF",
 		position: "relative",
 	},
@@ -208,17 +266,20 @@ const styles = StyleSheet.create({
 		width: "90%",
 		marginLeft: "5%",
 		marginRight: "5%",
-		height: 280,
-		justifyContent: "space-between",
+		marginBottom: "5%",
+		borderColor: "black",
+		borderWidth: 1,
 	},
 	row: {
 		flexDirection: "row",
 	},
 	cell: {
 		flex: 1,
-		height: 50,
+		height: 45,
 		justifyContent: 'center',
 		alignItems: 'center',
+		borderColor: "black",
+		borderWidth: 1,
 	},
 	backgroundImage: {
 		width: '100%',
@@ -291,6 +352,28 @@ const styles = StyleSheet.create({
 		fontSize: 15,
 		fontWeight: "bold",
 		textAlign: "center",
+	},
+	selectedImageContainer: {
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: '#f0f0f0', // 배경색 변경
+		padding: 10,
+		borderRadius: 10, // 모서리 둥글게
+		margin: 5,
+	},
+	selectedImage: {
+		width: '100%',
+		height: 90,
+		borderRadius: 10, // 이미지 모서리 둥글게
+	},
+	pinDateText: {
+		fontSize: 12,
+		color: '#333',
+		marginTop: 5,
+	},
+	emptyText: {
+		fontSize: 14,
+		color: '#bbb',
 	},
 });
 
