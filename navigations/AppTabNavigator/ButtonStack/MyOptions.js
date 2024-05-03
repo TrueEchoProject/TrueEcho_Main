@@ -1,6 +1,7 @@
-import React from 'react';
-import {View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { FontAwesome5, AntDesign, FontAwesome6, MaterialIcons, Entypo, Ionicons } from '@expo/vector-icons';
+import { Image } from "expo-image";
 
 const OptionText = ({ label }) => {
 	return <Text style={styles.smallText}>{label}</Text>;
@@ -17,18 +18,36 @@ const OptionItem = ({ navigation, icon, iconType, label, backgroundColor = "#99A
 	);
 };
 
-const MyOptions = ({ navigation }) => {
+const MyOptions = ({ navigation, route }) => {
+	const [user, setUser] = useState({})
+	
+	useEffect(() => {
+		if (route.params?.user) {
+			console.log('Received user response:', route.params.user);
+			setUser(route.params.user);
+		}
+	}, [route.params?.user]);
+	
+	useEffect(() => {
+		if (user) {
+			console.log('profile_url:', user.profile_url);
+			console.log('user_vote:', user.user_vote);
+			console.log('username:', user.username);
+			console.log('user_Id:', user.user_Id);
+		}
+	}, [user]);
+	
 	return (
 		<View style={styles.container}>
 			<ScrollView style={styles.scrollView}>
 				<View style={{ margin: 10 }}>
-					<View style={styles.View}>
-						<View style={styles.Image} />
+					<TouchableOpacity onPress={() => navigation.navigate('내 설정 편집', { user: user })} style={styles.View}>
+						<Image source={{ uri: user.profile_url }} style={styles.Image} />
 						<View style={{ marginLeft: 10 }}>
-							<Text style={styles.Text}>박신형</Text>
-							<Text style={styles.Text}>sin1234</Text>
+							<Text style={styles.Text}>{user.username}</Text>
+							<Text style={styles.Text}>{user.user_Id}</Text>
 						</View>
-					</View>
+					</TouchableOpacity>
 					<View>
 						<OptionText label="기능" />
 						<OptionItem

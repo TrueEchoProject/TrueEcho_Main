@@ -4,6 +4,7 @@ import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import PagerView from "react-native-pager-view";
 import axios from "axios";
 import { Image } from "expo-image";
+import { Button3 } from "../../../components/Button";
 
 const MyPage = ({ navigation, route }) => {
 	const [userData, setUserData] = useState(null);
@@ -46,8 +47,7 @@ const MyPage = ({ navigation, route }) => {
 	
 	useEffect(() => {
 		if (userData) {
-			console.log(userData.profile_url);
-			console.log(userData.username);
+			console.log(userData);
 		}
 	}, [userData]); // userData 변화 감지
 	
@@ -61,8 +61,11 @@ const MyPage = ({ navigation, route }) => {
 	
 	return (
 		<View style={styles.container}>
+			<View style={{flexDirection: 'row'}}>
+				<Button3 onPress={() => navigation.navigate('MyOp', { user: userData })} />
+			</View>
 			<View style={styles.topContainer}>
-				<Image source={{ uri: userData.profile_url }} style={styles.avatar} />
+				<Image source={{ uri: userData.profile_url }} style={styles.avatar}/>
 				<View style={styles.textContainer}>
 					<Text style={styles.name}>{userData.username}</Text>
 					<FontAwesome5
