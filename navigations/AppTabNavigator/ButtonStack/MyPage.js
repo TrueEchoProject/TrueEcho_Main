@@ -140,29 +140,48 @@ const MyPage = ({ navigation, route }) => {
 						/>
 					</TouchableOpacity>
 				</View>
-				<PagerView
-					style={styles.pagerView}
-					initialPage={0}
-					onPageSelected={handlePageChange}
-				>
-					{pinData.map((item) => (
-						<View key={item.pin_id} style={{ position: 'relative' }}>
-							<TouchableOpacity onPress={changeImage}>
-								<Image
-									source={{ uri: isFrontShowing ? item.post_front_url : item.post_back_url }}
-									style={styles.pageStyle}
-								/>
-							</TouchableOpacity>
+				{pinData.length === 0 ? (
+					<View style={styles.pinPlus}>
+						<TouchableOpacity
+							style={{alignItems: "center", padding: 30,}}
+							onPress={() => navigation.navigate('캘린더')}
+						>
+							<AntDesign
+								name="plussquareo"
+								size={40}
+								style={{margin: 20,}}
+								color="white"
+							/>
+							<Text style={[styles.pinsText, {textAlign: 'center'}]}>핀을{'\n'}추가해보세요!</Text>
+						</TouchableOpacity>
+					</View>
+				) : (
+					<>
+						<PagerView
+							style={styles.pagerView}
+							initialPage={0}
+							onPageSelected={handlePageChange}
+						>
+							{pinData.map((item) => (
+								<View key={item.pin_id} style={{ position: 'relative' }}>
+									<TouchableOpacity onPress={changeImage}>
+										<Image
+											source={{ uri: isFrontShowing ? item.post_front_url : item.post_back_url }}
+											style={styles.pageStyle}
+										/>
+									</TouchableOpacity>
+								</View>
+							))}
+						</PagerView>
+						<View style={styles.indicatorContainer}>
+							{pinData.map((_, index) => (
+								<Text key={index} style={[styles.indicator, index === currentPage ? styles.activeIndicator : null]}>
+									&#9679;
+								</Text>
+							))}
 						</View>
-					))}
-				</PagerView>
-				<View style={styles.indicatorContainer}>
-					{pinData.map((_, index) => (
-						<Text key={index} style={[styles.indicator, index === currentPage ? styles.activeIndicator : null]}>
-							&#9679;
-						</Text>
-					))}
-				</View>
+					</>
+				)}
 			</View>
 		</View>
 	);
@@ -204,7 +223,7 @@ const styles = StyleSheet.create({
 	pinPlus: {
 		marginTop: 10,
 		width: "100%",
-		height: "97%",
+		height: "90%",
 		borderRadius: 10,
 		backgroundColor: "grey",
 		alignItems: 'center',
