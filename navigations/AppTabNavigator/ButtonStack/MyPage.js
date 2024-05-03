@@ -1,12 +1,12 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import PagerView from "react-native-pager-view";
 import axios from "axios";
-import {useFocusEffect} from "@react-navigation/native";
-import {Image} from "expo-image";
+import { useFocusEffect } from "@react-navigation/native";
+import { Image } from "expo-image";
 
-const MyPage = () => {
+const MyPage = ({ navigation }) => {
 	const [userData, setUserData] = useState(null); // 초기 상태를 null로 설정
 	const [pinData, setPinData] = useState([]);
 	const [isFrontShowing, setIsFrontShowing] = useState(true); // 현재 보여지는 이미지가 전면 이미지인지 추적하는 상태
@@ -84,6 +84,7 @@ const MyPage = () => {
 									alignItems: "center",
 									padding: 30,
 								}}
+								onPress={() => navigation.navigate('캘린더')}
 							>
 								<AntDesign
 									name="plussquareo"
@@ -119,6 +120,7 @@ const MyPage = () => {
 											alignItems: "center",
 											padding: 30,
 										}}
+										onPress={() => navigation.navigate('캘린더')}
 									>
 										<AntDesign
 											name="plussquareo"
