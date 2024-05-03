@@ -36,6 +36,7 @@ const MyOptions = ({ navigation, route }) => {
 	const [isNotificationModal, setIsNotificationModal] = useState(false);
 	const [isBlockModal, setIsBlockModal] = useState(false);
 	const [isTimeModal, setIsTimeModal] = useState(false);
+	const [isQnAModal, setIsQnAModal] = useState(false);
 	
 	useEffect(() => {
 		if (route.params?.user) {
@@ -43,7 +44,6 @@ const MyOptions = ({ navigation, route }) => {
 			setUser(route.params.user);
 		}
 	}, [route.params?.user]);
-	
 	useEffect(() => {
 		if (user) {
 			console.log('profile_url:', user.profile_url);
@@ -53,7 +53,6 @@ const MyOptions = ({ navigation, route }) => {
 			console.log('your_location:', user.your_location);
 		}
 	}, [user]);
-	
 	const notificationModalVisible = () => {
 		setIsNotificationModal(!isNotificationModal);
 	};
@@ -63,7 +62,9 @@ const MyOptions = ({ navigation, route }) => {
 	const timeModalVisible = () => {
 		setIsTimeModal(!isTimeModal);
 	};
-	
+	const qnAModalVisible = () => {
+		setIsQnAModal(!isQnAModal);
+	};
 	const NotificationModal = ({ isVisible, onClose }) => {
 		const [notificationSettings, setNotificationSettings] = useState({});
 		
@@ -172,7 +173,6 @@ const MyOptions = ({ navigation, route }) => {
 			</Modal>
 		);
 	};
-	
 	const BlockModal = ({ isVisible, onClose }) => {
 		const [editButton, setEditButton] = useState(false);
 		const [blockedStatus, setBlockedStatus] = useState({});
@@ -258,7 +258,7 @@ const MyOptions = ({ navigation, route }) => {
 						) : (
 							<>
 								<ScrollView
-									style={styles.scrollContainer}
+									style={{width: windowWidth * 0.8,}}
 									contentContainerStyle={styles.scrollContent}
 								>
 									{blockedUsers.map((user) => (
@@ -310,7 +310,7 @@ const MyOptions = ({ navigation, route }) => {
 							</>
 						)}
 						<TouchableOpacity
-							style={[styles.modalButton, { backgroundColor: "grey", marginBottom: "10%", }]}
+							style={[styles.modalButton, { backgroundColor: "grey", marginBottom: "8%", }]}
 							onPress={onClose}
 						>
 							<Text style={styles.buttonText}>닫기</Text>
@@ -320,7 +320,6 @@ const MyOptions = ({ navigation, route }) => {
 			</Modal>
 		);
 	};
-	
 	const TimeModal = ({ isVisible, onClose }) => {
 		const [Time_type, setTime_type] = useState({});
 		const fetchTime_type = async () => {
@@ -407,6 +406,70 @@ const MyOptions = ({ navigation, route }) => {
 			</Modal>
 		);
 	};
+	const QnAModal = ({ isVisible, onClose }) => {
+		const [QnA, setQnA] = useState([
+		
+		]);
+		const [answerShowing, setAnswerShowing] = useState({});
+		
+		const fetchAnswer = async () => {
+			try {
+				const response = await axios.get(`http://192.168.0.3:3000/QnA`);
+				setQnA(response.data);
+				console.log(response.data);
+			} catch (error) {
+				console.error('Error fetching calendar data', error);
+			}
+		}
+		useEffect(() => {
+			fetchAnswer();
+		}, []);
+		
+		const toggleAnswerVisible = (id) => {
+			setAnswerShowing(prev => ({
+				...prev,
+				[id]: !prev[id]
+			}));
+		};
+		
+		return (
+			<Modal
+				animationType="fade"
+				visible={isVisible}
+				onRequestClose={onClose}
+				transparent={true}
+			>
+				<View style={styles.modalContainer}>
+					<View style={styles.imageContainer}>
+						<Text style={styles.modalText}>QnA</Text>
+						<Text style={styles.modalSmallText}>자주 받는 질문들에 대해 답변해드려요</Text>
+						<ScrollView
+							style={{ width: windowWidth * 0.8, }}
+							contentContainerStyle={styles.scrollContent}
+						>
+							{QnA.map(item => (
+								<View key={item.id} style={{ width: "80%", alignItems: "center" }}>
+									<TouchableOpacity onPress={() => toggleAnswerVisible(item.id)} style={styles.QContainer}>
+										<Text style={styles.QnAText}>Q.{item.id}</Text>
+										<Text style={styles.QnASubText}>{item.Q}</Text>
+									</TouchableOpacity>
+									{answerShowing[item.id] && (
+										<View style={styles.AContainer}>
+											<Text style={styles.QnAText}>A.{item.id}</Text>
+											<Text style={styles.QnASubText}>{item.A}</Text>
+										</View>
+									)}
+								</View>
+							))}
+						</ScrollView>
+						<TouchableOpacity style={[styles.modalButton, { backgroundColor: "grey", margin: 15, }]} onPress={onClose}>
+							<Text style={styles.buttonText}>닫기</Text>
+						</TouchableOpacity>
+					</View>
+				</View>
+			</Modal>
+		);
+	};
 	
 	return (
 		<View style={styles.container}>
@@ -469,15 +532,17 @@ const MyOptions = ({ navigation, route }) => {
 				<View>
 					<OptionText label="더보기" />
 					<OptionItem
-						iconType={AntDesign}
-						icon="sharealt"
-						label="공유"
-					/>
-					<OptionItem
 						iconType={Entypo}
 						icon="chat"
 						label="도움받기"
+						onPress={qnAModalVisible}
 					/>
+					{isQnAModal && (
+						<QnAModal
+							isVisible={isQnAModal}
+							onClose={() => setIsQnAModal(false)}
+						/>
+					)}
 				</View>
 				<View style={{ marginTop: 30 }}>
 					<OptionItem
@@ -596,11 +661,11 @@ const styles = StyleSheet.create({
 		backgroundColor: "#99A1B6",
 		borderColor: 'black',
 		alignItems: 'center',
-		margin: "3%",
+		margin: "5%",
 	},
 	scrollModalButton :{
 		flexDirection: "row",
-		width: "100%",
+		width: "85%",
 		height: 50,
 		borderRadius: 10,
 		borderWidth: 1,
@@ -672,6 +737,35 @@ const styles = StyleSheet.create({
 		padding: 10,
 		borderWidth: 1,
 		borderColor: "black",
+	},
+	QnAText: {
+		fontSize: 15,
+		fontWeight: "bold",
+		marginLeft: 10,
+	},
+	QnASubText: {
+		fontSize: 12,
+		fontWeight: "400",
+		marginLeft: 10,
+	},
+	QContainer: {
+		marginTop: 10,
+		width: "100%",
+		height: 50,
+		borderRadius: 10,
+		borderWidth: 1,
+		backgroundColor: "#99A1B6",
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "flex-start",
+	},
+	AContainer: {
+		padding: 5, // 텍스트 주위에 공간을 추가합니다.
+		width: "95%",
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "flex-start",
+		marginVertical: 5,
 	},
 })
 export default MyOptions;
