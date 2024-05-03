@@ -1,263 +1,52 @@
 import React from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import { FontAwesome5, AntDesign, FontAwesome6, MaterialIcons, Entypo, Ionicons } from '@expo/vector-icons';
+
+const OptionText = ({ label }) => {
+	return <Text style={styles.smallText}>{label}</Text>;
+};
+const OptionItem = ({ icon, iconType, label, backgroundColor = "#99A1B6" }) => {
+	const IconComponent = iconType;
+	return (
+		<TouchableOpacity>
+			<View style={[styles.View, { backgroundColor }]}>
+				<IconComponent name={icon} style={{marginRight: 15}} size={30} color="black" />
+				<Text style={styles.smallText}>{label}</Text>
+			</View>
+		</TouchableOpacity>
+	);
+};
 
 const MyOptions = () =>{
 	return (
 		<View style={styles.container}>
-			<ScrollView style={{
-				margin:20,
-			}}>
-				<View style={{
-					flexDirection: "row",
-					alignItems: "center",
-					padding:20,
-					borderRadius: 15,
-					backgroundColor: "#99A1B6",
-					margin: 10,
-				}}>
-					<View style={{
-						width: 74,
-						height: 74,
-						borderRadius: 37,
-						backgroundColor: 'white',
-					}}/>
-					<View style={{
-						marginLeft: 10,
-					}}>
-						<Text style={{
-							fontSize: 25,
-							fontWeight: "300",
-						}}>
-							박신형
-						</Text>
-						<Text style={{
-							fontSize: 20,
-							fontWeight: "300",
-						}}>
-							sin1234
-						</Text>
+			<ScrollView style={styles.scrollView}>
+				<View style={{margin: 10}}>
+					<View style={styles.View}>
+						<View style={styles.Image}/>
+						<View style={{marginLeft: 10}}>
+							<Text style={styles.Text}>박신형</Text>
+							<Text style={styles.Text}>sin1234</Text>
+						</View>
 					</View>
-				</View>
-				<View style={{
-					margin: 10,
-				}}>
-					<Text style={{
-						fontSize: 20,
-						fontWeight: "300",
-						marginBottom: 10,
-					}}>
-						기능
-					</Text>
-					<View style={{
-						flexDirection: "row",
-						alignItems: "center",
-						padding: 20,
-						borderRadius: 15,
-						backgroundColor: "#99A1B6",
-					}}>
-						<FontAwesome5
-							name="calendar-alt"
-							style={{
-								marginRight: 15,
-							}}
-							size={30}
-							color="black"
-						/>
-						<Text style={{
-							fontSize: 20,
-							fontWeight: "300",
-						}}>
-							캘린더
-						</Text>
+					<View>
+						<OptionText label="기능"/>
+						<OptionItem iconType={FontAwesome5} icon="calendar-alt" label="캘린더"/>
 					</View>
-				</View>
-				<View style={{
-					margin: 10,
-				}}>
-					<Text style={{
-						fontSize: 20,
-						fontWeight: "300",
-						marginBottom: 10,
-					}}>
-						설정
-					</Text>
-					<View style={{
-						flexDirection: "row",
-						alignItems: "center",
-						padding: 20,
-						borderRadius: 15,
-						backgroundColor: "#99A1B6",
-						marginBottom: 10,
-					}}>
-						<AntDesign
-							name="bells"
-							style={{
-								marginRight: 15,
-							}}
-							size={30}
-							color="black"
-						/>
-						<Text style={{
-							fontSize: 20,
-							fontWeight: "300",
-						}}>
-							알림
-						</Text>
+					<View>
+						<OptionText label="설정"/>
+						<OptionItem iconType={AntDesign} icon="bells" label="알림" />
+						<OptionItem iconType={FontAwesome6} icon="user-shield" label="개인정보 보호" />
+						<OptionItem iconType={MaterialIcons} icon="phonelink-ring" label="시간대" />
 					</View>
-					<View style={{
-						flexDirection: "row",
-						alignItems: "center",
-						padding: 20,
-						borderRadius: 15,
-						backgroundColor: "#99A1B6",
-						marginBottom: 10,
-					}}>
-						<FontAwesome6
-							name="user-shield"
-							style={{
-								marginRight: 15,
-							}}
-							size={30}
-							color="black"
-						/>
-						<Text style={{
-							fontSize: 20,
-							fontWeight: "300",
-						}}>
-							개인정보 보호
-						</Text>
+					<View>
+						<OptionText label="더보기"/>
+						<OptionItem iconType={AntDesign} icon="sharealt" label="공유" />
+						<OptionItem iconType={Entypo} icon="chat" label="도움받기" />
 					</View>
-					<View style={{
-						flexDirection: "row",
-						alignItems: "center",
-						padding: 20,
-						borderRadius: 15,
-						backgroundColor: "#99A1B6",
-						marginBottom: 10,
-					}}>
-						<MaterialIcons
-							name="phonelink-ring"
-							style={{
-								marginRight: 15,
-							}}
-							size={30}
-							color="black"
-						/>
-						<Text style={{
-							fontSize: 20,
-							fontWeight: "300",
-						}}>
-							시간대
-						</Text>
-					</View>
-				</View>
-				<View style={{
-					margin: 10,
-				}}>
-					<Text style={{
-						fontSize: 20,
-						fontWeight: "300",
-						marginBottom: 10,
-					}}>
-						더보기
-					</Text>
-					<View style={{
-						flexDirection: "row",
-						alignItems: "center",
-						padding: 20,
-						borderRadius: 15,
-						backgroundColor: "#99A1B6",
-						marginBottom: 10,
-					}}>
-						<AntDesign
-							name="sharealt"
-							style={{
-								marginRight: 15,
-							}}
-							size={30}
-							color="black"
-						/>
-						<Text style={{
-							fontSize: 20,
-							fontWeight: "300",
-						}}>
-							공유
-						</Text>
-					</View>
-					<View style={{
-						flexDirection: "row",
-						alignItems: "center",
-						padding: 20,
-						borderRadius: 15,
-						backgroundColor: "#99A1B6",
-						marginBottom: 10,
-					}}>
-						<Entypo
-							name="chat"
-							style={{
-								marginRight: 15,
-							}}
-							size={30}
-							color="black"
-						/>
-						<Text style={{
-							fontSize: 20,
-							fontWeight: "300",
-						}}>
-							도움받기
-						</Text>
-					</View>
-				</View>
-				<View style={{
-					margin: 10,
-					marginTop: 30,
-				}}>
-					<View style={{
-						flexDirection: "row",
-						alignItems: "center",
-						padding: 20,
-						borderRadius: 15,
-						backgroundColor: "grey",
-						marginBottom: 10,
-					}}>
-						<Entypo
-							name="log-out"
-							style={{
-								marginRight: 15,
-							}}
-							size={30}
-							color="black"
-						/>
-						<Text style={{
-							fontSize: 20,
-							fontWeight: "300",
-						}}>
-							로그아웃
-						</Text>
-					</View>
-					<View style={{
-						flexDirection: "row",
-						alignItems: "center",
-						padding: 20,
-						borderRadius: 15,
-						backgroundColor: "red",
-						marginBottom: 10,
-					}}>
-						<Ionicons
-							name="alert-circle"
-							style={{
-								marginRight: 15,
-							}}
-							size={30}
-							color="black"
-						/>
-						<Text style={{
-							fontSize: 20,
-							fontWeight: "300",
-						}}>
-							계정 삭제
-						</Text>
+					<View style={{marginTop: 30}}>
+						<OptionItem iconType={Entypo} icon="log-out" label="로그아웃" backgroundColor="grey" />
+						<OptionItem iconType={Ionicons} icon="alert-circle" label="계정 삭제" backgroundColor="red" />
 					</View>
 				</View>
 			</ScrollView>
@@ -269,5 +58,31 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: '#fff',
 	},
+	scrollView: {
+		margin: 20,
+	},
+	View: {
+		flexDirection: "row",
+		alignItems: "center",
+		padding: 20,
+		borderRadius: 15,
+		backgroundColor: "#99A1B6",
+		marginBottom: 10,
+	},
+	Image: {
+		width: 74,
+		height: 74,
+		borderRadius: 37,
+		backgroundColor: 'white',
+	},
+	Text: {
+		fontSize: 25,
+		fontWeight: "300",
+	},
+	smallText: {
+		fontSize: 22,
+		fontWeight: "300",
+		margin: 10,
+	}
 })
 export default MyOptions;
