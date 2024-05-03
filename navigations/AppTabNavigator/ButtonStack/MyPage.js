@@ -8,12 +8,9 @@ import {Image} from "expo-image";
 
 const MyPage = () => {
 	const [userData, setUserData] = useState(null); // 초기 상태를 null로 설정
-	const [pinData, setPinData] = useState([1, 2, 3, 4]);
+	const [pinData, setPinData] = useState([]);
 	
 	const fetchUser = async () => {
-		if (userData) {
-			return;
-		}
 		try {
 			const response = await axios.get(`http://192.168.0.3:3000/user_me`);
 			const user = response.data[0]; // 데이터 배열의 첫 번째 객체 접근
@@ -22,6 +19,22 @@ const MyPage = () => {
 			console.error('Error fetching user', error);
 		}
 	};
+	
+	const fetchPin = async () => {
+		try {
+			const pinResponse = await axios.get(`http://192.168.0.3:3000/user_pin`);
+			const pins = pinResponse.data;
+			setPinData(pins);
+		} catch (error) {
+			console.error('Error fetching pins', error);
+		}
+	};
+	
+	useEffect(() => {
+		if (pinData) {
+			console.log(pinData);
+		}
+	}, [pinData]);
 	
 	useEffect(() => {
 		if (userData) {
@@ -33,15 +46,16 @@ const MyPage = () => {
 	useFocusEffect(
 		useCallback(() => {
 			fetchUser();
+			fetchPin();
 		}, [])
 	);
 	
 	return (
-		userData ? (
+		userData && pinData ? (
 			<View style={styles.container}>
 				<View style={styles.topContainer}>
 					<Image
-						source={userData.profile_url}
+						source={{ uri: userData.profile_url }}
 						style={styles.avatar}
 					/>
 					<View style={styles.textContainer}>
@@ -59,7 +73,7 @@ const MyPage = () => {
 				</View>
 				<View style={styles.pinsContainer}>
 					<Text style={styles.pinsTitle}>Pins</Text>
-					{(!pinData || pinData.length === 0) ? (
+					{pinData.length === 0 ? (
 						<View style={[styles.pagerView, styles.pageStyle]}>
 							<TouchableOpacity
 								style={{
@@ -80,9 +94,14 @@ const MyPage = () => {
 						</View>
 					) : (
 						<PagerView style={styles.pagerView}>
-							{pinData.map((number) => (
-								<View key={number} style={styles.pageStyle}>
-									<Text style={styles.pinsText}>{number}</Text>
+							{pinData.map((item, index) => (
+								<View key={index}>
+									<TouchableOpacity>
+										<Image
+											source={{ uri: item.post_front_url }}
+											style={styles.pageStyle}
+										/>
+									</TouchableOpacity>
 								</View>
 							))}
 						</PagerView>
@@ -125,6 +144,8 @@ const styles = StyleSheet.create({
 	},
 	pageStyle: {
 		marginTop: 10,
+		width: "100%",
+		height: "100%",
 		justifyContent: 'center', // 자식 컴포넌트를 수직 방향으로 중앙 정렬
 		alignItems: 'center',     // 자식 컴포넌트를 수평 방향으로 중앙 정렬
 		borderRadius: 10,
