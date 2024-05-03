@@ -10,9 +10,13 @@ const MyPage = ({ navigation }) => {
 	const [userData, setUserData] = useState(null); // 초기 상태를 null로 설정
 	const [pinData, setPinData] = useState([]);
 	const [isFrontShowing, setIsFrontShowing] = useState(true); // 현재 보여지는 이미지가 전면 이미지인지 추적하는 상태
+	const [currentPage, setCurrentPage] = useState(0);
 	
 	const changeImage = () => {
 		setIsFrontShowing(!isFrontShowing);
+	};
+	const handlePageChange = (e) => {
+		setCurrentPage(e.nativeEvent.position);
 	};
 	const fetchUser = async () => {
 		try {
@@ -55,59 +59,39 @@ const MyPage = ({ navigation }) => {
 	);
 	
 	return (
-		userData && pinData ? (
-			<View style={styles.container}>
-				<View style={styles.topContainer}>
-					<Image
-						source={{ uri: userData.profile_url }}
-						style={styles.avatar}
-					/>
-					<View style={styles.textContainer}>
-						<Text style={styles.name}>{userData.username}</Text>
-						<FontAwesome5
-							name="crown"
-							style={{ marginLeft: 10, marginBottom: 10 }}
-							size={24}
-							color="blue"
+		<View style={styles.container}>
+			{userData && pinData ? (
+				<>
+					<View style={styles.topContainer}>
+						<Image
+							source={{ uri: userData.profile_url }}
+							style={styles.avatar}
 						/>
-					</View>
-					<View style={styles.textContainer}>
-						<Text>{userData.user_vote}</Text>
-					</View>
-				</View>
-				<View style={styles.pinsContainer}>
-					<Text style={styles.pinsTitle}>Pins</Text>
-					{pinData.length === 0 ? (
-						<View style={styles.pinPlus}>
-							<TouchableOpacity
-								style={{
-									alignItems: "center",
-									padding: 30,
-								}}
-								onPress={() => navigation.navigate('캘린더')}
-							>
-								<AntDesign
-									name="plussquareo"
-									size={40}
-									style={{
-										margin: 20,
-									}}
-									color="white"
-								/>
-								<Text style={[styles.pinsText, {textAlign: 'center'}]}>핀을{'\n'}추가해보세요!</Text>
-							</TouchableOpacity>
+						<View style={styles.textContainer}>
+							<Text style={styles.name}>{userData.username}</Text>
+							<FontAwesome5
+								name="crown"
+								style={{ marginLeft: 10, marginBottom: 10 }}
+								size={24}
+								color="blue"
+							/>
 						</View>
-					) : (
-						<PagerView style={styles.pagerView}>
+						<View style={styles.textContainer}>
+							<Text>{userData.user_vote}</Text>
+						</View>
+					</View>
+					<View style={styles.pinsContainer}>
+						<Text style={styles.pinsTitle}>Pins</Text>
+						<PagerView
+							style={styles.pagerView}
+							initialPage={0}
+							onPageSelected={handlePageChange}
+						>
 							{pinData.map((item) => (
-								<View
-									key={item.pin_id}
-									style={{ position: 'relative' }}
-								>
+								<View key={item.pin_id} style={{ position: 'relative' }}>
 									<TouchableOpacity onPress={changeImage}>
 										<Image
-											source=
-												{{ uri: isFrontShowing ? item.post_front_url: item.post_back_url }}
+											source={{ uri: isFrontShowing ? item.post_front_url : item.post_back_url }}
 											style={styles.pageStyle}
 										/>
 									</TouchableOpacity>
@@ -116,18 +100,13 @@ const MyPage = ({ navigation }) => {
 							{pinData.length <= 5 && (
 								<View style={styles.pinPlus}>
 									<TouchableOpacity
-										style={{
-											alignItems: "center",
-											padding: 30,
-										}}
+										style={{ alignItems: "center", padding: 30, }}
 										onPress={() => navigation.navigate('캘린더')}
 									>
 										<AntDesign
 											name="plussquareo"
 											size={40}
-											style={{
-												margin: 20,
-											}}
+											style={{ margin: 20, }}
 											color="white"
 										/>
 										<Text style={[styles.pinsText, {textAlign: 'center'}]}>핀을{'\n'}추가해보세요!</Text>
@@ -135,14 +114,19 @@ const MyPage = ({ navigation }) => {
 								</View>
 							)}
 						</PagerView>
-					)}
-				</View>
-			</View>
-		) : (
-			<View style={styles.container}>
+						<View style={styles.indicatorContainer}>
+							{pinData.map((_, index) => (
+								<Text key={index} style={[styles.indicator, index === currentPage ? styles.activeIndicator : null]}>
+									&#9679;
+								</Text>
+							))}
+						</View>
+					</View>
+				</>
+			) : (
 				<Text>데이터 로딩 중...</Text>
-			</View>
-		)
+			)}
+		</View>
 	)
 }
 const styles = StyleSheet.create({
@@ -201,6 +185,18 @@ const styles = StyleSheet.create({
 	name: {
 		fontSize: 30,
 		fontWeight: "300",
+	},
+	indicatorContainer: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+		marginTop: 5,
+	},
+	indicator: {
+		margin: 3,
+		color: 'grey',
+	},
+	activeIndicator: {
+		color: 'blue',
 	},
 })
 export default MyPage;
