@@ -7,50 +7,28 @@ const MyPage = () =>{
 	return (
 		<View style={styles.container}>
 			<View style={styles.topContainer}>
-				<View style={{
-					width: 74,
-					height: 74,
-					borderRadius: 37,
-					backgroundColor: 'grey',
-				}}>
+				<View style={styles.avatar}>
 				</View>
-				<View style={{
-					flexDirection: "row",
-					alignItems: 'flex-end',
-					marginTop: 5,
-				}}>
-					<Text style={{ fontSize: 30, fontWeight: "300" }}>박신형</Text>
+				<View style={styles.textContainer}>
+					<Text style={styles.name}>박신형</Text>
 					<FontAwesome5
 						name="crown"
 						style={{ marginLeft:10, marginBottom: 10, }}
 						size={24} color="blue"
 					/>
 				</View>
-				<View style={{
-					flexDirection: "row",
-					alignItems: 'flex-end',
-				}}>
+				<View style={styles.textContainer}>
 					<Text>이성 친구가 제일 많을 거 같은 친구</Text>
 				</View>
 			</View>
 			<View style={styles.pinsContainer}>
 				<Text style={styles.pinsTitle}>Pins</Text>
 				<PagerView style={styles.pagerView}>
-					<View key="1" style={styles.pageStyle}>
-						<Text style={[styles.pinsTitle, {color: "white"}]}>1</Text>
-					</View>
-					<View key="2" style={styles.pageStyle}>
-						<Text style={[styles.pinsTitle, {color: "white"}]}>2</Text>
-					</View>
-					<View key="3" style={styles.pageStyle}>
-						<Text style={[styles.pinsTitle, {color: "white"}]}>3</Text>
-					</View>
-					<View key="4" style={styles.pageStyle}>
-						<Text style={[styles.pinsTitle, {color: "white"}]}>4</Text>
-					</View>
-					<View key="5" style={styles.pageStyle}>
-						<Text style={[styles.pinsTitle, {color: "white"}]}>5</Text>
-					</View>
+					{[1, 2, 3, 4, 5].map((number) => (
+						<View key={number} style={styles.pageStyle}>
+							<Text style={styles.pinsText}>{number}</Text>
+						</View>
+					))}
 				</PagerView>
 			</View>
 		</View>
@@ -76,6 +54,11 @@ const styles = StyleSheet.create({
 		fontSize: 25,
 		fontWeight: "300",
 	},
+	pinsText: {
+		fontSize: 25,
+		fontWeight: "300",
+		color: "white"
+	},
 	pagerView: {
 		flex: 1,
 		marginTop: 10,
@@ -88,6 +71,20 @@ const styles = StyleSheet.create({
 		alignItems: 'center',     // 자식 컴포넌트를 수평 방향으로 중앙 정렬
 		borderRadius: 10,
 		backgroundColor: 'blue',   // 배경 색상은 예시이며 변경 가능합니다
+	},
+	textContainer: {
+		flexDirection: "row",
+		alignItems: 'flex-end',
+		marginTop: 5,
+	},
+	avatar: {
+		width: 74,
+		height: 74,
+		borderRadius: 37,
+		backgroundColor: 'grey',
+	},
+	name: {
+		fontSize: 30, fontWeight: "300"
 	},
 })
 export default MyPage;
