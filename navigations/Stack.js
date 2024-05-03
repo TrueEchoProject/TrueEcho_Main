@@ -1,10 +1,10 @@
 import React from 'react';
 import { createStackNavigator } from "@react-navigation/stack";
-import { Friends, MyPage, MyOptions } from "./AppTabNavigator/ButtonStack"
+import { Friends, MyPage, MyOptions, Calendar, MyInfo } from "./AppTabNavigator/ButtonStack"
 import { View } from 'react-native';
 import { Button1, Button2, Button3 } from "../components/Button";
 import { MainPostTabScreen } from "./AppTabNavigator/PostTab/MainPostTab";
-import Vote from "./AppTabNavigator/CommunityTabs/Vote";
+import { CommunityTabScreen } from "./AppTabNavigator/CommunityTabs/CommunityTab";
 
 const MainPostStack = createStackNavigator();
 
@@ -26,13 +26,6 @@ export const MainPostStackScreen = () => { // 메인 피드 속 Stack 구성
 			<MainPostStack.Screen
 				name="MyP"
 				component={MyPage}
-				options={({ navigation }) => ({ // 마이페이지 화면에서 상단 네비 구현
-					headerRight: () => (
-						<View style={{flexDirection: 'row'}}>
-							<Button3 onPress={() => navigation.navigate('MyOp')} />
-						</View>
-					)
-				})}
 			/>
 			<MainPostStack.Screen
 				name="Fri"
@@ -41,6 +34,14 @@ export const MainPostStackScreen = () => { // 메인 피드 속 Stack 구성
 			<MainPostStack.Screen
 				name="MyOp"
 				component={MyOptions}
+			/>
+			<MainPostStack.Screen
+				name="캘린더"
+				component={Calendar}
+			/>
+			<MainPostStack.Screen
+				name="내 설정 편집"
+				component={MyInfo}
 			/>
 		</MainPostStack.Navigator>
 	);
@@ -53,7 +54,7 @@ export const CommunityStackScreen = () => { // 커뮤니티 속 Stack 구성
 		<CommunityStack.Navigator>
 			<CommunityStack.Screen
 				name="Community"
-				component={Vote}
+				component={CommunityTabScreen}
 				options={({ navigation }) => ({ // 커뮤니티 화면에서 상단 네비 구현
 					headerRight: () => (
 						<View style={{flexDirection: 'row'}}>
@@ -66,13 +67,6 @@ export const CommunityStackScreen = () => { // 커뮤니티 속 Stack 구성
 			<CommunityStack.Screen
 				name="MyP"
 				component={MyPage}
-				options={({ navigation }) => ({ // 마이페이지 화면에서 상단 네비 구현
-					headerRight: () => (
-						<View style={{flexDirection: 'row'}}>
-							<Button3 onPress={() => navigation.navigate('MyOp')} />
-						</View>
-					)
-				})}
 			/>
 			<CommunityStack.Screen
 				name="Fri"
@@ -81,6 +75,14 @@ export const CommunityStackScreen = () => { // 커뮤니티 속 Stack 구성
 			<CommunityStack.Screen
 				name="MyOp"
 				component={MyOptions}
+			/>
+			<CommunityStack.Screen
+				name="캘린더"
+				component={Calendar}
+			/>
+			<CommunityStack.Screen
+				name="내 설정 편집"
+				component={MyInfo}
 			/>
 		</ CommunityStack.Navigator>
 	);
