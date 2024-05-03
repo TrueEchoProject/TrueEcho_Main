@@ -78,7 +78,7 @@ const MyPage = () => {
 				<View style={styles.pinsContainer}>
 					<Text style={styles.pinsTitle}>Pins</Text>
 					{pinData.length === 0 ? (
-						<View style={[styles.pagerView, styles.pageStyle]}>
+						<View style={styles.pinPlus}>
 							<TouchableOpacity
 								style={{
 									alignItems: "center",
@@ -98,31 +98,40 @@ const MyPage = () => {
 						</View>
 					) : (
 						<PagerView style={styles.pagerView}>
-							{pinData.map((item, index) => (
+							{pinData.map((item) => (
 								<View
-									key={index}
+									key={item.pin_id}
 									style={{ position: 'relative' }}
 								>
-									<TouchableOpacity
-										onPress={changeImage}
-										style={{ zIndex: 2, position: 'absolute', top: 10, left: 10 }}
-									>
+									<TouchableOpacity onPress={changeImage}>
 										<Image
-											source={{ uri: isFrontShowing ? item.post_front_url: item.post_back_url }}
-											style={styles.pageStyle2}
-										/>
-									</TouchableOpacity>
-									<TouchableOpacity
-										onPress={changeImage}
-										style={{ zIndex: 1, position: 'relative' }}
-									>
-										<Image
-											source={{ uri: isFrontShowing ? item.post_back_url: item.post_front_url }}
+											source=
+												{{ uri: isFrontShowing ? item.post_front_url: item.post_back_url }}
 											style={styles.pageStyle}
 										/>
 									</TouchableOpacity>
 								</View>
 							))}
+							{pinData.length <= 5 && (
+								<View style={styles.pinPlus}>
+									<TouchableOpacity
+										style={{
+											alignItems: "center",
+											padding: 30,
+										}}
+									>
+										<AntDesign
+											name="plussquareo"
+											size={40}
+											style={{
+												margin: 20,
+											}}
+											color="white"
+										/>
+										<Text style={[styles.pinsText, {textAlign: 'center'}]}>핀을{'\n'}추가해보세요!</Text>
+									</TouchableOpacity>
+								</View>
+							)}
 						</PagerView>
 					)}
 				</View>
@@ -164,14 +173,18 @@ const styles = StyleSheet.create({
 	pageStyle: {
 		marginTop: 10,
 		width: "100%",
-		height: "100%",
+		height: "97%",
 		borderRadius: 10,
 	},
-	pageStyle2: {
+	pinPlus: {
 		marginTop: 10,
-		width: 130,
-		height: 130,
-		borderRadius: 3,
+		width: "100%",
+		height: "97%",
+		borderRadius: 10,
+		backgroundColor: "grey",
+		alignItems: 'center',
+		justifyContent: 'center',
+		padding: 30,
 	},
 	textContainer: {
 		flexDirection: "row",
