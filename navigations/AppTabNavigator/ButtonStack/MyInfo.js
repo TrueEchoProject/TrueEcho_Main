@@ -1,29 +1,49 @@
 import React, { useEffect, useState } from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, TextInput, } from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, Platform, } from 'react-native';
 import { Image } from "expo-image";
 import axios from "axios";
+import * as ImagePicker from 'expo-image-picker';
 
 const MyInfo = ({ navigation, route }) => {
 	const [user, setUser] = useState({});
 	const [editableUserId, setEditableUserId] = useState(""); // 사용자가 수정할 수 있는 user_Id 상태
+	const [imageUri, setImageUri] = useState("");
 	
 	useEffect(() => {
 		if (route.params?.user) {
 			console.log('Received user response in Info:', route.params.user);
 			setUser(route.params.user);
 			setEditableUserId(route.params.user.user_Id); // 초기 user_Id 값 설정
+			setImageUri(route.params.user.profile_url);
 		}
 	}, [route.params?.user]);
 	
-	useEffect(() => {
-		if (user) {
-			console.log('profile_url in Info:', user.profile_url);
-			console.log('user_vote in Info:', user.user_vote);
-			console.log('username in Info:', user.username);
-			console.log('user_Id in Info:', user.user_Id);
-			console.log('your_location in Info:', user.your_location);
+	const pickImage = async () => {
+		if (Platform.OS !== 'web') {
+			const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+			if (status !== 'granted') {
+				Alert.alert('Permission Required', 'Sorry, we need camera roll permissions to make this work!');
+				return;
+			}
 		}
-	}, [user]);
+		
+		try {
+			let result = await ImagePicker.launchImageLibraryAsync({
+				mediaTypes: ImagePicker.MediaTypeOptions.Images,
+				allowsEditing: true,
+				aspect: [4, 4],
+				quality: 1,
+			});
+			
+			if (!result.cancelled) {
+				console.log(result); // 확인 로그
+				console.log(result.assets[0].uri); // 확인 로그
+				setImageUri(result.assets[0].uri);
+			}
+		} catch (error) {
+			console.error("ImagePicker Error: ", error);
+		}
+	};
 	
 	const handleUserIdChange = (text) => {
 		setEditableUserId(text);
@@ -35,7 +55,7 @@ const MyInfo = ({ navigation, route }) => {
 			username: user.username,
 			user_Id: editableUserId, // 변경된 user_Id
 			user_vote: user.user_vote,
-			profile_url: user.profile_url,
+			profile_url: imageUri,
 			your_location: user.your_location,
 		};
 		
@@ -54,13 +74,13 @@ const MyInfo = ({ navigation, route }) => {
 	return (
 		<View style={styles.container}>
 			<View style={{ padding: 20, alignItems:"center",}}>
-				<TouchableOpacity>
+				<TouchableOpacity onPress={pickImage}>
 					<Image
-						source={{ uri: user.profile_url }}
+						source={{ uri: imageUri }}
 						style={styles.Image}
 					/>
 				</TouchableOpacity>
-				<Text style={[styles.smallText, { marginTop: 5 }]}>프로필 사진 설정</Text>
+				<Text style={[styles.smallText, { marginTop: 5 }]}>프로필 사진 변경</Text>
 			</View>
 			<View style={{ width: "90%", }}>
 				<View style={styles.View}>
