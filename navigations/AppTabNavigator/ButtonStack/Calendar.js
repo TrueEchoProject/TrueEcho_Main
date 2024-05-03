@@ -1,14 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ImageBackground } from 'react-native';
+import {
+	View,
+	Text,
+	TouchableOpacity,
+	StyleSheet,
+	SafeAreaView,
+	ImageBackground,
+	Modal,
+	Dimensions,
+} from 'react-native';
 import axios from "axios";
+import { Image } from "expo-image"
 
 const days = ["일", "월", "화", "수", "목", "금", "토"];
 const months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
-
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 const Calendar = () => {
 	const [currentMonth, setCurrentMonth] = useState(new Date());
-	const [selectedDay, setSelectedDay] = useState(null);
 	const [specificDates, setSpecificDates] = useState({});
+	const [isImageVisible, setIsImageVisible] = useState(false);
+	const [currentImageUrls, setCurrentImageUrls] = useState({ front: null, back: null });
 	
 	const fetchCalendar = async () => {
 		try {
@@ -16,22 +28,22 @@ const Calendar = () => {
 			const calendarData = response.data;
 			const newSpecificDates = {};
 			calendarData.forEach(item => {
-				newSpecificDates[item.created_at] = item.post_back_url;
+				newSpecificDates[item.created_at] = { front: item.post_front_url, back: item.post_back_url };
 			});
 			setSpecificDates(newSpecificDates);
 		} catch (error) {
 			console.error('Error fetching calendar data', error);
 		}
 	};
-	useEffect(() => {
-		if (specificDates) {
-			console.log(specificDates);
-		}
-	}, [specificDates]); // userData 변화 감지
+	
 	useEffect(() => {
 		fetchCalendar();
 	}, []);
 	
+	const toggleImageVisibility = (imageUrl, imageBackUrl) => {
+		setCurrentImageUrls({ front: imageUrl, back: imageBackUrl });
+		setIsImageVisible(!isImageVisible);
+	};
 	
 	const generateMatrix = () => {
 		let matrix = [days.map(day => ({ day }))];
@@ -49,11 +61,93 @@ const Calendar = () => {
 				matrix[row][col] = {
 					day,
 					isInCurrentMonth: day !== '',
-					imageUrl: specificDates[dateKey]
+					imageUrl: specificDates[dateKey]?.front,
+					imageBackUrl: specificDates[dateKey]?.back
 				};
 			}
 		}
 		return matrix;
+	};
+	
+	const ImageModal = ({ isVisible, postFront, postBack, onClose }) => {
+		const [isFrontShowing, setIsFrontShowing] = useState(true);
+		const changeImage = () => {
+			setIsFrontShowing(!isFrontShowing);
+		};
+		
+		return (
+			<Modal
+				animationType="slide"
+				visible={isVisible}
+				onRequestClose={onClose}
+				transparent={true}
+			>
+				<View style={styles.modalContainer}>
+					<TouchableOpacity
+						onPress={onClose}
+						style={{
+							alignItems: "center",
+							justifyContent: "center",
+							backgroundColor: "white",
+							borderTopEndRadius: 10,
+							borderTopStartRadius: 10,
+							width: windowWidth * 0.8,
+							height: 40,
+						}}>
+						<Text
+							style={{
+								color: "black",
+								fontSize: 15,
+								fontWeight: "bold",
+								textAlign: "center",
+							}}
+						>
+							닫기</Text>
+					</TouchableOpacity>
+					<View style={styles.imageContainer}>
+						<TouchableOpacity
+							onPress={changeImage}
+							style={{ zIndex: 2, position: 'absolute', top: 10, left: 10 }}
+						>
+							<Image
+								source={{ uri: isFrontShowing ? postFront : postBack }}
+								style={styles.smallImage}
+							/>
+						</TouchableOpacity>
+						<TouchableOpacity
+							onPress={changeImage}
+							style={{ zIndex: 1, position: 'relative' }}
+						>
+							<Image
+								source={{ uri: isFrontShowing ? postBack: postFront }}
+								style={styles.fullImage}
+							/>
+						</TouchableOpacity>
+					</View>
+					<TouchableOpacity
+						onPress={onClose}
+						style={{
+							alignItems: "center",
+							justifyContent: "center",
+							backgroundColor: "white",
+							borderBottomEndRadius: 10,
+							borderBottomStartRadius: 10,
+							width: windowWidth * 0.8,
+							height: 40,
+						}}>
+						<Text
+							style={{
+								color: "black",
+								fontSize: 15,
+								fontWeight: "bold",
+								textAlign: "center",
+							}}
+						>
+							Pin 지정</Text>
+					</TouchableOpacity>
+				</View>
+			</Modal>
+		);
 	};
 	
 	const renderCalendar = () => {
@@ -67,8 +161,8 @@ const Calendar = () => {
 								<TouchableOpacity
 									key={colIndex}
 									style={styles.cell}
-									onPress={toggleImageVisibility}
-									disabled={rowIndex === 0 || !item.day}>
+									onPress={() => toggleImageVisibility(item.imageUrl, item.imageBackUrl)}
+								>
 									<ImageBackground source={{ uri: item.imageUrl }} style={styles.backgroundImage}>
 										<Text style={styles.dateImageText}>{item.day}</Text>
 									</ImageBackground>
@@ -95,6 +189,14 @@ const Calendar = () => {
 					<Text style={styles.monthLabel}>{currentMonth.getFullYear()}년 {months[currentMonth.getMonth()]}월</Text>
 				</View>
 				{renderCalendar()}
+				{isImageVisible && (
+					<ImageModal
+						isVisible={isImageVisible}
+						postFront={currentImageUrls.front}
+						postBack={currentImageUrls.back}
+						onClose={() => setIsImageVisible(false)}
+					/>
+				)}
 			</View>
 		</SafeAreaView>
 	);
@@ -156,6 +258,27 @@ const styles = StyleSheet.create({
 	monthLabel: {
 		fontSize: 18,
 		fontWeight: 'bold',
+	},
+	modalContainer: {
+		flex: 1,
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	imageContainer: {
+		width: windowWidth * 0.8,
+		height: windowHeight * 0.6,
+		backgroundColor: 'white',
+		position: 'relative',
+	},
+	fullImage: {
+		width: windowWidth * 0.8,
+		height: windowHeight * 0.6,
+	},
+	smallImage: {
+		width: windowWidth * 0.3,
+		height: windowHeight * 0.2,
+		borderRadius: 12,
 	},
 });
 
