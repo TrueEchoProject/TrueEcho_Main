@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ImageBackground } from 'react-native';
+import axios from "axios";
 
 const days = ["일", "월", "화", "수", "목", "금", "토"];
 const months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
@@ -7,26 +8,33 @@ const months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11"
 const Calendar = () => {
 	const [currentMonth, setCurrentMonth] = useState(new Date());
 	const [selectedDay, setSelectedDay] = useState(null);
-	const [specificDates, setSpecificDates] = useState({
-		'2024-04-15': 'https://ppss.kr/wp-content/uploads/2020/07/01-4-540x304.png',
-		'2024-04-20': 'https://ppss.kr/wp-content/uploads/2020/07/01-4-540x304.png'
-	});
+	const [specificDates, setSpecificDates] = useState({});
 	
-	const handleDayPress = (day, isInCurrentMonth) => {
-		const year = currentMonth.getFullYear()
-		const month = currentMonth.getMonth()
-		const formattedMonth = month < 9 ? `0${month + 1}` : month + 1;
-		const formattedDay = day < 10 ? `0${day}` : day;
-		const formattedDate = `${year}-${formattedMonth}-${formattedDay}`;
-		if (isInCurrentMonth) {
-			setSelectedDay(formattedDate);
+	const fetchCalendar = async () => {
+		try {
+			const response = await axios.get(`http://192.168.0.3:3000/user_calendar`);
+			const calendarData = response.data;
+			const newSpecificDates = {};
+			calendarData.forEach(item => {
+				newSpecificDates[item.created_at] = item.post_back_url;
+			});
+			setSpecificDates(newSpecificDates);
+		} catch (error) {
+			console.error('Error fetching calendar data', error);
 		}
 	};
+	useEffect(() => {
+		if (specificDates) {
+			console.log(specificDates);
+		}
+	}, [specificDates]); // userData 변화 감지
+	useEffect(() => {
+		fetchCalendar();
+	}, []);
+	
 	
 	const generateMatrix = () => {
-		let matrix = [];
-		matrix[0] = days.map(day => ({ day })); // 요일 이름을 객체 형태로 변환하여 첫 행에 할당
-		
+		let matrix = [days.map(day => ({ day }))];
 		const year = currentMonth.getFullYear();
 		const month = currentMonth.getMonth();
 		const firstDay = new Date(year, month, 1).getDay();
@@ -59,10 +67,10 @@ const Calendar = () => {
 								<TouchableOpacity
 									key={colIndex}
 									style={styles.cell}
-									onPress={() => rowIndex !== 0 && item.day && handleDayPress(item.day, item.isInCurrentMonth)}
+									onPress={toggleImageVisibility}
 									disabled={rowIndex === 0 || !item.day}>
 									<ImageBackground source={{ uri: item.imageUrl }} style={styles.backgroundImage}>
-										<Text style={styles.dateText}>{item.day}</Text>
+										<Text style={styles.dateImageText}>{item.day}</Text>
 									</ImageBackground>
 								</TouchableOpacity>
 							) : (
@@ -140,6 +148,10 @@ const styles = StyleSheet.create({
 	},
 	dateText: {
 		color: '#000',
+	},
+	dateImageText: {
+		color: 'white',
+		fontWeight: 'bold',
 	},
 	monthLabel: {
 		fontSize: 18,
