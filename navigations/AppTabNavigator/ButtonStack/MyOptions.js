@@ -63,7 +63,7 @@ const MyOptions = ({ navigation, route }) => {
 					<OptionItem
 						iconType={FontAwesome6}
 						icon="user-shield"
-						label="개인정보 보호"
+						label="차단 유저 관리"
 					/>
 					<OptionItem
 						iconType={MaterialIcons}

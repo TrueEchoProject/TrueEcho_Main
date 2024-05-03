@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, Dimensions, ActivityIndicator } from 'react-native';
 import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import PagerView from "react-native-pager-view";
@@ -12,10 +12,11 @@ const windowHeight = Dimensions.get('window').height;
 const MyPage = ({ navigation, route }) => {
 	const [userData, setUserData] = useState(null);
 	const [pinData, setPinData] = useState([]);
-	const [isFrontShowing, setIsFrontShowing] = useState(true);
+	const [isFrontShowing, setIsFrontShowing] = useState({});
 	const [currentPage, setCurrentPage] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const pagerRef = useRef(null);
 	
 	useEffect(() => {
 		if (route.params?.Update) {
@@ -27,12 +28,24 @@ const MyPage = ({ navigation, route }) => {
 	useEffect(() => {
 		if (route.params?.pinRes) {
 			console.log('Received pin response:', route.params.pinRes);
-			setPinData(route.params.pinRes.pins);
+			const pins = route.params.pinRes.pins;
+			setPinData(pins);
+			// 각 핀에 대한 isFrontShowing 상태 초기화
+			const showingStates = {};
+			pins.forEach(pin => {
+				showingStates[pin.pin_id] = true; // 기본적으로 모든 핀은 앞면을 보여줍니다.
+			});
+			setIsFrontShowing(showingStates);
 		}
 	}, [route.params?.pinRes]);
-	const changeImage = () => {
-		setIsFrontShowing(!isFrontShowing);
+	
+	const changeImage = (pinId) => {
+		setIsFrontShowing(prev => ({
+			...prev,
+			[pinId]: !prev[pinId]
+		}));
 	};
+	
 	const profileImageModalVisible = () => {
 		setIsModalVisible(!isModalVisible);
 	};
@@ -58,9 +71,11 @@ const MyPage = ({ navigation, route }) => {
 	
 	useEffect(() => {
 		if (pinData) {
-			console.log(pinData);
+			console.log('pinData updated:', pinData);
 		}
-		setCurrentPage(0); // 페이지 변경 시 0으로 설정
+		if (pinData.length > 0 && pagerRef.current) {
+			pagerRef.current.setPageWithoutAnimation(0);
+		}
 	}, [pinData]);
 	
 	useEffect(() => {
@@ -161,12 +176,13 @@ const MyPage = ({ navigation, route }) => {
 							style={styles.pagerView}
 							initialPage={0}
 							onPageSelected={handlePageChange}
+							ref={pagerRef}
 						>
 							{pinData.map((item) => (
 								<View key={item.pin_id} style={{ position: 'relative' }}>
-									<TouchableOpacity onPress={changeImage}>
+									<TouchableOpacity onPress={() => changeImage(item.pin_id)}>
 										<Image
-											source={{ uri: isFrontShowing ? item.post_front_url : item.post_back_url }}
+											source={{ uri: isFrontShowing[item.pin_id] ? item.post_front_url : item.post_back_url }}
 											style={styles.pageStyle}
 										/>
 									</TouchableOpacity>
