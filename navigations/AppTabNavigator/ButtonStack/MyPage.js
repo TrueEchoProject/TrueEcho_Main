@@ -64,14 +64,14 @@ const MyPage = ({ navigation }) => {
 				<>
 					<View style={styles.topContainer}>
 						<Image
-							source={{ uri: userData.profile_url }}
+							source={{uri: userData.profile_url}}
 							style={styles.avatar}
 						/>
 						<View style={styles.textContainer}>
 							<Text style={styles.name}>{userData.username}</Text>
 							<FontAwesome5
 								name="crown"
-								style={{ marginLeft: 10, marginBottom: 10 }}
+								style={{marginLeft: 10, marginBottom: 10}}
 								size={24}
 								color="blue"
 							/>
@@ -82,53 +82,73 @@ const MyPage = ({ navigation }) => {
 					</View>
 					<View style={styles.pinsContainer}>
 						<Text style={styles.pinsTitle}>Pins</Text>
-						<PagerView
-							style={styles.pagerView}
-							initialPage={0}
-							onPageSelected={handlePageChange}
-						>
-							{pinData.map((item) => (
-								<View key={item.pin_id} style={{ position: 'relative' }}>
-									<TouchableOpacity onPress={changeImage}>
-										<Image
-											source={{ uri: isFrontShowing ? item.post_front_url : item.post_back_url }}
-											style={styles.pageStyle}
-										/>
-									</TouchableOpacity>
+						{pinData.length === 0 ? (
+							<View style={styles.pinPlus}>
+								<TouchableOpacity
+									style={{alignItems: "center", padding: 30,}}
+									onPress={() => navigation.navigate('캘린더')}
+								>
+									<AntDesign
+										name="plussquareo"
+										size={40}
+										style={{margin: 20,}}
+										color="white"
+									/>
+									<Text style={[styles.pinsText, {textAlign: 'center'}]}>핀을{'\n'}추가해보세요!</Text>
+								</TouchableOpacity>
+							</View>
+						) : (
+							<>
+								<PagerView
+									style={styles.pagerView}
+									initialPage={0}
+									onPageSelected={handlePageChange}
+								>
+									{pinData.map((item) => (
+										<View key={item.pin_id} style={{position: 'relative'}}>
+											<TouchableOpacity onPress={changeImage}>
+												<Image
+													source={{uri: isFrontShowing ? item.post_front_url : item.post_back_url}}
+													style={styles.pageStyle}
+												/>
+											</TouchableOpacity>
+										</View>
+									))}
+									{pinData.length <= 5 && (
+										<View style={styles.pinPlus}>
+											<TouchableOpacity
+												style={{alignItems: "center", padding: 30,}}
+												onPress={() => navigation.navigate('캘린더')}
+											>
+												<AntDesign
+													name="plussquareo"
+													size={40}
+													style={{margin: 20,}}
+													color="white"
+												/>
+												<Text style={[styles.pinsText, {textAlign: 'center'}]}>핀을{'\n'}추가해보세요!</Text>
+											</TouchableOpacity>
+										</View>
+									)}
+								</PagerView>
+								<View style={styles.indicatorContainer}>
+									{pinData.map((_, index) => (
+										<Text key={index} style={[styles.indicator, index === currentPage ? styles.activeIndicator : null]}>
+											&#9679;
+										</Text>
+									))}
 								</View>
-							))}
-							{pinData.length <= 5 && (
-								<View style={styles.pinPlus}>
-									<TouchableOpacity
-										style={{ alignItems: "center", padding: 30, }}
-										onPress={() => navigation.navigate('캘린더')}
-									>
-										<AntDesign
-											name="plussquareo"
-											size={40}
-											style={{ margin: 20, }}
-											color="white"
-										/>
-										<Text style={[styles.pinsText, {textAlign: 'center'}]}>핀을{'\n'}추가해보세요!</Text>
-									</TouchableOpacity>
-								</View>
-							)}
-						</PagerView>
-						<View style={styles.indicatorContainer}>
-							{pinData.map((_, index) => (
-								<Text key={index} style={[styles.indicator, index === currentPage ? styles.activeIndicator : null]}>
-									&#9679;
-								</Text>
-							))}
-						</View>
+							</>
+						)}
 					</View>
 				</>
 			) : (
 				<Text>데이터 로딩 중...</Text>
 			)}
 		</View>
-	)
+	);
 }
+
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
