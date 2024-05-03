@@ -8,7 +8,6 @@ import {
 	Modal,
 	Dimensions,
 	Switch,
-	ActivityIndicator,
 } from 'react-native';
 import { FontAwesome5, AntDesign, FontAwesome6, MaterialIcons, Entypo, Ionicons } from '@expo/vector-icons';
 import { Image } from "expo-image";
@@ -470,7 +469,12 @@ const MyOptions = ({ navigation, route }) => {
 			</Modal>
 		);
 	};
-	
+	const logOut = () => {
+		console.log("logOut")
+	};
+	const deleteAccount = () => {
+		console.log("deleteAccount")
+	};
 	return (
 		<View style={styles.container}>
 			<ScrollView style={styles.scrollView}>
@@ -550,12 +554,14 @@ const MyOptions = ({ navigation, route }) => {
 						icon="log-out"
 						label="로그아웃"
 						backgroundColor="grey"
+						onPress={logOut}
 					/>
 					<OptionItem
 						iconType={Ionicons}
 						icon="alert-circle"
 						label="계정 삭제"
 						backgroundColor="red"
+						onPress={deleteAccount}
 					/>
 				</View>
 			</ScrollView>
