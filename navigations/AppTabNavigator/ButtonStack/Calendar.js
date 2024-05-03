@@ -1,153 +1,101 @@
-import React, { useState, useEffect } from 'react'
-import {
-	View,
-	Text,
-	TouchableOpacity,
-	StyleSheet,
-	SafeAreaView,
-} from 'react-native'
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ImageBackground } from 'react-native';
 
-const days = ["일", "월", "화", "수", "목", "금", "토",]
-const months = [
-	"01",
-	"02",
-	"03",
-	"04",
-	"05",
-	"06",
-	"07",
-	"08",
-	"09",
-	"10",
-	"11",
-	"12",
-]
+const days = ["일", "월", "화", "수", "목", "금", "토"];
+const months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
 
 const Calendar = () => {
-	const [currentMonth, setCurrentMonth] = useState(new Date())
-	const [selectedDay, setSelectedDay] = useState(null)
-	const [specificDates, setSpecificDates] = useState([])
-	const [checkDate, setCheckDate] = useState("")
+	const [currentMonth, setCurrentMonth] = useState(new Date());
+	const [selectedDay, setSelectedDay] = useState(null);
+	const [specificDates, setSpecificDates] = useState({
+		'2024-04-15': 'https://ppss.kr/wp-content/uploads/2020/07/01-4-540x304.png',
+		'2024-04-20': 'https://ppss.kr/wp-content/uploads/2020/07/01-4-540x304.png'
+	});
 	
 	const handleDayPress = (day, isInCurrentMonth) => {
 		const year = currentMonth.getFullYear()
 		const month = currentMonth.getMonth()
-		
+		const formattedMonth = month < 9 ? `0${month + 1}` : month + 1;
+		const formattedDay = day < 10 ? `0${day}` : day;
+		const formattedDate = `${year}-${formattedMonth}-${formattedDay}`;
 		if (isInCurrentMonth) {
-			const formattedMonth = month < 9 ? `0${month + 1}` : month + 1;
-			const formattedDay = day < 10 ? `0${day}` : day;
-			const formattedDate = `${year}-${formattedMonth}-${formattedDay}`;
-			setSelectedDay(day);
-			setCheckDate(formattedDate)
+			setSelectedDay(formattedDate);
 		}
 	};
 	
 	const generateMatrix = () => {
 		let matrix = [];
-		matrix[0] = days;
+		matrix[0] = days.map(day => ({ day })); // 요일 이름을 객체 형태로 변환하여 첫 행에 할당
 		
-		let year = currentMonth.getFullYear();
-		let month = currentMonth.getMonth();
-		let firstDay = new Date(year, month, 1).getDay();
-		let maxDays = new Date(year, month + 1, 0).getDate()
+		const year = currentMonth.getFullYear();
+		const month = currentMonth.getMonth();
+		const firstDay = new Date(year, month, 1).getDay();
+		const maxDays = new Date(year, month + 1, 0).getDate();
+		let counter = 1 - firstDay;
 		
-		let counter = -firstDay + 1;
 		for (let row = 1; row < 7; row++) {
 			matrix[row] = [];
-			for (let col = 0; col < 7; col++) {
-				let cellValue = counter > 0 && counter <= maxDays ? counter : "";
+			for (let col = 0; col < 7; col++, counter++) {
+				const day = counter > 0 && counter <= maxDays ? counter : '';
+				const dateKey = `${year}-${month + 1 < 10 ? `0${month + 1}` : month + 1}-${day < 10 ? `0${day}` : day}`;
 				matrix[row][col] = {
-					day: cellValue,
-					isInCurrentMonth: counter > 0 && counter <= maxDays
-				}
-				counter++;
+					day,
+					isInCurrentMonth: day !== '',
+					imageUrl: specificDates[dateKey]
+				};
 			}
 		}
 		return matrix;
-	}
-	
-	const renderCalendar = () => {
-		let matrix = generateMatrix();  // 날짜 데이터 생성
-		let rows = matrix.map((row, rowIndex) => {
-			let rowItems = row.map((item, colIndex) => {
-				// rowIndex === 0이면 요일 행이므로 days 배열에서 요일 이름을 사용
-				const content = rowIndex === 0 ? days[colIndex] : item.day;
-				const textStyle = getTextStyle(rowIndex, colIndex, item);
-				return (
-					<TouchableOpacity
-						style={styles.cell}
-						key={colIndex}
-						onPress={() => rowIndex !== 0 && item.day && handleDayPress(item.day, item.isInCurrentMonth)}
-						disabled={rowIndex === 0 || !item.day}>
-						<Text style={textStyle}>{content}</Text>
-					</TouchableOpacity>
-				);
-			});
-			return <View style={styles.row} key={rowIndex}>{rowItems}</View>
-		});
-		return <View style={styles.calendar}>{rows}</View>
 	};
 	
-	const getTextStyle = (rowIndex, colIndex, item) => {
-		if (rowIndex !== 0) {
-			const year = currentMonth.getFullYear();
-			const month = currentMonth.getMonth() + 1;
-			const formattedMonth = month < 10 ? `0${month}` : month;
-			const formattedDay = item.day < 10 ? `0${item.day}` : item.day;
-			const fullDate = `${year}-${formattedMonth}-${formattedDay}`
-			
-			let textStyle = item.isInCurrentMonth
-				? colIndex === 0
-					? styles.cellTextRed
-					: colIndex === 6
-						? styles.cellTextBlue
-						: styles.cellText
-				: colIndex === 0
-					? {...styles.cellTextRed, ...styles.cellTextGrayOpacity}
-					: colIndex === 6
-						? {...styles.cellTextBlue, ...styles.cellTextGrayOpacity}
-						: {...styles.cellTextGray, ...styles.cellTextGrayOpacity}
-			
-			if (item.isInCurrentMonth && specificDates.includes(fullDate)) {
-				textStyle = {...textStyle, ...styles.specificDate};
-			}
-			
-			if (item.day === selectedDay && item.isInCurrentMonth) {
-				textStyle = styles.selectedDay;
-			}
-			return textStyle;
-		} else if (rowIndex === 0) {
-			return colIndex === 0
-				? styles.headerTextRed
-				: colIndex === 6
-					? styles.headerTextBlue
-					: styles.headerText
-		}
-	}
+	const renderCalendar = () => {
+		const matrix = generateMatrix();
+		return (
+			<View style={styles.calendar}>
+				{matrix.map((row, rowIndex) => (
+					<View style={styles.row} key={rowIndex}>
+						{row.map((item, colIndex) => (
+							item.imageUrl && rowIndex !== 0 ? (
+								<TouchableOpacity
+									key={colIndex}
+									style={styles.cell}
+									onPress={() => rowIndex !== 0 && item.day && handleDayPress(item.day, item.isInCurrentMonth)}
+									disabled={rowIndex === 0 || !item.day}>
+									<ImageBackground source={{ uri: item.imageUrl }} style={styles.backgroundImage}>
+										<Text style={styles.dateText}>{item.day}</Text>
+									</ImageBackground>
+								</TouchableOpacity>
+							) : (
+								<View
+									key={colIndex}
+									style={styles.cell}
+								>
+									<Text style={styles.dateText}>{item.day}</Text>
+								</View>
+							)
+						))}
+					</View>
+				))}
+			</View>
+		);
+	};
 	
 	return (
 		<SafeAreaView style={styles.bg}>
 			<View style={styles.container}>
 				<View style={styles.header}>
-					<Text style={styles.monthLabel}>
-						{currentMonth.getFullYear()}.&nbsp;
-						{months[currentMonth.getMonth()]}
-					</Text>
+					<Text style={styles.monthLabel}>{currentMonth.getFullYear()}년 {months[currentMonth.getMonth()]}월</Text>
 				</View>
-				<View style={styles.calendar}>{renderCalendar()}</View>
+				{renderCalendar()}
 			</View>
 		</SafeAreaView>
-	)
-}
+	);
+};
 
 const styles = StyleSheet.create({
 	bg: {
 		backgroundColor: 'rgba(0,0,0,0.3)',
-		position: "absolute",
-		height: "100%",
-		width: "100%",
 		flex: 1,
-		display: "flex",
 		justifyContent: "center",
 	},
 	container: {
@@ -175,56 +123,28 @@ const styles = StyleSheet.create({
 		height: 280,
 		justifyContent: "space-between",
 	},
-	monthLabel: {
-		fontSize: 18,
-		color: "#000",
-	},
 	row: {
 		flexDirection: "row",
 	},
 	cell: {
 		flex: 1,
-		height: 40,
-		alignItems: "center",
-		justifyContent: "center",
+		height: 50,
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
-	headerText: {
-		color: "#000",
+	backgroundImage: {
+		width: '100%',
+		height: '100%',
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
-	headerTextRed: {
-		color: "#FF0000",
+	dateText: {
+		color: '#000',
 	},
-	headerTextBlue: {
-		color: "#007BA4",
+	monthLabel: {
+		fontSize: 18,
+		fontWeight: 'bold',
 	},
-	cellText: {
-		color: "#000",
-	},
-	cellTextRed: {
-		color: "#FF0000",
-	},
-	cellTextBlue: {
-		color: "#007BA4",
-	},
-	cellTextGray: {
-		color: "#0000004D"
-	},
-	selectedDay: {
-		backgroundColor: "#E6EEF5",
-		textAlign: "center",
-		lineHeight: 40,
-		color: "#000",
-		height: 40,
-		width: 40,
-		borderRadius: 20,
-		overflow: "hidden",
-	},
-	cellTextGrayOpacity: {
-		opacity: 0.3,
-	},
-	specificDate: {
-		color: "#FF0000",
-	}
 });
 
 export default Calendar;
