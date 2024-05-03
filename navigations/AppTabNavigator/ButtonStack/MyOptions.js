@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Dimensions, } from 'react-native';
 import { FontAwesome5, AntDesign, FontAwesome6, MaterialIcons, Entypo, Ionicons } from '@expo/vector-icons';
 import { Image } from "expo-image";
+import axios from "axios";
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -53,6 +54,42 @@ const MyOptions = ({ navigation, route }) => {
 		setIsTimeModal(!isTimeModal);
 	};
 	const NotificationModal = ({ isVisible, onClose }) => {
+		const [notificationSettings, setNotificationSettings] = useState({});
+		
+		const fetchNotification = async () => {
+			try {
+				const response = await axios.get(`http://192.168.0.3:3000/notificationSettings`);
+				setNotificationSettings(response.data[0]);
+			} catch (error) {
+				console.error('Error fetching calendar data', error);
+			}
+		};
+		useEffect(() => {
+			fetchNotification();
+		}, []);
+		// 각 알림 설정을 토글하는 함수
+		const toggleSetting = (key) => {
+			setNotificationSettings(prev => ({
+				...prev,
+				[key]: !prev[key]
+			}));
+			console.log('notificationSettings3:', notificationSettings);
+		};
+		
+		// 변경사항을 저장하고 모달을 닫는 함수
+		const saveChanges = async () => {
+			console.log("Saved notificationSettings:", notificationSettings);
+			try {
+				const Delete = await axios.delete(`http://192.168.0.3:3000/notificationSettings/1`);
+				const response = await axios.post(`http://192.168.0.3:3000/notificationSettings`, notificationSettings);
+				alert("알림 설정이 성공적으로 제출되었습니다.");
+			} catch (error) {
+				console.error('Error posting notification', error);
+				alert("알림 설정을 제출하는 중 오류가 발생했습니다.");
+			}
+			onClose(); // 설정을 저장한 후 모달을 닫습니다.
+		};
+		
 		return (
 			<Modal
 				animationType="fade"
@@ -62,23 +99,23 @@ const MyOptions = ({ navigation, route }) => {
 			>
 				<View style={styles.modalContainer}>
 					<View style={styles.imageContainer}>
-						<Text style={styles.modalText}>알림</Text>
+						<Text style={styles.modalText}>알림 설정</Text>
 						<Text style={styles.modalSmallText}>알림의 on/off를 설정해주세요!</Text>
-						<TouchableOpacity style={styles.modalButton}>
-							<Text style={styles.buttonText}>멘션/태그</Text>
+						<TouchableOpacity style={styles.modalButton} onPress={() => toggleSetting('mention')}>
+							<Text style={styles.buttonText}>멘션/태그 {notificationSettings.mention ? "ON" : "OFF"}</Text>
 						</TouchableOpacity>
-						<TouchableOpacity style={styles.modalButton}>
-							<Text style={styles.buttonText}>댓글 좋아요</Text>
+						<TouchableOpacity style={styles.modalButton} onPress={() => toggleSetting('likes')}>
+							<Text style={styles.buttonText}>댓글 좋아요 {notificationSettings.likes ? "ON" : "OFF"}</Text>
 						</TouchableOpacity>
-						<TouchableOpacity style={styles.modalButton}>
-							<Text style={styles.buttonText}>친구요청</Text>
+						<TouchableOpacity style={styles.modalButton} onPress={() => toggleSetting('friendRequest')}>
+							<Text style={styles.buttonText}>친구요청 {notificationSettings.friendRequest ? "ON" : "OFF"}</Text>
 						</TouchableOpacity>
-						<TouchableOpacity style={styles.modalButton}>
-							<Text style={styles.buttonText}>투표알림</Text>
+						<TouchableOpacity style={styles.modalButton} onPress={() => toggleSetting('voteNotification')}>
+							<Text style={styles.buttonText}>투표알림 {notificationSettings.voteNotification ? "ON" : "OFF"}</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
-							style={[styles.modalButton, { backgroundColor: '#4CAF50', }]}
-							onPress={onClose}
+							style={[styles.modalButton, { backgroundColor: '#4CAF50' }]}
+							onPress={saveChanges}
 						>
 							<Text style={styles.buttonText}>저장</Text>
 						</TouchableOpacity>
@@ -94,6 +131,8 @@ const MyOptions = ({ navigation, route }) => {
 		);
 	};
 	const TimeModal = ({ isVisible, onClose }) => {
+		const [Time_type, setTime_type] = useState(1);
+		
 		return (
 			<Modal
 				animationType="fade"
@@ -105,16 +144,28 @@ const MyOptions = ({ navigation, route }) => {
 					<View style={styles.imageContainer}>
 						<Text style={styles.modalText}>Photo Time</Text>
 						<Text style={styles.modalSmallText}>사진을 찍을 시간을 정해주세요!</Text>
-						<TouchableOpacity style={styles.modalButton}>
+						<TouchableOpacity
+							onPress={() => setTime_type(0)}
+							style={Time_type === 0 ? styles.selectedModalButton : styles.modalButton }
+						>
 							<Text style={styles.buttonText}>0-6</Text>
 						</TouchableOpacity>
-						<TouchableOpacity style={styles.modalButton}>
+						<TouchableOpacity
+							onPress={() => setTime_type(1)}
+							style={Time_type === 1 ? styles.selectedModalButton : styles.modalButton }
+						>
 							<Text style={styles.buttonText}>7-12</Text>
 						</TouchableOpacity>
-						<TouchableOpacity style={styles.modalButton}>
+						<TouchableOpacity
+							onPress={() => setTime_type(2)}
+							style={Time_type === 2 ? styles.selectedModalButton : styles.modalButton }
+						>
 							<Text style={styles.buttonText}>13-18</Text>
 						</TouchableOpacity>
-						<TouchableOpacity style={styles.modalButton}>
+						<TouchableOpacity
+							onPress={() => setTime_type(3)}
+							style={Time_type === 3 ? styles.selectedModalButton : styles.modalButton }
+						>
 							<Text style={styles.buttonText}>19-24</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
@@ -335,6 +386,17 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		borderWidth: 1,
 		backgroundColor: "#99A1B6",
+		borderColor: 'black',
+		alignItems: 'center',
+		justifyContent: 'center',
+		margin: "3%",
+	},
+	selectedModalButton: {
+		width: "80%",
+		height: "10%",
+		borderRadius: 10,
+		borderWidth: 1,
+		backgroundColor: "#3B4664",
 		borderColor: 'black',
 		alignItems: 'center',
 		justifyContent: 'center',
