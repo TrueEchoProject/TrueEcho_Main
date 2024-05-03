@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import {View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Dimensions, } from 'react-native';
 import { FontAwesome5, AntDesign, FontAwesome6, MaterialIcons, Entypo, Ionicons } from '@expo/vector-icons';
 import { Image } from "expo-image";
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 const OptionText = ({ label }) => {
 	return <Text style={styles.smallText}>{label}</Text>;
 };
-const OptionItem = ({ navigation, icon, iconType, label, backgroundColor = "#99A1B6" }) => {
+const OptionItem = ({ onPress, icon, iconType, label, backgroundColor = "#99A1B6" }) => {
 	const IconComponent = iconType;
 	return (
-		<TouchableOpacity onPress={navigation}>
+		<TouchableOpacity onPress={onPress}>
 			<View style={[styles.View, { backgroundColor }]}>
 				<IconComponent name={icon} style={{marginRight: 15}} size={30} color="black" />
 				<Text style={styles.smallText}>{label}</Text>
@@ -20,6 +22,9 @@ const OptionItem = ({ navigation, icon, iconType, label, backgroundColor = "#99A
 
 const MyOptions = ({ navigation, route }) => {
 	const [user, setUser] = useState({})
+	const [isNotificationModal, setIsNotificationModal] = useState(false);
+	const [isBlockModal, setIsBlockModal] = useState(false);
+	const [isTimeModal, setIsTimeModal] = useState(false);
 	
 	useEffect(() => {
 		if (route.params?.user) {
@@ -38,6 +43,139 @@ const MyOptions = ({ navigation, route }) => {
 		}
 	}, [user]);
 	
+	const notificationModalVisible = () => {
+		setIsNotificationModal(!isNotificationModal);
+	};
+	const blockModalVisible = () => {
+		setIsBlockModal(!isBlockModal);
+	};
+	const timeModalVisible = () => {
+		setIsTimeModal(!isTimeModal);
+	};
+	const NotificationModal = ({ isVisible, onClose }) => {
+		return (
+			<Modal
+				animationType="fade"
+				visible={isVisible}
+				onRequestClose={onClose}
+				transparent={true}
+			>
+				<View style={styles.modalContainer}>
+					<View style={styles.imageContainer}>
+						<Text style={styles.modalText}>알림</Text>
+						<Text style={styles.modalSmallText}>알림의 on/off를 설정해주세요!</Text>
+						<TouchableOpacity style={styles.modalButton}>
+							<Text style={styles.buttonText}>멘션/태그</Text>
+						</TouchableOpacity>
+						<TouchableOpacity style={styles.modalButton}>
+							<Text style={styles.buttonText}>댓글 좋아요</Text>
+						</TouchableOpacity>
+						<TouchableOpacity style={styles.modalButton}>
+							<Text style={styles.buttonText}>친구요청</Text>
+						</TouchableOpacity>
+						<TouchableOpacity style={styles.modalButton}>
+							<Text style={styles.buttonText}>투표알림</Text>
+						</TouchableOpacity>
+						<TouchableOpacity
+							style={[styles.modalButton, { backgroundColor: '#4CAF50', }]}
+							onPress={onClose}
+						>
+							<Text style={styles.buttonText}>저장</Text>
+						</TouchableOpacity>
+						<TouchableOpacity
+							style={[styles.modalButton, { backgroundColor: "grey" }]}
+							onPress={onClose}
+						>
+							<Text style={styles.buttonText}>닫기</Text>
+						</TouchableOpacity>
+					</View>
+				</View>
+			</Modal>
+		);
+	};
+	const TimeModal = ({ isVisible, onClose }) => {
+		return (
+			<Modal
+				animationType="fade"
+				visible={isVisible}
+				onRequestClose={onClose}
+				transparent={true}
+			>
+				<View style={styles.modalContainer}>
+					<View style={styles.imageContainer}>
+						<Text style={styles.modalText}>Photo Time</Text>
+						<Text style={styles.modalSmallText}>사진을 찍을 시간을 정해주세요!</Text>
+						<TouchableOpacity style={styles.modalButton}>
+							<Text style={styles.buttonText}>0-6</Text>
+						</TouchableOpacity>
+						<TouchableOpacity style={styles.modalButton}>
+							<Text style={styles.buttonText}>7-12</Text>
+						</TouchableOpacity>
+						<TouchableOpacity style={styles.modalButton}>
+							<Text style={styles.buttonText}>13-18</Text>
+						</TouchableOpacity>
+						<TouchableOpacity style={styles.modalButton}>
+							<Text style={styles.buttonText}>19-24</Text>
+						</TouchableOpacity>
+						<TouchableOpacity
+							style={[styles.modalButton, { backgroundColor: '#4CAF50', }]}
+							onPress={onClose}
+						>
+							<Text style={styles.buttonText}>저장</Text>
+						</TouchableOpacity>
+						<TouchableOpacity
+							style={[styles.modalButton, { backgroundColor: "grey" }]}
+							onPress={onClose}
+						>
+							<Text style={styles.buttonText}>닫기</Text>
+						</TouchableOpacity>
+					</View>
+				</View>
+			</Modal>
+		);
+	};
+	const BlockModal = ({ isVisible, onClose }) => {
+		return (
+			<Modal
+				animationType="fade"
+				visible={isVisible}
+				onRequestClose={onClose}
+				transparent={true}
+			>
+				<View style={styles.modalContainer}>
+					<View style={styles.imageContainer}>
+						<Text style={styles.modalText}>차단된 친구</Text>
+						<Text style={styles.modalSmallText}>차단을 편집하세요</Text>
+						<TouchableOpacity style={styles.modalButton}>
+							<Text style={styles.buttonText}>user 1</Text>
+						</TouchableOpacity>
+						<TouchableOpacity style={styles.modalButton}>
+							<Text style={styles.buttonText}>user 2</Text>
+						</TouchableOpacity>
+						<TouchableOpacity style={styles.modalButton}>
+							<Text style={styles.buttonText}>user 3</Text>
+						</TouchableOpacity>
+						<TouchableOpacity style={styles.modalButton}>
+							<Text style={styles.buttonText}>user 4</Text>
+						</TouchableOpacity>
+						<TouchableOpacity
+							style={[styles.modalButton, { backgroundColor: '#4CAF50', }]}
+							onPress={onClose}
+						>
+							<Text style={styles.buttonText}>저장</Text>
+						</TouchableOpacity>
+						<TouchableOpacity
+							style={[styles.modalButton, { backgroundColor: "grey" }]}
+							onPress={onClose}
+						>
+							<Text style={styles.buttonText}>닫기</Text>
+						</TouchableOpacity>
+					</View>
+				</View>
+			</Modal>
+		);
+	};
+	
 	return (
 		<View style={styles.container}>
 			<ScrollView style={styles.scrollView}>
@@ -54,27 +192,60 @@ const MyOptions = ({ navigation, route }) => {
 						iconType={FontAwesome5}
 						icon="calendar-alt"
 						label="캘린더"
-						navigation={() => navigation.navigate('캘린더')}
+						onPress={() => navigation.navigate('캘린더')}
 					/>
 				</View>
 				<View>
 					<OptionText label="설정" />
-					<OptionItem iconType={AntDesign} icon="bells" label="알림" />
+					<OptionItem
+						iconType={AntDesign}
+						icon="bells"
+						label="알림"
+						onPress={notificationModalVisible}
+					/>
+					{isNotificationModal && (
+						<NotificationModal
+							isVisible={isNotificationModal}
+							onClose={() => setIsNotificationModal(false)}
+						/>
+					)}
 					<OptionItem
 						iconType={FontAwesome6}
 						icon="user-shield"
 						label="차단 유저 관리"
+						onPress={blockModalVisible}
 					/>
+					{isBlockModal && (
+						<BlockModal
+							isVisible={isBlockModal}
+							onClose={() => setIsBlockModal(false)}
+						/>
+					)}
 					<OptionItem
 						iconType={MaterialIcons}
 						icon="phonelink-ring"
 						label="시간대"
+						onPress={timeModalVisible}
 					/>
+					{isTimeModal && (
+						<TimeModal
+							isVisible={isTimeModal}
+							onClose={() => setIsTimeModal(false)}
+						/>
+					)}
 				</View>
 				<View>
 					<OptionText label="더보기" />
-					<OptionItem iconType={AntDesign} icon="sharealt" label="공유" />
-					<OptionItem iconType={Entypo} icon="chat" label="도움받기" />
+					<OptionItem
+						iconType={AntDesign}
+						icon="sharealt"
+						label="공유"
+					/>
+					<OptionItem
+						iconType={Entypo}
+						icon="chat"
+						label="도움받기"
+					/>
 				</View>
 				<View style={{ marginTop: 30 }}>
 					<OptionItem
@@ -124,6 +295,50 @@ const styles = StyleSheet.create({
 		fontSize: 18,
 		fontWeight: "300",
 		margin: 5,
-	}
+	},
+	modalContainer: {
+		flex: 1,
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	imageContainer: {
+		alignItems: 'center',
+		justifyContent: 'center',
+		width: windowWidth * 0.8,
+		height: windowHeight * 0.7,
+		borderRadius: 20,
+		backgroundColor: 'white',
+	},
+	buttonText: {
+		color: "black",
+		fontSize: 15,
+		fontWeight: "bold",
+		textAlign: "center",
+	},
+	modalText: {
+		color: "black",
+		fontSize: 20,
+		fontWeight: "bold",
+		textAlign: "center",
+	},
+	modalSmallText: {
+		color: "black",
+		fontSize: 12,
+		textAlign: "center",
+		marginTop: 3,
+		marginBottom: 5,
+	},
+	modalButton: {
+		width: "80%",
+		height: "10%",
+		borderRadius: 10,
+		borderWidth: 1,
+		backgroundColor: "#99A1B6",
+		borderColor: 'black',
+		alignItems: 'center',
+		justifyContent: 'center',
+		margin: "3%",
+	},
 })
 export default MyOptions;

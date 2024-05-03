@@ -20,7 +20,12 @@ const MyInfo = ({ navigation, route }) => {
 			setImageUri(route.params.user.profile_url);
 		}
 	}, [route.params?.user]);
+	const defaultImage = "https://i.ibb.co/wwfqn6V/DALL-E-2024-04-26-20-08-20-A-realistic-image-capturing-the-essence-of-a-photo-taken-by-a-young-man-i.webp";
 	
+	const PofileInitialization = () => {
+		setImageUri(defaultImage);
+		setIsModalVisible(false)
+	}
 	const pickImage = async () => {
 		if (Platform.OS !== 'web') {
 			const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -74,12 +79,7 @@ const MyInfo = ({ navigation, route }) => {
 		}
 	};
 	
-	const defaultImage = "https://i.ibb.co/wwfqn6V/DALL-E-2024-04-26-20-08-20-A-realistic-image-capturing-the-essence-of-a-photo-taken-by-a-young-man-i.webp";
 	
-	const PofileInitialization = () => {
-		setImageUri(defaultImage);
-		setIsModalVisible(false)
-	}
 	const ProfileModal = ({ isVisible, onClose }) => { // 수정: 프로퍼티 이름 Image -> imageUrl 변경
 		return (
 			<Modal
