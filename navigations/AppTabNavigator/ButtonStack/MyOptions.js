@@ -1,674 +1,289 @@
-import React, { useEffect, useState } from 'react';
-import {
-	View,
-	Text,
-	StyleSheet,
-	ScrollView,
-	TouchableOpacity,
-	Modal,
-	Dimensions,
-	Switch,
-	ActivityIndicator,
-} from 'react-native';
-import { FontAwesome5, AntDesign, FontAwesome6, MaterialIcons, Entypo, Ionicons } from '@expo/vector-icons';
-import { Image } from "expo-image";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Share, Dimensions, } from 'react-native';
+import axios from 'axios';
+import { Image } from 'expo-image';
+import { MaterialIcons, Ionicons, Feather, SimpleLineIcons } from "@expo/vector-icons";
+import { ImageButton } from "./ImageButton";
+import { CommentModal } from './CommentModal'; // 댓글 창 컴포넌트 임포트
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
-const OptionText = ({ label }) => {
-	return <Text style={styles.smallText}>{label}</Text>;
-};
-const OptionItem = ({ onPress, icon, iconType, label, backgroundColor = "#99A1B6" }) => {
-	const IconComponent = iconType;
+const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExternal }) => {
+	const [isOptionsVisible, setIsOptionsVisible] = useState(isOptionsVisibleExternal || false);
+	const [buttonLayout, setButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
+	const [imageButtonHeight, setImageButtonHeight] = useState(0);
+	const [isLiked, setIsLiked] = useState(false); // 좋아요 상태 관리
+	const [likesCount, setLikesCount] = useState(post.likes_count); // 좋아요 수 관리
+	const [isCommentVisible, setIsCommentVisible] = useState(false); // 댓글 창 표시 상태
+	const [layoutSet, setLayoutSet] = useState(false); // 레이아웃 설정 여부 상태 추가
+	const windowWidth = Dimensions.get('window').width;
+	const [friendLook, setFriendLook] = useState(true); // 좋아요 수 관리
+	
+	useEffect(() => {
+		setIsOptionsVisible(isOptionsVisibleExternal);
+		console.log(`Options Visible for ${post.post_id}: ${isOptionsVisibleExternal}`);
+	}, [isOptionsVisibleExternal]); // 이제 외부에서 받은 props가 변경될 때마다 로그를 찍고 상태를 업데이트합니다.
+	
+	const toggleOptionsVisibility = () => {
+		const newVisibility = !isOptionsVisible;
+		setIsOptionsVisible(newVisibility); // 내부 상태 업데이트
+		setIsOptionsVisibleExternal(newVisibility); // 외부 상태 업데이트로 전파
+	};
+	const onImageButtonLayout = (event) => {
+		if (layoutSet) return; // 레이아웃이 이미 설정되었다면 추가 업데이트 방지
+		
+		const { height } = event.nativeEvent.layout;
+		setImageButtonHeight(height);
+		setLayoutSet(true); // 레이아웃 설정 완료 표시
+	};
+	const hideOptions = () => {
+		if (isOptionsVisible) {
+			setIsOptionsVisible(false);
+			setIsOptionsVisibleExternal(false); // 외부 상태도 업데이트
+		}
+	};
+	const toggleLike = async () => {
+		const newLikesCount = isLiked ? likesCount - 1 : likesCount + 1;
+		setIsLiked(!isLiked);
+		setLikesCount(newLikesCount);
+		console.log(newLikesCount)
+		console.log(post.post_id)
+		try {
+			await axios.patch(`http://192.168.0.3:3000/posts/${post.post_id}`, {
+				likes_count: newLikesCount
+			});
+			console.log('Likes count updated successfully');
+		} catch (error) {
+			console.error('Error updating likes count:', error);
+		}
+	};
+	const toggleBlock = async () => {
+		console.log(post.username);
+		try {
+			const response = await axios.post(`http://192.168.0.3:3000/blocked_users`, {
+				username: post.username,
+				profile_url: post.profile_url
+			});
+			console.log('User blocked successfully');
+			alert('유저를 정상적으로 차단했습니다');
+			hideOptions()
+		} catch (error) {
+			console.error('Error while blocking the user:', error.response ? error.response.data : error.message);
+			// HTTP 상태 코드가 409인 경우 여기서 처리
+			if (error.response && error.response.status === 409) {
+				alert('This user is already blocked.');
+				hideOptions()
+			}
+		}
+	};
+	
+	const toggleFriendSend = async () => {
+		console.log(post.username);  // 이것은 여전히 정상적으로 작동합니다.
+		try {
+			await axios.post(`http://192.168.0.3:3000/friendSend`, {
+				friendSendUser: post.username
+			});
+			console.log('Send updated successfully');
+			setFriendLook(false);
+		} catch (error) {
+			console.error('Error updating Send:', error);
+		}
+	};
+	const toggleCommentVisibility = () => {
+		setIsCommentVisible(!isCommentVisible);
+	};
+	
 	return (
-		<TouchableOpacity onPress={onPress}>
-			<View style={[styles.View, { backgroundColor }]}>
-				<IconComponent name={icon} style={{marginRight: 15}} size={30} color="black" />
-				<Text style={styles.smallText}>{label}</Text>
-			</View>
-		</TouchableOpacity>
-	);
-};
-
-const MyOptions = ({ navigation, route }) => {
-	const [user, setUser] = useState({})
-	const [isNotificationModal, setIsNotificationModal] = useState(false);
-	const [isBlockModal, setIsBlockModal] = useState(false);
-	const [isTimeModal, setIsTimeModal] = useState(false);
-	
-	useEffect(() => {
-		if (route.params?.user) {
-			console.log('Received user response:', route.params.user);
-			setUser(route.params.user);
-		}
-	}, [route.params?.user]);
-	
-	useEffect(() => {
-		if (user) {
-			console.log('profile_url:', user.profile_url);
-			console.log('user_vote:', user.user_vote);
-			console.log('username:', user.username);
-			console.log('user_Id:', user.user_Id);
-			console.log('your_location:', user.your_location);
-		}
-	}, [user]);
-	
-	const notificationModalVisible = () => {
-		setIsNotificationModal(!isNotificationModal);
-	};
-	const blockModalVisible = () => {
-		setIsBlockModal(!isBlockModal);
-	};
-	const timeModalVisible = () => {
-		setIsTimeModal(!isTimeModal);
-	};
-	
-	const NotificationModal = ({ isVisible, onClose }) => {
-		const [notificationSettings, setNotificationSettings] = useState({});
-		
-		const fetchNotification = async () => {
-			try {
-				const response = await axios.get(`http://192.168.0.3:3000/notificationSettings`);
-				setNotificationSettings(response.data[0]);
-			} catch (error) {
-				console.error('Error fetching calendar data', error);
-			}
-		};
-		useEffect(() => {
-			fetchNotification();
-		}, []);
-		// 각 알림 설정을 토글하는 함수
-		const toggleSetting = (key) => {
-			setNotificationSettings(prev => ({
-				...prev,
-				[key]: !prev[key]
-			}));
-			console.log('notificationSettings3:', notificationSettings);
-		};
-		
-		// 변경사항을 저장하고 모달을 닫는 함수
-		const saveChanges = async () => {
-			console.log("Saved notificationSettings:", notificationSettings);
-			try {
-				const Delete = await axios.delete(`http://192.168.0.3:3000/notificationSettings/1`);
-				const response = await axios.post(`http://192.168.0.3:3000/notificationSettings`, notificationSettings);
-				alert("알림 설정이 성공적으로\n제출되었습니다.");
-			} catch (error) {
-				console.error('Error posting notification', error);
-				alert("알림 설정을 제출하는 중\n오류가 발생했습니다.");
-			}
-			onClose(); // 설정을 저장한 후 모달을 닫습니다.
-		};
-		return (
-			<Modal
-				animationType="fade"
-				visible={isVisible}
-				onRequestClose={onClose}
-				transparent={true}
-			>
-				<View style={styles.modalContainer}>
-					<View style={styles.imageContainer}>
-						<Text style={styles.modalText}>알림 설정</Text>
-						<Text style={styles.modalSmallText}>알림의 on/off를 설정해주세요!</Text>
-						<View style={styles.switchModalButton}>
-							<Text style={styles.switchButtonText}>멘션/태그</Text>
-							<Switch
-								style={{ marginRight: 10 }}
-								trackColor={{ false: "#767577", true: "#3B4664" }}
-								thumbColor={ notificationSettings.mention ? "#81b0ff" : "#f4f3f4" }
-								ios_backgroundColor="#3e3e3e"
-								onValueChange={() => toggleSetting('mention')}
-								value={ notificationSettings.mention }
-							/>
+		<TouchableWithoutFeedback onPress={hideOptions}>
+			<View style={styles.cardContainer}>
+				<View style={styles.cardItem}>
+					<View style={styles.left}>
+						<Image
+							style={styles.thumbnail}
+							source={{ uri: post.profile_url }}
+						/>
+						<View style={styles.body}>
+							<Text style={{fontSize: 15, fontWeight: "500"}}>{post.username}</Text>
+							<Text style={{fontSize: 12, fontWeight: "300"}}note>{new Date(post.created_at).toDateString()}</Text>
+							<Text style={{fontSize: 12, fontWeight: "300"}}>{post.location}</Text>
 						</View>
-						<View style={styles.switchModalButton}>
-							<Text style={styles.switchButtonText}>댓글 좋아요</Text>
-							<Switch
-								style={{ marginRight: 10 }}
-								trackColor={{ false: "#767577", true: "#3B4664" }}
-								thumbColor={ notificationSettings.likes ? "#81b0ff" : "#f4f3f4" }
-								ios_backgroundColor="#3e3e3e"
-								onValueChange={() => toggleSetting('likes')}
-								value={ notificationSettings.likes }
-							/>
-						</View>
-						<View style={styles.switchModalButton}>
-							<Text style={styles.switchButtonText}>친구요청</Text>
-							<Switch
-								style={{ marginRight: 10 }}
-								trackColor={{ false: "#767577", true: "#3B4664" }}
-								thumbColor={ notificationSettings.friendRequest ? "#81b0ff" : "#f4f3f4" }
-								ios_backgroundColor="#3e3e3e"
-								onValueChange={() => toggleSetting('friendRequest')}
-								value={ notificationSettings.friendRequest }
-							/>
-						</View>
-						<View style={styles.switchModalButton}>
-							<Text style={styles.switchButtonText}>투표알림</Text>
-							<Switch
-								style={{ marginRight: 10 }}
-								trackColor={{ false: "#767577", true: "#3B4664" }}
-								thumbColor={ notificationSettings.voteNotification ? "#81b0ff" : "#f4f3f4" }
-								ios_backgroundColor="#3e3e3e"
-								onValueChange={() => toggleSetting('voteNotification')}
-								value={ notificationSettings.voteNotification }
-							/>
-						</View>
-						<TouchableOpacity
-							style={[styles.modalButton, { backgroundColor: '#4CAF50' }]}
-							onPress={saveChanges}
-						>
-							<Text style={styles.buttonText}>저장</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							style={[styles.modalButton, { backgroundColor: "grey" }]}
-							onPress={onClose}
-						>
-							<Text style={styles.buttonText}>닫기</Text>
-						</TouchableOpacity>
 					</View>
-				</View>
-			</Modal>
-		);
-	};
-	
-	const BlockModal = ({ isVisible, onClose }) => {
-		const [editButton, setEditButton] = useState(false);
-		const [blockedStatus, setBlockedStatus] = useState({});
-		const [originalStatus, setOriginalStatus] = useState({});
-		const [blockedUsers, setBlockedUsers] = useState([]);
-		
-		const fetchBlockedUsers = async () => {
-			try {
-				const response = await axios.get(`http://192.168.0.3:3000/blocked_users`);
-				setBlockedUsers(response.data);
-			} catch (error) {
-				console.error('Error fetching calendar data', error);
-			}
-		};
-		useEffect(() => {
-			console.log(blockedUsers);
-		}, [blockedUsers]);
-		
-		useEffect(() => {
-			fetchBlockedUsers();
-		}, []);
-		
-		// 각 사용자의 차단 상태를 초기화합니다.
-		useEffect(() => {
-			const initialStatus = blockedUsers.reduce((status, user) => {
-				status[user.id] = false; // 초기 상태를 false로 설정합니다.
-				return status;
-			}, {});
-			setBlockedStatus(initialStatus);
-		}, [blockedUsers]);
-		// 편집 상태를 시작할 때의 차단된 사용자 상태를 저장합니다.
-		const startEditing = () => {
-			setOriginalStatus({ ...blockedStatus });
-			setEditButton(true);
-		};
-		// 편집 취소 함수
-		const cancelEditing = () => {
-			setBlockedStatus(originalStatus);
-			setEditButton(false);
-		};
-		const toggleBlockStatus = (userId) => {
-			setBlockedStatus(prevStatus => ({
-				...prevStatus,
-				[userId]: !prevStatus[userId]
-			}));
-		};
-// 저장 버튼 클릭 시 호출되는 함수
-		const handleSave = async () => {
-			// 변경된 사항이 있는지 확인합니다.
-			const hasChanges = Object.keys(blockedStatus).some(id => blockedStatus[id] !== originalStatus[id]);
-			if (hasChanges) {
-				// blockedStatus에서 차단 해제된 사용자의 ID를 추출합니다.
-				const unblockedIds = Object.keys(blockedStatus).filter(id => !blockedStatus[id]);
-				// blockedUsers 배열에서 해당 ID의 사용자 정보를 찾습니다.
-				const unblockedUserInfo = blockedUsers.filter(user => unblockedIds.includes(String(user.id)));
-				
-				try {
-					await axios.delete('http://192.168.0.3:3000/blocked_users');
-					const response = await axios.post('http://192.168.0.3:3000/blocked_users', unblockedUserInfo);
-					console.log('서버 응답:', response.data);
-				} catch (error) {
-					console.error('Error updating blocked users:', error);
-				}
-			}
-			// 모달을 닫습니다.
-			onClose();
-		};
-		return (
-			<Modal
-				animationType="fade"
-				visible={isVisible}
-				onRequestClose={onClose}
-				transparent={true}
-			>
-				<View style={styles.modalContainer}>
-					<View style={styles.imageContainer}>
-						<Text style={[styles.modalText, { marginTop: "8%", }]}>차단된 친구</Text>
-						<Text style={[styles.modalSmallText, { marginBottom: "3%", }]}> 차단을 편집하세요</Text>
-						{ blockedUsers.length === 0 ? (
-							<View style={styles.blockNone}>
-								<Text>차단한 친구가 없어요</Text>
-							</View>
-						) : (
-							<>
-								<ScrollView
-									style={styles.scrollContainer}
-									contentContainerStyle={styles.scrollContent}
-								>
-									{blockedUsers.map((user) => (
-										<View key={user.id} style={styles.scrollModalButton}>
-											<Image
-												style={styles.profileImage}
-												source={{ uri: user.profile_url }}
-											/>
-											<Text style={styles.buttonText}>{user.username}</Text>
-											{ editButton && (
-												<TouchableOpacity
-													style={[
-														styles.blockedButton,
-														{ backgroundColor: blockedStatus[user.id] ? 'red' : 'green' } // 차단 상태에 따라 색상 변경
-													]}
-													onPress={() => toggleBlockStatus(user.id)}
-												>
-													<Text>{blockedStatus[user.id] ? 'Unb' : 'Blo'}</Text>
-												</TouchableOpacity>
-											)}
-										</View>
-									))}
-								</ScrollView>
-								<View style={styles.blockedModalButton}>
-									{!editButton ? (
-										<TouchableOpacity
-											style={[styles.blockedModalSaveButton, { backgroundColor: "#99A1F6", }]}
-											onPress={startEditing}                  >
-											<Text style={styles.buttonText}>편집</Text>
-										</TouchableOpacity>
-									) : (
-										<TouchableOpacity
-											style={[styles.blockedModalSaveButton, { backgroundColor: "#3B4664", }]}
-											onPress={cancelEditing}
-										>
-											<Text style={styles.buttonText}>편집 취소</Text>
-										</TouchableOpacity>
-									)}
-									<TouchableOpacity
-										style={styles.blockedModalSaveButton}
-										onPress={handleSave}
-									>
-										<Text style={styles.buttonText}>저장</Text>
+					<View style={{
+						flexDirection: "column",
+						marginLeft: "auto",
+					}}>
+						{post.friend === 1 && ( friendLook === true ? (
+								<View style={[
+									styles.right,
+									{
+										backgroundColor: "#3B4664",
+										padding: 5,
+										marginBottom: 5,
+										borderRadius: 3,
+									}
+								]}>
+									<TouchableOpacity onPress={toggleFriendSend}>
+										<Text style={{
+											fontSize: 15,
+											color: "white",
+										}}>
+											친구 추가
+										</Text>
 									</TouchableOpacity>
 								</View>
-							</>
+							) : (
+								<View style={[
+									styles.right,
+									{
+										backgroundColor: "#3B4664",
+										padding: 5,
+										marginBottom: 5,
+										borderRadius: 3,
+									}
+								]}>
+									<Text style={{
+										fontSize: 15,
+										color: "white",
+									}}>
+										추가 완료
+									</Text>
+								</View>
+							)
 						)}
-						<TouchableOpacity
-							style={[styles.modalButton, { backgroundColor: "grey", marginBottom: "10%", }]}
-							onPress={onClose}
-						>
-							<Text style={styles.buttonText}>닫기</Text>
+						<TouchableOpacity style={styles.right} onPress={toggleOptionsVisibility} onLayout={(event) => {
+							const layout = event.nativeEvent.layout;
+							setButtonLayout(layout);
+						}}>
+							<SimpleLineIcons name="options-vertical" size={20} color="black" />
 						</TouchableOpacity>
 					</View>
 				</View>
-			</Modal>
-		);
-	};
-	
-	const TimeModal = ({ isVisible, onClose }) => {
-		const [Time_type, setTime_type] = useState({});
-		const fetchTime_type = async () => {
-			try {
-				const response = await axios.get(`http://192.168.0.3:3000/Time`);
-				setTime_type(response.data[0]);
-				console.log(response.data[0]);
-			} catch (error) {
-				console.error('Error fetching calendar data', error);
-			}
-		};
-		useEffect(() => {
-			fetchTime_type();
-		}, []);
-		// 변경사항을 저장하고 모달을 닫는 함수
-		const saveChanges = async () => {
-			console.log("Saved Time_type:", Time_type);
-			try {
-				const Delete = await axios.delete(`http://192.168.0.3:3000/Time/1`);
-				const response = await axios.post(`http://192.168.0.3:3000/Time`, Time_type);
-				alert(`Photo Time이 성공적으로\n제출되었습니다.`);
-			} catch (error) {
-				console.error('Error posting notification', error);
-				alert("Photo Time을 제출하는 중\n오류가 발생했습니다.");
-			}
-			onClose(); // 설정을 저장한 후 모달을 닫습니다.
-		};
-		const handleTimeTypeChange = (type) => {
-			setTime_type(prevState => ({
-				...prevState,
-				type: type
-			}));
-			console.log('Time_type:', Time_type);
-		};
-		return (
-			<Modal
-				animationType="fade"
-				visible={isVisible}
-				onRequestClose={onClose}
-				transparent={true}
-			>
-				<View style={styles.modalContainer}>
-					<View style={styles.imageContainer}>
-						<Text style={styles.modalText}>Photo Time</Text>
-						<Text style={styles.modalSmallText}>사진을 찍을 시간을 정해주세요!</Text>
-						<TouchableOpacity
-							onPress={() => handleTimeTypeChange(0)}
-							style={Time_type.type === 0 ? styles.selectedModalButton : styles.modalButton }
-						>
-							<Text style={styles.buttonText}>0-6</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							onPress={() => handleTimeTypeChange(1)}
-							style={Time_type.type === 1 ? styles.selectedModalButton : styles.modalButton }
-						>
-							<Text style={styles.buttonText}>7-12</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							onPress={() => handleTimeTypeChange(2)}
-							style={Time_type.type === 2 ? styles.selectedModalButton : styles.modalButton }
-						>
-							<Text style={styles.buttonText}>13-18</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							onPress={() => handleTimeTypeChange(3)}
-							style={Time_type.type === 3 ? styles.selectedModalButton : styles.modalButton }
-						>
-							<Text style={styles.buttonText}>19-24</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							style={[styles.modalButton, { backgroundColor: '#4CAF50', }]}
-							onPress={saveChanges}
-						>
-							<Text style={styles.buttonText}>저장</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							style={[styles.modalButton, { backgroundColor: "grey" }]}
-							onPress={onClose}
-						>
-							<Text style={styles.buttonText}>닫기</Text>
+				{isOptionsVisible && (
+					<View style={[
+						styles.optionsContainer,
+						post.friend === 1 ?
+							{ top: buttonLayout.y + buttonLayout.height, right: 0 } :
+							{ top: buttonLayout.y + buttonLayout.height + 30, right: 0 }
+					]}>
+						<TouchableOpacity onPress={toggleBlock} style={{ flexDirection:'row', alignItems: 'center', }}>
+							<Feather name='alert-triangle' style={{ marginLeft: 10, color: 'red' }}/>
+							<Text style={[styles.optionItem, {color: 'red'}]}>사용자 차단하기</Text>
 						</TouchableOpacity>
 					</View>
+				)}
+				<View style={styles.imageButtonContainer} onLayout={onImageButtonLayout}>
+					<ImageButton
+						front_image={post.post_front_url}
+						back_image={post.post_back_url}
+						containerHeight={imageButtonHeight}
+						windowWidth={windowWidth}
+					/>
 				</View>
-			</Modal>
-		);
-	};
-	
-	return (
-		<View style={styles.container}>
-			<ScrollView style={styles.scrollView}>
-				<TouchableOpacity onPress={() => navigation.navigate('내 설정 편집', { user: user })} style={styles.View}>
-					<Image source={{ uri: user.profile_url }} style={styles.Image}/>
-					<View style={{ marginLeft: 10 }}>
-						<Text style={styles.Text}>{user.username}</Text>
-						<Text style={styles.Text}>{user.user_Id}</Text>
+				<View style={{ padding: 5, zIndex: 2, minHeight: 90, backgroundColor: "white", }}>
+					<View style={[styles.cardItem, {padding: 10}]}>
+						<Text style={styles.title}>{post.title}</Text>
 					</View>
-				</TouchableOpacity>
-				<View>
-					<OptionText label="기능" />
-					<OptionItem
-						iconType={FontAwesome5}
-						icon="calendar-alt"
-						label="캘린더"
-						onPress={() => navigation.navigate('캘린더')}
-					/>
-				</View>
-				<View>
-					<OptionText label="설정" />
-					<OptionItem
-						iconType={AntDesign}
-						icon="bells"
-						label="알림"
-						onPress={notificationModalVisible}
-					/>
-					{isNotificationModal && (
-						<NotificationModal
-							isVisible={isNotificationModal}
-							onClose={() => setIsNotificationModal(false)}
+					<View style={styles.cardItem}>
+						<View style={styles.left}>
+							<TouchableOpacity style={styles.iconButton} onPress={toggleLike}>
+								<Ionicons name={isLiked ? 'heart' : 'heart-outline'} style={styles.icon} size={24} color={isLiked ? 'red' : 'black'}/>
+								<Text>{likesCount}</Text>
+							</TouchableOpacity>
+							<TouchableOpacity style={styles.iconButton}>
+								<Ionicons name='chatbubbles' style={styles.icon} onPress={toggleCommentVisibility} size={24}/>
+							</TouchableOpacity>
+							<TouchableOpacity onPress={() => Share.share({ message: `${post.title}: http://192.168.0.3:3000/posts?post_id=${post.post_id}/` })}>
+								<MaterialIcons name='send' style={styles.icon} size={24} />
+							</TouchableOpacity>
+						</View>
+						<CommentModal
+							isVisible={isCommentVisible}
+							postId={post.post_id}
+							onClose={() => setIsCommentVisible(false)}
 						/>
-					)}
-					<OptionItem
-						iconType={FontAwesome6}
-						icon="user-shield"
-						label="차단 유저 관리"
-						onPress={blockModalVisible}
-					/>
-					{isBlockModal && (
-						<BlockModal
-							isVisible={isBlockModal}
-							onClose={() => setIsBlockModal(false)}
-						/>
-					)}
-					<OptionItem
-						iconType={MaterialIcons}
-						icon="phonelink-ring"
-						label="Photo Time"
-						onPress={timeModalVisible}
-					/>
-					{isTimeModal && (
-						<TimeModal
-							isVisible={isTimeModal}
-							onClose={() => setIsTimeModal(false)}
-						/>
-					)}
+						{post.post_status === 1 || post.post_status === 2 ? (
+							<View style={[
+								styles.right,
+								{
+									marginLeft: 'auto',
+									padding: 5,
+									paddingLeft: 30,
+									paddingRight: 30,
+									backgroundColor: "#3B4664",
+									borderRadius: 10,}
+							]}>
+								{post.post_status === 1 && (
+									<Text style={{ color: "white", fontSize: 25}}>free</Text>
+								)}
+								{post.post_status === 2 && (
+									<Text style={{ color: "white", fontSize: 25}}>late</Text>
+								)}
+							</View>
+						) : null}
+					</View>
 				</View>
-				<View>
-					<OptionText label="더보기" />
-					<OptionItem
-						iconType={AntDesign}
-						icon="sharealt"
-						label="공유"
-					/>
-					<OptionItem
-						iconType={Entypo}
-						icon="chat"
-						label="도움받기"
-					/>
-				</View>
-				<View style={{ marginTop: 30 }}>
-					<OptionItem
-						iconType={Entypo}
-						icon="log-out"
-						label="로그아웃"
-						backgroundColor="grey"
-					/>
-					<OptionItem
-						iconType={Ionicons}
-						icon="alert-circle"
-						label="계정 삭제"
-						backgroundColor="red"
-					/>
-				</View>
-			</ScrollView>
-		</View>
+			</View>
+		</TouchableWithoutFeedback>
 	);
-};
+}
+
 const styles = StyleSheet.create({
-	container: {
+	imageButtonContainer: {
 		flex: 1,
-		backgroundColor: '#fff',
 	},
-	scrollView: {
-		margin: 20,
-	},
-	View: {
-		flexDirection: "row",
-		alignItems: "center",
-		padding: 20,
-		borderRadius: 15,
-		backgroundColor: "#99A1B6",
-		marginBottom: 10,
-	},
-	Image: {
-		width: 74,
-		height: 74,
-		borderRadius: 37,
+	optionsContainer: {
+		position: 'absolute',
+		zIndex: 2,
 		backgroundColor: 'white',
-	},
-	Text: {
-		fontSize: 20,
-		fontWeight: "300",
-	},
-	smallText: {
-		fontSize: 18,
-		fontWeight: "300",
-		margin: 5,
-	},
-	modalContainer: {
-		flex: 1,
-		backgroundColor: 'rgba(0, 0, 0, 0.5)',
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	imageContainer: {
-		alignItems: 'center',
-		justifyContent: 'center',
-		width: windowWidth * 0.8,
-		height: windowHeight * 0.7,
-		borderRadius: 20,
-		backgroundColor: 'white',
-	},
-	scrollContainer: {
-		width: windowWidth * 0.65,
-		borderRadius: 10,
-		borderColor: 'black',
-		backgroundColor: '#81b0ff',
-	},
-	profileImage: {
-		height: 30,
-		width: 30,
-		borderRadius: 15,
-		borderWidth: 1,
-		borderColor: "grey",
-		marginHorizontal: 10,
-	},
-	scrollContent: {
-		alignItems: 'center', // 컨텐츠를 가운데 정렬
-	},
-	switchButtonText: {
-		marginLeft: 10,
-		marginRight: "auto",
-		color: "black",
-		fontSize: 15,
-		fontWeight: "bold",
-		textAlign: "center",
-	},
-	buttonText: {
-		color: "black",
-		fontSize: 15,
-		fontWeight: "bold",
-		textAlign: "center",
-	},
-	modalText: {
-		color: "black",
-		fontSize: 20,
-		fontWeight: "bold",
-		textAlign: "center",
+		padding: 12,
+		paddingLeft: 14,
+		borderRadius: 4,
+		shadowColor: 'black',
+		shadowOffset: { width: 0, height: 2 },
+		shadowRadius: 4,
+		shadowOpacity: 0.3,
+		elevation: 4,
 		marginTop: 10,
 	},
-	modalSmallText: {
-		color: "black",
-		fontSize: 12,
-		textAlign: "center",
-		marginTop: 3,
-		marginBottom: 5,
-	},
-	switchModalButton: {
-		flexDirection: "row",
-		width: "80%",
-		height: 50,
-		borderRadius: 10,
-		borderWidth: 1,
-		backgroundColor: "#99A1B6",
-		borderColor: 'black',
-		alignItems: 'center',
-		margin: "3%",
-	},
-	scrollModalButton :{
-		flexDirection: "row",
-		width: "100%",
-		height: 50,
-		borderRadius: 10,
-		borderWidth: 1,
-		backgroundColor: "#99A1B6",
-		borderColor: 'black',
-		alignItems: 'center',
-		margin: "3%",
-	},
-	blockedModalSaveButton: {
-		width: "45%",
-		margin: "5%",
-		height: "100%",
-		borderRadius: 10,
-		borderWidth: 1,
-		borderColor: "black",
-		justifyContent: "center",
-		backgroundColor: "#4CAF50",
-	},
-	blockedModalButton: {
-		width: "80%",
-		height: 50,
-		borderRadius: 10,
-		borderWidth: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
-		margin: "3%",
-		flexDirection: "row",
-		borderColor:"white",
-		backgroundColor: 'white',
-	},
-	modalButton: {
-		width: "80%",
-		height: 50,
-		borderRadius: 10,
-		borderWidth: 1,
-		backgroundColor: "#99A1B6",
-		borderColor: 'black',
-		alignItems: 'center',
-		justifyContent: 'center',
-		margin: "3%",
-	},
-	selectedModalButton: {
-		width: "80%",
-		height: "10%",
-		borderRadius: 10,
-		borderWidth: 1,
-		backgroundColor: "#3B4664",
-		borderColor: 'black',
-		alignItems: 'center',
-		justifyContent: 'center',
-		margin: "3%",
-	},
-	blockedButton: {
-		marginLeft: "auto",
+	optionItem: {
+		marginLeft: 10,
 		marginRight: 10,
-		width:30,
-		height: 30,
-		borderRadius: 5,
-		backgroundColor: "red",
+		fontSize: 15,
 	},
-	blockNone : {
-		height: "70%",
-		width: "80%",
-		justifyContent: 'center',
+	cardContainer: {
+		flex: 1,
+	},
+	cardItem: {
+		padding: 5,
+		flexDirection: 'row',
 		alignItems: 'center',
-		marginLeft: "10%",
-		marginRight: "10%",
-		backgroundColor: "#f4f3f4",
-		padding: 10,
-		borderWidth: 1,
-		borderColor: "black",
 	},
-})
-export default MyOptions;
+	left: {
+		flexDirection: 'row',
+		alignItems: 'center',
+	},
+	body: {
+		marginLeft: 10,
+		height: 55,
+	},
+	thumbnail: {
+		width: 44,
+		height: 44,
+		borderRadius: 22,
+	},
+	title: {
+		fontWeight: '900',
+	},
+	iconButton: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center',
+		marginRight: 15,
+	},
+	icon: {
+		marginRight: 4,
+	},
+	right: {
+		marginLeft: 'auto',
+	},
+});
+
+export default React.memo(CardComponent)
