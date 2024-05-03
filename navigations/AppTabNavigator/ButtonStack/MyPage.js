@@ -65,7 +65,9 @@ const MyPage = ({ navigation, route }) => {
 				<Button3 onPress={() => navigation.navigate('MyOp', { user: userData })} />
 			</View>
 			<View style={styles.topContainer}>
-				<Image source={{ uri: userData.profile_url }} style={styles.avatar}/>
+				<TouchableOpacity>
+					<Image source={{ uri: userData.profile_url }} style={styles.avatar}/>
+				</TouchableOpacity>
 				<View style={styles.textContainer}>
 					<Text style={styles.name}>{userData.username}</Text>
 					<FontAwesome5
