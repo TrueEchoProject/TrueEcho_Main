@@ -28,11 +28,11 @@ const PublicPosts = React.forwardRef((props, ref) => {
 	const getPosts = async (selectedRange, selectedLocation, start = 0) => {
 		setRefreshing(true);
 		const limit = 10; // 한 번에 불러올 게시물 수
-		let url = `http://192.168.0.27:3000/posts?scope=PUBLIC&_start=${start}&_limit=${limit}`;
+		let url = `http://192.168.0.3:3000/posts?scope=PUBLIC&_start=${start}&_limit=${limit}`;
 		
 		if (selectedRange) {
 			try {
-				const locationResponse = await axios.get('http://192.168.0.27:3000/user_location');
+				const locationResponse = await axios.get('http://192.168.0.3:3000/user_location');
 				const words = locationResponse.data[0].your_location.split(' ');
 				let newLocation = '';
 				switch (selectedRange) {
