@@ -53,6 +53,7 @@ const MyOptions = ({ navigation, route }) => {
 	const timeModalVisible = () => {
 		setIsTimeModal(!isTimeModal);
 	};
+	
 	const NotificationModal = ({ isVisible, onClose }) => {
 		const [notificationSettings, setNotificationSettings] = useState({});
 		
@@ -130,9 +131,103 @@ const MyOptions = ({ navigation, route }) => {
 			</Modal>
 		);
 	};
+	
+	const BlockModal = ({ isVisible, onClose }) => {
+		return (
+			<Modal
+				animationType="fade"
+				visible={isVisible}
+				onRequestClose={onClose}
+				transparent={true}
+			>
+				<View style={styles.modalContainer}>
+					<View style={styles.imageContainer}>
+						<Text style={[styles.modalText, { marginTop: "10%", }]}>차단된 친구</Text>
+						<Text style={styles.modalSmallText}>차단을 편집하세요</Text>
+						<ScrollView
+							style={styles.scrollContainer}
+							contentContainerStyle={styles.scrollContent}
+						>
+							<TouchableOpacity style={styles.modalButton}>
+								<Text style={styles.buttonText}>user 1</Text>
+							</TouchableOpacity>
+							<TouchableOpacity style={styles.modalButton}>
+								<Text style={styles.buttonText}>user 2</Text>
+							</TouchableOpacity>
+							<TouchableOpacity style={styles.modalButton}>
+								<Text style={styles.buttonText}>user 3</Text>
+							</TouchableOpacity>
+							<TouchableOpacity style={styles.modalButton}>
+								<Text style={styles.buttonText}>user 4</Text>
+							</TouchableOpacity>
+							<TouchableOpacity style={styles.modalButton}>
+								<Text style={styles.buttonText}>user 5</Text>
+							</TouchableOpacity>
+							<TouchableOpacity style={styles.modalButton}>
+								<Text style={styles.buttonText}>user 6</Text>
+							</TouchableOpacity>
+							<TouchableOpacity style={styles.modalButton}>
+								<Text style={styles.buttonText}>user 7</Text>
+							</TouchableOpacity>
+							<TouchableOpacity style={styles.modalButton}>
+								<Text style={styles.buttonText}>user 8</Text>
+							</TouchableOpacity>
+							<TouchableOpacity style={styles.modalButton}>
+								<Text style={styles.buttonText}>user 9</Text>
+							</TouchableOpacity>
+						</ScrollView>
+						<TouchableOpacity
+							style={[styles.modalButton, { backgroundColor: '#4CAF50', marginTop: "10%", }]}
+							onPress={onClose}
+						>
+							<Text style={styles.buttonText}>저장</Text>
+						</TouchableOpacity>
+						<TouchableOpacity
+							style={[styles.modalButton, { backgroundColor: "grey", marginBottom: "10%", }]}
+							onPress={onClose}
+						>
+							<Text style={styles.buttonText}>닫기</Text>
+						</TouchableOpacity>
+					</View>
+				</View>
+			</Modal>
+		);
+	};
+	
 	const TimeModal = ({ isVisible, onClose }) => {
-		const [Time_type, setTime_type] = useState(1);
-		
+		const [Time_type, setTime_type] = useState({});
+		const fetchTime_type = async () => {
+			try {
+				const response = await axios.get(`http://192.168.0.3:3000/Time`);
+				setTime_type(response.data[0]);
+				console.log(response.data[0]);
+			} catch (error) {
+				console.error('Error fetching calendar data', error);
+			}
+		};
+		useEffect(() => {
+			fetchTime_type();
+		}, []);
+		// 변경사항을 저장하고 모달을 닫는 함수
+		const saveChanges = async () => {
+			console.log("Saved Time_type:", Time_type);
+			try {
+				const Delete = await axios.delete(`http://192.168.0.3:3000/Time/1`);
+				const response = await axios.post(`http://192.168.0.3:3000/Time`, Time_type);
+				alert(`Photo Time이 성공적으로\n제출되었습니다.`);
+			} catch (error) {
+				console.error('Error posting notification', error);
+				alert("Photo Time을 제출하는 중\n오류가 발생했습니다.");
+			}
+			onClose(); // 설정을 저장한 후 모달을 닫습니다.
+		};
+		const handleTimeTypeChange = (type) => {
+			setTime_type(prevState => ({
+				...prevState,
+				type: type
+			}));
+			console.log('Time_type:', Time_type);
+		};
 		return (
 			<Modal
 				animationType="fade"
@@ -145,73 +240,32 @@ const MyOptions = ({ navigation, route }) => {
 						<Text style={styles.modalText}>Photo Time</Text>
 						<Text style={styles.modalSmallText}>사진을 찍을 시간을 정해주세요!</Text>
 						<TouchableOpacity
-							onPress={() => setTime_type(0)}
-							style={Time_type === 0 ? styles.selectedModalButton : styles.modalButton }
+							onPress={() => handleTimeTypeChange(0)}
+							style={Time_type.type === 0 ? styles.selectedModalButton : styles.modalButton }
 						>
 							<Text style={styles.buttonText}>0-6</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
-							onPress={() => setTime_type(1)}
-							style={Time_type === 1 ? styles.selectedModalButton : styles.modalButton }
+							onPress={() => handleTimeTypeChange(1)}
+							style={Time_type.type === 1 ? styles.selectedModalButton : styles.modalButton }
 						>
 							<Text style={styles.buttonText}>7-12</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
-							onPress={() => setTime_type(2)}
-							style={Time_type === 2 ? styles.selectedModalButton : styles.modalButton }
+							onPress={() => handleTimeTypeChange(2)}
+							style={Time_type.type === 2 ? styles.selectedModalButton : styles.modalButton }
 						>
 							<Text style={styles.buttonText}>13-18</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
-							onPress={() => setTime_type(3)}
-							style={Time_type === 3 ? styles.selectedModalButton : styles.modalButton }
+							onPress={() => handleTimeTypeChange(3)}
+							style={Time_type.type === 3 ? styles.selectedModalButton : styles.modalButton }
 						>
 							<Text style={styles.buttonText}>19-24</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
 							style={[styles.modalButton, { backgroundColor: '#4CAF50', }]}
-							onPress={onClose}
-						>
-							<Text style={styles.buttonText}>저장</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							style={[styles.modalButton, { backgroundColor: "grey" }]}
-							onPress={onClose}
-						>
-							<Text style={styles.buttonText}>닫기</Text>
-						</TouchableOpacity>
-					</View>
-				</View>
-			</Modal>
-		);
-	};
-	const BlockModal = ({ isVisible, onClose }) => {
-		return (
-			<Modal
-				animationType="fade"
-				visible={isVisible}
-				onRequestClose={onClose}
-				transparent={true}
-			>
-				<View style={styles.modalContainer}>
-					<View style={styles.imageContainer}>
-						<Text style={styles.modalText}>차단된 친구</Text>
-						<Text style={styles.modalSmallText}>차단을 편집하세요</Text>
-						<TouchableOpacity style={styles.modalButton}>
-							<Text style={styles.buttonText}>user 1</Text>
-						</TouchableOpacity>
-						<TouchableOpacity style={styles.modalButton}>
-							<Text style={styles.buttonText}>user 2</Text>
-						</TouchableOpacity>
-						<TouchableOpacity style={styles.modalButton}>
-							<Text style={styles.buttonText}>user 3</Text>
-						</TouchableOpacity>
-						<TouchableOpacity style={styles.modalButton}>
-							<Text style={styles.buttonText}>user 4</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							style={[styles.modalButton, { backgroundColor: '#4CAF50', }]}
-							onPress={onClose}
+							onPress={saveChanges}
 						>
 							<Text style={styles.buttonText}>저장</Text>
 						</TouchableOpacity>
@@ -275,7 +329,7 @@ const MyOptions = ({ navigation, route }) => {
 					<OptionItem
 						iconType={MaterialIcons}
 						icon="phonelink-ring"
-						label="시간대"
+						label="Photo Time"
 						onPress={timeModalVisible}
 					/>
 					{isTimeModal && (
@@ -361,6 +415,13 @@ const styles = StyleSheet.create({
 		borderRadius: 20,
 		backgroundColor: 'white',
 	},
+	scrollContainer: {
+		width: windowWidth * 0.8,
+		backgroundColor: 'white',
+	},
+	scrollContent: {
+		alignItems: 'center', // 컨텐츠를 가운데 정렬
+	},
 	buttonText: {
 		color: "black",
 		fontSize: 15,
@@ -372,6 +433,7 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 		fontWeight: "bold",
 		textAlign: "center",
+		marginTop: 10,
 	},
 	modalSmallText: {
 		color: "black",
@@ -382,7 +444,7 @@ const styles = StyleSheet.create({
 	},
 	modalButton: {
 		width: "80%",
-		height: "10%",
+		height: 50,
 		borderRadius: 10,
 		borderWidth: 1,
 		backgroundColor: "#99A1B6",
