@@ -23,11 +23,6 @@ const Calendar = () => {
 	const [isImageVisible, setIsImageVisible] = useState(false);
 	const [currentImageUrls, setCurrentImageUrls] = useState({ front: null, back: null });
 	const [selectedPins, setSelectedPins] = useState([]);  // 선택된 핀들의 정보를 저장할 상태
-	const [selectFront, setSelectFront] = useState(true);
-	
-	const changeSelectFront = () => {
-		setSelectFront(!selectFront);
-	};
 	const fetchCalendar = async () => {
 		try {
 			const response = await axios.get(`http://192.168.0.3:3000/user_calendar`);
@@ -164,6 +159,12 @@ const Calendar = () => {
 			setIsImageVisible(false); // 모달 닫기
 			return;
 		}
+		// 이미 5개의 핀이 선택되었는지 확인
+		if (selectedPins.length >= 5) {
+			alert("최대 5개의 핀을 선택할 수 있습니다.");
+			setIsImageVisible(false); // 모달 닫기
+			return;
+		}
 		// 새로운 핀 추가
 		const newPin = {
 			frontUrl: currentImageUrls.front,
@@ -184,7 +185,7 @@ const Calendar = () => {
 	};
 	// 선택된 핀을 화면에 표시하는 컴포넌트
 	const SelectedPinsList = () => {
-		// 최대 6개의 칸을 가정
+		// 최대 5개의 칸을 가정
 		const maxSlots = 5;
 		const emptySlots = maxSlots - selectedPins.length;
 		const allSlots = [...selectedPins];
@@ -231,6 +232,9 @@ const Calendar = () => {
 			<View style={styles.container}>
 				<View style={styles.header}>
 					<Text style={styles.monthLabel}>{currentMonth.getFullYear()}년 {months[currentMonth.getMonth()]}월</Text>
+					<TouchableOpacity style={{borderRadius:5, padding:5, backgroundColor: '#3B4664',}}>
+						<Text style={{color: "white"}}>제출</Text>
+					</TouchableOpacity>
 				</View>
 				{renderCalendar()}
 				{isImageVisible && (
@@ -370,7 +374,7 @@ const styles = StyleSheet.create({
 		margin: 5,
 	},
 	selectedImage: {
-		width: '100%',
+		width: 90,
 		height: 90,
 		borderRadius: 10, // 이미지 모서리 둥글게
 	},
