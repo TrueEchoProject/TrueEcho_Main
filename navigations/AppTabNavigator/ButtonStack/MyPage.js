@@ -17,6 +17,13 @@ const MyPage = ({ navigation, route }) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	
 	useEffect(() => {
+		if (route.params?.Update) {
+			console.log('Received pin response:', route.params.Update);
+			setUserData(route.params.Update);
+		}
+	}, [route.params?.Update]);
+	
+	useEffect(() => {
 		if (route.params?.pinRes) {
 			console.log('Received pin response:', route.params.pinRes);
 			setPinData(route.params.pinRes.pins);
