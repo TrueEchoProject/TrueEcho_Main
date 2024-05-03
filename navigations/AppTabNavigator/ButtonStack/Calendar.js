@@ -66,6 +66,7 @@ const Calendar = ({ navigation }) => {
 	
 	useEffect(() => {
 		fetchCalendar();
+		loadSelectedPins();  // 앱 로드 시 선택된 핀을 로드
 	}, []);
 	
 	const toggleImageVisibility = (imageUrl, imageBackUrl, date) => {
@@ -206,6 +207,21 @@ const Calendar = ({ navigation }) => {
 		const updatedPins = [...selectedPins];
 		updatedPins[index].isFrontShowing = !updatedPins[index].isFrontShowing;
 		setSelectedPins(updatedPins);
+	};
+	// 선택된 핀을 로드하는 함수
+	const loadSelectedPins = async () => {
+		try {
+			const response = await axios.get('http://192.168.0.3:3000/user_pin');
+			const selectedPinsData = response.data;
+			setSelectedPins(selectedPinsData.map(pin => ({
+				date: pin.created_at,
+				frontUrl: pin.post_front_url,
+				backUrl: pin.post_back_url,
+				isFrontShowing: true  // 기본적으로 전면 이미지를 보여줌
+			})));
+		} catch (error) {
+			console.error('Error fetching selected pins', error);
+		}
 	};
 	const removePin = (index) => {
 		setSelectedPins(prevPins => prevPins.filter((_, i) => i !== index));
