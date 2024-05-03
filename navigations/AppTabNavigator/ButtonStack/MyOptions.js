@@ -5,10 +5,10 @@ import { FontAwesome5, AntDesign, FontAwesome6, MaterialIcons, Entypo, Ionicons 
 const OptionText = ({ label }) => {
 	return <Text style={styles.smallText}>{label}</Text>;
 };
-const OptionItem = ({ icon, iconType, label, backgroundColor = "#99A1B6" }) => {
+const OptionItem = ({ navigation, icon, iconType, label, backgroundColor = "#99A1B6" }) => {
 	const IconComponent = iconType;
 	return (
-		<TouchableOpacity>
+		<TouchableOpacity onPress={navigation}>
 			<View style={[styles.View, { backgroundColor }]}>
 				<IconComponent name={icon} style={{marginRight: 15}} size={30} color="black" />
 				<Text style={styles.smallText}>{label}</Text>
@@ -17,42 +17,65 @@ const OptionItem = ({ icon, iconType, label, backgroundColor = "#99A1B6" }) => {
 	);
 };
 
-const MyOptions = () =>{
+const MyOptions = ({ navigation }) => {
 	return (
 		<View style={styles.container}>
 			<ScrollView style={styles.scrollView}>
-				<View style={{margin: 10}}>
+				<View style={{ margin: 10 }}>
 					<View style={styles.View}>
-						<View style={styles.Image}/>
-						<View style={{marginLeft: 10}}>
+						<View style={styles.Image} />
+						<View style={{ marginLeft: 10 }}>
 							<Text style={styles.Text}>박신형</Text>
 							<Text style={styles.Text}>sin1234</Text>
 						</View>
 					</View>
 					<View>
-						<OptionText label="기능"/>
-						<OptionItem iconType={FontAwesome5} icon="calendar-alt" label="캘린더"/>
+						<OptionText label="기능" />
+						<OptionItem
+							iconType={FontAwesome5}
+							icon="calendar-alt"
+							label="캘린더"
+							navigation={() => navigation.navigate('캘린더')}
+						/>
 					</View>
 					<View>
-						<OptionText label="설정"/>
+						<OptionText label="설정" />
 						<OptionItem iconType={AntDesign} icon="bells" label="알림" />
-						<OptionItem iconType={FontAwesome6} icon="user-shield" label="개인정보 보호" />
-						<OptionItem iconType={MaterialIcons} icon="phonelink-ring" label="시간대" />
+						<OptionItem
+							iconType={FontAwesome6}
+							icon="user-shield"
+							label="개인정보 보호"
+						/>
+						<OptionItem
+							iconType={MaterialIcons}
+							icon="phonelink-ring"
+							label="시간대"
+						/>
 					</View>
 					<View>
-						<OptionText label="더보기"/>
+						<OptionText label="더보기" />
 						<OptionItem iconType={AntDesign} icon="sharealt" label="공유" />
 						<OptionItem iconType={Entypo} icon="chat" label="도움받기" />
 					</View>
-					<View style={{marginTop: 30}}>
-						<OptionItem iconType={Entypo} icon="log-out" label="로그아웃" backgroundColor="grey" />
-						<OptionItem iconType={Ionicons} icon="alert-circle" label="계정 삭제" backgroundColor="red" />
+					<View style={{ marginTop: 30 }}>
+						<OptionItem
+							iconType={Entypo}
+							icon="log-out"
+							label="로그아웃"
+							backgroundColor="grey"
+						/>
+						<OptionItem
+							iconType={Ionicons}
+							icon="alert-circle"
+							label="계정 삭제"
+							backgroundColor="red"
+						/>
 					</View>
 				</View>
 			</ScrollView>
 		</View>
 	);
-}
+};
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
