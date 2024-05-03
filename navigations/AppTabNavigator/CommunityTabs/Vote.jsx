@@ -16,7 +16,7 @@ const Vote = ({ navigation }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const questionsResponse = await axios.get('http://192.168.123.121:3000/questions');
+                const questionsResponse = await axios.get('http://192.168.0.27:3000/questions');
                 setQuestions(questionsResponse.data);
             } catch (error) {
                 console.error('Error fetching data: ', error);
@@ -58,7 +58,7 @@ const Vote = ({ navigation }) => {
             
             // 사용자 선택 정보를 서버로 전송
             if (selectedInfo) { // selectedInfo가 존재할 때만 전송
-                axios.post('http://192.168.123.121:3000/submitVote', selectedInfo)
+                axios.post('http://192.168.0.27:3000/submitVote', selectedInfo)
                   .then(response => {
                       console.log('Vote submitted successfully:', response.data);
                   })

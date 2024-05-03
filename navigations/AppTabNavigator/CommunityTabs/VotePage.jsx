@@ -14,7 +14,7 @@ const VotePage = ({ question, onUserSelect }) => {
     
     const fetchUserData = async () => {
         try {
-            const response = await axios.get('http://192.168.123.121:3000/users');
+            const response = await axios.get('http://192.168.0.27:3000/users');
             setUserData(response.data || []);
             setSelectedUser(null);
             setSelectedUserImgUrls(null); // 이미지 상태 초기화

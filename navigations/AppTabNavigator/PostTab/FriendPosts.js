@@ -16,7 +16,6 @@ const FriendPosts = React.forwardRef((props, ref) => {
 	const [friendStatus, setFriendStatus] = useState([]);
 	const pagerViewRef = useRef(null);
 	const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
-	
 	const [lastFetchedIndex, setLastFetchedIndex] = useState(0);
 	
 	const fetchPostsAndRecommendations = async (start) => {
@@ -25,7 +24,7 @@ const FriendPosts = React.forwardRef((props, ref) => {
 		const postLimit = 8;
 		const recommendationLimit = 4;
 		try {
-			const postResponse = await axios.get(`http://192.168.0.3:3000/posts?scope=FRIEND&_start=${start}&_limit=${postLimit}`);
+			const postResponse = await axios.get(`http://192.168.0.27:3000/posts?scope=FRIEND&_start=${start}&_limit=${postLimit}`);
 			const newPosts = postResponse.data;
 			
 			const updatedContentList = [...contentList, ...newPosts.map(post => ({ type: 'post', data: post }))];
@@ -38,7 +37,7 @@ const FriendPosts = React.forwardRef((props, ref) => {
 			});
 			
 			if (newPosts.length === postLimit) {
-				const recsResponse = await axios.get(`http://192.168.0.3:3000/recommendations?_start=${contentList.filter(item => item.type === 'recommendation').length}&_limit=${recommendationLimit}`);
+				const recsResponse = await axios.get(`http://192.168.0.27:3000/recommendations?_start=${contentList.filter(item => item.type === 'recommendation').length}&_limit=${recommendationLimit}`);
 				const newRecs = recsResponse.data;
 				if (newRecs && newRecs.length > 0) {
 					updatedContentList.push({ type: 'recommendation', data: newRecs });
@@ -53,7 +52,6 @@ const FriendPosts = React.forwardRef((props, ref) => {
 			setIsLoading(false);
 		}
 	};
-	
 	const getPosts = async (start = 0) => {
 		if (start === 0) {
 			setRefreshing(true);
@@ -68,6 +66,25 @@ const FriendPosts = React.forwardRef((props, ref) => {
 		}
 	};
 	
+	const toggleFriendSend = async (index, item) => {
+		try {
+			await axios.post(`http://192.168.0.27:3000/friendSend`, {
+				friendSendUser: item.username
+			});
+			const newFriendStatus = [...friendStatus];
+			newFriendStatus[index] = true;
+			setFriendStatus(newFriendStatus);
+		} catch (error) {
+			console.error('Error sending friend request:', error);
+		}
+	};
+	
+	useFocusEffect(
+		useCallback(() => {
+			getPosts();
+		}, [])
+	);
+	
 	const handlePageChange = useCallback((e) => {
 		const newIndex = e.nativeEvent.position;
 		if (newIndex === currentPage) return; // 페이지가 실제로 변경되지 않았다면 종료
@@ -79,34 +96,6 @@ const FriendPosts = React.forwardRef((props, ref) => {
 			[contentList[currentPage]?.data?.post_id]: false
 		}));
 	}, [currentPage]);
-	
-	useEffect(() => {
-		console.log(contentList);
-	}, [contentList]);
-	
-	React.useImperativeHandle(ref, () => ({
-		getPosts: getPosts,
-	}));
-	
-	useFocusEffect(
-		useCallback(() => {
-			getPosts();
-		}, [])
-	);
-	
-	const toggleFriendSend = async (index, item) => {
-		try {
-			await axios.post(`http://192.168.0.3:3000/friendSend`, {
-				friendSendUser: item.username
-			});
-			const newFriendStatus = [...friendStatus];
-			newFriendStatus[index] = true;
-			setFriendStatus(newFriendStatus);
-		} catch (error) {
-			console.error('Error sending friend request:', error);
-		}
-	};
-	
 	useEffect(() => {
 		const thresholdIndex = contentList.length - 5; // 데이터를 더 불러오기 시작할 임계점
 		if (currentPage >= thresholdIndex && !isLoading) {
@@ -114,10 +103,17 @@ const FriendPosts = React.forwardRef((props, ref) => {
 		}
 	}, [currentPage, isLoading, contentList]);
 	
+	React.useImperativeHandle(ref, () => ({
+		getPosts: getPosts,
+	}));
+	
+	useEffect(() => {
+		console.log(contentList);
+	}, [contentList]);
+	
 	if (contentList.length === 0) {
 		return <View style={styles.container}><Text>Loading...</Text></View>;
 	}
-	
 	return (
 		<ScrollView
 			contentContainerStyle={styles.scrollViewContent}
@@ -162,6 +158,12 @@ const FriendPosts = React.forwardRef((props, ref) => {
 });
 
 const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: 'white',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
 	postContainer: {
 		flex: 1,
 		backgroundColor: 'white',

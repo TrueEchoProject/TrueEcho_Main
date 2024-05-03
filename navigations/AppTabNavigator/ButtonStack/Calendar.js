@@ -25,7 +25,7 @@ const Calendar = ({ navigation }) => {
 	const [selectedPins, setSelectedPins] = useState([]);  // 선택된 핀들의 정보를 저장할 상태
 	const fetchCalendar = async () => {
 		try {
-			const response = await axios.get(`http://192.168.0.3:3000/user_calendar`);
+			const response = await axios.get(`http://192.168.0.27:3000/user_calendar`);
 			const calendarData = response.data;
 			const newSpecificDates = {};
 			calendarData.forEach(item => {
@@ -36,7 +36,6 @@ const Calendar = ({ navigation }) => {
 			console.error('Error fetching calendar data', error);
 		}
 	};
-// 선택된 모든 핀을 서버에 전송하는 함수
 	const postPins = async () => {
 		if (selectedPins.length === 0) {
 			alert("선택된 핀이 없습니다.");
@@ -52,8 +51,8 @@ const Calendar = ({ navigation }) => {
 		};
 		
 		try {
-			const PostResponse = await axios.delete('http://192.168.0.3:3000/user_pin')
-			const response = await axios.post('http://192.168.0.3:3000/user_pin', pinData);
+			const PostResponse = await axios.delete('http://192.168.0.27:3000/user_pin')
+			const response = await axios.post('http://192.168.0.27:3000/user_pin', pinData);
 			alert("핀이 성공적으로 제출되었습니다.");
 			if (response) {
 				navigation.navigate("MyP", { pinRes: pinData }); // SendPost 페이지로 이동하면서 두 배열의 파라미터를 전달
@@ -63,14 +62,19 @@ const Calendar = ({ navigation }) => {
 			alert("핀을 제출하는 중 오류가 발생했습니다.");
 		}
 	};
-	
-	useEffect(() => {
-		fetchCalendar();
-	}, []);
-	
-	const toggleImageVisibility = (imageUrl, imageBackUrl, date) => {
-		setCurrentImageUrls({ front: imageUrl, back: imageBackUrl, date: date });
-		setIsImageVisible(!isImageVisible);
+	const loadSelectedPins = async () => {
+		try {
+			const response = await axios.get('http://192.168.0.27:3000/user_pin');
+			const selectedPinsData = response.data;
+			setSelectedPins(selectedPinsData.map(pin => ({
+				date: pin.created_at,
+				frontUrl: pin.post_front_url,
+				backUrl: pin.post_back_url,
+				isFrontShowing: true  // 기본적으로 전면 이미지를 보여줌
+			})));
+		} catch (error) {
+			console.error('Error fetching selected pins', error);
+		}
 	};
 	
 	const generateMatrix = () => {
@@ -97,7 +101,37 @@ const Calendar = ({ navigation }) => {
 		}
 		return matrix;
 	};
-	
+	const renderCalendar = () => {
+		const matrix = generateMatrix();
+		return (
+			<View style={styles.calendar}>
+				{matrix.map((row, rowIndex) => (
+					<View style={styles.row} key={rowIndex}>
+						{row.map((item, colIndex) => (
+							item.imageUrl && rowIndex !== 0 ? (
+								<TouchableOpacity
+									key={colIndex}
+									style={styles.cell}
+									onPress={() => toggleImageVisibility(item.imageUrl, item.imageBackUrl, item.date)}
+								>
+									<ImageBackground source={{ uri: item.imageBackUrl }} style={styles.backgroundImage}>
+										<Text style={styles.dateImageText}>{item.day}</Text>
+									</ImageBackground>
+								</TouchableOpacity>
+							) : (
+								<View
+									key={colIndex}
+									style={styles.cell}
+								>
+									<Text style={styles.dateText}>{item.day}</Text>
+								</View>
+							)
+						))}
+					</View>
+				))}
+			</View>
+		);
+	};
 	const ImageModal = ({ isVisible, postFront, postBack, onClose, onSelectPin }) => {
 		const [isFrontShowing, setIsFrontShowing] = useState(true);
 		const changeImage = () => {
@@ -147,37 +181,9 @@ const Calendar = ({ navigation }) => {
 			</Modal>
 		);
 	};
-	
-	const renderCalendar = () => {
-		const matrix = generateMatrix();
-		return (
-			<View style={styles.calendar}>
-				{matrix.map((row, rowIndex) => (
-					<View style={styles.row} key={rowIndex}>
-						{row.map((item, colIndex) => (
-							item.imageUrl && rowIndex !== 0 ? (
-								<TouchableOpacity
-									key={colIndex}
-									style={styles.cell}
-									onPress={() => toggleImageVisibility(item.imageUrl, item.imageBackUrl, item.date)}
-								>
-									<ImageBackground source={{ uri: item.imageBackUrl }} style={styles.backgroundImage}>
-										<Text style={styles.dateImageText}>{item.day}</Text>
-									</ImageBackground>
-								</TouchableOpacity>
-							) : (
-								<View
-									key={colIndex}
-									style={styles.cell}
-								>
-									<Text style={styles.dateText}>{item.day}</Text>
-								</View>
-							)
-						))}
-					</View>
-				))}
-			</View>
-		);
+	const toggleImageVisibility = (imageUrl, imageBackUrl, date) => {
+		setCurrentImageUrls({ front: imageUrl, back: imageBackUrl, date: date });
+		setIsImageVisible(!isImageVisible);
 	};
 	const handleSelectPin = () => {
 		// 중복된 날짜의 핀이 있는지 확인
@@ -207,12 +213,7 @@ const Calendar = ({ navigation }) => {
 		updatedPins[index].isFrontShowing = !updatedPins[index].isFrontShowing;
 		setSelectedPins(updatedPins);
 	};
-	const removePin = (index) => {
-		setSelectedPins(prevPins => prevPins.filter((_, i) => i !== index));
-	};
-	// 선택된 핀을 화면에 표시하는 컴포넌트
 	const SelectedPinsList = () => {
-		// 최대 5개의 칸을 가정
 		const maxSlots = 5;
 		const emptySlots = maxSlots - selectedPins.length;
 		const allSlots = [...selectedPins];
@@ -247,7 +248,14 @@ const Calendar = ({ navigation }) => {
 			</View>
 		);
 	};
+	const removePin = (index) => {
+		setSelectedPins(prevPins => prevPins.filter((_, i) => i !== index));
+	};
 	
+	useEffect(() => {
+		fetchCalendar();
+		loadSelectedPins();  // 앱 로드 시 선택된 핀을 로드
+	}, []);
 	useEffect(() => {
 		if (selectedPins) {
 			console.log(selectedPins);

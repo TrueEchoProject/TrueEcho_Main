@@ -25,13 +25,14 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		setOptionsVisible(!optionsVisible);
 	};
 	
-	const getPosts = async (selectedRange = range, start = 0) => {
+	const getPosts = async (selectedRange, selectedLocation, start = 0) => {
 		setRefreshing(true);
 		const limit = 10; // 한 번에 불러올 게시물 수
-		let url = `http://192.168.0.3:3000/posts?scope=PUBLIC&_start=${start}&_limit=${limit}`;
+		let url = `http://192.168.0.27:3000/posts?scope=PUBLIC&_start=${start}&_limit=${limit}`;
+		
 		if (selectedRange) {
 			try {
-				const locationResponse = await axios.get('http://192.168.0.3:3000/user_location');
+				const locationResponse = await axios.get('http://192.168.0.27:3000/user_location');
 				const words = locationResponse.data[0].your_location.split(' ');
 				let newLocation = '';
 				switch (selectedRange) {
@@ -56,8 +57,8 @@ const PublicPosts = React.forwardRef((props, ref) => {
 				setRefreshing(false);
 				return;
 			}
-		} else if (location) {
-			url += `&location_contains=${encodeURIComponent(location)}`;
+		} else if (selectedLocation) {
+			url += `&location_contains=${encodeURIComponent(selectedLocation)}`;
 		}
 		
 		try {
@@ -83,11 +84,10 @@ const PublicPosts = React.forwardRef((props, ref) => {
 			}
 		}
 	};
+	
 	const refreshPosts = () => {
-		setLocation('');
-		setRange(null);
 		setIsRefreshing(true);
-		getPosts(null, 0);
+		getPosts(null, '', 0); // range와 location을 명시적으로 null 혹은 ''로 설정하여 호출
 	};
 	
 	React.useImperativeHandle(ref, () => ({
@@ -125,7 +125,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		
 		// 추가 데이터 로딩
 		if (newIndex === posts.length - 4) {
-			getPosts(range, posts.length);
+			getPosts(range,location, posts.length);
 		}
 	};
 	

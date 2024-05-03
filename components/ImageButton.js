@@ -4,7 +4,7 @@ import { Image } from 'expo-image';
 
 const ImageButton = React.memo(({ front_image, back_image, containerHeight, windowWidth }) => {
 	const [isFrontShowing, setIsFrontShowing] = useState(true); // 현재 보여지는 이미지가 전면 이미지인지 추적하는 상태
-	const [myPicture, setMyPicture] = useState("")
+	const [myPicture, setMyPicture] = useState("front")
 	const changeImage = () => {
 			setIsFrontShowing(!isFrontShowing);
 	};
@@ -17,9 +17,7 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
 	// Calculate blurRadius for each image based on myStatus
 	const getBlurRadius = (isFront) => {
 		if (myPicture === "none") return 20;
-		if ((myPicture === "front" && !isFront) || (myPicture === "back" && isFront)) {
-			return 20;
-		}
+		if ((myPicture === "front" && !isFront) || (myPicture === "back" && isFront)) { return 20; }
 		return 0;
 	};
 	

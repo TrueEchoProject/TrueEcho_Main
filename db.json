@@ -167,6 +167,21 @@
       }
     }
   ],
+  "notificationSettings": [
+    {
+      "id": 1,
+      "mention": false,
+      "likes": true,
+      "friendRequest": true,
+      "voteNotification": false
+    }
+  ],
+  "Time": [
+    {
+      "type": 1,
+      "id": 1
+    }
+  ],
   "user_calendar": [
     {
       "calendar_id": 1,
@@ -220,15 +235,16 @@
     },
     {
       "pin_id": 2,
-      "created_at": "2024-04-25",
+      "created_at": "2024-04-20",
       "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
       "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
     }
   ],
   "user_me": [
     {
+      "id": 1,
       "username": "박신형",
-      "user_Id": "sin10920",
+      "user_Id": "sin1afahskfj",
       "user_vote": "이성 친구가 제일 많을 거 같은 친구",
       "profile_url": "https://i.ibb.co/wwfqn6V/DALL-E-2024-04-26-20-08-20-A-realistic-image-capturing-the-essence-of-a-photo-taken-by-a-young-man-i.webp",
       "your_location": "서울특별시 용산구 서빙고동"
@@ -239,58 +255,63 @@
       "your_location": "서울특별시 용산구 서빙고동"
     }
   ],
+  "QnA": [
+    {
+      "id": 1,
+      "Q": "hi?One",
+      "A": "hello!One/hello!One"
+    },
+    {
+      "id": 2,
+      "Q": "hi?Two",
+      "A": "hello!Two/hello!Two"
+    },
+    {
+      "id": 3,
+      "Q": "hi?Three",
+      "A": "hello!Three/hello!Three"
+    },
+    {
+      "id": 4,
+      "Q": "hi?Four",
+      "A": "hello!Four/hello!Four"
+    },
+    {
+      "id": 5,
+      "Q": "hi?Five",
+      "A": "hello!Five/hello!Five"
+    },
+    {
+      "id": 6,
+      "Q": "hi?Six",
+      "A": "hello!Six/hello!Six"
+    },
+    {
+      "id": 7,
+      "Q": "hi?Seven",
+      "A": "hello!Seven/hello!Seven"
+    },
+    {
+      "id": 8,
+      "Q": "hi?Eight",
+      "A": "hello!Eight/hello!Eight"
+    },
+    {
+      "id": 9,
+      "Q": "hi?Nine",
+      "A": "hello!Nine/hello!Nine"
+    },
+    {
+      "id": 10,
+      "Q": "hi?Ten",
+      "A": "hello!Ten/hello!Ten"
+    }
+  ],
   "blocked_users": [
     {
-      "blocked_user": "",
-      "id": 1
-    },
-    {
-      "blocked_user": "",
-      "id": 2
-    },
-    {
-      "blocked_user": "",
-      "id": 3
-    },
-    {
-      "blocked_user": "윤서_free_FRIEND_서빙고동",
-      "id": 4
-    },
-    {
-      "blocked_user": "예린_free_FRIEND_장안구",
-      "id": 5
-    },
-    {
-      "blocked_user": "혜진_onTime_FRIEND_서빙고동",
-      "id": 6
-    },
-    {
-      "blocked_user": "혜진_onTime_FRIEND_서빙고동",
-      "id": 7
-    },
-    {
-      "blocked_user": "윤서_free_FRIEND_서빙고동",
-      "id": 8
-    },
-    {
-      "blocked_user": "시우_late_FRIEND_서빙고동",
-      "id": 9
-    },
-    {
-      "blocked_user": "진우_late_PUBLIC_일산동구",
-      "id": 10
-    },
-    {
-      "blocked_user": "예린_free_FRIEND_장안구",
-      "id": 11
-    },
-    {
-      "blocked_user": "예린_free_FRIEND_장안구",
-      "id": 12
-    },
-    {
-      "blocked_user": "시우_late_FRIEND_서빙고동",
-      "id": 13
+      "username": "윤서_free_FRIEND_서빙고동",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
+      "id": 1714417953288
     }
   ],
   "friendSend": [
@@ -357,6 +378,14 @@
     {
       "friendSendUser": "서준_onTime_FRIEND_서빙고동",
       "id": 16
+    },
+    {
+      "friendSendUser": "혜진_onTime_FRIEND_서빙고동",
+      "id": 17
+    },
+    {
+      "friendSendUser": "진우_late_PUBLIC_일산동구",
+      "id": 18
     }
   ],
   "recommendations": [
@@ -1575,31 +1604,6 @@
       "post_id": 7,
       "id": 32,
       "reply_count": 1
-    },
-    {
-      "comment": "처음 보는 풍경이야.",
-      "username": "지현",
-      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
-      "created_at": "2024-03-25",
-      "under_comments": [
-        {
-          "under_comment": "잘 들었습니다, 좋은 의견 감사해요!",
-          "username": "서율",
-          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126444805029928/funnyclown123_A_military_theater_website_builder_interface._Pri_fe28614a-3c49-43ea-9eee-9e0676a85eb8.png?ex=661c5b97&is=6609e697&hm=607a5601cbe45d2bd0d72349a2040a724920832823f043060ef40fa64cbfbe18&",
-          "created_at": "2024-03-25",
-          "id": 33
-        },
-        {
-          "under_comment": "네, 정말 가볼 만한 곳이에요!",
-          "username": "지혜",
-          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126028666896424/hadymarquez_soft_playset_personalized_df04b6e7-6032-450a-af46-47cf9cb774c7.png?ex=661c5b34&is=6609e634&hm=d11c8846f567ec102ebacb94467dca190b61d3a689546d5d946e5217288b71f8&",
-          "created_at": "2024-03-25",
-          "id": 34
-        }
-      ],
-      "post_id": 8,
-      "id": 33,
-      "reply_count": 2
     },
     {
       "comment": "동감이야, 나도 그래.",

@@ -36,21 +36,43 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	const [hasMore, setHasMore] = useState(true);
 	const scrollPositionRef = useRef(0); // 스크롤 위치 저장용
 	const [replyingTo, setReplyingTo] = useState(null); // 답글을 다는 댓글의 ID
+	const fetchComments = async (page) => {
+		setLoading(true);
+		const currentPosition = scrollPositionRef.current; // 로딩 전 스크롤 위치 저장
+		try {
+			const response = await axios.get(`http://192.168.0.27:3000/comments`, {
+				params: {
+					post_id: postId,
+					_page: page,
+					_limit: 5
+				}
+			});
+			if (response.data.length > 0) {
+				setComments(prevComments => [...prevComments, ...response.data]);
+				setCurrentPage(page);
+				setTimeout(() => {
+					scrollViewRef.current?.scrollTo({ y: currentPosition, animated: false }); // 스크롤 위치 복원
+				}, 0); // setTimeout으로 지연하여 스크롤 위치를 정확하게 복원
+			} else {
+				setHasMore(false);
+			}
+		} catch (error) {
+			console.error('Fetching comments failed:', error);
+		}
+		setLoading(false);
+	};
 	const handleDeleteComment = async (commentId) => {
 		Alert.alert(
 			"댓글 삭제", // 알림 제목
 			"이 댓글을 삭제하시겠습니까?", // 메시지
 			[
-				{
-					text: "취소",
+				{ text: "취소",
 					onPress: () => console.log("삭제 취소"),
-					style: "cancel"
-				},
-				{
-					text: "삭제",
+					style: "cancel" },
+				{ text: "삭제",
 					onPress: async () => {
 						try {
-							await axios.delete(`http://192.168.0.3:3000/comments/${commentId}`);
+							await axios.delete(`http://192.168.0.27:3000/comments/${commentId}`);
 							setComments(comments.filter(comment => comment.id !== commentId)); // UI에서 댓글 제거
 							setTextInputValue(''); // 입력 필드 초기화
 							setShowUnderComments({})
@@ -60,13 +82,39 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 							setTextInputValue(''); // 입력 필드 초기화
 							setShowUnderComments({})
 							setReplyingTo(null);
-						}
-					}
-				}
-			]
-		);
+						}}}]);
 	};
-	
+	const handleDeleteUnderComment = async (commentId, underCommentId) => {
+		// 삭제 확인을 요청하는 Alert 추가
+		Alert.alert(
+			"답글 삭제", // 알림 제목
+			"이 답글을 삭제하시겠습니까?", // 메시지
+			[
+				{ text: "취소",
+					onPress: () => console.log("답글 삭제 취소"),
+					style: "cancel" },
+				{ text: "삭제",
+					onPress: async () => {
+						try {
+							const response = await axios.delete(`http://192.168.0.27:3000/comments/${commentId}/under_comments/${underCommentId}`);
+							if (response.status === 204) {
+								setComments(prevComments => prevComments.map(comment => {
+									if (comment.id === commentId) {
+										const updatedUnderComments = comment.under_comments.filter(uc => uc.id !== underCommentId);
+										return {
+											...comment,
+											under_comments: updatedUnderComments,
+											reply_count: Math.max(0, updatedUnderComments.length) // 답글 수 감소
+										};}
+									return comment;}));
+							}
+							setTextInputValue(''); // 입력 필드 초기화
+							setShowUnderComments({})
+							setReplyingTo(null);
+						} catch (error) {
+							console.error('답글 삭제 실패:', error);
+						}}}]);
+	};
 	const handleSubmitComment = async () => {
 		if (!textInputValue.trim()) {
 			alert("글을 입력해주세요.");
@@ -74,12 +122,11 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 		}
 		const currentDate = new Date();
 		const formattedDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}${currentDate.getHours().toString().padStart(2, '0')}:${currentDate.getMinutes().toString().padStart(2, '0')}`;
-		
 		if (replyingTo) {
 			console.log(replyingTo)
 			// 답글 제출 로직
 			try {
-				const response = await axios.post(`http://192.168.0.3:3000/comments/${replyingTo}/under_comments`, {
+				const response = await axios.post(`http://192.168.0.27:3000/comments/${replyingTo}/under_comments`, {
 					under_comment: textInputValue,
 					username: "신형",
 					profile_url: "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
@@ -98,8 +145,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 							};
 						} else {
 							return comment;
-						}
-					});
+						}});
 				});
 				setTextInputValue("");
 				setReplyingTo(null);
@@ -110,7 +156,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 		} else {
 			// 새 댓글 추가 로직
 			try {
-				const response = await axios.post('http://192.168.0.3:3000/comments', {
+				const response = await axios.post('http://192.168.0.27:3000/comments', {
 					comment: textInputValue, // 사용자가 입력한 댓글 내용
 					username: "신형",
 					profile_url: "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
@@ -132,47 +178,86 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 		setShowUnderComments({})
 		setReplyingTo(null);
 	};
+
+	// 초기 데이터 및 추가 데이터 불러오기
+	useEffect(() => {
+		if (isVisible) {
+			fetchComments(1); // 초기 페이지 로드
+			setTextInputValue(''); // 입력 필드 초기화
+			setShowUnderComments({})
+			setReplyingTo(null);
+			Animated.timing(animatedHeight, {
+				toValue: initialMarginTop, // 모달을 초기 높이로 설정
+				duration: 0, // 즉시 변경되도록 시간을 0으로 설정
+				useNativeDriver: false
+			}).start();
+		} else {
+			setComments([]);
+			setCurrentPage(1);
+			setHasMore(true);
+		}
+	}, [isVisible, postId]);
 	
-	
-	const handleDeleteUnderComment = async (commentId, underCommentId) => {
-		// 삭제 확인을 요청하는 Alert 추가
-		Alert.alert(
-			"답글 삭제", // 알림 제목
-			"이 답글을 삭제하시겠습니까?", // 메시지
-			[
-				{
-					text: "취소",
-					onPress: () => console.log("답글 삭제 취소"),
-					style: "cancel"
-				},
-				{
-					text: "삭제",
-					onPress: async () => {
-						try {
-							const response = await axios.delete(`http://192.168.0.3:3000/comments/${commentId}/under_comments/${underCommentId}`);
-							if (response.status === 204) {
-								setComments(prevComments => prevComments.map(comment => {
-									if (comment.id === commentId) {
-										const updatedUnderComments = comment.under_comments.filter(uc => uc.id !== underCommentId);
-										return {
-											...comment,
-											under_comments: updatedUnderComments,
-											reply_count: Math.max(0, updatedUnderComments.length) // 답글 수 감소
-										};
-									}
-									return comment;
-								}));
-							}
-							setTextInputValue(''); // 입력 필드 초기화
-							setShowUnderComments({})
-							setReplyingTo(null);
-						} catch (error) {
-							console.error('답글 삭제 실패:', error);
-						}
-					}
-				}
-			]
+	const CommentItem = React.memo(({ comment, toggleUnderComments, showUnderComments, index }) => {
+		const isReplyingTo = replyingTo === comment.id; // 현재 답글을 작성 중인지 확인
+		const commentItemStyle = isReplyingTo
+			? [styles.commentItem, styles.replyingCommentItem] // 답글 작성 중 스타일 적용
+			: styles.commentItem;
+		const commentItemRef = useRef(null);
+		
+		useEffect(() => {
+			commentRefs.current[comment.id] = commentItemRef.current;
+			return () => {
+				delete commentRefs.current[comment.id]; // Cleanup on unmount
+			};
+		}, [comment.id]);
+		
+		return (
+			<View style={commentItemStyle} ref={commentItemRef}>
+				<Image style={styles.profileImage} source={{ uri: comment.profile_url }} />
+				<Text>Date: {comment.created_at}</Text>
+				<Text style={styles.commentText}>{comment.username}: {comment.comment}</Text>
+				<TouchableOpacity onPress={() => handleDeleteComment(comment.id)}>
+					<Text>삭제</Text>
+				</TouchableOpacity>
+				<TouchableOpacity onPress={() => setReplyingTo(comment.id)}>
+					<Text>답글 달기</Text>
+				</TouchableOpacity>
+				{comment.reply_count > 0 && (
+					<TouchableOpacity onPress={() => toggleUnderComments(index)}>
+						<Text>답글 {comment.reply_count}개 더보기</Text>
+					</TouchableOpacity>
+				)}
+				<UnderComments commentId={comment.id} underComments={comment.under_comments} isVisible={showUnderComments[index]} />
+			</View>
 		);
+	});
+	const UnderCommentItem = ({ underComment, commentId }) => {
+		return (
+			<View style={styles.underCommentItem}>
+				<Image style={styles.profileImage} source={{ uri: underComment.profile_url }} />
+				<Text>Date: {underComment.created_at}</Text>
+				<Text style={styles.underCommentText}>{underComment.username}: {underComment.under_comment}</Text>
+				<TouchableOpacity onPress={() => handleDeleteUnderComment(commentId, underComment.id)}>
+					<Text>삭제</Text>
+				</TouchableOpacity>
+			</View>
+		);
+	};
+	const UnderComments = React.memo(({ underComments, isVisible, commentId }) => {
+		return isVisible ? (
+			<View>
+				{underComments.map((underComment, index) => (
+					<UnderCommentItem key={index} underComment={underComment} commentId={commentId} />
+				))}
+			</View>
+		) : null;
+	});
+	const toggleUnderComments = (index) => {
+		setShowUnderComments(prevState => ({
+			...prevState,
+			[index]: !prevState[index]
+		}));
 	};
 	
 	const handleInputFocus = () => {
@@ -211,52 +296,6 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 			}
 		},
 	}), [insets.top]); // 의존성 배열 업데이트
-	
-	const fetchComments = async (page) => {
-		setLoading(true);
-		const currentPosition = scrollPositionRef.current; // 로딩 전 스크롤 위치 저장
-		try {
-			const response = await axios.get(`http://192.168.0.3:3000/comments`, {
-				params: {
-					post_id: postId,
-					_page: page,
-					_limit: 5
-				}
-			});
-			if (response.data.length > 0) {
-				setComments(prevComments => [...prevComments, ...response.data]);
-				setCurrentPage(page);
-				setTimeout(() => {
-					scrollViewRef.current?.scrollTo({ y: currentPosition, animated: false }); // 스크롤 위치 복원
-				}, 0); // setTimeout으로 지연하여 스크롤 위치를 정확하게 복원
-			} else {
-				setHasMore(false);
-			}
-		} catch (error) {
-			console.error('Fetching comments failed:', error);
-		}
-		setLoading(false);
-	};
-	
-	// 초기 데이터 및 추가 데이터 불러오기
-	useEffect(() => {
-		if (isVisible) {
-			fetchComments(1); // 초기 페이지 로드
-			setTextInputValue(''); // 입력 필드 초기화
-			setShowUnderComments({})
-			setReplyingTo(null);
-			Animated.timing(animatedHeight, {
-				toValue: initialMarginTop, // 모달을 초기 높이로 설정
-				duration: 0, // 즉시 변경되도록 시간을 0으로 설정
-				useNativeDriver: false
-			}).start();
-		} else {
-			setComments([]);
-			setCurrentPage(1);
-			setHasMore(true);
-		}
-	}, [isVisible, postId]);
-	
 	// 스크롤 이벤트 처리
 	const handleScroll = ({ nativeEvent }) => {
 		const { contentOffset } = nativeEvent;
@@ -269,71 +308,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 		}
 	};
 	
-	const CommentItem = React.memo(({ comment, toggleUnderComments, showUnderComments, index }) => {
-		const isReplyingTo = replyingTo === comment.id; // 현재 답글을 작성 중인지 확인
-		const commentItemStyle = isReplyingTo
-			? [styles.commentItem, styles.replyingCommentItem] // 답글 작성 중 스타일 적용
-			: styles.commentItem;
-		const commentItemRef = useRef(null);
-		
-		useEffect(() => {
-			commentRefs.current[comment.id] = commentItemRef.current;
-			return () => {
-				delete commentRefs.current[comment.id]; // Cleanup on unmount
-			};
-		}, [comment.id]);
-		
-		return (
-			<View style={commentItemStyle} ref={commentItemRef}>
-				<Image style={styles.profileImage} source={{ uri: comment.profile_url }} />
-				<Text>Date: {comment.created_at}</Text>
-				<Text style={styles.commentText}>{comment.username}: {comment.comment}</Text>
-				<TouchableOpacity onPress={() => handleDeleteComment(comment.id)}>
-					<Text>삭제</Text>
-				</TouchableOpacity>
-				<TouchableOpacity onPress={() => setReplyingTo(comment.id)}>
-					<Text>답글 달기</Text>
-				</TouchableOpacity>
-				{comment.reply_count > 0 && (
-					<TouchableOpacity onPress={() => toggleUnderComments(index)}>
-						<Text>답글 {comment.reply_count}개 더보기</Text>
-					</TouchableOpacity>
-				)}
-				<UnderComments commentId={comment.id} underComments={comment.under_comments} isVisible={showUnderComments[index]} />
-			</View>
-		);
-	});
-	
-	
-	const UnderCommentItem = ({ underComment, commentId }) => {
-		return (
-			<View style={styles.underCommentItem}>
-				<Image style={styles.profileImage} source={{ uri: underComment.profile_url }} />
-				<Text>Date: {underComment.created_at}</Text>
-				<Text style={styles.underCommentText}>{underComment.username}: {underComment.under_comment}</Text>
-				<TouchableOpacity onPress={() => handleDeleteUnderComment(commentId, underComment.id)}>
-					<Text>삭제</Text>
-				</TouchableOpacity>
-			</View>
-		);
-	};
-	
-	const UnderComments = React.memo(({ underComments, isVisible, commentId }) => {
-		return isVisible ? (
-			<View>
-				{underComments.map((underComment, index) => (
-					<UnderCommentItem key={index} underComment={underComment} commentId={commentId} />
-				))}
-			</View>
-		) : null;
-	});
-	
-	const toggleUnderComments = (index) => {
-		setShowUnderComments(prevState => ({
-			...prevState,
-			[index]: !prevState[index]
-		}));
-	};
+
 	const handleCancelReply = () => {
 		setReplyingTo(null);
 		setTextInputValue('');  // 입력 필드 초기화
