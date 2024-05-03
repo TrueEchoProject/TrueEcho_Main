@@ -85,29 +85,16 @@ const Calendar = () => {
 				<View style={styles.modalContainer}>
 					<TouchableOpacity
 						onPress={onClose}
-						style={{
-							alignItems: "center",
-							justifyContent: "center",
-							backgroundColor: "white",
-							borderTopEndRadius: 10,
-							borderTopStartRadius: 10,
-							width: windowWidth * 0.8,
-							height: 40,
-						}}>
-						<Text
-							style={{
-								color: "black",
-								fontSize: 15,
-								fontWeight: "bold",
-								textAlign: "center",
-							}}
-						>
-							닫기</Text>
+						style={styles.closeButton}
+					>
+						<Text style={styles.buttonText}>
+							닫기
+						</Text>
 					</TouchableOpacity>
 					<View style={styles.imageContainer}>
 						<TouchableOpacity
 							onPress={changeImage}
-							style={{ zIndex: 2, position: 'absolute', top: 10, left: 10 }}
+							style={styles.frontImage}
 						>
 							<Image
 								source={{ uri: isFrontShowing ? postFront : postBack }}
@@ -116,34 +103,18 @@ const Calendar = () => {
 						</TouchableOpacity>
 						<TouchableOpacity
 							onPress={changeImage}
-							style={{ zIndex: 1, position: 'relative' }}
+							style={styles.backImage}
 						>
 							<Image
-								source={{ uri: isFrontShowing ? postBack: postFront }}
+								source={{ uri: isFrontShowing ? postBack : postFront }}
 								style={styles.fullImage}
 							/>
 						</TouchableOpacity>
 					</View>
-					<TouchableOpacity
-						onPress={onClose}
-						style={{
-							alignItems: "center",
-							justifyContent: "center",
-							backgroundColor: "white",
-							borderBottomEndRadius: 10,
-							borderBottomStartRadius: 10,
-							width: windowWidth * 0.8,
-							height: 40,
-						}}>
-						<Text
-							style={{
-								color: "black",
-								fontSize: 15,
-								fontWeight: "bold",
-								textAlign: "center",
-							}}
-						>
-							Pin 지정</Text>
+					<TouchableOpacity onPress={onClose} style={styles.selectButton}>
+						<Text style={styles.buttonText}>
+							Pin 지정
+						</Text>
 					</TouchableOpacity>
 				</View>
 			</Modal>
@@ -163,7 +134,7 @@ const Calendar = () => {
 									style={styles.cell}
 									onPress={() => toggleImageVisibility(item.imageUrl, item.imageBackUrl)}
 								>
-									<ImageBackground source={{ uri: item.imageUrl }} style={styles.backgroundImage}>
+									<ImageBackground source={{ uri: item.imageBackUrl }} style={styles.backgroundImage}>
 										<Text style={styles.dateImageText}>{item.day}</Text>
 									</ImageBackground>
 								</TouchableOpacity>
@@ -197,6 +168,16 @@ const Calendar = () => {
 						onClose={() => setIsImageVisible(false)}
 					/>
 				)}
+				<View style={{
+					position: "absolute",
+					bottom: 1,
+					marginHorizontal: "10%",
+					marginBottom: "1%",
+				}}>
+					<Text>
+						hello
+					</Text>
+				</View>
 			</View>
 		</SafeAreaView>
 	);
@@ -209,12 +190,9 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 	},
 	container: {
+		flex: 1,
 		backgroundColor: "#FFF",
-		borderRadius: 8,
-		width: "90%",
-		height: "90%",
-		marginLeft: "5%",
-		marginRight: "5%",
+		position: "relative",
 	},
 	header: {
 		flexDirection: "row",
@@ -279,6 +257,40 @@ const styles = StyleSheet.create({
 		width: windowWidth * 0.3,
 		height: windowHeight * 0.2,
 		borderRadius: 12,
+	},
+	frontImage: {
+		zIndex: 2,
+		position: 'absolute',
+		top: 10,
+		left: 10
+	},
+	backImage: {
+		zIndex: 1,
+		position: 'relative'
+	},
+	closeButton: {
+		alignItems: "center",
+		justifyContent: "center",
+		backgroundColor: "white",
+		borderTopEndRadius: 10,
+		borderTopStartRadius: 10,
+		width: windowWidth * 0.8,
+		height: 40,
+	},
+	selectButton: {
+		alignItems: "center",
+		justifyContent: "center",
+		backgroundColor: "white",
+		borderBottomEndRadius: 10,
+		borderBottomStartRadius: 10,
+		width: windowWidth * 0.8,
+		height: 40,
+	},
+	buttonText: {
+		color: "black",
+		fontSize: 15,
+		fontWeight: "bold",
+		textAlign: "center",
 	},
 });
 
