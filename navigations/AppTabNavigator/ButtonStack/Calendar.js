@@ -179,6 +179,9 @@ const Calendar = () => {
 		updatedPins[index].isFrontShowing = !updatedPins[index].isFrontShowing;
 		setSelectedPins(updatedPins);
 	};
+	const removePin = (index) => {
+		setSelectedPins(prevPins => prevPins.filter((_, i) => i !== index));
+	};
 	// 선택된 핀을 화면에 표시하는 컴포넌트
 	const SelectedPinsList = () => {
 		// 최대 6개의 칸을 가정
@@ -194,18 +197,23 @@ const Calendar = () => {
 			<View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
 				<View style={{ flexDirection: 'row', justifyContent: 'space-around', flexWrap: 'wrap' }}>
 					{allSlots.map((pin, index) => (
-						<TouchableOpacity onPress={() => togglePinImage(index)} key={index} style={styles.selectedImageContainer}>
-							{pin.empty ? (
+						pin.empty ? (
+							<View key={index} style={styles.selectedImageContainer}>
 								<Text style={styles.emptyText}>핀을 선택하세요</Text>
-							) : (
-								<>
+							</View>
+						) : (
+							<View key={index} style={styles.selectedImageContainer}>
+								<TouchableOpacity onPress={() => togglePinImage(index)}>
 									<Image
-										source={{ uri: pin.isFrontShowing ? pin.backUrl : pin.frontUrl }}
+										source={{ uri: pin.isFrontShowing ? pin.frontUrl : pin.backUrl }}
 										style={styles.selectedImage} />
 									<Text style={styles.pinDateText}>Date: {pin.date}</Text>
-								</>
-							)}
-						</TouchableOpacity>
+								</TouchableOpacity>
+								<TouchableOpacity onPress={() => removePin(index)} style={styles.removeButton}>
+									<Text style={styles.removeButtonText}>삭제</Text>
+								</TouchableOpacity>
+							</View>
+						)
 					))}
 				</View>
 			</View>
@@ -374,6 +382,17 @@ const styles = StyleSheet.create({
 	emptyText: {
 		fontSize: 14,
 		color: '#bbb',
+	},
+	removeButton: {
+		marginTop: 5,
+		backgroundColor: 'red',
+		padding: 5,
+		borderRadius: 5,
+	},
+	removeButtonText: {
+		color: 'white',
+		fontSize: 12,
+		textAlign: 'center',
 	},
 });
 
