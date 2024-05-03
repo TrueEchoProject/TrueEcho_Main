@@ -9,7 +9,11 @@ import {Image} from "expo-image";
 const MyPage = () => {
 	const [userData, setUserData] = useState(null); // 초기 상태를 null로 설정
 	const [pinData, setPinData] = useState([]);
+	const [isFrontShowing, setIsFrontShowing] = useState(true); // 현재 보여지는 이미지가 전면 이미지인지 추적하는 상태
 	
+	const changeImage = () => {
+		setIsFrontShowing(!isFrontShowing);
+	};
 	const fetchUser = async () => {
 		try {
 			const response = await axios.get(`http://192.168.0.3:3000/user_me`);
@@ -95,10 +99,25 @@ const MyPage = () => {
 					) : (
 						<PagerView style={styles.pagerView}>
 							{pinData.map((item, index) => (
-								<View key={index}>
-									<TouchableOpacity>
+								<View
+									key={index}
+									style={{ position: 'relative' }}
+								>
+									<TouchableOpacity
+										onPress={changeImage}
+										style={{ zIndex: 2, position: 'absolute', top: 10, left: 10 }}
+									>
 										<Image
-											source={{ uri: item.post_front_url }}
+											source={{ uri: isFrontShowing ? item.post_front_url: item.post_back_url }}
+											style={styles.pageStyle2}
+										/>
+									</TouchableOpacity>
+									<TouchableOpacity
+										onPress={changeImage}
+										style={{ zIndex: 1, position: 'relative' }}
+									>
+										<Image
+											source={{ uri: isFrontShowing ? item.post_back_url: item.post_front_url }}
 											style={styles.pageStyle}
 										/>
 									</TouchableOpacity>
@@ -146,10 +165,13 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 		width: "100%",
 		height: "100%",
-		justifyContent: 'center', // 자식 컴포넌트를 수직 방향으로 중앙 정렬
-		alignItems: 'center',     // 자식 컴포넌트를 수평 방향으로 중앙 정렬
 		borderRadius: 10,
-		backgroundColor: 'grey',   // 배경 색상은 예시이며 변경 가능합니다
+	},
+	pageStyle2: {
+		marginTop: 10,
+		width: 130,
+		height: 130,
+		borderRadius: 3,
 	},
 	textContainer: {
 		flexDirection: "row",
