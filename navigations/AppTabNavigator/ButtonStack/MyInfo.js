@@ -11,6 +11,7 @@ const MyInfo = ({ navigation, route }) => {
 	const [editableUserId, setEditableUserId] = useState(""); // 사용자가 수정할 수 있는 user_Id 상태
 	const [imageUri, setImageUri] = useState("");
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const defaultImage = "https://i.ibb.co/wwfqn6V/DALL-E-2024-04-26-20-08-20-A-realistic-image-capturing-the-essence-of-a-photo-taken-by-a-young-man-i.webp";
 	
 	useEffect(() => {
 		if (route.params?.user) {
@@ -20,7 +21,6 @@ const MyInfo = ({ navigation, route }) => {
 			setImageUri(route.params.user.profile_url);
 		}
 	}, [route.params?.user]);
-	const defaultImage = "https://i.ibb.co/wwfqn6V/DALL-E-2024-04-26-20-08-20-A-realistic-image-capturing-the-essence-of-a-photo-taken-by-a-young-man-i.webp";
 	
 	const PofileInitialization = () => {
 		setImageUri(defaultImage);
@@ -34,7 +34,6 @@ const MyInfo = ({ navigation, route }) => {
 				return;
 			}
 		}
-		
 		try {
 			let result = await ImagePicker.launchImageLibraryAsync({
 				mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -42,7 +41,6 @@ const MyInfo = ({ navigation, route }) => {
 				aspect: [4, 4],
 				quality: 1,
 			});
-			
 			if (!result.cancelled) {
 				console.log(result); // 확인 로그
 				console.log(result.assets[0].uri); // 확인 로그
@@ -68,8 +66,8 @@ const MyInfo = ({ navigation, route }) => {
 		};
 		
 		try {
-			const DeleteUser = await axios.delete('http://192.168.0.3:3000/user_me')
-			const response = await axios.post('http://192.168.0.3:3000/user_me', updatedUser);
+			const DeleteUser = await axios.delete('http://192.168.0.27:3000/user_me')
+			const response = await axios.post('http://192.168.0.27:3000/user_me', updatedUser);
 			console.log('User updated:', response.data);
 			// 성공 시 필요한 로직 추가, 예를 들어 화면 이동 등
 			navigation.navigate("MyP", { Update: updatedUser })
@@ -78,7 +76,6 @@ const MyInfo = ({ navigation, route }) => {
 			// 에러 처리 로직 추가
 		}
 	};
-	
 	
 	const ProfileModal = ({ isVisible, onClose }) => { // 수정: 프로퍼티 이름 Image -> imageUrl 변경
 		return (
@@ -232,7 +229,7 @@ const styles = StyleSheet.create({
 	},
 	imageContainer: {
 		alignItems: 'center',
-		justifyContent: 'center',
+    justifyContent: 'center',
 		width: windowWidth * 0.8,
 		height: windowHeight * 0.3,
 		borderRadius: 20,

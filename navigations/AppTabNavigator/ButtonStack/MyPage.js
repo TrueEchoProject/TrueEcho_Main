@@ -20,14 +20,13 @@ const MyPage = ({ navigation, route }) => {
 	
 	useEffect(() => {
 		if (route.params?.Update) {
-			console.log('Received pin response:', route.params.Update);
+			console.log('Received Update response:', route.params.Update);
 			setUserData(route.params.Update);
 		}
 	}, [route.params?.Update]);
-	
 	useEffect(() => {
 		if (route.params?.pinRes) {
-			console.log('Received pin response:', route.params.pinRes);
+			console.log('Received pinRes response:', route.params.pinRes);
 			const pins = route.params.pinRes.pins;
 			setPinData(pins);
 			// 각 핀에 대한 isFrontShowing 상태 초기화
@@ -39,6 +38,19 @@ const MyPage = ({ navigation, route }) => {
 		}
 	}, [route.params?.pinRes]);
 	
+	useEffect(() => {
+		if (pinData) {
+			console.log('pinData updated:', pinData);
+		}
+		if (pinData.length > 0 && pagerRef.current) {
+			pagerRef.current.setPageWithoutAnimation(0);
+		}
+	}, [pinData]);
+	useEffect(() => {
+		if (userData) {
+			console.log(userData);
+		}
+	}, [userData]); // userData 변화 감지
 	const changeImage = (pinId) => {
 		setIsFrontShowing(prev => ({
 			...prev,
@@ -52,11 +64,12 @@ const MyPage = ({ navigation, route }) => {
 	const handlePageChange = (e) => {
 		setCurrentPage(e.nativeEvent.position);
 	};
+
 	useEffect(() => {
 		async function fetchData() {
 			try {
-				const userResponse = await axios.get(`http://192.168.0.3:3000/user_me`);
-				const pinResponse = await axios.get(`http://192.168.0.3:3000/user_pin?_limit=5`);
+				const userResponse = await axios.get(`http://192.168.0.27:3000/user_me`);
+				const pinResponse = await axios.get(`http://192.168.0.27:3000/user_pin?_limit=5`);
 				setUserData(userResponse.data[0]);
 				setPinData(pinResponse.data);
 			} catch (error) {
@@ -65,28 +78,13 @@ const MyPage = ({ navigation, route }) => {
 				setIsLoading(false); // 데이터 로드 완료
 			}
 		}
-		
 		fetchData();
 	}, []);
 	
-	useEffect(() => {
-		if (pinData) {
-			console.log('pinData updated:', pinData);
-		}
-		if (pinData.length > 0 && pagerRef.current) {
-			pagerRef.current.setPageWithoutAnimation(0);
-		}
-	}, [pinData]);
-	
-	useEffect(() => {
-		if (userData) {
-			console.log(userData);
-		}
-	}, [userData]); // userData 변화 감지
-	
 	if (isLoading) {
-		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff" /></View>;
+		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff"/></View>;
 	}
+	
 	const ProfileImageModal = ({ isVisible, imageUrl, onClose }) => { // 수정: 프로퍼티 이름 Image -> imageUrl 변경
 		return (
 			<Modal
@@ -199,7 +197,7 @@ const MyPage = ({ navigation, route }) => {
 							))}
 						</View>
 					</>
-				)}
+			)}
 			</View>
 		</View>
 	);

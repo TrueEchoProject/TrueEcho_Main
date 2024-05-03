@@ -16,7 +16,7 @@ import axios from "axios";
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 const OptionText = ({ label }) => {
-	return <Text style={styles.smallText}>{label}</Text>;
+  return <Text style={styles.smallText}>{label}</Text>;
 };
 const OptionItem = ({ onPress, icon, iconType, label, backgroundColor = "#99A1B6" }) => {
 	const IconComponent = iconType;
@@ -53,8 +53,8 @@ const MyOptions = ({ navigation, route }) => {
 		}
 	}, [user]);
 	const notificationModalVisible = () => {
-		setIsNotificationModal(!isNotificationModal);
-	};
+    setIsNotificationModal(!isNotificationModal);
+  };
 	const blockModalVisible = () => {
 		setIsBlockModal(!isBlockModal);
 	};
@@ -69,7 +69,7 @@ const MyOptions = ({ navigation, route }) => {
 		
 		const fetchNotification = async () => {
 			try {
-				const response = await axios.get(`http://192.168.0.3:3000/notificationSettings`);
+				const response = await axios.get(`http://192.168.0.27:3000/notificationSettings`);
 				setNotificationSettings(response.data[0]);
 			} catch (error) {
 				console.error('Error fetching calendar data', error);
@@ -91,8 +91,8 @@ const MyOptions = ({ navigation, route }) => {
 		const saveChanges = async () => {
 			console.log("Saved notificationSettings:", notificationSettings);
 			try {
-				const Delete = await axios.delete(`http://192.168.0.3:3000/notificationSettings/1`);
-				const response = await axios.post(`http://192.168.0.3:3000/notificationSettings`, notificationSettings);
+				const Delete = await axios.delete(`http://192.168.0.27:3000/notificationSettings/1`);
+				const response = await axios.post(`http://192.168.0.27:3000/notificationSettings`, notificationSettings);
 				alert("알림 설정이 성공적으로\n제출되었습니다.");
 			} catch (error) {
 				console.error('Error posting notification', error);
@@ -180,15 +180,15 @@ const MyOptions = ({ navigation, route }) => {
 		
 		const fetchBlockedUsers = async () => {
 			try {
-				const response = await axios.get(`http://192.168.0.3:3000/blocked_users`);
+					const response = await axios.get(`http://192.168.0.27:3000/blocked_users`);
 				setBlockedUsers(response.data);
 			} catch (error) {
 				console.error('Error fetching calendar data', error);
 			}
 		};
 		useEffect(() => {
-			console.log(blockedUsers);
-		}, [blockedUsers]);
+      console.log(blockedUsers);
+    }, [blockedUsers]);
 		
 		useEffect(() => {
 			fetchBlockedUsers();
@@ -229,8 +229,8 @@ const MyOptions = ({ navigation, route }) => {
 				const unblockedUserInfo = blockedUsers.filter(user => unblockedIds.includes(String(user.id)));
 				
 				try {
-					await axios.delete('http://192.168.0.3:3000/blocked_users');
-					const response = await axios.post('http://192.168.0.3:3000/blocked_users', unblockedUserInfo);
+					await axios.delete('http://192.168.0.27:3000/blocked_users');
+					const response = await axios.post('http://192.168.0.27:3000/blocked_users', unblockedUserInfo);
 					console.log('서버 응답:', response.data);
 				} catch (error) {
 					console.error('Error updating blocked users:', error);
@@ -323,7 +323,7 @@ const MyOptions = ({ navigation, route }) => {
 		const [Time_type, setTime_type] = useState({});
 		const fetchTime_type = async () => {
 			try {
-				const response = await axios.get(`http://192.168.0.3:3000/Time`);
+				const response = await axios.get(`http://192.168.0.27:3000/Time`);
 				setTime_type(response.data[0]);
 				console.log(response.data[0]);
 			} catch (error) {
@@ -337,8 +337,8 @@ const MyOptions = ({ navigation, route }) => {
 		const saveChanges = async () => {
 			console.log("Saved Time_type:", Time_type);
 			try {
-				const Delete = await axios.delete(`http://192.168.0.3:3000/Time/1`);
-				const response = await axios.post(`http://192.168.0.3:3000/Time`, Time_type);
+				const Delete = await axios.delete(`http://192.168.0.27:3000/Time/1`);
+				const response = await axios.post(`http://192.168.0.27:3000/Time`, Time_type);
 				alert(`Photo Time이 성공적으로\n제출되었습니다.`);
 			} catch (error) {
 				console.error('Error posting notification', error);
@@ -406,23 +406,21 @@ const MyOptions = ({ navigation, route }) => {
 		);
 	};
 	const QnAModal = ({ isVisible, onClose }) => {
-		const [QnA, setQnA] = useState([
-		
-		]);
+		const [QnA, setQnA] = useState([]);
 		const [answerShowing, setAnswerShowing] = useState({});
 		
 		const fetchAnswer = async () => {
 			try {
-				const response = await axios.get(`http://192.168.0.3:3000/QnA`);
-				setQnA(response.data);
-				console.log(response.data);
-			} catch (error) {
-				console.error('Error fetching calendar data', error);
-			}
+        const response = await axios.get(`http://192.168.0.27:3000/QnA`);
+        setQnA(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error('Error fetching calendar data', error);
+      }
 		}
 		useEffect(() => {
-			fetchAnswer();
-		}, []);
+      fetchAnswer();
+    }, []);
 		
 		const toggleAnswerVisible = (id) => {
 			setAnswerShowing(prev => ({
@@ -475,99 +473,100 @@ const MyOptions = ({ navigation, route }) => {
 	const deleteAccount = () => {
 		console.log("deleteAccount")
 	};
-	return (
-		<View style={styles.container}>
-			<ScrollView style={styles.scrollView}>
+  return (
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView}>
 				<TouchableOpacity onPress={() => navigation.navigate('내 설정 편집', { user: user })} style={styles.View}>
-					<Image source={{ uri: user.profile_url }} style={styles.Image}/>
-					<View style={{ marginLeft: 10 }}>
-						<Text style={styles.Text}>{user.username}</Text>
-						<Text style={styles.Text}>{user.user_Id}</Text>
-					</View>
-				</TouchableOpacity>
-				<View>
-					<OptionText label="기능" />
-					<OptionItem
-						iconType={FontAwesome5}
-						icon="calendar-alt"
-						label="캘린더"
-						onPress={() => navigation.navigate('캘린더')}
-					/>
-				</View>
-				<View>
-					<OptionText label="설정" />
-					<OptionItem
-						iconType={AntDesign}
-						icon="bells"
-						label="알림"
-						onPress={notificationModalVisible}
-					/>
-					{isNotificationModal && (
-						<NotificationModal
-							isVisible={isNotificationModal}
-							onClose={() => setIsNotificationModal(false)}
-						/>
-					)}
-					<OptionItem
-						iconType={FontAwesome6}
-						icon="user-shield"
-						label="차단 유저 관리"
-						onPress={blockModalVisible}
-					/>
-					{isBlockModal && (
-						<BlockModal
-							isVisible={isBlockModal}
-							onClose={() => setIsBlockModal(false)}
-						/>
-					)}
-					<OptionItem
-						iconType={MaterialIcons}
-						icon="phonelink-ring"
-						label="Photo Time"
-						onPress={timeModalVisible}
-					/>
-					{isTimeModal && (
-						<TimeModal
-							isVisible={isTimeModal}
-							onClose={() => setIsTimeModal(false)}
-						/>
-					)}
-				</View>
-				<View>
-					<OptionText label="더보기" />
-					<OptionItem
-						iconType={Entypo}
-						icon="chat"
-						label="도움받기"
-						onPress={qnAModalVisible}
-					/>
-					{isQnAModal && (
-						<QnAModal
-							isVisible={isQnAModal}
-							onClose={() => setIsQnAModal(false)}
-						/>
-					)}
-				</View>
-				<View style={{ marginTop: 30 }}>
-					<OptionItem
-						iconType={Entypo}
-						icon="log-out"
-						label="로그아웃"
-						backgroundColor="grey"
-						onPress={logOut}
-					/>
-					<OptionItem
-						iconType={Ionicons}
-						icon="alert-circle"
-						label="계정 삭제"
-						backgroundColor="red"
-						onPress={deleteAccount}
-					/>
-				</View>
-			</ScrollView>
-		</View>
-	);
+          <Image source={{ uri: user.profile_url }} style={styles.Image}/>
+          <View style={{ marginLeft: 10 }}>
+            <Text style={styles.Text}>{user.username}</Text>
+            <Text style={styles.Text}>{user.user_Id}</Text>
+          </View>
+        </TouchableOpacity>
+        <View>
+          <OptionText label="기능" />
+          <OptionItem
+            iconType={FontAwesome5}
+            icon="calendar-alt"
+            label="캘린더"
+            onPress={() => navigation.navigate('캘린더')}
+          />
+        </View>
+        <View>
+          <OptionText label="설정" />
+          <OptionItem
+	          iconType={AntDesign}
+	          icon="bells"
+	          label="알림"
+	          onPress={notificationModalVisible}
+          />
+	        {isNotificationModal && (
+		        <NotificationModal
+			        isVisible={isNotificationModal}
+			        onClose={() => setIsNotificationModal(false)}
+		        />
+	        )}
+          <OptionItem
+            iconType={FontAwesome6}
+            icon="user-shield"
+            label="차단 유저 관리"
+            onPress={blockModalVisible}
+          />
+	        {isBlockModal && (
+		        <BlockModal
+			        isVisible={isBlockModal}
+			        onClose={() => setIsBlockModal(false)}
+		        />
+	        )}
+          <OptionItem
+            iconType={MaterialIcons}
+            icon="phonelink-ring"
+            label="Photo Time"
+            onPress={timeModalVisible}
+          />
+	        {isTimeModal && (
+		        <TimeModal
+			        isVisible={isTimeModal}
+			        onClose={() => setIsTimeModal(false)}
+		        />
+	        )}
+        </View>
+        <View>
+          <OptionText label="더보기" />
+          <OptionItem
+	          iconType={Entypo}
+	          icon="chat"
+	          label="도움받기"
+	          onPress={qnAModalVisible}
+          />
+	        {isQnAModal && (
+		        <QnAModal
+			        isVisible={isQnAModal}
+			        onClose={() => setIsQnAModal(false)}
+		        />
+	        )}
+        </View>
+        <View style={{ marginTop: 30 }}>
+          <OptionItem
+            iconType={Entypo}
+            icon="log-out"
+            label="로그아웃"
+            backgroundColor="grey"
+            onPress={logOut}
+          />
+          <OptionItem
+            iconType={Ionicons}
+            icon="alert-circle"
+            label="계정 삭제"
+            backgroundColor="red"
+            onPress={deleteAccount}
+          />
+        </View>
+      </ScrollView>
+    </View>
+  );
 };
+
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
