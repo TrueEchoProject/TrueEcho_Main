@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, Platform, } from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, Platform, Modal, Dimensions, } from 'react-native';
 import { Image } from "expo-image";
 import axios from "axios";
 import * as ImagePicker from 'expo-image-picker';
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 const MyInfo = ({ navigation, route }) => {
 	const [user, setUser] = useState({});
 	const [editableUserId, setEditableUserId] = useState(""); // 사용자가 수정할 수 있는 user_Id 상태
 	const [imageUri, setImageUri] = useState("");
+	const [isModalVisible, setIsModalVisible] = useState(false);
 	
 	useEffect(() => {
 		if (route.params?.user) {
@@ -71,15 +74,69 @@ const MyInfo = ({ navigation, route }) => {
 		}
 	};
 	
+	const defaultImage = "https://i.ibb.co/wwfqn6V/DALL-E-2024-04-26-20-08-20-A-realistic-image-capturing-the-essence-of-a-photo-taken-by-a-young-man-i.webp";
+	
+	const PofileInitialization = () => {
+		setImageUri(defaultImage);
+		setIsModalVisible(false)
+	}
+	const ProfileModal = ({ isVisible, onClose }) => { // 수정: 프로퍼티 이름 Image -> imageUrl 변경
+		return (
+			<Modal
+				animationType="fade"
+				visible={isVisible}
+				onRequestClose={onClose}
+				transparent={true}
+			>
+				<View style={styles.modalContainer}>
+					<View style={styles.imageContainer}>
+						<TouchableOpacity
+							onPress={pickImage}
+							style={styles.modalButton}
+						>
+							<Text style={styles.buttonText}>
+								앨범에서 고르기
+							</Text>
+						</TouchableOpacity>
+						<TouchableOpacity
+							onPress={PofileInitialization}
+							style={styles.modalButton}
+						>
+							<Text style={styles.buttonText}>
+								기본 이미지로 변경
+							</Text>
+						</TouchableOpacity>
+						<TouchableOpacity
+							onPress={onClose}
+							style={[styles.modalButton,{ backgroundColor: "grey", }]}
+						>
+							<Text style={styles.buttonText}>
+								닫기
+							</Text>
+						</TouchableOpacity>
+					</View>
+				</View>
+			</Modal>
+		);
+	};
+	const profileModalVisible = () => {
+		setIsModalVisible(!isModalVisible);
+	};
 	return (
 		<View style={styles.container}>
 			<View style={{ padding: 20, alignItems:"center",}}>
-				<TouchableOpacity onPress={pickImage}>
+				<TouchableOpacity onPress={profileModalVisible}>
 					<Image
 						source={{ uri: imageUri }}
 						style={styles.Image}
 					/>
 				</TouchableOpacity>
+				{isModalVisible && (
+					<ProfileModal
+						isVisible={isModalVisible}
+						onClose={() => setIsModalVisible(false)}
+					/>
+				)}
 				<Text style={[styles.smallText, { marginTop: 5 }]}>프로필 사진 변경</Text>
 			</View>
 			<View style={{ width: "90%", }}>
@@ -166,6 +223,37 @@ const styles = StyleSheet.create({
 		fontWeight: "600",
 		color: 'white', // 입력 텍스트 색상
 		minWidth: "100%", // 최소 너비 설정
+	},
+	modalContainer: {
+		flex: 1,
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	imageContainer: {
+		alignItems: 'center',
+		justifyContent: 'center',
+		width: windowWidth * 0.8,
+		height: windowHeight * 0.3,
+		borderRadius: 20,
+		backgroundColor: 'white',
+	},
+	buttonText: {
+		color: "black",
+		fontSize: 15,
+		fontWeight: "bold",
+		textAlign: "center",
+	},
+	modalButton: {
+		width: "80%",
+		height: "20%",
+		borderRadius: 10,
+		borderWidth: 1,
+		backgroundColor: "#99A1B6",
+		borderColor: 'black',
+		alignItems: 'center',
+		justifyContent: 'center',
+		margin: "3%",
 	},
 });
 
