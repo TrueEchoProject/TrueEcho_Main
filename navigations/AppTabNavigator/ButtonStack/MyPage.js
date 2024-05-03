@@ -1,5 +1,5 @@
-import React, { useState, useEffect, } from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Modal, Dimensions } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, Dimensions, ActivityIndicator } from 'react-native';
 import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import PagerView from "react-native-pager-view";
 import axios from "axios";
@@ -8,12 +8,13 @@ import { Button3 } from "../../../components/Button";
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+
 const MyPage = ({ navigation, route }) => {
 	const [userData, setUserData] = useState(null);
 	const [pinData, setPinData] = useState([]);
 	const [isFrontShowing, setIsFrontShowing] = useState(true);
 	const [currentPage, setCurrentPage] = useState(0);
-	const [isLoading, setIsLoading] = useState(true);  // 로딩 상태 추가
+	const [isLoading, setIsLoading] = useState(true);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	
 	useEffect(() => {
@@ -38,24 +39,28 @@ const MyPage = ({ navigation, route }) => {
 	const handlePageChange = (e) => {
 		setCurrentPage(e.nativeEvent.position);
 	};
-	const fetchData = async () => {
-		setIsLoading(true);
-		try {
-			const userResponse = await axios.get(`http://192.168.0.3:3000/user_me`);
-			const pinResponse = await axios.get(`http://192.168.0.3:3000/user_pin?_limit=5`);
-			setUserData(userResponse.data[0]);
-			setPinData(pinResponse.data);
-		} catch (error) {
-			console.error('Error fetching data', error);
-		} finally {
-			setIsLoading(false);
+	useEffect(() => {
+		async function fetchData() {
+			try {
+				const userResponse = await axios.get(`http://192.168.0.3:3000/user_me`);
+				const pinResponse = await axios.get(`http://192.168.0.3:3000/user_pin?_limit=5`);
+				setUserData(userResponse.data[0]);
+				setPinData(pinResponse.data);
+			} catch (error) {
+				console.error('Error fetching data', error);
+			} finally {
+				setIsLoading(false); // 데이터 로드 완료
+			}
 		}
-	};
+		
+		fetchData();
+	}, []);
 	
 	useEffect(() => {
 		if (pinData) {
 			console.log(pinData);
 		}
+		setCurrentPage(0); // 페이지 변경 시 0으로 설정
 	}, [pinData]);
 	
 	useEffect(() => {
@@ -64,12 +69,8 @@ const MyPage = ({ navigation, route }) => {
 		}
 	}, [userData]); // userData 변화 감지
 	
-	useEffect(() => {
-		fetchData();
-	}, []);
-	
 	if (isLoading) {
-		return <Text>Loading...</Text>;  // 로딩 중 표시
+		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff" /></View>;
 	}
 	const ProfileImageModal = ({ isVisible, imageUrl, onClose }) => { // 수정: 프로퍼티 이름 Image -> imageUrl 변경
 		return (
@@ -80,7 +81,6 @@ const MyPage = ({ navigation, route }) => {
 				transparent={true}
 			>
 				<View style={styles.modalContainer}>
-					
 					<View style={styles.imageContainer}>
 						<TouchableOpacity
 							onPress={onClose}
@@ -129,56 +129,33 @@ const MyPage = ({ navigation, route }) => {
 				</View>
 			</View>
 			<View style={styles.pinsContainer}>
-				<Text style={styles.pinsTitle}>Pins</Text>
-				{pinData.length <= 4 ? (
-					<PagerView
-						style={styles.pagerView}
-						initialPage={0}
-						onPageSelected={handlePageChange}
-					>
-						{pinData.map((item) => (
-							<View key={item.pin_id} style={{ position: 'relative' }}>
-								<TouchableOpacity onPress={changeImage}>
-									<Image
-										source={{ uri: isFrontShowing ? item.post_front_url : item.post_back_url }}
-										style={styles.pageStyle}
-									/>
-								</TouchableOpacity>
-							</View>
-						))}
-						<View key="additionalPage" style={styles.pinPlus}>
-							<TouchableOpacity
-								style={{alignItems: "center", padding: 30,}}
-								onPress={() => navigation.navigate('캘린더')}
-							>
-								<AntDesign
-									name="plussquareo"
-									size={40}
-									style={{margin: 20,}}
-									color="white"
+				<View style={{ flexDirection: "row" }}>
+					<Text style={styles.pinsTitle}>Pins</Text>
+					<TouchableOpacity onPress={() => navigation.navigate('캘린더')}>
+						<AntDesign
+							name="plussquare"
+							style={{ marginLeft: 10, marginTop: 6, }}
+							size={24}
+							color="black"
+						/>
+					</TouchableOpacity>
+				</View>
+				<PagerView
+					style={styles.pagerView}
+					initialPage={0}
+					onPageSelected={handlePageChange}
+				>
+					{pinData.map((item) => (
+						<View key={item.pin_id} style={{ position: 'relative' }}>
+							<TouchableOpacity onPress={changeImage}>
+								<Image
+									source={{ uri: isFrontShowing ? item.post_front_url : item.post_back_url }}
+									style={styles.pageStyle}
 								/>
-								<Text style={[styles.pinsText, {textAlign: 'center'}]}>핀을{'\n'}추가해보세요!</Text>
 							</TouchableOpacity>
 						</View>
-					</PagerView>
-				) : (
-					<PagerView
-						style={styles.pagerView}
-						initialPage={0}
-						onPageSelected={handlePageChange}
-					>
-						{pinData.map((item) => (
-							<View key={item.pin_id} style={{ position: 'relative' }}>
-								<TouchableOpacity onPress={changeImage}>
-									<Image
-										source={{ uri: isFrontShowing ? item.post_front_url : item.post_back_url }}
-										style={styles.pageStyle}
-									/>
-								</TouchableOpacity>
-							</View>
-						))}
-					</PagerView>
-				)}
+					))}
+				</PagerView>
 				<View style={styles.indicatorContainer}>
 					{pinData.map((_, index) => (
 						<Text key={index} style={[styles.indicator, index === currentPage ? styles.activeIndicator : null]}>
@@ -284,6 +261,11 @@ const styles = StyleSheet.create({
 		width: windowWidth * 0.8,
 		height: windowHeight * 0.6,
 		borderRadius: 12,
+	},
+	loader: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 })
 export default MyPage;
