@@ -21,6 +21,25 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 		setIsOptionsVisible(isOptionsVisibleExternal);
 		console.log(`Options Visible for ${post.post_id}: ${isOptionsVisibleExternal}`);
 	}, [isOptionsVisibleExternal]); // 이제 외부에서 받은 props가 변경될 때마다 로그를 찍고 상태를 업데이트합니다.
+	
+	const toggleOptionsVisibility = () => {
+		const newVisibility = !isOptionsVisible;
+		setIsOptionsVisible(newVisibility); // 내부 상태 업데이트
+		setIsOptionsVisibleExternal(newVisibility); // 외부 상태 업데이트로 전파
+	};
+	const onImageButtonLayout = (event) => {
+		if (layoutSet) return; // 레이아웃이 이미 설정되었다면 추가 업데이트 방지
+		
+		const { height } = event.nativeEvent.layout;
+		setImageButtonHeight(height);
+		setLayoutSet(true); // 레이아웃 설정 완료 표시
+	};
+	const hideOptions = () => {
+		if (isOptionsVisible) {
+			setIsOptionsVisible(false);
+			setIsOptionsVisibleExternal(false); // 외부 상태도 업데이트
+		}
+	};
 	const toggleLike = async () => {
 		const newLikesCount = isLiked ? likesCount - 1 : likesCount + 1;
 		setIsLiked(!isLiked);
@@ -28,7 +47,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 		console.log(newLikesCount)
 		console.log(post.post_id)
 		try {
-			await axios.patch(`http://192.168.0.27:3000/posts/${post.post_id}`, {
+			await axios.patch(`http://192.168.0.3:3000/posts/${post.post_id}`, {
 				likes_count: newLikesCount
 			});
 			console.log('Likes count updated successfully');
@@ -39,7 +58,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 	const toggleBlock = async () => {
 		console.log(post.username);
 		try {
-			const response = await axios.post(`http://192.168.0.27:3000/blocked_users`, {
+			const response = await axios.post(`http://192.168.0.3:3000/blocked_users`, {
 				username: post.username,
 				profile_url: post.profile_url
 			});
@@ -55,10 +74,11 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 			}
 		}
 	};
+	
 	const toggleFriendSend = async () => {
 		console.log(post.username);  // 이것은 여전히 정상적으로 작동합니다.
 		try {
-			await axios.post(`http://192.168.0.27:3000/friendSend`, {
+			await axios.post(`http://192.168.0.3:3000/friendSend`, {
 				friendSendUser: post.username
 			});
 			console.log('Send updated successfully');
@@ -67,28 +87,8 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 			console.error('Error updating Send:', error);
 		}
 	};
-	
-	const toggleOptionsVisibility = () => {
-		const newVisibility = !isOptionsVisible;
-		setIsOptionsVisible(newVisibility); // 내부 상태 업데이트
-		setIsOptionsVisibleExternal(newVisibility); // 외부 상태 업데이트로 전파
-	};
-	const hideOptions = () => {
-		if (isOptionsVisible) {
-			setIsOptionsVisible(false);
-			setIsOptionsVisibleExternal(false); // 외부 상태도 업데이트
-		}
-	};
 	const toggleCommentVisibility = () => {
 		setIsCommentVisible(!isCommentVisible);
-	};
-	
-	const onImageButtonLayout = (event) => {
-		if (layoutSet) return; // 레이아웃이 이미 설정되었다면 추가 업데이트 방지
-		
-		const { height } = event.nativeEvent.layout;
-		setImageButtonHeight(height);
-		setLayoutSet(true); // 레이아웃 설정 완료 표시
 	};
 	
 	return (
@@ -190,7 +190,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 							<TouchableOpacity style={styles.iconButton}>
 								<Ionicons name='chatbubbles' style={styles.icon} onPress={toggleCommentVisibility} size={24}/>
 							</TouchableOpacity>
-							<TouchableOpacity onPress={() => Share.share({ message: `${post.title}: http://192.168.0.27:3000/posts?post_id=${post.post_id}/` })}>
+							<TouchableOpacity onPress={() => Share.share({ message: `${post.title}: http://192.168.0.3:3000/posts?post_id=${post.post_id}/` })}>
 								<MaterialIcons name='send' style={styles.icon} size={24} />
 							</TouchableOpacity>
 						</View>
