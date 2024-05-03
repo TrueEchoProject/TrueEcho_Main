@@ -17,7 +17,7 @@ const days = ["일", "월", "화", "수", "목", "금", "토"];
 const months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
-const Calendar = () => {
+const Calendar = ({ navigation }) => {
 	const [currentMonth, setCurrentMonth] = useState(new Date());
 	const [specificDates, setSpecificDates] = useState({});
 	const [isImageVisible, setIsImageVisible] = useState(false);
@@ -34,6 +34,33 @@ const Calendar = () => {
 			setSpecificDates(newSpecificDates);
 		} catch (error) {
 			console.error('Error fetching calendar data', error);
+		}
+	};
+// 선택된 모든 핀을 서버에 전송하는 함수
+	const postPins = async () => {
+		if (selectedPins.length === 0) {
+			alert("선택된 핀이 없습니다.");
+			return;
+		}
+		const pinData = {
+			pins: selectedPins.map((pin, index) => ({
+				pin_id: index + 1,
+				created_at: pin.date,
+				post_front_url: pin.frontUrl,
+				post_back_url: pin.backUrl
+			}))
+		};
+		
+		try {
+			const PostResponse = await axios.delete('http://192.168.0.3:3000/user_pin')
+			const response = await axios.post('http://192.168.0.3:3000/user_pin', pinData);
+			alert("핀이 성공적으로 제출되었습니다.");
+			if (response) {
+				navigation.navigate("MyP", { pinRes: pinData }); // SendPost 페이지로 이동하면서 두 배열의 파라미터를 전달
+			}
+		} catch (error) {
+			console.error('Error posting pins', error);
+			alert("핀을 제출하는 중 오류가 발생했습니다.");
 		}
 	};
 	
@@ -232,8 +259,8 @@ const Calendar = () => {
 			<View style={styles.container}>
 				<View style={styles.header}>
 					<Text style={styles.monthLabel}>{currentMonth.getFullYear()}년 {months[currentMonth.getMonth()]}월</Text>
-					<TouchableOpacity style={{borderRadius:5, padding:5, backgroundColor: '#3B4664',}}>
-						<Text style={{color: "white"}}>제출</Text>
+					<TouchableOpacity onPress={postPins} style={styles.submitButton}>
+						<Text style={styles.submitButtonText}>핀 제출</Text>
 					</TouchableOpacity>
 				</View>
 				{renderCalendar()}
@@ -396,6 +423,16 @@ const styles = StyleSheet.create({
 	removeButtonText: {
 		color: 'white',
 		fontSize: 12,
+		textAlign: 'center',
+	},
+	submitButton: {
+		backgroundColor: '#4CAF50', // 버튼 색상: 녹색
+		padding: 10,
+		borderRadius: 5,
+	},
+	submitButtonText: {
+		color: 'white',
+		fontSize: 16,
 		textAlign: 'center',
 	},
 });

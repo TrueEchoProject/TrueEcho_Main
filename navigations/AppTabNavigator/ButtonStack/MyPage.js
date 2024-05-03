@@ -1,40 +1,40 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect, } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import PagerView from "react-native-pager-view";
 import axios from "axios";
-import { useFocusEffect } from "@react-navigation/native";
 import { Image } from "expo-image";
 
-const MyPage = ({ navigation }) => {
-	const [userData, setUserData] = useState(null); // 초기 상태를 null로 설정
+const MyPage = ({ navigation, route }) => {
+	const [userData, setUserData] = useState(null);
 	const [pinData, setPinData] = useState([]);
-	const [isFrontShowing, setIsFrontShowing] = useState(true); // 현재 보여지는 이미지가 전면 이미지인지 추적하는 상태
+	const [isFrontShowing, setIsFrontShowing] = useState(true);
 	const [currentPage, setCurrentPage] = useState(0);
+	const [isLoading, setIsLoading] = useState(true);  // 로딩 상태 추가
 	
+	useEffect(() => {
+		if (route.params?.pinRes) {
+			console.log('Received pin response:', route.params.pinRes);
+			setPinData(route.params.pinRes.pins);
+		}
+	}, [route.params?.pinRes]);
 	const changeImage = () => {
 		setIsFrontShowing(!isFrontShowing);
 	};
 	const handlePageChange = (e) => {
 		setCurrentPage(e.nativeEvent.position);
 	};
-	const fetchUser = async () => {
+	const fetchData = async () => {
+		setIsLoading(true);
 		try {
-			const response = await axios.get(`http://192.168.0.3:3000/user_me`);
-			const user = response.data[0]; // 데이터 배열의 첫 번째 객체 접근
-			setUserData(user);
+			const userResponse = await axios.get(`http://192.168.0.3:3000/user_me`);
+			const pinResponse = await axios.get(`http://192.168.0.3:3000/user_pin?_limit=5`);
+			setUserData(userResponse.data[0]);
+			setPinData(pinResponse.data);
 		} catch (error) {
-			console.error('Error fetching user', error);
-		}
-	};
-	
-	const fetchPin = async () => {
-		try {
-			const pinResponse = await axios.get(`http://192.168.0.3:3000/user_pin`);
-			const pins = pinResponse.data;
-			setPinData(pins);
-		} catch (error) {
-			console.error('Error fetching pins', error);
+			console.error('Error fetching data', error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 	
@@ -51,100 +51,90 @@ const MyPage = ({ navigation }) => {
 		}
 	}, [userData]); // userData 변화 감지
 	
-	useFocusEffect(
-		useCallback(() => {
-			fetchUser();
-			fetchPin();
-		}, [])
-	);
+	useEffect(() => {
+		fetchData();
+	}, []);
+	
+	if (isLoading) {
+		return <Text>Loading...</Text>;  // 로딩 중 표시
+	}
 	
 	return (
 		<View style={styles.container}>
-			{userData && pinData ? (
-				<>
-					<View style={styles.topContainer}>
-						<Image
-							source={{uri: userData.profile_url}}
-							style={styles.avatar}
-						/>
-						<View style={styles.textContainer}>
-							<Text style={styles.name}>{userData.username}</Text>
-							<FontAwesome5
-								name="crown"
-								style={{marginLeft: 10, marginBottom: 10}}
-								size={24}
-								color="blue"
-							/>
-						</View>
-						<View style={styles.textContainer}>
-							<Text>{userData.user_vote}</Text>
-						</View>
-					</View>
-					<View style={styles.pinsContainer}>
-						<Text style={styles.pinsTitle}>Pins</Text>
-						{pinData.length === 0 ? (
-							<View style={styles.pinPlus}>
-								<TouchableOpacity
-									style={{alignItems: "center", padding: 30,}}
-									onPress={() => navigation.navigate('캘린더')}
-								>
-									<AntDesign
-										name="plussquareo"
-										size={40}
-										style={{margin: 20,}}
-										color="white"
+			<View style={styles.topContainer}>
+				<Image source={{ uri: userData.profile_url }} style={styles.avatar} />
+				<View style={styles.textContainer}>
+					<Text style={styles.name}>{userData.username}</Text>
+					<FontAwesome5
+						name="crown"
+						style={{marginLeft: 10, marginBottom: 10}}
+						size={24}
+						color="blue"
+					/>
+				</View>
+				<View style={styles.textContainer}>
+					<Text>{userData.user_vote}</Text>
+				</View>
+			</View>
+			<View style={styles.pinsContainer}>
+				<Text style={styles.pinsTitle}>Pins</Text>
+				{pinData.length <= 4 ? (
+					<PagerView
+						style={styles.pagerView}
+						initialPage={0}
+						onPageSelected={handlePageChange}
+					>
+						{pinData.map((item) => (
+							<View key={item.pin_id} style={{ position: 'relative' }}>
+								<TouchableOpacity onPress={changeImage}>
+									<Image
+										source={{ uri: isFrontShowing ? item.post_front_url : item.post_back_url }}
+										style={styles.pageStyle}
 									/>
-									<Text style={[styles.pinsText, {textAlign: 'center'}]}>핀을{'\n'}추가해보세요!</Text>
 								</TouchableOpacity>
 							</View>
-						) : (
-							<>
-								<PagerView
-									style={styles.pagerView}
-									initialPage={0}
-									onPageSelected={handlePageChange}
-								>
-									{pinData.map((item) => (
-										<View key={item.pin_id} style={{position: 'relative'}}>
-											<TouchableOpacity onPress={changeImage}>
-												<Image
-													source={{uri: isFrontShowing ? item.post_front_url : item.post_back_url}}
-													style={styles.pageStyle}
-												/>
-											</TouchableOpacity>
-										</View>
-									))}
-									{pinData.length <= 5 && (
-										<View style={styles.pinPlus}>
-											<TouchableOpacity
-												style={{alignItems: "center", padding: 30,}}
-												onPress={() => navigation.navigate('캘린더')}
-											>
-												<AntDesign
-													name="plussquareo"
-													size={40}
-													style={{margin: 20,}}
-													color="white"
-												/>
-												<Text style={[styles.pinsText, {textAlign: 'center'}]}>핀을{'\n'}추가해보세요!</Text>
-											</TouchableOpacity>
-										</View>
-									)}
-								</PagerView>
-								<View style={styles.indicatorContainer}>
-									{pinData.map((_, index) => (
-										<Text key={index} style={[styles.indicator, index === currentPage ? styles.activeIndicator : null]}>
-											&#9679;
-										</Text>
-									))}
-								</View>
-							</>
-						)}
-					</View>
-				</>
-			) : (
-				<Text>데이터 로딩 중...</Text>
-			)}
+						))}
+						<View key="additionalPage" style={styles.pinPlus}>
+							<TouchableOpacity
+								style={{alignItems: "center", padding: 30,}}
+								onPress={() => navigation.navigate('캘린더')}
+							>
+								<AntDesign
+									name="plussquareo"
+									size={40}
+									style={{margin: 20,}}
+									color="white"
+								/>
+								<Text style={[styles.pinsText, {textAlign: 'center'}]}>핀을{'\n'}추가해보세요!</Text>
+							</TouchableOpacity>
+						</View>
+					</PagerView>
+				) : (
+					<PagerView
+						style={styles.pagerView}
+						initialPage={0}
+						onPageSelected={handlePageChange}
+					>
+						{pinData.map((item) => (
+							<View key={item.pin_id} style={{ position: 'relative' }}>
+								<TouchableOpacity onPress={changeImage}>
+									<Image
+										source={{ uri: isFrontShowing ? item.post_front_url : item.post_back_url }}
+										style={styles.pageStyle}
+									/>
+								</TouchableOpacity>
+							</View>
+						))}
+					</PagerView>
+				)}
+				<View style={styles.indicatorContainer}>
+					{pinData.map((_, index) => (
+						<Text key={index} style={[styles.indicator, index === currentPage ? styles.activeIndicator : null]}>
+							&#9679;
+						</Text>
+					))}
+				</View>
+			</View>
 		</View>
 	);
 }
