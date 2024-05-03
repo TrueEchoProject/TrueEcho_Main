@@ -1,17 +1,20 @@
 import React, { useState, useEffect, } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Modal, Dimensions } from 'react-native';
 import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import PagerView from "react-native-pager-view";
 import axios from "axios";
 import { Image } from "expo-image";
 import { Button3 } from "../../../components/Button";
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 const MyPage = ({ navigation, route }) => {
 	const [userData, setUserData] = useState(null);
 	const [pinData, setPinData] = useState([]);
 	const [isFrontShowing, setIsFrontShowing] = useState(true);
 	const [currentPage, setCurrentPage] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);  // 로딩 상태 추가
+	const [isModalVisible, setIsModalVisible] = useState(false);
 	
 	useEffect(() => {
 		if (route.params?.pinRes) {
@@ -21,6 +24,9 @@ const MyPage = ({ navigation, route }) => {
 	}, [route.params?.pinRes]);
 	const changeImage = () => {
 		setIsFrontShowing(!isFrontShowing);
+	};
+	const profileImageModalVisible = () => {
+		setIsModalVisible(!isModalVisible);
 	};
 	const handlePageChange = (e) => {
 		setCurrentPage(e.nativeEvent.position);
@@ -58,6 +64,33 @@ const MyPage = ({ navigation, route }) => {
 	if (isLoading) {
 		return <Text>Loading...</Text>;  // 로딩 중 표시
 	}
+	const ProfileImageModal = ({ isVisible, imageUrl, onClose }) => { // 수정: 프로퍼티 이름 Image -> imageUrl 변경
+		return (
+			<Modal
+				animationType="fade"
+				visible={isVisible}
+				onRequestClose={onClose}
+				transparent={true}
+			>
+				<View style={styles.modalContainer}>
+					
+					<View style={styles.imageContainer}>
+						<TouchableOpacity
+							onPress={onClose}
+						>
+							<Text style={styles.buttonText}>
+								닫기
+							</Text>
+						</TouchableOpacity>
+						<Image
+							source={{ uri: imageUrl }} // 수정: imageUrl을 사용
+							style={styles.smallImage}
+						/>
+					</View>
+				</View>
+			</Modal>
+		);
+	};
 	
 	return (
 		<View style={styles.container}>
@@ -65,9 +98,16 @@ const MyPage = ({ navigation, route }) => {
 				<Button3 onPress={() => navigation.navigate('MyOp', { user: userData })} />
 			</View>
 			<View style={styles.topContainer}>
-				<TouchableOpacity>
+				<TouchableOpacity onPress={profileImageModalVisible}>
 					<Image source={{ uri: userData.profile_url }} style={styles.avatar}/>
 				</TouchableOpacity>
+				{isModalVisible && (
+					<ProfileImageModal
+						isVisible={isModalVisible}
+						imageUrl={userData.profile_url} // 수정: imageUrl 프로퍼티 전달
+						onClose={() => setIsModalVisible(false)}
+					/>
+				)}
 				<View style={styles.textContainer}>
 					<Text style={styles.name}>{userData.username}</Text>
 					<FontAwesome5
@@ -212,6 +252,31 @@ const styles = StyleSheet.create({
 	},
 	activeIndicator: {
 		color: 'blue',
+	},
+	modalContainer: {
+		flex: 1,
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	buttonText: {
+		color: "black",
+		fontSize: 15,
+		fontWeight: "bold",
+		textAlign: "center",
+		marginTop: 15,
+	},
+	imageContainer: {
+		width: windowWidth * 0.8,
+		height: windowHeight * 0.6,
+		borderRadius: 12,
+		backgroundColor: 'white',
+	},
+	smallImage: {
+		marginTop: 13,
+		width: windowWidth * 0.8,
+		height: windowHeight * 0.6,
+		borderRadius: 12,
 	},
 })
 export default MyPage;
