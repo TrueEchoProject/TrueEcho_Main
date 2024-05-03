@@ -76,13 +76,13 @@ const styles = StyleSheet.create({
 		backgroundColor: 'white',
 	},
 	Text: {
-		fontSize: 25,
+		fontSize: 20,
 		fontWeight: "300",
 	},
 	smallText: {
-		fontSize: 22,
+		fontSize: 18,
 		fontWeight: "300",
-		margin: 10,
+		margin: 5,
 	}
 })
 export default MyOptions;
