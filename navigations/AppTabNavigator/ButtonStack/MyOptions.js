@@ -67,7 +67,6 @@ const MyOptions = ({ navigation, route }) => {
 	const NotificationModal = ({ isVisible, onClose }) => {
 		const [notificationSettings, setNotificationSettings] = useState({});
 		
-		
 		const fetchNotification = async () => {
 			try {
 				const response = await axios.get(`http://192.168.0.3:3000/notificationSettings`);
@@ -175,6 +174,72 @@ const MyOptions = ({ navigation, route }) => {
 	};
 	
 	const BlockModal = ({ isVisible, onClose }) => {
+		const [editButton, setEditButton] = useState(false);
+		const [blockedStatus, setBlockedStatus] = useState({});
+		const [originalStatus, setOriginalStatus] = useState({});
+		const [blockedUsers, setBlockedUsers] = useState([]);
+		
+		const fetchBlockedUsers = async () => {
+			try {
+				const response = await axios.get(`http://192.168.0.3:3000/blocked_users`);
+				setBlockedUsers(response.data);
+			} catch (error) {
+				console.error('Error fetching calendar data', error);
+			}
+		};
+		useEffect(() => {
+			console.log(blockedUsers);
+		}, [blockedUsers]);
+		
+		useEffect(() => {
+			fetchBlockedUsers();
+		}, []);
+		
+		// 각 사용자의 차단 상태를 초기화합니다.
+		useEffect(() => {
+			const initialStatus = blockedUsers.reduce((status, user) => {
+				status[user.id] = false; // 초기 상태를 false로 설정합니다.
+				return status;
+			}, {});
+			setBlockedStatus(initialStatus);
+		}, [blockedUsers]);
+		// 편집 상태를 시작할 때의 차단된 사용자 상태를 저장합니다.
+		const startEditing = () => {
+			setOriginalStatus({ ...blockedStatus });
+			setEditButton(true);
+		};
+		// 편집 취소 함수
+		const cancelEditing = () => {
+			setBlockedStatus(originalStatus);
+			setEditButton(false);
+		};
+		const toggleBlockStatus = (userId) => {
+			setBlockedStatus(prevStatus => ({
+				...prevStatus,
+				[userId]: !prevStatus[userId]
+			}));
+		};
+// 저장 버튼 클릭 시 호출되는 함수
+		const handleSave = async () => {
+			// 변경된 사항이 있는지 확인합니다.
+			const hasChanges = Object.keys(blockedStatus).some(id => blockedStatus[id] !== originalStatus[id]);
+			if (hasChanges) {
+				// blockedStatus에서 차단 해제된 사용자의 ID를 추출합니다.
+				const unblockedIds = Object.keys(blockedStatus).filter(id => !blockedStatus[id]);
+				// blockedUsers 배열에서 해당 ID의 사용자 정보를 찾습니다.
+				const unblockedUserInfo = blockedUsers.filter(user => unblockedIds.includes(String(user.id)));
+				
+				try {
+					await axios.delete('http://192.168.0.3:3000/blocked_users');
+					const response = await axios.post('http://192.168.0.3:3000/blocked_users', unblockedUserInfo);
+					console.log('서버 응답:', response.data);
+				} catch (error) {
+					console.error('Error updating blocked users:', error);
+				}
+			}
+			// 모달을 닫습니다.
+			onClose();
+		};
 		return (
 			<Modal
 				animationType="fade"
@@ -184,46 +249,63 @@ const MyOptions = ({ navigation, route }) => {
 			>
 				<View style={styles.modalContainer}>
 					<View style={styles.imageContainer}>
-						<Text style={[styles.modalText, { marginTop: "10%", }]}>차단된 친구</Text>
-						<Text style={styles.modalSmallText}>차단을 편집하세요</Text>
-						<ScrollView
-							style={styles.scrollContainer}
-							contentContainerStyle={styles.scrollContent}
-						>
-							<TouchableOpacity style={styles.modalButton}>
-								<Text style={styles.buttonText}>user 1</Text>
-							</TouchableOpacity>
-							<TouchableOpacity style={styles.modalButton}>
-								<Text style={styles.buttonText}>user 2</Text>
-							</TouchableOpacity>
-							<TouchableOpacity style={styles.modalButton}>
-								<Text style={styles.buttonText}>user 3</Text>
-							</TouchableOpacity>
-							<TouchableOpacity style={styles.modalButton}>
-								<Text style={styles.buttonText}>user 4</Text>
-							</TouchableOpacity>
-							<TouchableOpacity style={styles.modalButton}>
-								<Text style={styles.buttonText}>user 5</Text>
-							</TouchableOpacity>
-							<TouchableOpacity style={styles.modalButton}>
-								<Text style={styles.buttonText}>user 6</Text>
-							</TouchableOpacity>
-							<TouchableOpacity style={styles.modalButton}>
-								<Text style={styles.buttonText}>user 7</Text>
-							</TouchableOpacity>
-							<TouchableOpacity style={styles.modalButton}>
-								<Text style={styles.buttonText}>user 8</Text>
-							</TouchableOpacity>
-							<TouchableOpacity style={styles.modalButton}>
-								<Text style={styles.buttonText}>user 9</Text>
-							</TouchableOpacity>
-						</ScrollView>
-						<TouchableOpacity
-							style={[styles.modalButton, { backgroundColor: '#4CAF50', marginTop: "10%", }]}
-							onPress={onClose}
-						>
-							<Text style={styles.buttonText}>저장</Text>
-						</TouchableOpacity>
+						<Text style={[styles.modalText, { marginTop: "8%", }]}>차단된 친구</Text>
+						<Text style={[styles.modalSmallText, { marginBottom: "3%", }]}> 차단을 편집하세요</Text>
+						{ blockedUsers.length === 0 ? (
+							<View style={styles.blockNone}>
+								<Text>차단한 친구가 없어요</Text>
+							</View>
+						) : (
+							<>
+								<ScrollView
+									style={styles.scrollContainer}
+									contentContainerStyle={styles.scrollContent}
+								>
+									{blockedUsers.map((user) => (
+										<View key={user.id} style={styles.scrollModalButton}>
+											<Image
+												style={styles.profileImage}
+												source={{ uri: user.profile_url }}
+											/>
+											<Text style={styles.buttonText}>{user.username}</Text>
+											{ editButton && (
+												<TouchableOpacity
+													style={[
+														styles.blockedButton,
+														{ backgroundColor: blockedStatus[user.id] ? 'red' : 'green' } // 차단 상태에 따라 색상 변경
+													]}
+													onPress={() => toggleBlockStatus(user.id)}
+												>
+													<Text>{blockedStatus[user.id] ? 'Unb' : 'Blo'}</Text>
+												</TouchableOpacity>
+											)}
+										</View>
+									))}
+								</ScrollView>
+								<View style={styles.blockedModalButton}>
+									{!editButton ? (
+										<TouchableOpacity
+											style={[styles.blockedModalSaveButton, { backgroundColor: "#99A1F6", }]}
+											onPress={startEditing}                  >
+											<Text style={styles.buttonText}>편집</Text>
+										</TouchableOpacity>
+									) : (
+										<TouchableOpacity
+											style={[styles.blockedModalSaveButton, { backgroundColor: "#3B4664", }]}
+											onPress={cancelEditing}
+										>
+											<Text style={styles.buttonText}>편집 취소</Text>
+										</TouchableOpacity>
+									)}
+									<TouchableOpacity
+										style={styles.blockedModalSaveButton}
+										onPress={handleSave}
+									>
+										<Text style={styles.buttonText}>저장</Text>
+									</TouchableOpacity>
+								</View>
+							</>
+						)}
 						<TouchableOpacity
 							style={[styles.modalButton, { backgroundColor: "grey", marginBottom: "10%", }]}
 							onPress={onClose}
@@ -458,8 +540,18 @@ const styles = StyleSheet.create({
 		backgroundColor: 'white',
 	},
 	scrollContainer: {
-		width: windowWidth * 0.8,
-		backgroundColor: 'white',
+		width: windowWidth * 0.65,
+		borderRadius: 10,
+		borderColor: 'black',
+		backgroundColor: '#81b0ff',
+	},
+	profileImage: {
+		height: 30,
+		width: 30,
+		borderRadius: 15,
+		borderWidth: 1,
+		borderColor: "grey",
+		marginHorizontal: 10,
 	},
 	scrollContent: {
 		alignItems: 'center', // 컨텐츠를 가운데 정렬
@@ -503,6 +595,39 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		margin: "3%",
 	},
+	scrollModalButton :{
+		flexDirection: "row",
+		width: "100%",
+		height: 50,
+		borderRadius: 10,
+		borderWidth: 1,
+		backgroundColor: "#99A1B6",
+		borderColor: 'black',
+		alignItems: 'center',
+		margin: "3%",
+	},
+	blockedModalSaveButton: {
+		width: "45%",
+		margin: "5%",
+		height: "100%",
+		borderRadius: 10,
+		borderWidth: 1,
+		borderColor: "black",
+		justifyContent: "center",
+		backgroundColor: "#4CAF50",
+	},
+	blockedModalButton: {
+		width: "80%",
+		height: 50,
+		borderRadius: 10,
+		borderWidth: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+		margin: "3%",
+		flexDirection: "row",
+		borderColor:"white",
+		backgroundColor: 'white',
+	},
 	modalButton: {
 		width: "80%",
 		height: 50,
@@ -524,6 +649,26 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		margin: "3%",
+	},
+	blockedButton: {
+		marginLeft: "auto",
+		marginRight: 10,
+		width:30,
+		height: 30,
+		borderRadius: 5,
+		backgroundColor: "red",
+	},
+	blockNone : {
+		height: "70%",
+		width: "80%",
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginLeft: "10%",
+		marginRight: "10%",
+		backgroundColor: "#f4f3f4",
+		padding: 10,
+		borderWidth: 1,
+		borderColor: "black",
 	},
 })
 export default MyOptions;
