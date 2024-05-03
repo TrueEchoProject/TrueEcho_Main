@@ -116,28 +116,30 @@ const MyPage = ({ navigation, route }) => {
 	
 	return (
 		<View style={styles.container}>
-			<View style={{flexDirection: 'row'}}>
-				<Button3 onPress={() => navigation.navigate('MyOp', { user: userData })} />
-			</View>
 			<View style={styles.topContainer}>
-				<TouchableOpacity onPress={profileImageModalVisible}>
-					<Image source={{ uri: userData.profile_url }} style={styles.avatar}/>
-				</TouchableOpacity>
-				{isModalVisible && (
-					<ProfileImageModal
-						isVisible={isModalVisible}
-						imageUrl={userData.profile_url} // 수정: imageUrl 프로퍼티 전달
-						onClose={() => setIsModalVisible(false)}
-					/>
-				)}
-				<View style={styles.textContainer}>
-					<Text style={styles.name}>{userData.username}</Text>
-					<FontAwesome5
-						name="crown"
-						style={{marginLeft: 10, marginBottom: 10}}
-						size={24}
-						color="blue"
-					/>
+				<View style={{flexDirection: "row"}}>
+					<View style={{marginRight: "auto"}}>
+						<TouchableOpacity onPress={profileImageModalVisible}>
+							<Image source={{ uri: userData.profile_url }} style={styles.avatar}/>
+						</TouchableOpacity>
+						{isModalVisible && (
+							<ProfileImageModal
+								isVisible={isModalVisible}
+								imageUrl={userData.profile_url} // 수정: imageUrl 프로퍼티 전달
+								onClose={() => setIsModalVisible(false)}
+							/>
+						)}
+						<View style={styles.textContainer}>
+							<Text style={styles.name}>{userData.username}</Text>
+							<FontAwesome5
+								name="crown"
+								style={{marginLeft: 10, marginBottom: 10}}
+								size={24}
+								color="blue"
+							/>
+						</View>
+					</View>
+					<Button3 onPress={() => navigation.navigate('MyOp', { user: userData })}/>
 				</View>
 				<View style={styles.textContainer}>
 					<Text>{userData.user_vote}</Text>
@@ -214,7 +216,7 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 	},
 	pinsContainer: {
-		flex: 1,
+		height: windowHeight * 0.59,
 		marginHorizontal: 15,
 		marginBottom: 20, // 하단 마진을 추가합니다.
 	},
