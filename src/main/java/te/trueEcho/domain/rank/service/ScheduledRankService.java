@@ -3,6 +3,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import te.trueEcho.domain.rank.repository.RankRepository;
 import te.trueEcho.domain.rank.repository.RankRepositoryImpl;
 import te.trueEcho.domain.user.entity.User;
@@ -49,13 +50,13 @@ import java.util.stream.Collectors;
         결국 vote로 그룹핑을 하고, 그 vote를 받은 user로 한번 더 그룹핑을 해야 한다.
         그리고 user별로 투표를 받은 횟수를 카운트해야 한다.
          */
-@Component
+@Service
 @Slf4j
 @RequiredArgsConstructor
 public class ScheduledRankService {
 
-    private VoteRepository voteRepository;
-    private RankRepository rankRepository;
+    private final VoteRepository voteRepository;
+    private final RankRepository rankRepository;
 
 //    @Scheduled(cron = "0 * 20 ? * 0", zone = "Asia/Seoul") //매주 일요일 20시에 랭킹을 만들어주는 서비스
     @Scheduled(fixedDelay = 10000)
