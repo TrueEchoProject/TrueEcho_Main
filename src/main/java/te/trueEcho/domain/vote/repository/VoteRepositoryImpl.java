@@ -134,4 +134,15 @@ public class VoteRepositoryImpl implements VoteRepository {
         return randomId;
     }
 
+    public List<VoteResult> getThisWeekVoteResult() {
+        try {
+            //이번주 투표 결과를 가져옴
+            return em.createQuery("SELECT VR FROM VoteResult VR " +
+                            "WHERE WEEK(VR.createdAt) = WEEK(CURRENT_DATE)"
+                    , VoteResult.class).getResultList();
+        } catch (Exception e) {
+            log.error("Error occurred while fetching this week's results", e);
+            return Collections.emptyList();
+        }
+    }
 }
