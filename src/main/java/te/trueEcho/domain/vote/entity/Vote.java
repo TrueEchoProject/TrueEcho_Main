@@ -15,12 +15,16 @@ import java.util.List;
 public class Vote {
 
     @Id
-    @Column(name = "vote id")
+    @Column(name = "vote_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "vote_title")
     private String title;
+
+    @Column(name = "vote_category")
+    @Enumerated(EnumType.STRING)
+    private VoteCategory category;
 
     @OneToMany(mappedBy = "vote", cascade = CascadeType.ALL)
     private List<VoteResult> voteResults;
