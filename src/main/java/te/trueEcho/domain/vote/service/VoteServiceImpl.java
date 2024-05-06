@@ -102,7 +102,7 @@ public class VoteServiceImpl implements VoteService {
         List<Post> postList = postRepository.readPost(1, 0, usersToRead);
         if(postList==null || postList.isEmpty()) return null;
 
-        return PostToPhotoDtoConverter.converter(postList.getFirst());
+        return PostToPhotoDtoConverter.converter(postList.get(0));
     }
 
 

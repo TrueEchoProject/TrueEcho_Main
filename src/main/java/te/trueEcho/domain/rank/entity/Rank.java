@@ -29,7 +29,7 @@ public class Rank {
     @Column(name = "rank_week")
     private LocalDate rankWeek;
 
-    @OneToMany(mappedBy = "rank" , cascade= CascadeType.ALL)
+    @OneToMany(mappedBy = "rank" )
     private List<User> users;
 
     @OneToOne(fetch = FetchType.LAZY)
