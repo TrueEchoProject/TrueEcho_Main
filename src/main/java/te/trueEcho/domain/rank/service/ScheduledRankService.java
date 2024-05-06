@@ -1,11 +1,11 @@
 package te.trueEcho.domain.rank.service;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import te.trueEcho.domain.rank.converter.RankToDtoConverter;
 import te.trueEcho.domain.rank.repository.RankRepository;
-import te.trueEcho.domain.rank.repository.RankRepositoryImpl;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.vote.entity.Vote;
 import te.trueEcho.domain.vote.entity.VoteResult;
@@ -58,8 +58,8 @@ public class ScheduledRankService {
     private final VoteRepository voteRepository;
     private final RankRepository rankRepository;
 
-//    @Scheduled(cron = "0 * 20 ? * 0", zone = "Asia/Seoul") //매주 일요일 20시에 랭킹을 만들어주는 서비스
-    @Scheduled(fixedDelay = 10000)
+  @Scheduled(cron = "0 0 20 ? * 0", zone = "Asia/Seoul") //매주 일요일 20시에 랭킹을 만들어주는 서비스
+    @Transactional
     public void makeRank() {
 
         List<VoteResult> voteResults = voteRepository.getThisWeekVoteResult();
@@ -94,10 +94,9 @@ public class ScheduledRankService {
             });
         }
 
-        rankRepository.cacheThisWeekRank(sortedResults); // 이번주 랭킹을 캐싱
+        rankRepository.cacheThisWeekRank(RankToDtoConverter.converter(sortedResults)); // 이번주 랭킹을 캐싱
 
         log.info("Ranking is updated");
-
     }
 }
 
