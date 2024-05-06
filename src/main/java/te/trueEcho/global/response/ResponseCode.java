@@ -76,15 +76,18 @@ public enum ResponseCode {
     WRITE_POST_SUCCESS(202, "T002", "게시물 작성을 성공했습니다."),
     WRITE_POST_FAIL(202, "T002", "게시물 작성을 실패했습니다."),
 
-    // 커뮤니티
+
+    // 투표
     GET_VOTE_CONTENT_SUCCESS(202, "T002", "투표지 읽기를 성공했습니다."),
     GET_VOTE_CONTENT_FAIL(202, "T002", "투표지 읽기를 실패했습니다."),
     GET_VOTE_TARGET_SUCCESS(202, "T002", "투표 인원 뽑기를 성공했습니다."),
     GET_VOTE_TARGET_FAIL(202, "T002","투표 인원 뽑기를 실패했습니다."),
     SAVE_VOTE_RESULT_SUCCESS(202, "T002", "투표 결과 저장을 성공했습니다."),
-    SAVE_VOTE_RESULT_FAIL(202, "T002","투표 결과 저장을 실패했습니다.");
+    SAVE_VOTE_RESULT_FAIL(202, "T002","투표 결과 저장을 실패했습니다."),
 
-
+    // 랭킹
+    GET_RANK_SUCCESS(202, "T002", "투표지 읽기를 성공했습니다."),
+    GET_RANK_FAIL(202, "T002", "투표지 읽기를 실패했습니다.");
 
     private final int status;
     private final String code;

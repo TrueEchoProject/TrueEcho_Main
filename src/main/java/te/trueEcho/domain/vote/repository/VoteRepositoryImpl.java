@@ -2,6 +2,7 @@ package te.trueEcho.domain.vote.repository;
 
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -132,6 +133,20 @@ public class VoteRepositoryImpl implements VoteRepository {
             }
         }
         return randomId;
+    }
+
+    public List<VoteResult> getThisWeekVoteResult() {
+        try {
+            return em.createQuery("SELECT VR FROM VoteResult VR " +
+                            "JOIN FETCH VR.userTarget " +
+                            "JOIN FETCH VR.vote " +
+                            "WHERE FUNCTION('WEEK', VR.createdAt) = :currentWeek", VoteResult.class)
+                    .setParameter("currentWeek", getThisWeekAsNum()-1)
+                    .getResultList();
+        } catch (Exception e) {
+            log.error("Error occurred while fetching this week's results", e);
+            return Collections.emptyList();
+        }
     }
 
 }
