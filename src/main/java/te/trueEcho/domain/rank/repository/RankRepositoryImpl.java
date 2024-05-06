@@ -2,20 +2,14 @@ package te.trueEcho.domain.rank.repository;
 
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import te.trueEcho.domain.user.entity.User;
-import te.trueEcho.domain.vote.entity.Vote;
-import te.trueEcho.domain.vote.entity.VoteResult;
-import te.trueEcho.domain.vote.repository.VoteType;
+import te.trueEcho.domain.rank.dto.RankListResponse;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
-import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -40,14 +34,21 @@ import java.util.stream.Collectors;
 
 public class RankRepositoryImpl implements RankRepository{
     private final EntityManager em;
-    private final static ConcurrentHashMap<Integer,  Map<Vote,Map<User, Integer>> > ranksByWeek
+    private final static ConcurrentHashMap<Integer, RankListResponse> ranksByWeek
             = new ConcurrentHashMap<>();
 
-    public  Map<Vote,Map<User, Integer>>  getRanksByWeek(){
-        return ranksByWeek.get(getThisWeekAsNum());
+    public RankListResponse getRanksByWeek() {
+
+        try {
+            return ranksByWeek.getOrDefault(getThisWeekAsNum(), null);
+
+        }catch (Exception e){
+            log.error("Error occurred while getting rank", e);
+            return null;
+        }
     }
 
-    public void cacheThisWeekRank( Map<Vote,Map<User, Integer>>  voteResultMap){
+    public void cacheThisWeekRank( RankListResponse voteResultMap){
         try {
             resetRank();
             ranksByWeek.put(getThisWeekAsNum(), voteResultMap);
