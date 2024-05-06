@@ -46,10 +46,14 @@ public class RankToDtoConverter {
                                         .id(user.getId())
                                         .nickname(user.getNickname())
                                         .profileUrl(user.getProfileURL())
-                                        .age(user.getAge()).build();
+                                        .age(user.getAge())
+                                        .voteCount(voteCount)
+                                        .gender(user.getGender().toString())
+                                        .build();
                             }).toList();
 
-                    return RankResponse.builder().voteId(vote.getId())
+                    return RankResponse.builder()
+                            .voteId(vote.getId())
                             .title(vote.getTitle())
                             .category(String.valueOf(vote.getCategory()))
                             .topRankList(rankUserResponseList).build();
