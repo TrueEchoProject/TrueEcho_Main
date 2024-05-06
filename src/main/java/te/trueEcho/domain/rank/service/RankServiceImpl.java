@@ -19,8 +19,6 @@ public class RankServiceImpl implements RankService{
 
     @Override
     public RankListResponse getRank() {
-        Map<Vote,Map<User, Integer>>  thisWeekRanks =   rankRepository.getRanksByWeek();
-
-        return RankToDtoConverter.converter(thisWeekRanks);
+        return rankRepository.getRanksByWeek();
     }
 }
