@@ -10,9 +10,12 @@ import java.util.List;
 public interface VoteRepository {
 
      List<Vote> getTodayVoteContentsByType(VoteType type, LocalDate key);
+
      void createSelectedVoteContents();
 
      boolean saveVoteResult(VoteResult result);
 
      Vote findVoteById(Long voteId);
+
+     List<VoteResult> getThisWeekVoteResult();
 }

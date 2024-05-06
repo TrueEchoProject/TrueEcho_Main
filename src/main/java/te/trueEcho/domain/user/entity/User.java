@@ -141,6 +141,10 @@ public class User extends CreatedDateAudit {
         this.connectByFriend = true;
     }
 
+    public int getAge(){
+        return LocalDate.now().getYear() - this.birthday.getYear();
+    }
+
     public boolean getNotificationSetting() {
         return this.notificationSetting;
     }

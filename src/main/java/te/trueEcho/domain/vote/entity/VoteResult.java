@@ -22,7 +22,6 @@ import te.trueEcho.global.entity.CreatedDateAudit;
                 columnNames={"user_id_target", "user_id_voter", "vote_id"}
         )
 })
-
 public class VoteResult extends CreatedDateAudit {
 
     @Id
@@ -42,14 +41,10 @@ public class VoteResult extends CreatedDateAudit {
     @JoinColumn(name = "vote_id")
     private Vote vote;
 
-    @OneToOne(mappedBy = "voteResult", cascade=CascadeType.ALL)
-    private VoteResultNoti voteResultNoti;
-
     @Builder
-    public VoteResult(User userVoter, User userTarget, Vote vote, VoteResultNoti voteResultNoti) {
+    public VoteResult(User userVoter, User userTarget, Vote vote){
         this.userVoter = userVoter;
         this.userTarget = userTarget;
         this.vote = vote;
-        this.voteResultNoti = voteResultNoti;
     }
 }
