@@ -106,7 +106,10 @@ const PublicPosts = React.forwardRef((props, ref) => {
 	if (posts.length === 0) {
 		return <View style={style.container}><Text>Loading...</Text></View>;
 	}
-	
+	const handleBlock = async (postId) => {
+		setPosts(prev => prev.filter(item => item.post_id !== postId));
+		await new Promise(resolve => setTimeout(resolve, 0)); // 비동기 업데이트를 위한 Promise
+	};
 	const handlePageChange = (e) => {
 		const newIndex = e.nativeEvent.position;
 		setCurrentPage(newIndex);
@@ -213,6 +216,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 						<View key={post.post_id} style={style.container}>
 							<MemoizedCardComponent
 								post={post}
+								onBlock={handleBlock}
 								isOptionsVisibleExternal={optionsVisibleStates[post.post_id]}
 								setIsOptionsVisibleExternal={(visible) => setOptionsVisibleStates(prev => ({ ...prev, [post.post_id]: visible }))}
 							/>

@@ -84,7 +84,10 @@ const FriendPosts = React.forwardRef((props, ref) => {
 			getPosts();
 		}, [])
 	);
-	
+	const handleBlock = async (postId) => {
+		setContentList(prev => prev.filter(item => item.data.post_id !== postId));
+		await new Promise(resolve => setTimeout(resolve, 0)); // 비동기 업데이트를 위한 Promise
+	};
 	const handlePageChange = useCallback((e) => {
 		const newIndex = e.nativeEvent.position;
 		if (newIndex === currentPage) return; // 페이지가 실제로 변경되지 않았다면 종료
@@ -130,6 +133,7 @@ const FriendPosts = React.forwardRef((props, ref) => {
 						{item.type === 'post' ? (
 							<CardComponent
 								post={item.data}
+								onBlock={handleBlock}
 								isOptionsVisibleExternal={optionsVisibleStates[item.data.post_id]}
 								setIsOptionsVisibleExternal={(visible) => setOptionsVisibleStates(prev => ({ ...prev, [item.data.post_id]: visible }))}
 							/>

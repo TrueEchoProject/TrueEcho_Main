@@ -6,7 +6,7 @@ import { MaterialIcons, Ionicons, Feather, SimpleLineIcons } from "@expo/vector-
 import { ImageButton } from "./ImageButton";
 import { CommentModal } from './CommentModal'; // 댓글 창 컴포넌트 임포트
 
-const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExternal }) => {
+const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExternal, onBlock }) => {
 	const [isOptionsVisible, setIsOptionsVisible] = useState(isOptionsVisibleExternal || false);
 	const [buttonLayout, setButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
 	const [imageButtonHeight, setImageButtonHeight] = useState(0);
@@ -45,13 +45,14 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 			});
 			console.log('User blocked successfully');
 			alert('유저를 정상적으로 차단했습니다');
-			hideOptions()
+			hideOptions();
+			onBlock(post.post_id); // 차단 이벤트를 상위 컴포넌트에 알림
 		} catch (error) {
 			console.error('Error while blocking the user:', error.response ? error.response.data : error.message);
 			// HTTP 상태 코드가 409인 경우 여기서 처리
 			if (error.response && error.response.status === 409) {
 				alert('This user is already blocked.');
-				hideOptions()
+				hideOptions();
 			}
 		}
 	};
