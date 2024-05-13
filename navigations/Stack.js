@@ -1,8 +1,8 @@
 import React from 'react';
 import { createStackNavigator } from "@react-navigation/stack";
-import { Friends, MyPage, MyOptions, Calendar, MyInfo } from "./AppTabNavigator/ButtonStack"
+import { Friends, MyPage, MyOptions, Calendar, MyInfo, Alarm } from "./AppTabNavigator/ButtonStack"
 import { View } from 'react-native';
-import { Button1, Button2, Button3 } from "../components/Button";
+import { Button1, Button2 } from "../components/Button";
 import { MainPostTabScreen } from "./AppTabNavigator/PostTab/MainPostTab";
 import { CommunityTabScreen } from "./AppTabNavigator/CommunityTabs/CommunityTab";
 
@@ -42,6 +42,10 @@ export const MainPostStackScreen = () => { // 메인 피드 속 Stack 구성
 			<MainPostStack.Screen
 				name="내 설정 편집"
 				component={MyInfo}
+			/>
+			<MainPostStack.Screen
+				name="알람"
+				component={Alarm}
 			/>
 		</MainPostStack.Navigator>
 	);

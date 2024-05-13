@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, Dimensions, ActivityIndicator } from 'react-native';
-import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
+import {AntDesign, FontAwesome5, MaterialIcons} from '@expo/vector-icons';
 import PagerView from "react-native-pager-view";
 import axios from "axios";
 import { Image } from "expo-image";
@@ -64,7 +64,7 @@ const MyPage = ({ navigation, route }) => {
 	const handlePageChange = (e) => {
 		setCurrentPage(e.nativeEvent.position);
 	};
-
+	
 	useEffect(() => {
 		async function fetchData() {
 			try {
@@ -138,6 +138,13 @@ const MyPage = ({ navigation, route }) => {
 						</View>
 					</View>
 					<Button3 onPress={() => navigation.navigate('MyOp', { user: userData })}/>
+					<TouchableOpacity onPress={() => navigation.navigate("알람")}>
+						<MaterialIcons
+							name="alarm"
+							size={30}
+							style={{ height: 30, width:30, marginLeft: 10,}}
+						/>
+					</TouchableOpacity>
 				</View>
 				<View style={styles.textContainer}>
 					<Text>{userData.user_vote}</Text>
@@ -197,7 +204,7 @@ const MyPage = ({ navigation, route }) => {
 							))}
 						</View>
 					</>
-			)}
+				)}
 			</View>
 		</View>
 	);
