@@ -51,13 +51,29 @@ const MyPage = ({ navigation, route }) => {
 			console.log(userData);
 		}
 	}, [userData]); // userData 변화 감지
+	useEffect(() => {
+		fetchData();
+	}, []);
+	
+	const fetchData = async () => {
+		try {
+			const userResponse = await axios.get(`http://192.168.0.27:3000/user_me`);
+			const pinResponse = await axios.get(`http://192.168.0.27:3000/user_pin?_limit=5`);
+			setUserData(userResponse.data[0]);
+			setPinData(pinResponse.data);
+		} catch (error) {
+			console.error('Error fetching data', error);
+		} finally {
+			setIsLoading(false); // 데이터 로드 완료
+		}
+	}
+	
 	const changeImage = (pinId) => {
 		setIsFrontShowing(prev => ({
 			...prev,
 			[pinId]: !prev[pinId]
 		}));
 	};
-	
 	const profileImageModalVisible = () => {
 		setIsModalVisible(!isModalVisible);
 	};
@@ -65,26 +81,9 @@ const MyPage = ({ navigation, route }) => {
 		setCurrentPage(e.nativeEvent.position);
 	};
 	
-	useEffect(() => {
-		async function fetchData() {
-			try {
-				const userResponse = await axios.get(`http://192.168.0.27:3000/user_me`);
-				const pinResponse = await axios.get(`http://192.168.0.27:3000/user_pin?_limit=5`);
-				setUserData(userResponse.data[0]);
-				setPinData(pinResponse.data);
-			} catch (error) {
-				console.error('Error fetching data', error);
-			} finally {
-				setIsLoading(false); // 데이터 로드 완료
-			}
-		}
-		fetchData();
-	}, []);
-	
 	if (isLoading) {
 		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff"/></View>;
 	}
-	
 	const ProfileImageModal = ({ isVisible, imageUrl, onClose }) => { // 수정: 프로퍼티 이름 Image -> imageUrl 변경
 		return (
 			<Modal

@@ -181,7 +181,7 @@ const Alarm = ({ navigation }) => {
 									</TouchableOpacity>
 								)}
 								{alarm.type === 2 && (
-									<TouchableOpacity onPress={() => {navigation.navigate("유저 알람")}} style={{alignItems: "center", flexDirection: "row"}}>
+									<TouchableOpacity onPress={() => {navigation.navigate("유저 알람", {userId : alarm.user_id})}} style={{alignItems: "center", flexDirection: "row"}}>
 										<Image
 											source={{ uri: GraphImage }}
 											style={styles.avatar}
