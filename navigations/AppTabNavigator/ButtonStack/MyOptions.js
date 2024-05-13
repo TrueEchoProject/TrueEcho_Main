@@ -65,8 +65,8 @@ const MyOptions = ({ navigation, route }) => {
 		setIsQnAModal(!isQnAModal);
 	};
 	const NotificationModal = ({ isVisible, onClose }) => {
+		const [clickedStatus, setClickedStatus] = useState({});
 		const [notificationSettings, setNotificationSettings] = useState({});
-		
 		const fetchNotification = async () => {
 			try {
 				const response = await axios.get(`http://192.168.0.27:3000/notificationSettings`);
@@ -78,15 +78,25 @@ const MyOptions = ({ navigation, route }) => {
 		useEffect(() => {
 			fetchNotification();
 		}, []);
-		// 각 알림 설정을 토글하는 함수
-		const toggleSetting = (key) => {
-			setNotificationSettings(prev => ({
+		const updateNotificationSetting = (key, subKey = null) => {
+			setNotificationSettings(prev => {
+				if (subKey) {  // 배열 내 객체의 서브키를 업데이트하는 경우
+					const newValue = !prev[key][0][subKey];
+					return {
+						...prev,
+						[key]: [{ ...prev[key][0], [subKey]: newValue }]
+					}} else {  // 단일 키를 업데이트하는 경우
+					return {
+						...prev,
+						[key]: !prev[key]
+					}}
+			})};
+		const toggleClickStatus = (optionId) => {
+			setClickedStatus(prev => ({
 				...prev,
-				[key]: !prev[key]
+				[optionId]: !prev[optionId]
 			}));
-			console.log('notificationSettings3:', notificationSettings);
 		};
-		
 		// 변경사항을 저장하고 모달을 닫는 함수
 		const saveChanges = async () => {
 			console.log("Saved notificationSettings:", notificationSettings);
@@ -111,58 +121,116 @@ const MyOptions = ({ navigation, route }) => {
 					<View style={styles.imageContainer}>
 						<Text style={styles.modalText}>알림 설정</Text>
 						<Text style={styles.modalSmallText}>알림의 on/off를 설정해주세요!</Text>
-						<View style={styles.switchModalButton}>
-							<Text style={styles.switchButtonText}>멘션/태그</Text>
-							<Switch
-								style={{ marginRight: 10 }}
-								trackColor={{ false: "#767577", true: "#3B4664" }}
-								thumbColor={ notificationSettings.mention ? "#81b0ff" : "#f4f3f4" }
-								ios_backgroundColor="#3e3e3e"
-								onValueChange={() => toggleSetting('mention')}
-								value={ notificationSettings.mention }
-							/>
-						</View>
-						<View style={styles.switchModalButton}>
-							<Text style={styles.switchButtonText}>댓글 좋아요</Text>
-							<Switch
-								style={{ marginRight: 10 }}
-								trackColor={{ false: "#767577", true: "#3B4664" }}
-								thumbColor={ notificationSettings.likes ? "#81b0ff" : "#f4f3f4" }
-								ios_backgroundColor="#3e3e3e"
-								onValueChange={() => toggleSetting('likes')}
-								value={ notificationSettings.likes }
-							/>
-						</View>
-						<View style={styles.switchModalButton}>
-							<Text style={styles.switchButtonText}>친구요청</Text>
-							<Switch
-								style={{ marginRight: 10 }}
-								trackColor={{ false: "#767577", true: "#3B4664" }}
-								thumbColor={ notificationSettings.friendRequest ? "#81b0ff" : "#f4f3f4" }
-								ios_backgroundColor="#3e3e3e"
-								onValueChange={() => toggleSetting('friendRequest')}
-								value={ notificationSettings.friendRequest }
-							/>
-						</View>
-						<View style={styles.switchModalButton}>
-							<Text style={styles.switchButtonText}>투표알림</Text>
-							<Switch
-								style={{ marginRight: 10 }}
-								trackColor={{ false: "#767577", true: "#3B4664" }}
-								thumbColor={ notificationSettings.voteNotification ? "#81b0ff" : "#f4f3f4" }
-								ios_backgroundColor="#3e3e3e"
-								onValueChange={() => toggleSetting('voteNotification')}
-								value={ notificationSettings.voteNotification }
-							/>
-						</View>
+						<ScrollView
+							style={{width: windowWidth * 0.8,}}
+							contentContainerStyle={styles.scrollContent}
+						>
+							<TouchableOpacity
+								style={styles.scrollModalButton}
+								onPress={() => toggleClickStatus('community')}
+							>
+								<Text style={styles.switchButtonText}>커뮤니티</Text>
+							</TouchableOpacity>
+							{clickedStatus['community'] &&
+								<>
+									<View style={styles.switchModalButton}>
+										<Text style={styles.switchButtonText}>투표 마감/랭킹</Text>
+										<Switch
+											style={{ marginRight: 10 }}
+											trackColor={{ false: "#767577", true: "#3B4664" }}
+											thumbColor={ notificationSettings.community[0].vote_ranking ? "#81b0ff" : "#f4f3f4" }
+											ios_backgroundColor="#3e3e3e"
+											onValueChange={() => updateNotificationSetting('community', 'vote_ranking')}
+											value={ notificationSettings.community[0].vote_ranking }
+										/>
+									</View>
+									<View style={styles.switchModalButton}>
+										<Text style={styles.switchButtonText}>투표</Text>
+										<Switch
+											style={{ marginRight: 10 }}
+											trackColor={{ false: "#767577", true: "#3B4664" }}
+											thumbColor={ notificationSettings.community[0].vote ? "#81b0ff" : "#f4f3f4" }
+											ios_backgroundColor="#3e3e3e"
+											onValueChange={() => updateNotificationSetting('community', 'vote')}
+											value={ notificationSettings.community[0].vote }
+										/>
+									</View>
+								</>
+							}
+							<TouchableOpacity
+								style={styles.scrollModalButton}
+								onPress={() => toggleClickStatus('post')}
+							>
+								<Text style={styles.switchButtonText}>게시물</Text>
+							</TouchableOpacity>
+							{clickedStatus['post'] &&
+								<>
+									<View style={styles.switchModalButton}>
+										<Text style={styles.switchButtonText}>댓글 추가</Text>
+										<Switch
+											style={{ marginRight: 10 }}
+											trackColor={{ false: "#767577", true: "#3B4664" }}
+											thumbColor={ notificationSettings.post[0].newComment ? "#81b0ff" : "#f4f3f4" }
+											ios_backgroundColor="#3e3e3e"
+											onValueChange={() => updateNotificationSetting('post', 'newComment')}
+											value={ notificationSettings.post[0].newComment }
+										/>
+									</View>
+									<View style={styles.switchModalButton}>
+										<Text style={styles.switchButtonText}>답글</Text>
+										<Switch
+											style={{ marginRight: 10 }}
+											trackColor={{ false: "#767577", true: "#3B4664" }}
+											thumbColor={ notificationSettings.post[0].subComment ? "#81b0ff" : "#f4f3f4" }
+											ios_backgroundColor="#3e3e3e"
+											onValueChange={() => updateNotificationSetting('post', 'subComment')}
+											value={ notificationSettings.post[0].subComment }
+										/>
+									</View>
+									<View style={styles.switchModalButton}>
+										<Text style={styles.switchButtonText}>좋아요</Text>
+										<Switch
+											style={{ marginRight: 10 }}
+											trackColor={{ false: "#767577", true: "#3B4664" }}
+											thumbColor={ notificationSettings.post[0].postLike ? "#81b0ff" : "#f4f3f4" }
+											ios_backgroundColor="#3e3e3e"
+											onValueChange={() => updateNotificationSetting('post', 'postLike')}
+											value={ notificationSettings.post[0].postLike }
+										/>
+									</View>
+								</>
+							}
+							<View style={styles.scrollModalButton}>
+								<Text style={styles.switchButtonText}>친구요청</Text>
+								<Switch
+									style={{ marginRight: 10 }}
+									trackColor={{ false: "#767577", true: "#3B4664" }}
+									thumbColor={ notificationSettings.friendRequest ? "#81b0ff" : "#f4f3f4" }
+									ios_backgroundColor="#3e3e3e"
+									onValueChange={() => updateNotificationSetting('friendRequest')}
+									value={ notificationSettings.friendRequest }
+								/>
+							</View>
+							<View style={styles.scrollModalButton}>
+								<Text style={styles.switchButtonText}>PhotoTime</Text>
+								<Switch
+									style={{ marginRight: 10 }}
+									trackColor={{ false: "#767577", true: "#3B4664" }}
+									thumbColor={ notificationSettings.PhotoTime ? "#81b0ff" : "#f4f3f4" }
+									ios_backgroundColor="#3e3e3e"
+									onValueChange={() => updateNotificationSetting('PhotoTime')}
+									value={ notificationSettings.PhotoTime }
+								/>
+							</View>
+						</ScrollView>
 						<TouchableOpacity
-							style={[styles.modalButton, { backgroundColor: '#4CAF50' }]}
+							style={[styles.modalButton, { backgroundColor: '#4CAF50', marginTop: 20, }]}
 							onPress={saveChanges}
 						>
 							<Text style={styles.buttonText}>저장</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
-							style={[styles.modalButton, { backgroundColor: "grey" }]}
+							style={[styles.modalButton, { backgroundColor: "grey", marginBottom: 20,  }]}
 							onPress={onClose}
 						>
 							<Text style={styles.buttonText}>닫기</Text>
@@ -681,14 +749,14 @@ const styles = StyleSheet.create({
 	},
 	switchModalButton: {
 		flexDirection: "row",
-		width: "80%",
+		width: "60%",
 		height: 50,
 		borderRadius: 10,
 		borderWidth: 1,
 		backgroundColor: "#99A1B6",
 		borderColor: 'black',
 		alignItems: 'center',
-		margin: "5%",
+		margin: 10,
 	},
 	scrollModalButton :{
 		flexDirection: "row",

@@ -278,10 +278,21 @@
   "notificationSettings": [
     {
       "id": 1,
-      "mention": true,
-      "likes": false,
+      "community": [
+        {
+          "vote_ranking": true,
+          "vote": true
+        }
+      ],
+      "post": [
+        {
+          "newComment": false,
+          "subComment": false,
+          "postLike": true
+        }
+      ],
       "friendRequest": true,
-      "voteNotification": true
+      "PhotoTime": false
     }
   ],
   "Time": [
