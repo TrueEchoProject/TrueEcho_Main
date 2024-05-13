@@ -146,7 +146,7 @@ const MyPage = ({ navigation, route }) => {
 					</TouchableOpacity>
 				</View>
 				<View style={styles.textContainer}>
-					<Text>{userData.user_vote}</Text>
+					<Text>{userData.user_vote ? userData.user_vote : "투표를 진행해주세요!"}</Text>
 				</View>
 			</View>
 			<View style={styles.pinsContainer}>
