@@ -4,17 +4,12 @@ import { Image } from "expo-image";
 import moment from 'moment';
 import 'moment/locale/ko';
 import axios from "axios";
-import { CommonActions } from '@react-navigation/native';
 
 const Alarm = ({ navigation }) => {
 	const [selected, setSelected] = useState("게시물");
 	const [alarmPost, setAlarmPost] = useState([])
 	const [alarmCommunity, setAlarmCommunity] = useState([])
 	const GraphImage = "https://i.ibb.co/NybJtMb/DALL-E-2024-05-06-18-33-20-A-simple-and-clear-bar-chart-representing-a-generic-voting-result-suitabl.webp"
-	
-	useEffect( () => {
-		fetchAlarm()
-	}, []);
 	
 	const fetchAlarm = async () => {
 		try {
@@ -24,7 +19,6 @@ const Alarm = ({ navigation }) => {
 			console.error('Error fetching data', error);
 		}
 	}
-	
 	const toggleSetting = async (item) => {
 		setSelected(item); // 선택된 항목을 직접 설정
 		if (item === "게시물") {
@@ -49,20 +43,21 @@ const Alarm = ({ navigation }) => {
 	
 	const handlePress = (alarm) => {
 		switch (alarm.type) {
-			case 0:
-				// 타입 0에 대한 액션
+			case 0: // 타입 0에 대한 액션
+				navigation.navigate("피드 알람", { post_id : alarm.post_id })
 				console.log("댓글에 대한 상세 페이지로 이동");
 				break;
-			case 1:
-				// 타입 1에 대한 액션
+			case 1: // 타입 1에 대한 액션
+				navigation.navigate("피드 알람")
+				navigation.navigate("피드 알람", { post_id : alarm.post_id })
 				console.log("답장에 대한 상세 페이지로 이동");
 				break;
-			case 2:
-				// 타입 2에 대한 액션
+			case 2: // 타입 2에 대한 액션
+				navigation.navigate("피드 알람")
+				navigation.navigate("피드 알람", { post_id : alarm.post_id })
 				console.log("사진 좋아요에 대한 상세 정보 보기");
 				break;
-			case 3:
-				// 타입 3에 대한 액션
+			case 3: // 타입 3에 대한 액션
 				navigation.navigate("Fri")
 				console.log("친구요청에 대한 상세 정보 보기");
 				break;
@@ -70,6 +65,10 @@ const Alarm = ({ navigation }) => {
 				console.log("알 수 없는 액션");
 		}
 	}
+	
+	useEffect( () => {
+		fetchAlarm()
+	}, []);
 	
 	return (
 		<View style={styles.container}>
@@ -144,7 +143,8 @@ const Alarm = ({ navigation }) => {
 						<View key={index} style={styles.alarmContainer}>
 							<View style={{ flex: 1, flexDirection: "row", }}>
 								{alarm.type === 0 && (
-									<TouchableOpacity onPress={() => {navigation.navigate("결과")}} style={{alignItems: "center", flexDirection: "row"}}>
+									<TouchableOpacity
+										onPress={() => {navigation.navigate("결과")}} style={{alignItems: "center", flexDirection: "row"}}>
 										<Image
 											source={{ uri: GraphImage }}
 											style={styles.avatar}
