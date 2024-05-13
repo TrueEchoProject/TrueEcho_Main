@@ -104,43 +104,82 @@ const Alarm = ({ navigation }) => {
 							onPress={() => handlePress(alarm)}
 							style={styles.alarmContainer}
 						>
-							<Image
-								source={{ uri: alarm.profile_url }}
-								style={styles.avatar}
-							/>
 							<View style={{ flex: 1 }}>
 								{alarm.type === 0 && (
-									<Text numberOfLines={2} ellipsizeMode='tail'>
-										<Text style={styles.emphasizedText}>{alarm.username}</Text>
-										님이 댓글을 남겼습니다:
-										<Text style={styles.emphasizedText}> {alarm.comment}</Text>
-									</Text>
+									<View style={{alignItems: "center", flexDirection: "row"}}>
+										<Image
+											source={{ uri: alarm.profile_url }}
+											style={styles.avatar}
+										/>
+										<View style={{flex: 1 ,flexDirection: "column"}}>
+											<Text numberOfLines={2} ellipsizeMode='tail'>
+												<Text style={styles.emphasizedText}>{alarm.username}</Text>
+												님이 댓글을 남겼습니다:
+												<Text style={styles.emphasizedText}> {alarm.comment}</Text>
+											</Text>
+											<Text>{moment(alarm.created_at).fromNow()}</Text>
+										</View>
+										<Image
+											source={{ uri: alarm.post_back_url }}
+											style={styles.post}
+										/>
+									</View>
 								)}
 								{alarm.type === 1 && (
-									<Text numberOfLines={2} ellipsizeMode='tail'>
-										<Text style={styles.emphasizedText}>{alarm.username}</Text>
-										님이 회원님의 댓글에 답장을 보냈습니다:
-										<Text style={styles.emphasizedText}> {alarm.comment}</Text>
-									</Text>
+									<View style={{alignItems: "center", flexDirection: "row"}}>
+										<Image
+											source={{ uri: alarm.profile_url }}
+											style={styles.avatar}
+										/>
+										<View style={{flex: 1 ,flexDirection: "column"}}>
+											<Text numberOfLines={2} ellipsizeMode='tail'>
+												<Text style={styles.emphasizedText}>{alarm.username}</Text>
+												님이 회원님의 댓글에 답장을 보냈습니다:
+												<Text style={styles.emphasizedText}> {alarm.comment}</Text>
+											</Text>
+											<Text>{moment(alarm.created_at).fromNow()}</Text>
+										</View>
+										<Image
+											source={{ uri: alarm.post_back_url }}
+											style={styles.post}
+										/>
+									</View>
 								)}
 								{alarm.type === 2 && (
-									<Text numberOfLines={2} ellipsizeMode='tail'>
-										<Text style={styles.emphasizedText}>{alarm.like_username}</Text>
-										님이 회원님의 사진을 좋아합니다
-									</Text>
+									<View style={{alignItems: "center", flexDirection: "row"}}>
+										<Image
+											source={{ uri: alarm.profile_url }}
+											style={styles.avatar}
+										/>
+										<View style={{flex: 1 ,flexDirection: "column"}}>
+											<Text numberOfLines={2} ellipsizeMode='tail'>
+												<Text style={styles.emphasizedText}>{alarm.like_username}</Text>
+												님이 회원님의 사진을 좋아합니다
+											</Text>
+											<Text>{moment(alarm.created_at).fromNow()}</Text>
+										</View>
+										<Image
+											source={{ uri: alarm.post_back_url }}
+											style={styles.post}
+										/>
+									</View>
 								)}
 								{alarm.type === 3 && (
-									<Text numberOfLines={2} ellipsizeMode='tail'>
-										<Text style={styles.emphasizedText}>{alarm.friend_username}</Text>
-										님이 친구요청을 보냈습니다.
-									</Text>
+									<View style={{alignItems: "center", flexDirection: "row"}}>
+										<Image
+											source={{ uri: alarm.profile_url }}
+											style={styles.avatar}
+										/>
+										<View style={{flex: 1 ,flexDirection: "column"}}>
+											<Text numberOfLines={2} ellipsizeMode='tail'>
+												<Text style={styles.emphasizedText}>{alarm.friend_username}</Text>
+												님이 친구요청을 보냈습니다.
+											</Text>
+											<Text>{moment(alarm.created_at).fromNow()}</Text>
+										</View>
+									</View>
 								)}
-								<Text>{moment(alarm.created_at).fromNow()}</Text>
 							</View>
-							<Image
-								source={{ uri: alarm.post_back_url }}
-								style={styles.post}
-							/>
 						</TouchableOpacity>
 					))
 				}

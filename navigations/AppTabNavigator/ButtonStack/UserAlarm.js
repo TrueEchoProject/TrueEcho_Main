@@ -8,13 +8,13 @@ import { Image } from "expo-image";
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-const UserAlarm = ({ navigation, route }) => {
+const UserAlarm = ({ route }) => {
 	const [userId, setUserId] = useState()
 	const [userData, setUserData] = useState(null);
 	const [pinData, setPinData] = useState([]);
 	const [isFrontShowing, setIsFrontShowing] = useState({});
 	const [currentPage, setCurrentPage] = useState(0);
-	const [isLoading, setIsLoading] = useState(true);
+	
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const pagerRef = useRef(null);
 	
@@ -52,8 +52,6 @@ const UserAlarm = ({ navigation, route }) => {
 			}
 		} catch (error) {
 			console.error('Error fetching data', error);
-		} finally {
-			setIsLoading(false); // 데이터 로드 완료
 		}
 	}
 	
