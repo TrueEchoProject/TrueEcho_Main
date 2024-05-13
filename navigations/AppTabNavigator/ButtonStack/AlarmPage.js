@@ -14,17 +14,51 @@ const Alarm = ({ navigation }) => {
 	const fetchAlarm = async () => {
 		try {
 			const response = await axios.get(`http://192.168.0.27:3000/alarm_post`);
-			setAlarmPost(response.data);
+			const processedData = processLikeAlarms(response.data.filter(alarm => alarm.type === 2));
+			setAlarmPost([...response.data.filter(alarm => alarm.type !== 2), ...processedData]);
 		} catch (error) {
 			console.error('Error fetching data', error);
 		}
-	}
+	};
+	const processLikeAlarms = (alarms) => {
+		const groupedByPostId = alarms.reduce((acc, alarm) => {
+			if (!acc[alarm.post_id]) {
+				acc[alarm.post_id] = {
+					...alarm,
+					like_usernames: [alarm.like_username],
+				};
+			} else {
+				acc[alarm.post_id].like_usernames.push(alarm.like_username);
+			}
+			return acc;
+		}, {});
+		
+		return Object.values(groupedByPostId).map(alarm => ({
+			...alarm,
+			like_username: formatUsernames(alarm.like_usernames),
+		}));
+	};
+	const formatUsernames = (usernames) => {
+		const count = usernames.length;
+		usernames.reverse();
+		if (count === 1) {
+			return <Text>{<Text style={styles.emphasizedText}>{usernames[0]}</Text>}
+				님이 회원님의 사진을 좋아합니다</Text>;
+		} else if (count === 2) {
+			return <Text>{<Text style={styles.emphasizedText}>{usernames[0]}</Text>}
+				님과 {<Text style={styles.emphasizedText}>{usernames[1]}</Text>}
+				님이 회원님의 사진을 좋아합니다</Text>;
+		} else {
+			return <Text>{<Text style={styles.emphasizedText}>{usernames[0]}</Text>}
+				님과 {<Text style={styles.emphasizedText}>{usernames[1]}</Text>}님
+				외 {<Text style={styles.emphasizedText}>여러 명</Text>}이 회원님의 사진을 좋아합니다</Text>;
+		}
+	};
 	const toggleSetting = async (item) => {
 		setSelected(item); // 선택된 항목을 직접 설정
 		if (item === "게시물") {
 			try {
-				const response = await axios.get(`http://192.168.0.27:3000/alarm_post`);
-				setAlarmPost(response.data);
+				fetchAlarm();
 				setAlarmCommunity([]);
 			} catch (error) {
 				console.error('Error fetching data', error);
@@ -153,8 +187,7 @@ const Alarm = ({ navigation }) => {
 										/>
 										<View style={{flex: 1 ,flexDirection: "column"}}>
 											<Text numberOfLines={2} ellipsizeMode='tail'>
-												<Text style={styles.emphasizedText}>{alarm.like_username}</Text>
-												님이 회원님의 사진을 좋아합니다
+												{alarm.like_username}
 											</Text>
 											<Text>{moment(alarm.created_at).fromNow()}</Text>
 										</View>
