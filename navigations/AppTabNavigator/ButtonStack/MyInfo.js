@@ -9,7 +9,9 @@ const windowHeight = Dimensions.get('window').height;
 const MyInfo = ({ navigation, route }) => {
 	const [user, setUser] = useState({});
 	const [editableUserId, setEditableUserId] = useState(""); // 사용자가 수정할 수 있는 user_Id 상태
+	const [initialUserId, setInitialUserId] = useState(""); // 초기 user_Id 상태
 	const [imageUri, setImageUri] = useState("");
+	const [warning, setWarning] = useState("");
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const defaultImage = "https://i.ibb.co/wwfqn6V/DALL-E-2024-04-26-20-08-20-A-realistic-image-capturing-the-essence-of-a-photo-taken-by-a-young-man-i.webp";
 	
@@ -17,7 +19,8 @@ const MyInfo = ({ navigation, route }) => {
 		if (route.params?.user) {
 			console.log('Received user response in Info:', route.params.user);
 			setUser(route.params.user);
-			setEditableUserId(route.params.user.user_Id); // 초기 user_Id 값 설정
+			setInitialUserId(route.params.user.user_Id); // 초기 user_Id 값 설정
+			setEditableUserId(route.params.user.user_Id); // editableUserId 초기값 설정
 			setImageUri(route.params.user.profile_url);
 		}
 	}, [route.params?.user]);
@@ -54,8 +57,47 @@ const MyInfo = ({ navigation, route }) => {
 	const handleUserIdChange = (text) => {
 		setEditableUserId(text);
 	};
+	const duplicateCheck = () => {
+		if (editableUserId === "") {
+			Alert.alert("알림", "이름을 입력해주세요!");
+			return;
+		}
+		
+		console.log('Checking user ID:', editableUserId);
+		axios.get(`http://192.168.0.27:3000/user?user_Id=${editableUserId}`)
+			.then(response => {
+				console.log('Response data:', response.data); // 응답 데이터 로깅
+				if (response.data.length > 0) { //get을 통해 무언가 반환이 되면, 중복이므로 중복 알림 표시.
+					alert('이미 사용 중인 아이디입니다.');
+					setWarning('이미 사용 중인 아이디입니다.');
+				} else { // 빈배열이 반환되면 중복이 아니므로 사용가능 알림 표시.
+					alert('사용 가능한 아이디입니다.');
+					setWarning('사용 가능한 아이디입니다.');
+				}
+			})
+			.catch(error => { // 에러처리.
+				console.error('Error:', error);
+			});
+	};
 	
 	const handleSave = async () => {
+		if (editableUserId === "") {
+			Alert.alert("알림", "이름을 입력해주세요!");
+			return;
+		}
+		
+		if (editableUserId === initialUserId) {
+			Alert.alert(
+				"알림", `변경된 값이 없어요.\n편집을 계속하시겠습니까?`,
+				[
+					{text: "예",
+						onPress: () => console.log("편집 계속") // 편집을 계속하는 로직을 여기에 추가합니다.
+					},
+					{text: "아니오",
+						onPress: () => navigation.navigate("MyP", { Update: user }), // 변경 없이 이전 화면으로 돌아갑니다.
+						style: "cancel"}]);
+			return;
+		}
 		const updatedUser = {
 			id: 1,
 			username: user.username,
@@ -143,15 +185,38 @@ const MyInfo = ({ navigation, route }) => {
 				</View>
 			</View>
 			<View style={{ width: "90%",}}>
-				<View style={styles.View}>
+				<View style={{
+					flexDirection: "column",
+					padding: 12,
+					width: "100%",
+					borderRadius: 15,
+					backgroundColor: "#99A1B6",
+				}}>
 					<Text style={styles.smallText}>사용자 이름</Text>
-					<TextInput
-						style={[styles.text, { padding: 5 }]}
-						onChangeText={handleUserIdChange}
-						value={editableUserId}
-						editable={true} // 편집 가능하게 설정
-						returnKeyType="done"
-					/>
+					<View style={{flexDirection: "row"}}>
+						<TextInput
+							style={[styles.text, { minWidth: "80%", padding: 5 }]}
+							onChangeText={handleUserIdChange}
+							value={editableUserId}
+							editable={true} // 편집 가능하게 설정
+							returnKeyType="done"
+						/>
+						<TouchableOpacity
+							onPress={duplicateCheck}
+							style={styles.duplicateConfirm}
+						>
+							<Text style={styles.duplicateText}>중복{'\n'}확인</Text>
+						</TouchableOpacity>
+					</View>
+				</View>
+				<View style={{
+					paddingTop: 10,
+					paddingLeft: 10,
+					marginBottom: 30,
+				}}>
+					<Text style={warning === '이미 사용 중인 아이디입니다.' ? { color: 'red' } : { color: 'green' }}>
+						{warning}
+					</Text>
 				</View>
 			</View>
 			<View style={{ width: "90%",}}>
@@ -229,7 +294,7 @@ const styles = StyleSheet.create({
 	},
 	imageContainer: {
 		alignItems: 'center',
-    justifyContent: 'center',
+		justifyContent: 'center',
 		width: windowWidth * 0.8,
 		height: windowHeight * 0.3,
 		borderRadius: 20,
@@ -251,6 +316,20 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		margin: "3%",
+	},
+	duplicateConfirm: {
+		height: 50,
+		width: 50,
+		borderRadius: 10,
+		marginLeft: 10,
+		backgroundColor: "#4CAF50",
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	duplicateText: {
+		fontSize: 12,
+		fontWeight: "bold",
+		color: "white",
 	},
 });
 

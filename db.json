@@ -358,10 +358,27 @@
     {
       "id": 1,
       "username": "박신형",
-      "user_Id": "sin1af",
+      "user_Id": "hello@example.comafaf",
       "user_vote": null,
       "profile_url": "https://i.ibb.co/wwfqn6V/DALL-E-2024-04-26-20-08-20-A-realistic-image-capturing-the-essence-of-a-photo-taken-by-a-young-man-i.webp",
       "your_location": "서울특별시 용산구 서빙고동"
+    }
+  ],
+  "user": [
+    {
+      "id": 1,
+      "username": "박신형",
+      "user_Id": "hello@example.comafaf"
+    },
+    {
+      "id": 2,
+      "username": "박준형",
+      "user_Id": "hi@example.comafaf"
+    },
+    {
+      "id": 3,
+      "username": "서희준",
+      "user_Id": "holo@example.comafaf"
     }
   ],
   "user_location": [
