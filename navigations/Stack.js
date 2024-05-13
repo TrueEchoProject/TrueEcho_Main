@@ -43,7 +43,7 @@ export const MainPostStackScreen = () => { // 메인 피드 속 Stack 구성
 				name="내 설정 편집"
 				component={MyInfo}
 			/>
-			<MainPostStack.Screen
+			<CommunityStack.Screen
 				name="알람"
 				component={Alarm}
 			/>
@@ -67,26 +67,6 @@ export const CommunityStackScreen = () => { // 커뮤니티 속 Stack 구성
 						</View>
 					)
 				})}
-			/>
-			<CommunityStack.Screen
-				name="MyP"
-				component={MyPage}
-			/>
-			<CommunityStack.Screen
-				name="Fri"
-				component={Friends}
-			/>
-			<CommunityStack.Screen
-				name="MyOp"
-				component={MyOptions}
-			/>
-			<CommunityStack.Screen
-				name="캘린더"
-				component={Calendar}
-			/>
-			<CommunityStack.Screen
-				name="내 설정 편집"
-				component={MyInfo}
 			/>
 		</ CommunityStack.Navigator>
 	);

@@ -170,6 +170,13 @@
   "alarm_community": [
     {
       "id": 1,
+      "type": 0,
+      "rank_vote": "무인도에서도 살아남을 거 같은 사람",
+      "rank" : 1,
+      "created_at": "2024-05-06"
+    },
+    {
+      "id": 2,
       "type": 1,
       "created_at": "2024-05-06"
     }
