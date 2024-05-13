@@ -26,9 +26,11 @@ const Alarm = ({ navigation }) => {
 				acc[alarm.post_id] = {
 					...alarm,
 					like_usernames: [alarm.like_username],
+					profile_urls: [alarm.profile_url], // 프로필 URL들을 배열로 저장
 				};
 			} else {
 				acc[alarm.post_id].like_usernames.push(alarm.like_username);
+				acc[alarm.post_id].profile_urls.push(alarm.profile_url);
 			}
 			return acc;
 		}, {});
@@ -36,6 +38,7 @@ const Alarm = ({ navigation }) => {
 		return Object.values(groupedByPostId).map(alarm => ({
 			...alarm,
 			like_username: formatUsernames(alarm.like_usernames),
+			profile_urls: alarm.profile_urls.slice(-2), // 최신 2개의 프로필 URL만 유지
 		}));
 	};
 	const formatUsernames = (usernames) => {
@@ -181,10 +184,27 @@ const Alarm = ({ navigation }) => {
 								)}
 								{alarm.type === 2 && (
 									<View style={{alignItems: "center", flexDirection: "row"}}>
-										<Image
-											source={{ uri: alarm.profile_url }}
-											style={styles.avatar}
-										/>
+										<View style={{
+											width: 60,
+											height: 60,
+											justifyContent: "center",
+											position: 'relative',
+										}}>
+											{alarm.profile_urls.length > 1 ?
+												alarm.profile_urls.map((url, idx) => (
+													<Image
+														key={idx}
+														source={{ uri: url }}
+														style={idx === 0 ? styles.ImageAvatar : styles.overlayAvatar}
+													/>
+												)) : (
+													<Image
+														source={{ uri: alarm.profile_url }}
+														style={styles.avatar}
+													/>
+												)
+											}
+										</View>
 										<View style={{flex: 1 ,flexDirection: "column"}}>
 											<Text numberOfLines={2} ellipsizeMode='tail'>
 												{alarm.like_username}
@@ -299,6 +319,31 @@ const styles = StyleSheet.create({
 		width: 40,
 		borderRadius: 20,
 		marginHorizontal: 10,
+	},
+	ImageAvatar: {
+		position: 'absolute',
+		right: 5,
+		bottom: 15,
+		height: 40,
+		width: 40,
+		borderCurve: "circular",
+		borderWidth: 3,
+		borderColor: "grey",
+		borderRadius: 20,
+		marginHorizontal: 10,
+	},
+	overlayAvatar: {
+		position: 'absolute',
+		left: 5,
+		bottom: 5,
+		height: 40,
+		width: 40,
+		borderCurve: "circular",
+		borderWidth: 3,
+		borderColor: "grey",
+		borderRadius: 20,
+		marginHorizontal: 10,
+		zIndex: 1, // 최신 이미지가 위에 오도록
 	},
 	post: {
 		height: 40,

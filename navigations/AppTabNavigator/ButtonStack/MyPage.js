@@ -10,7 +10,7 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const MyPage = ({ navigation, route }) => {
-	const [userData, setUserData] = useState(null);
+	const [userData, setUserData] = useState({});
 	const [pinData, setPinData] = useState([]);
 	const [isFrontShowing, setIsFrontShowing] = useState({});
 	const [currentPage, setCurrentPage] = useState(0);

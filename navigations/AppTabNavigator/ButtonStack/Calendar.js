@@ -70,7 +70,7 @@ const Calendar = ({ navigation }) => {
 				date: pin.created_at,
 				frontUrl: pin.post_front_url,
 				backUrl: pin.post_back_url,
-				isFrontShowing: true  // 기본적으로 전면 이미지를 보여줌
+				isFrontShowing: false //기본적으로 전면 이미지를 보여줌
 			})));
 		} catch (error) {
 			console.error('Error fetching selected pins', error);
@@ -151,7 +151,7 @@ const Calendar = ({ navigation }) => {
 						style={styles.closeButton}
 					>
 						<Text style={styles.buttonText}>
-						닫기
+							닫기
 						</Text>
 					</TouchableOpacity>
 					<View style={styles.imageContainer}>

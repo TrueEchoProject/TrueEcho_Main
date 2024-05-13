@@ -16,7 +16,7 @@ import axios from "axios";
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 const OptionText = ({ label }) => {
-  return <Text style={styles.smallText}>{label}</Text>;
+	return <Text style={styles.smallText}>{label}</Text>;
 };
 const OptionItem = ({ onPress, icon, iconType, label, backgroundColor = "#99A1B6" }) => {
 	const IconComponent = iconType;
@@ -53,8 +53,8 @@ const MyOptions = ({ navigation, route }) => {
 		}
 	}, [user]);
 	const notificationModalVisible = () => {
-    setIsNotificationModal(!isNotificationModal);
-  };
+		setIsNotificationModal(!isNotificationModal);
+	};
 	const blockModalVisible = () => {
 		setIsBlockModal(!isBlockModal);
 	};
@@ -180,15 +180,15 @@ const MyOptions = ({ navigation, route }) => {
 		
 		const fetchBlockedUsers = async () => {
 			try {
-					const response = await axios.get(`http://192.168.0.27:3000/blocked_users`);
+				const response = await axios.get(`http://192.168.0.27:3000/blocked_users`);
 				setBlockedUsers(response.data);
 			} catch (error) {
 				console.error('Error fetching calendar data', error);
 			}
 		};
 		useEffect(() => {
-      console.log(blockedUsers);
-    }, [blockedUsers]);
+			console.log(blockedUsers);
+		}, [blockedUsers]);
 		
 		useEffect(() => {
 			fetchBlockedUsers();
@@ -218,7 +218,7 @@ const MyOptions = ({ navigation, route }) => {
 				[userId]: !prevStatus[userId]
 			}));
 		};
-// 저장 버튼 클릭 시 호출되는 함수
+		// 저장 버튼 클릭 시 호출되는 함수
 		const handleSave = async () => {
 			// 변경된 사항이 있는지 확인합니다.
 			const hasChanges = Object.keys(blockedStatus).some(id => blockedStatus[id] !== originalStatus[id]);
@@ -411,16 +411,16 @@ const MyOptions = ({ navigation, route }) => {
 		
 		const fetchAnswer = async () => {
 			try {
-        const response = await axios.get(`http://192.168.0.27:3000/QnA`);
-        setQnA(response.data);
-        console.log(response.data);
-      } catch (error) {
-        console.error('Error fetching calendar data', error);
-      }
+				const response = await axios.get(`http://192.168.0.27:3000/QnA`);
+				setQnA(response.data);
+				console.log(response.data);
+			} catch (error) {
+				console.error('Error fetching calendar data', error);
+			}
 		}
 		useEffect(() => {
-      fetchAnswer();
-    }, []);
+			fetchAnswer();
+		}, []);
 		
 		const toggleAnswerVisible = (id) => {
 			setAnswerShowing(prev => ({
@@ -473,98 +473,98 @@ const MyOptions = ({ navigation, route }) => {
 	const deleteAccount = () => {
 		console.log("deleteAccount")
 	};
-  return (
-    <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
+	return (
+		<View style={styles.container}>
+			<ScrollView style={styles.scrollView}>
 				<TouchableOpacity onPress={() => navigation.navigate('내 설정 편집', { user: user })} style={styles.View}>
-          <Image source={{ uri: user.profile_url }} style={styles.Image}/>
-          <View style={{ marginLeft: 10 }}>
-            <Text style={styles.Text}>{user.username}</Text>
-            <Text style={styles.Text}>{user.user_Id}</Text>
-          </View>
-        </TouchableOpacity>
-        <View>
-          <OptionText label="기능" />
-          <OptionItem
-            iconType={FontAwesome5}
-            icon="calendar-alt"
-            label="캘린더"
-            onPress={() => navigation.navigate('캘린더')}
-          />
-        </View>
-        <View>
-          <OptionText label="설정" />
-          <OptionItem
-	          iconType={AntDesign}
-	          icon="bells"
-	          label="알림"
-	          onPress={notificationModalVisible}
-          />
-	        {isNotificationModal && (
-		        <NotificationModal
-			        isVisible={isNotificationModal}
-			        onClose={() => setIsNotificationModal(false)}
-		        />
-	        )}
-          <OptionItem
-            iconType={FontAwesome6}
-            icon="user-shield"
-            label="차단 유저 관리"
-            onPress={blockModalVisible}
-          />
-	        {isBlockModal && (
-		        <BlockModal
-			        isVisible={isBlockModal}
-			        onClose={() => setIsBlockModal(false)}
-		        />
-	        )}
-          <OptionItem
-            iconType={MaterialIcons}
-            icon="phonelink-ring"
-            label="Photo Time"
-            onPress={timeModalVisible}
-          />
-	        {isTimeModal && (
-		        <TimeModal
-			        isVisible={isTimeModal}
-			        onClose={() => setIsTimeModal(false)}
-		        />
-	        )}
-        </View>
-        <View>
-          <OptionText label="더보기" />
-          <OptionItem
-	          iconType={Entypo}
-	          icon="chat"
-	          label="도움받기"
-	          onPress={qnAModalVisible}
-          />
-	        {isQnAModal && (
-		        <QnAModal
-			        isVisible={isQnAModal}
-			        onClose={() => setIsQnAModal(false)}
-		        />
-	        )}
-        </View>
-        <View style={{ marginTop: 30 }}>
-          <OptionItem
-            iconType={Entypo}
-            icon="log-out"
-            label="로그아웃"
-            backgroundColor="grey"
-            onPress={logOut}
-          />
-          <OptionItem
-            iconType={Ionicons}
-            icon="alert-circle"
-            label="계정 삭제"
-            backgroundColor="red"
-            onPress={deleteAccount}
-          />
-        </View>
-      </ScrollView>
-    </View>
-  );
+					<Image source={{ uri: user.profile_url }} style={styles.Image}/>
+					<View style={{ marginLeft: 10 }}>
+						<Text style={styles.Text}>{user.username}</Text>
+						<Text style={styles.Text}>{user.user_Id}</Text>
+					</View>
+				</TouchableOpacity>
+				<View>
+					<OptionText label="기능" />
+					<OptionItem
+						iconType={FontAwesome5}
+						icon="calendar-alt"
+						label="캘린더"
+						onPress={() => navigation.navigate('캘린더')}
+					/>
+				</View>
+				<View>
+					<OptionText label="설정" />
+					<OptionItem
+						iconType={AntDesign}
+						icon="bells"
+						label="알림"
+						onPress={notificationModalVisible}
+					/>
+					{isNotificationModal && (
+						<NotificationModal
+							isVisible={isNotificationModal}
+							onClose={() => setIsNotificationModal(false)}
+						/>
+					)}
+					<OptionItem
+						iconType={FontAwesome6}
+						icon="user-shield"
+						label="차단 유저 관리"
+						onPress={blockModalVisible}
+					/>
+					{isBlockModal && (
+						<BlockModal
+							isVisible={isBlockModal}
+							onClose={() => setIsBlockModal(false)}
+						/>
+					)}
+					<OptionItem
+						iconType={MaterialIcons}
+						icon="phonelink-ring"
+						label="Photo Time"
+						onPress={timeModalVisible}
+					/>
+					{isTimeModal && (
+						<TimeModal
+							isVisible={isTimeModal}
+							onClose={() => setIsTimeModal(false)}
+						/>
+					)}
+				</View>
+				<View>
+					<OptionText label="더보기" />
+					<OptionItem
+						iconType={Entypo}
+						icon="chat"
+						label="도움받기"
+						onPress={qnAModalVisible}
+					/>
+					{isQnAModal && (
+						<QnAModal
+							isVisible={isQnAModal}
+							onClose={() => setIsQnAModal(false)}
+						/>
+					)}
+				</View>
+				<View style={{ marginTop: 30 }}>
+					<OptionItem
+						iconType={Entypo}
+						icon="log-out"
+						label="로그아웃"
+						backgroundColor="grey"
+						onPress={logOut}
+					/>
+					<OptionItem
+						iconType={Ionicons}
+						icon="alert-circle"
+						label="계정 삭제"
+						backgroundColor="red"
+						onPress={deleteAccount}
+					/>
+				</View>
+			</ScrollView>
+		</View>
+	);
 };
 
 const styles = StyleSheet.create({

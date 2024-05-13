@@ -278,58 +278,58 @@
   "notificationSettings": [
     {
       "id": 1,
-      "mention": false,
-      "likes": true,
+      "mention": true,
+      "likes": false,
       "friendRequest": true,
-      "voteNotification": false
+      "voteNotification": true
     }
   ],
   "Time": [
     {
-      "type": 1,
+      "type": 3,
       "id": 1
     }
   ],
   "user_calendar": [
     {
       "calendar_id": 1,
-      "created_at": "2024-04-05",
+      "created_at": "2024-05-05",
       "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
       "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
     },
     {
       "calendar_id": 2,
-      "created_at": "2024-04-10",
+      "created_at": "2024-05-10",
       "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
       "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
     },
     {
       "calendar_id": 3,
-      "created_at": "2024-04-15",
+      "created_at": "2024-05-15",
       "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
       "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
     },
     {
       "calendar_id": 4,
-      "created_at": "2024-04-20",
+      "created_at": "2024-05-20",
       "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
       "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
     },
     {
       "calendar_id": 5,
-      "created_at": "2024-04-25",
+      "created_at": "2024-05-25",
       "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
       "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
     },
     {
       "calendar_id": 6,
-      "created_at": "2024-04-27",
+      "created_at": "2024-05-27",
       "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
       "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
     },
     {
       "calendar_id": 7,
-      "created_at": "2024-04-07",
+      "created_at": "2024-05-07",
       "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
       "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
     }
@@ -343,7 +343,13 @@
     },
     {
       "pin_id": 2,
-      "created_at": "2024-04-20",
+      "created_at": "2024-05-15",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "pin_id": 3,
+      "created_at": "2024-05-25",
       "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
       "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
     }
@@ -352,7 +358,7 @@
     {
       "id": 1,
       "username": "박신형",
-      "user_Id": "sin1afahskfj",
+      "user_Id": "sin1af",
       "user_vote": "이성 친구가 제일 많을 거 같은 친구",
       "profile_url": "https://i.ibb.co/wwfqn6V/DALL-E-2024-04-26-20-08-20-A-realistic-image-capturing-the-essence-of-a-photo-taken-by-a-young-man-i.webp",
       "your_location": "서울특별시 용산구 서빙고동"
