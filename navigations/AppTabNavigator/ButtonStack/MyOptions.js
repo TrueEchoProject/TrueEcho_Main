@@ -339,10 +339,15 @@ const MyOptions = ({ navigation, route }) => {
 			try {
 				const Delete = await axios.delete(`http://192.168.0.27:3000/Time/1`);
 				const response = await axios.post(`http://192.168.0.27:3000/Time`, Time_type);
-				alert(`Photo Time이 성공적으로\n제출되었습니다.`);
+				// 서버의 응답 상태 코드에 따라 다른 메시지를 표시합니다.
+				if (response.status === 201) {
+					alert('변경 사항이 성공적으로 제출되었습니다.');
+				} else if (response.status === 400) {
+					alert('잘못된 요청입니다. 다시 시도해주세요.');
+				}
 			} catch (error) {
-				console.error('Error posting notification', error);
-				alert("Photo Time을 제출하는 중\n오류가 발생했습니다.");
+				console.error('Error posting data:', error);
+				alert('데이터를 제출하는 중 오류가 발생했습니다.');
 			}
 			onClose(); // 설정을 저장한 후 모달을 닫습니다.
 		};
@@ -364,30 +369,47 @@ const MyOptions = ({ navigation, route }) => {
 					<View style={styles.imageContainer}>
 						<Text style={styles.modalText}>Photo Time</Text>
 						<Text style={styles.modalSmallText}>사진을 찍을 시간을 정해주세요!</Text>
-						<TouchableOpacity
-							onPress={() => handleTimeTypeChange(0)}
-							style={Time_type.type === 0 ? styles.selectedModalButton : styles.modalButton }
+						<ScrollView
+							style={{width: windowWidth * 0.8,}}
+							contentContainerStyle={styles.scrollContent}
 						>
-							<Text style={styles.buttonText}>0-6</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							onPress={() => handleTimeTypeChange(1)}
-							style={Time_type.type === 1 ? styles.selectedModalButton : styles.modalButton }
-						>
-							<Text style={styles.buttonText}>7-12</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							onPress={() => handleTimeTypeChange(2)}
-							style={Time_type.type === 2 ? styles.selectedModalButton : styles.modalButton }
-						>
-							<Text style={styles.buttonText}>13-18</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							onPress={() => handleTimeTypeChange(3)}
-							style={Time_type.type === 3 ? styles.selectedModalButton : styles.modalButton }
-						>
-							<Text style={styles.buttonText}>19-24</Text>
-						</TouchableOpacity>
+							<TouchableOpacity
+								onPress={() => handleTimeTypeChange(0)}
+								style={Time_type.type === 0 ? styles.selectedModalButton : styles.modalButton }
+							>
+								<Text style={styles.buttonText}>00 ~ 07</Text>
+							</TouchableOpacity>
+							<TouchableOpacity
+								onPress={() => handleTimeTypeChange(1)}
+								style={Time_type.type === 1 ? styles.selectedModalButton : styles.modalButton }
+							>
+								<Text style={styles.buttonText}>07 ~ 12</Text>
+							</TouchableOpacity>
+							<TouchableOpacity
+								onPress={() => handleTimeTypeChange(2)}
+								style={Time_type.type === 2 ? styles.selectedModalButton : styles.modalButton }
+							>
+								<Text style={styles.buttonText}>12 ~ 15</Text>
+							</TouchableOpacity>
+							<TouchableOpacity
+								onPress={() => handleTimeTypeChange(3)}
+								style={Time_type.type === 3 ? styles.selectedModalButton : styles.modalButton }
+							>
+								<Text style={styles.buttonText}>15 ~ 18</Text>
+							</TouchableOpacity>
+							<TouchableOpacity
+								onPress={() => handleTimeTypeChange(4)}
+								style={Time_type.type === 4 ? styles.selectedModalButton : styles.modalButton }
+							>
+								<Text style={styles.buttonText}>18 ~ 21</Text>
+							</TouchableOpacity>
+							<TouchableOpacity
+								onPress={() => handleTimeTypeChange(5)}
+								style={Time_type.type === 5 ? styles.selectedModalButton : styles.modalButton }
+							>
+								<Text style={styles.buttonText}>21 ~ 24</Text>
+							</TouchableOpacity>
+						</ScrollView>
 						<TouchableOpacity
 							style={[styles.modalButton, { backgroundColor: '#4CAF50', }]}
 							onPress={saveChanges}
@@ -714,7 +736,7 @@ const styles = StyleSheet.create({
 	},
 	selectedModalButton: {
 		width: "80%",
-		height: "10%",
+		height: 50,
 		borderRadius: 10,
 		borderWidth: 1,
 		backgroundColor: "#3B4664",
