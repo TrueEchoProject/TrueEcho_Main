@@ -65,7 +65,13 @@ const Alarm = ({ navigation }) => {
 				console.log("알 수 없는 액션");
 		}
 	}
-	
+	const getGenderText = (gender) => {
+		return gender === 0 ? "남성" : "여성";
+	};
+	const getAgeText = (age) => {
+		const ageGroup = Math.floor(age / 10) * 10;
+		return `${ageGroup}대`;
+	};
 	useEffect( () => {
 		fetchAlarm()
 	}, []);
@@ -107,14 +113,14 @@ const Alarm = ({ navigation }) => {
 									<Text numberOfLines={2} ellipsizeMode='tail'>
 										<Text style={styles.emphasizedText}>{alarm.username}</Text>
 										님이 댓글을 남겼습니다:
-										<Text style={styles.emphasizedText}>{alarm.comment}</Text>
+										<Text style={styles.emphasizedText}> {alarm.comment}</Text>
 									</Text>
 								)}
 								{alarm.type === 1 && (
 									<Text numberOfLines={2} ellipsizeMode='tail'>
 										<Text style={styles.emphasizedText}>{alarm.username}</Text>
 										님이 회원님의 댓글에 답장을 보냈습니다:
-										<Text style={styles.emphasizedText}>{alarm.comment}</Text>
+										<Text style={styles.emphasizedText}> {alarm.comment}</Text>
 									</Text>
 								)}
 								{alarm.type === 2 && (
@@ -143,8 +149,7 @@ const Alarm = ({ navigation }) => {
 						<View key={index} style={styles.alarmContainer}>
 							<View style={{ flex: 1, flexDirection: "row", }}>
 								{alarm.type === 0 && (
-									<TouchableOpacity
-										onPress={() => {navigation.navigate("결과")}} style={{alignItems: "center", flexDirection: "row"}}>
+									<TouchableOpacity onPress={() => {navigation.navigate("결과")}} style={{alignItems: "center", flexDirection: "row"}}>
 										<Image
 											source={{ uri: GraphImage }}
 											style={styles.avatar}
@@ -154,8 +159,8 @@ const Alarm = ({ navigation }) => {
 												이번 주 "
 												<Text style={styles.emphasizedText}>{alarm.rank_vote}</Text>
 												" 투표에서
-												<Text style={styles.emphasizedText}>{alarm.rank}</Text>
-												등을 달성하셨어요!
+												<Text style={styles.emphasizedText}> {alarm.rank}등</Text>
+												을 달성하셨어요!
 											</Text>
 											<Text>{moment(alarm.created_at).fromNow()}</Text>
 										</View>
@@ -170,6 +175,26 @@ const Alarm = ({ navigation }) => {
 										<View style={{flexDirection: "column", flex: 1,}}>
 											<Text style={styles.emphasizedText} numberOfLines={2} ellipsizeMode='tail'>
 												이번 주 투표가 마감되었어요. 확인해볼까요?
+											</Text>
+											<Text>{moment(alarm.created_at).fromNow()}</Text>
+										</View>
+									</TouchableOpacity>
+								)}
+								{alarm.type === 2 && (
+									<TouchableOpacity onPress={() => {navigation.navigate("유저 알람")}} style={{alignItems: "center", flexDirection: "row"}}>
+										<Image
+											source={{ uri: GraphImage }}
+											style={styles.avatar}
+										/>
+										<View style={{flexDirection: "column", flex: 1,}}>
+											<Text numberOfLines={2} ellipsizeMode='tail'>
+												"
+												<Text style={styles.emphasizedText}>{alarm.vote}</Text>
+												" 질문에
+												<Text style={styles.emphasizedText}> {getAgeText(alarm.age)}</Text>
+												<Text style={styles.emphasizedText}> {getGenderText(alarm.gender)} </Text>
+												<Text style={styles.emphasizedText}>{alarm.username}</Text>
+												님이 투표하셨어요. 확인해볼까요?
 											</Text>
 											<Text>{moment(alarm.created_at).fromNow()}</Text>
 										</View>
