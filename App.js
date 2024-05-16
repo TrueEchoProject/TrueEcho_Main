@@ -107,7 +107,7 @@ export default function App() {
     
     // 네비게이션 초기화 대기 및 데이터 유효성 검사
     const waitForNavigation = setInterval(() => {
-      if (navigationRef.current && data && data.postId) {
+      if (navigationRef.current) {
         clearInterval(waitForNavigation);
         handleNavigation(type, data);
       }
@@ -116,29 +116,48 @@ export default function App() {
   
   const handleNavigation = (type, data) => {
     switch (type) {
-      case 'friend':
-        navigationRef.current?.navigate('Fri');
-        console.log('Navigating to Fri');
+      case 'goFriend':
+        handleFriend(data);
         break;
       case 'goPost':
         handlePost(data);
+        break;
+      case 'goRanking':
+        handleRanking(data);
+        break;
+      case 'goUser':
+        handleUser(data);
+        break;
+      case 'random':
+        handleRandom(data);
         break;
       default:
         console.log('Unknown notification type received.');
     }
   };
   
+  const handleFriend = (data) => {
+    navigationRef.current?.navigate('Fri');
+    console.log('Navigating to Fri');
+  };
   const handlePost = (data) => {
-    if (!data || !data.postId) {
-      console.log('Invalid post data:', data);
-      return;
-    }
-    
-    console.log('Handling post:', data);
     navigationRef.current?.navigate('피드 알람', { post_id: data.postId });
     console.log('Navigating to 피드 알람 with post_id:', data.postId);
   };
-  
+  const handleRanking = (data) => {
+    console.log('Handling ranking:', data);
+    navigationRef.current?.navigate("결과");
+    console.log('Navigating to 결과');
+  };
+  const handleUser = (data) => {
+    console.log('Handling post:', data);
+    navigationRef.current?.navigate("유저 알람", {userId : data.user_id});
+    console.log('Navigating to 유저 알람 with user_id:', data.user_id);
+  };
+  const handleRandom = () => {
+    navigationRef.current?.navigate("CameraOption");
+    console.log('Navigating to CameraOption');
+  };
   return (
     <NavigationContainer ref={navigationRef}>
       <TabNavigation />
