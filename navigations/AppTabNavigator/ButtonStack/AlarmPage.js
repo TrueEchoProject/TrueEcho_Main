@@ -1,6 +1,6 @@
 import React, {useEffect, useState,} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
-import { Image } from "expo-image";
+import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import moment from 'moment';
 import 'moment/locale/ko';
 import axios from "axios";
@@ -144,7 +144,7 @@ const Alarm = ({ navigation }) => {
 							<View style={{ flex: 1 }}>
 								{alarm.type === 0 && (
 									<View style={{alignItems: "center", flexDirection: "row"}}>
-										<Image
+										<ExpoImage
 											source={{ uri: alarm.profile_url }}
 											style={styles.avatar}
 										/>
@@ -156,7 +156,7 @@ const Alarm = ({ navigation }) => {
 											</Text>
 											<Text>{moment(alarm.created_at).fromNow()}</Text>
 										</View>
-										<Image
+										<ExpoImage
 											source={{ uri: alarm.post_back_url }}
 											style={styles.post}
 										/>
@@ -164,7 +164,7 @@ const Alarm = ({ navigation }) => {
 								)}
 								{alarm.type === 1 && (
 									<View style={{alignItems: "center", flexDirection: "row"}}>
-										<Image
+										<ExpoImage
 											source={{ uri: alarm.profile_url }}
 											style={styles.avatar}
 										/>
@@ -176,7 +176,7 @@ const Alarm = ({ navigation }) => {
 											</Text>
 											<Text>{moment(alarm.created_at).fromNow()}</Text>
 										</View>
-										<Image
+										<ExpoImage
 											source={{ uri: alarm.post_back_url }}
 											style={styles.post}
 										/>
@@ -192,13 +192,13 @@ const Alarm = ({ navigation }) => {
 										}}>
 											{alarm.profile_urls.length > 1 ?
 												alarm.profile_urls.map((url, idx) => (
-													<Image
+													<ExpoImage
 														key={idx}
 														source={{ uri: url }}
 														style={idx === 0 ? styles.ImageAvatar : styles.overlayAvatar}
 													/>
 												)) : (
-													<Image
+													<ExpoImage
 														source={{ uri: alarm.profile_url }}
 														style={styles.avatar}
 													/>
@@ -211,7 +211,7 @@ const Alarm = ({ navigation }) => {
 											</Text>
 											<Text>{moment(alarm.created_at).fromNow()}</Text>
 										</View>
-										<Image
+										<ExpoImage
 											source={{ uri: alarm.post_back_url }}
 											style={styles.post}
 										/>
@@ -219,7 +219,7 @@ const Alarm = ({ navigation }) => {
 								)}
 								{alarm.type === 3 && (
 									<View style={{alignItems: "center", flexDirection: "row"}}>
-										<Image
+										<ExpoImage
 											source={{ uri: alarm.profile_url }}
 											style={styles.avatar}
 										/>
@@ -242,7 +242,7 @@ const Alarm = ({ navigation }) => {
 							<View style={{ flex: 1, flexDirection: "row", }}>
 								{alarm.type === 0 && (
 									<TouchableOpacity onPress={() => {navigation.navigate("결과")}} style={{alignItems: "center", flexDirection: "row"}}>
-										<Image
+										<ExpoImage
 											source={{ uri: GraphImage }}
 											style={styles.avatar}
 										/>
@@ -260,7 +260,7 @@ const Alarm = ({ navigation }) => {
 								)}
 								{alarm.type === 1 && (
 									<TouchableOpacity onPress={() => {navigation.navigate("결과")}} style={{alignItems: "center", flexDirection: "row"}}>
-										<Image
+										<ExpoImage
 											source={{ uri: GraphImage }}
 											style={styles.avatar}
 										/>
@@ -274,7 +274,7 @@ const Alarm = ({ navigation }) => {
 								)}
 								{alarm.type === 2 && (
 									<TouchableOpacity onPress={() => {navigation.navigate("유저 알람", {userId : alarm.user_id})}} style={{alignItems: "center", flexDirection: "row"}}>
-										<Image
+										<ExpoImage
 											source={{ uri: GraphImage }}
 											style={styles.avatar}
 										/>

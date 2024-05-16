@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, Platform, Modal, Dimensions, } from 'react-native';
-import { Image } from "expo-image";
+import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import axios from "axios";
 import * as ImagePicker from 'expo-image-picker';
 
@@ -165,7 +165,7 @@ const MyInfo = ({ navigation, route }) => {
 		<View style={styles.container}>
 			<View style={{ padding: 20, alignItems:"center",}}>
 				<TouchableOpacity onPress={profileModalVisible}>
-					<Image
+					<ExpoImage
 						source={{ uri: imageUri }}
 						style={styles.Image}
 					/>

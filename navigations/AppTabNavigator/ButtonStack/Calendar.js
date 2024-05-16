@@ -11,7 +11,7 @@ import {
 	ScrollView,
 } from 'react-native';
 import axios from "axios";
-import { Image } from "expo-image"
+import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 
 const days = ["일", "월", "화", "수", "목", "금", "토"];
 const months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
@@ -159,7 +159,7 @@ const Calendar = ({ navigation }) => {
 							onPress={changeImage}
 							style={styles.frontImage}
 						>
-							<Image
+							<ExpoImage
 								source={{ uri: isFrontShowing ? postFront : postBack }}
 								style={styles.smallImage}
 							/>
@@ -168,7 +168,7 @@ const Calendar = ({ navigation }) => {
 							onPress={changeImage}
 							style={styles.backImage}
 						>
-							<Image
+							<ExpoImage
 								source={{ uri: isFrontShowing ? postBack : postFront }}
 								style={styles.fullImage}
 							/>
@@ -233,7 +233,7 @@ const Calendar = ({ navigation }) => {
 						) : (
 							<View key={index} style={styles.selectedImageContainer}>
 								<TouchableOpacity onPress={() => togglePinImage(index)}>
-									<Image
+									<ExpoImage
 										source={{ uri: pin.isFrontShowing ? pin.frontUrl : pin.backUrl }}
 										style={styles.selectedImage} />
 									<Text style={styles.pinDateText}>Date: {pin.date}</Text>

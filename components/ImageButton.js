@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, View, StyleSheet, Text } from 'react-native';
-import { Image } from 'expo-image';
+import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 
 const ImageButton = React.memo(({ front_image, back_image, containerHeight, windowWidth }) => {
 	const [isFrontShowing, setIsFrontShowing] = useState(true); // 현재 보여지는 이미지가 전면 이미지인지 추적하는 상태
@@ -31,7 +31,7 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
 				</View>
 			)}
 			<TouchableOpacity onPress={changeImage} style={{ zIndex: 2, position: 'absolute', top: 10, left: 10 }}>
-				<Image
+				<ExpoImage
 					source={{ uri: isFrontShowing ? (front_image || defaultImage) : (back_image || defaultImage) }}
 					style={{
 						borderColor: '#ffffff',
@@ -65,7 +65,7 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
 				)}
 			</TouchableOpacity>
 			<TouchableOpacity onPress={changeImage} style={{ zIndex: 1, position: 'relative' }}>
-				<Image
+				<ExpoImage
 					source={{ uri: isFrontShowing ? (back_image || defaultImage) : (front_image || defaultImage) }}
 					style={{
 						height: ImageHeight,
@@ -109,7 +109,3 @@ const styles = StyleSheet.create({
 });
 
 export { ImageButton };
-
-
-
-

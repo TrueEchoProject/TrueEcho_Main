@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Share, Dimensions, } from 'react-native';
 import axios from 'axios';
-import { Image } from 'expo-image';
+import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import { MaterialIcons, Ionicons, Feather, SimpleLineIcons } from "@expo/vector-icons";
 import { ImageButton } from "./ImageButton";
 import { CommentModal } from './CommentModal'; // 댓글 창 컴포넌트 임포트
@@ -97,7 +97,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 			<View style={styles.cardContainer}>
 				<View style={styles.cardItem}>
 					<View style={styles.left}>
-						<Image
+						<ExpoImage
 							style={styles.thumbnail}
 							source={{ uri: post.profile_url }}
 						/>

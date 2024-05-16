@@ -1,7 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"; // 하단 Tab 네비게이터
 import { MaterialIcons } from "@expo/vector-icons";
-import { NavigationContainer } from "@react-navigation/native";
 import { MainPostStackScreen, CommunityStackScreen } from "./Stack"
 import { CameraStackScreen } from "./AppTabNavigator/CameraStack/CameraStacks"
 

@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import axios from 'axios';
-import { Image } from 'expo-image';
+import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import { AntDesign } from "@expo/vector-icons";
 
 const windowHeight = Dimensions.get('window').height;
@@ -214,7 +214,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 		
 		return (
 			<View style={commentItemStyle} ref={commentItemRef}>
-				<Image style={styles.profileImage} source={{ uri: comment.profile_url }} />
+				<ExpoImage style={styles.profileImage} source={{ uri: comment.profile_url }} />
 				<Text>Date: {comment.created_at}</Text>
 				<Text style={styles.commentText}>{comment.username}: {comment.comment}</Text>
 				<TouchableOpacity onPress={() => handleDeleteComment(comment.id)}>
@@ -235,7 +235,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	const UnderCommentItem = ({ underComment, commentId }) => {
 		return (
 			<View style={styles.underCommentItem}>
-				<Image style={styles.profileImage} source={{ uri: underComment.profile_url }} />
+				<ExpoImage style={styles.profileImage} source={{ uri: underComment.profile_url }} />
 				<Text>Date: {underComment.created_at}</Text>
 				<Text style={styles.underCommentText}>{underComment.username}: {underComment.under_comment}</Text>
 				<TouchableOpacity onPress={() => handleDeleteUnderComment(commentId, underComment.id)}>

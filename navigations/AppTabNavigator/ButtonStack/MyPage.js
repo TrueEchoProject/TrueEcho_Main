@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal, Dimensions, ActivityIn
 import {AntDesign, FontAwesome5, MaterialIcons} from '@expo/vector-icons';
 import PagerView from "react-native-pager-view";
 import axios from "axios";
-import { Image } from "expo-image";
+import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import { Button3 } from "../../../components/Button";
 
 const windowWidth = Dimensions.get('window').width;
@@ -101,7 +101,7 @@ const MyPage = ({ navigation, route }) => {
 								닫기
 							</Text>
 						</TouchableOpacity>
-						<Image
+						<ExpoImage
 							source={{ uri: imageUrl }} // 수정: imageUrl을 사용
 							style={styles.smallImage}
 						/>
@@ -117,7 +117,7 @@ const MyPage = ({ navigation, route }) => {
 				<View style={{flexDirection: "row"}}>
 					<View style={{marginRight: "auto"}}>
 						<TouchableOpacity onPress={profileImageModalVisible}>
-							<Image source={{ uri: userData.profile_url }} style={styles.avatar}/>
+							<ExpoImage source={{ uri: userData.profile_url }} style={styles.avatar}/>
 						</TouchableOpacity>
 						{isModalVisible && (
 							<ProfileImageModal
@@ -187,7 +187,7 @@ const MyPage = ({ navigation, route }) => {
 							{pinData.map((item) => (
 								<View key={item.pin_id} style={{ position: 'relative' }}>
 									<TouchableOpacity onPress={() => changeImage(item.pin_id)}>
-										<Image
+										<ExpoImage
 											source={{ uri: isFrontShowing[item.pin_id] ? item.post_front_url : item.post_back_url }}
 											style={styles.pageStyle}
 										/>

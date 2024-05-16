@@ -42,7 +42,7 @@ const Friends = () => {
 			await Notifications.scheduleNotificationAsync({
 				content: {
 					title: "좋아요",
-					body: '"username"님이 좋아요를 눌렀어요!',
+					body: 'username"님이 좋아요를 눌렀어요!',
 					data: {  // 알림에 추가 데이터 포함
 						postId: 3,
 						type: "goPost",

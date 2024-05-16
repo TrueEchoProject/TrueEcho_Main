@@ -10,7 +10,7 @@ import {
 	Switch,
 } from 'react-native';
 import { FontAwesome5, AntDesign, FontAwesome6, MaterialIcons, Entypo, Ionicons } from '@expo/vector-icons';
-import { Image } from "expo-image";
+import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import axios from "axios";
 
 const windowWidth = Dimensions.get('window').width;
@@ -330,7 +330,7 @@ const MyOptions = ({ navigation, route }) => {
 								>
 									{blockedUsers.map((user) => (
 										<View key={user.id} style={styles.scrollModalButton}>
-											<Image
+											<ExpoImage
 												style={styles.profileImage}
 												source={{ uri: user.profile_url }}
 											/>
