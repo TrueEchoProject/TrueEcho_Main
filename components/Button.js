@@ -26,7 +26,7 @@ export const Button3 = ({ onPress }) => { // ( 마이페이지 이동 후 ) 상�
 	return (
 		<TouchableOpacity onPress={onPress}>
 			<View>
-				< MaterialIcons name='settings' size={30} style={{ height: 30, width:30, marginRight:10 }}/>
+				< MaterialIcons name='settings' size={30} style={{ height: 30, width:30, }}/>
 			</View>
 		</ TouchableOpacity>
 	)

@@ -167,46 +167,180 @@
       }
     }
   ],
+  "alarm_community": [
+    {
+      "id": 1,
+      "type": 0,
+      "rank_vote": "무인도에서도 살아남을 거 같은 사람",
+      "rank": 1,
+      "created_at": "2024-05-06"
+    },
+    {
+      "id": 2,
+      "type": 1,
+      "created_at": "2024-05-06"
+    },
+    {
+      "id": 3,
+      "type": 2,
+      "profile_url": "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp",
+      "username": "박신형",
+      "vote": "ENTJ일 거 같은 사람",
+      "gender": 0,
+      "age": 21,
+      "created_at": "2024-05-06",
+      "user_id": 1
+    }
+  ],
+  "alarm_post": [
+    {
+      "id": 1,
+      "type": 0,
+      "profile_url": "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg",
+      "username": "박신형",
+      "comment": "천국 같아, 여기 어디야?",
+      "created_at": "2024-05-06",
+      "post_id": 1
+    },
+    {
+      "id": 2,
+      "type": 1,
+      "profile_url": "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp",
+      "post_back_url": "https://i.ibb.co/TYFYFFW/DALL-E-2024-05-05-22-54-52-A-serene-and-historical-photograph-of-Sensoji-Temple-in-Asakusa-Tokyo-Jap.webp",
+      "username": "박신형",
+      "comment": "별말씀을요",
+      "created_at": "2024-04-04",
+      "post_id": 2
+    },
+    {
+      "id": 3,
+      "type": 2,
+      "profile_url": "https://i.ibb.co/TYFYFFW/DALL-E-2024-05-05-22-54-52-A-serene-and-historical-photograph-of-Sensoji-Temple-in-Asakusa-Tokyo-Jap.webp",
+      "post_back_url": "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp",
+      "like_username": "박준형",
+      "created_at": "2024-04-23",
+      "post_id": 3
+    },
+    {
+      "id": 4,
+      "type": 2,
+      "profile_url": "https://i.ibb.co/9HTcsj5/DALL-E-2024-05-06-17-42-02-A-picturesque-scene-of-Kinkaku-ji-the-Golden-Pavilion-in-Kyoto-Japan-The.webp",
+      "post_back_url": "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp",
+      "like_username": "백효영",
+      "created_at": "2024-04-30",
+      "post_id": 4
+    },
+    {
+      "id": 5,
+      "type": 2,
+      "profile_url": "https://i.ibb.co/9HTcsj5/DALL-E-2024-05-06-17-42-02-A-picturesque-scene-of-Kinkaku-ji-the-Golden-Pavilion-in-Kyoto-Japan-The.webp",
+      "post_back_url": "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp",
+      "like_username": "백효영",
+      "created_at": "2024-04-30",
+      "post_id": 4
+    },
+    {
+      "id": 6,
+      "type": 2,
+      "profile_url": "https://i.ibb.co/1T3Nfs7/DALL-E-2024-05-06-17-42-45-A-beautiful-scene-of-Osaka-Castle-in-Osaka-Japan-during-cherry-blossom-se.webp",
+      "post_back_url": "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp",
+      "like_username": "서희준",
+      "created_at": "2024-05-02",
+      "post_id": 5
+    },
+    {
+      "id": 7,
+      "type": 2,
+      "profile_url": "https://i.ibb.co/1T3Nfs7/DALL-E-2024-05-06-17-42-45-A-beautiful-scene-of-Osaka-Castle-in-Osaka-Japan-during-cherry-blossom-se.webp",
+      "post_back_url": "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp",
+      "like_username": "백종원",
+      "created_at": "2024-05-02",
+      "post_id": 5
+    },
+    {
+      "id": 8,
+      "type": 2,
+      "profile_url": "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp",
+      "post_back_url": "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp",
+      "like_username": "민희진",
+      "created_at": "2024-05-02",
+      "post_id": 5
+    },
+    {
+      "id": 9,
+      "type": 3,
+      "profile_url": "https://i.ibb.co/1T3Nfs7/DALL-E-2024-05-06-17-42-45-A-beautiful-scene-of-Osaka-Castle-in-Osaka-Japan-during-cherry-blossom-se.webp",
+      "friend_username": "강상호",
+      "created_at": "2024-05-02"
+    }
+  ],
+  "notificationSettings": [
+    {
+      "id": 1,
+      "community": [
+        {
+          "vote_ranking": true,
+          "vote": false
+        }
+      ],
+      "post": [
+        {
+          "newComment": true,
+          "subComment": true,
+          "postLike": true
+        }
+      ],
+      "friendRequest": true,
+      "PhotoTime": true
+    }
+  ],
+  "Time": [
+    {
+      "type": 4,
+      "id": 1
+    }
+  ],
   "user_calendar": [
     {
       "calendar_id": 1,
-      "created_at": "2024-04-05",
+      "created_at": "2024-05-05",
       "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
       "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
     },
     {
       "calendar_id": 2,
-      "created_at": "2024-04-10",
+      "created_at": "2024-05-10",
       "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
       "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
     },
     {
       "calendar_id": 3,
-      "created_at": "2024-04-15",
+      "created_at": "2024-05-15",
       "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
       "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
     },
     {
       "calendar_id": 4,
-      "created_at": "2024-04-20",
+      "created_at": "2024-05-20",
       "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
       "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
     },
     {
       "calendar_id": 5,
-      "created_at": "2024-04-25",
+      "created_at": "2024-05-25",
       "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
       "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
     },
     {
       "calendar_id": 6,
-      "created_at": "2024-04-27",
+      "created_at": "2024-05-27",
       "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
       "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
     },
     {
       "calendar_id": 7,
-      "created_at": "2024-04-07",
+      "created_at": "2024-05-07",
       "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
       "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
     }
@@ -220,18 +354,65 @@
     },
     {
       "pin_id": 2,
-      "created_at": "2024-04-25",
+      "created_at": "2024-05-15",
+      "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "pin_id": 3,
+      "created_at": "2024-05-25",
       "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
       "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
     }
   ],
   "user_me": [
     {
+      "id": 1,
       "username": "박신형",
-      "user_Id": "sin10920",
-      "user_vote": "이성 친구가 제일 많을 거 같은 친구",
+      "user_Id": "hello@example.co",
+      "user_vote": null,
       "profile_url": "https://i.ibb.co/wwfqn6V/DALL-E-2024-04-26-20-08-20-A-realistic-image-capturing-the-essence-of-a-photo-taken-by-a-young-man-i.webp",
       "your_location": "서울특별시 용산구 서빙고동"
+    }
+  ],
+  "user": [
+    {
+      "id": 1,
+      "username": "박신형",
+      "user_Id": "hello@example.comafaf"
+    },
+    {
+      "id": 2,
+      "username": "박준형",
+      "user_Id": "hi@example.comafaf"
+    },
+    {
+      "id": 3,
+      "username": "서희준",
+      "user_Id": "holo@example.comafaf"
+    }
+  ],
+  "user_Data": [
+    {
+      "user_id": 1,
+      "username": "백종원",
+      "nickname": "jong",
+      "user_vote": "잘 웃을 거 같은 사람",
+      "profile_url": "https://i.ibb.co/wwfqn6V/DALL-E-2024-04-26-20-08-20-A-realistic-image-capturing-the-essence-of-a-photo-taken-by-a-young-man-i.webp",
+      "pin": [
+        {
+          "pin_id": 1,
+          "created_at": "2024-04-15",
+          "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+          "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+        },
+        {
+          "pin_id": 2,
+          "created_at": "2024-04-20",
+          "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+          "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+        }
+      ]
     }
   ],
   "user_location": [
@@ -239,58 +420,63 @@
       "your_location": "서울특별시 용산구 서빙고동"
     }
   ],
+  "QnA": [
+    {
+      "id": 1,
+      "Q": "hi?One",
+      "A": "hello!One/hello!One"
+    },
+    {
+      "id": 2,
+      "Q": "hi?Two",
+      "A": "hello!Two/hello!Two"
+    },
+    {
+      "id": 3,
+      "Q": "hi?Three",
+      "A": "hello!Three/hello!Three"
+    },
+    {
+      "id": 4,
+      "Q": "hi?Four",
+      "A": "hello!Four/hello!Four"
+    },
+    {
+      "id": 5,
+      "Q": "hi?Five",
+      "A": "hello!Five/hello!Five"
+    },
+    {
+      "id": 6,
+      "Q": "hi?Six",
+      "A": "hello!Six/hello!Six"
+    },
+    {
+      "id": 7,
+      "Q": "hi?Seven",
+      "A": "hello!Seven/hello!Seven"
+    },
+    {
+      "id": 8,
+      "Q": "hi?Eight",
+      "A": "hello!Eight/hello!Eight"
+    },
+    {
+      "id": 9,
+      "Q": "hi?Nine",
+      "A": "hello!Nine/hello!Nine"
+    },
+    {
+      "id": 10,
+      "Q": "hi?Ten",
+      "A": "hello!Ten/hello!Ten"
+    }
+  ],
   "blocked_users": [
     {
-      "blocked_user": "",
-      "id": 1
-    },
-    {
-      "blocked_user": "",
-      "id": 2
-    },
-    {
-      "blocked_user": "",
-      "id": 3
-    },
-    {
-      "blocked_user": "윤서_free_FRIEND_서빙고동",
-      "id": 4
-    },
-    {
-      "blocked_user": "예린_free_FRIEND_장안구",
-      "id": 5
-    },
-    {
-      "blocked_user": "혜진_onTime_FRIEND_서빙고동",
-      "id": 6
-    },
-    {
-      "blocked_user": "혜진_onTime_FRIEND_서빙고동",
-      "id": 7
-    },
-    {
-      "blocked_user": "윤서_free_FRIEND_서빙고동",
-      "id": 8
-    },
-    {
-      "blocked_user": "시우_late_FRIEND_서빙고동",
-      "id": 9
-    },
-    {
-      "blocked_user": "진우_late_PUBLIC_일산동구",
-      "id": 10
-    },
-    {
-      "blocked_user": "예린_free_FRIEND_장안구",
-      "id": 11
-    },
-    {
-      "blocked_user": "예린_free_FRIEND_장안구",
-      "id": 12
-    },
-    {
-      "blocked_user": "시우_late_FRIEND_서빙고동",
-      "id": 13
+      "username": "윤서_free_FRIEND_서빙고동",
+      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
+      "id": 1715507932785
     }
   ],
   "friendSend": [
@@ -357,6 +543,18 @@
     {
       "friendSendUser": "서준_onTime_FRIEND_서빙고동",
       "id": 16
+    },
+    {
+      "friendSendUser": "혜진_onTime_FRIEND_서빙고동",
+      "id": 17
+    },
+    {
+      "friendSendUser": "진우_late_PUBLIC_일산동구",
+      "id": 18
+    },
+    {
+      "friendSendUser": "진우_late_PUBLIC_일산동구",
+      "id": 19
     }
   ],
   "recommendations": [
@@ -1575,31 +1773,6 @@
       "post_id": 7,
       "id": 32,
       "reply_count": 1
-    },
-    {
-      "comment": "처음 보는 풍경이야.",
-      "username": "지현",
-      "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
-      "created_at": "2024-03-25",
-      "under_comments": [
-        {
-          "under_comment": "잘 들었습니다, 좋은 의견 감사해요!",
-          "username": "서율",
-          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126444805029928/funnyclown123_A_military_theater_website_builder_interface._Pri_fe28614a-3c49-43ea-9eee-9e0676a85eb8.png?ex=661c5b97&is=6609e697&hm=607a5601cbe45d2bd0d72349a2040a724920832823f043060ef40fa64cbfbe18&",
-          "created_at": "2024-03-25",
-          "id": 33
-        },
-        {
-          "under_comment": "네, 정말 가볼 만한 곳이에요!",
-          "username": "지혜",
-          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126028666896424/hadymarquez_soft_playset_personalized_df04b6e7-6032-450a-af46-47cf9cb774c7.png?ex=661c5b34&is=6609e634&hm=d11c8846f567ec102ebacb94467dca190b61d3a689546d5d946e5217288b71f8&",
-          "created_at": "2024-03-25",
-          "id": 34
-        }
-      ],
-      "post_id": 8,
-      "id": 33,
-      "reply_count": 2
     },
     {
       "comment": "동감이야, 나도 그래.",
@@ -3149,10 +3322,18 @@
       "username": "신형",
       "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
       "created_at": "2024-04-1319:24",
-      "under_comments": [],
+      "under_comments": [
+        {
+          "id": "2024-05-1414:34",
+          "under_comment": "fdfdf",
+          "username": "신형",
+          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+          "created_at": "2024-05-1414:34"
+        }
+      ],
       "post_id": 2,
       "id": 1713036297461,
-      "reply_count": 0
+      "reply_count": 2
     },
     {
       "comment": "apfhd",

@@ -11,7 +11,7 @@ import {
 	ScrollView,
 } from 'react-native';
 import axios from "axios";
-import { Image } from "expo-image"
+import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 
 const days = ["일", "월", "화", "수", "목", "금", "토"];
 const months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
@@ -25,7 +25,7 @@ const Calendar = ({ navigation }) => {
 	const [selectedPins, setSelectedPins] = useState([]);  // 선택된 핀들의 정보를 저장할 상태
 	const fetchCalendar = async () => {
 		try {
-			const response = await axios.get(`http://192.168.0.3:3000/user_calendar`);
+			const response = await axios.get(`http://192.168.0.27:3000/user_calendar`);
 			const calendarData = response.data;
 			const newSpecificDates = {};
 			calendarData.forEach(item => {
@@ -36,7 +36,6 @@ const Calendar = ({ navigation }) => {
 			console.error('Error fetching calendar data', error);
 		}
 	};
-// 선택된 모든 핀을 서버에 전송하는 함수
 	const postPins = async () => {
 		if (selectedPins.length === 0) {
 			alert("선택된 핀이 없습니다.");
@@ -52,8 +51,8 @@ const Calendar = ({ navigation }) => {
 		};
 		
 		try {
-			const PostResponse = await axios.delete('http://192.168.0.3:3000/user_pin')
-			const response = await axios.post('http://192.168.0.3:3000/user_pin', pinData);
+			const PostResponse = await axios.delete('http://192.168.0.27:3000/user_pin')
+			const response = await axios.post('http://192.168.0.27:3000/user_pin', pinData);
 			alert("핀이 성공적으로 제출되었습니다.");
 			if (response) {
 				navigation.navigate("MyP", { pinRes: pinData }); // SendPost 페이지로 이동하면서 두 배열의 파라미터를 전달
@@ -63,14 +62,19 @@ const Calendar = ({ navigation }) => {
 			alert("핀을 제출하는 중 오류가 발생했습니다.");
 		}
 	};
-	
-	useEffect(() => {
-		fetchCalendar();
-	}, []);
-	
-	const toggleImageVisibility = (imageUrl, imageBackUrl, date) => {
-		setCurrentImageUrls({ front: imageUrl, back: imageBackUrl, date: date });
-		setIsImageVisible(!isImageVisible);
+	const loadSelectedPins = async () => {
+		try {
+			const response = await axios.get('http://192.168.0.27:3000/user_pin');
+			const selectedPinsData = response.data;
+			setSelectedPins(selectedPinsData.map(pin => ({
+				date: pin.created_at,
+				frontUrl: pin.post_front_url,
+				backUrl: pin.post_back_url,
+				isFrontShowing: false //기본적으로 전면 이미지를 보여줌
+			})));
+		} catch (error) {
+			console.error('Error fetching selected pins', error);
+		}
 	};
 	
 	const generateMatrix = () => {
@@ -97,57 +101,6 @@ const Calendar = ({ navigation }) => {
 		}
 		return matrix;
 	};
-	
-	const ImageModal = ({ isVisible, postFront, postBack, onClose, onSelectPin }) => {
-		const [isFrontShowing, setIsFrontShowing] = useState(true);
-		const changeImage = () => {
-			setIsFrontShowing(!isFrontShowing);
-		};
-		
-		return (
-			<Modal
-				animationType="slide"
-				visible={isVisible}
-				onRequestClose={onClose}
-				transparent={true}
-			>
-				<View style={styles.modalContainer}>
-					<TouchableOpacity
-						onPress={onClose}
-						style={styles.closeButton}
-					>
-						<Text style={styles.buttonText}>
-						닫기
-						</Text>
-					</TouchableOpacity>
-					<View style={styles.imageContainer}>
-						<TouchableOpacity
-							onPress={changeImage}
-							style={styles.frontImage}
-						>
-							<Image
-								source={{ uri: isFrontShowing ? postFront : postBack }}
-								style={styles.smallImage}
-							/>
-						</TouchableOpacity>
-						<TouchableOpacity
-							onPress={changeImage}
-							style={styles.backImage}
-						>
-							<Image
-								source={{ uri: isFrontShowing ? postBack : postFront }}
-								style={styles.fullImage}
-							/>
-						</TouchableOpacity>
-					</View>
-					<TouchableOpacity onPress={onSelectPin} style={styles.selectButton}>
-						<Text style={styles.buttonText}>Pin 지정</Text>
-					</TouchableOpacity>
-				</View>
-			</Modal>
-		);
-	};
-	
 	const renderCalendar = () => {
 		const matrix = generateMatrix();
 		return (
@@ -179,6 +132,59 @@ const Calendar = ({ navigation }) => {
 			</View>
 		);
 	};
+	const ImageModal = ({ isVisible, postFront, postBack, onClose, onSelectPin }) => {
+		const [isFrontShowing, setIsFrontShowing] = useState(true);
+		const changeImage = () => {
+			setIsFrontShowing(!isFrontShowing);
+		};
+		
+		return (
+			<Modal
+				animationType="slide"
+				visible={isVisible}
+				onRequestClose={onClose}
+				transparent={true}
+			>
+				<View style={styles.modalContainer}>
+					<TouchableOpacity
+						onPress={onClose}
+						style={styles.closeButton}
+					>
+						<Text style={styles.buttonText}>
+							닫기
+						</Text>
+					</TouchableOpacity>
+					<View style={styles.imageContainer}>
+						<TouchableOpacity
+							onPress={changeImage}
+							style={styles.frontImage}
+						>
+							<ExpoImage
+								source={{ uri: isFrontShowing ? postFront : postBack }}
+								style={styles.smallImage}
+							/>
+						</TouchableOpacity>
+						<TouchableOpacity
+							onPress={changeImage}
+							style={styles.backImage}
+						>
+							<ExpoImage
+								source={{ uri: isFrontShowing ? postBack : postFront }}
+								style={styles.fullImage}
+							/>
+						</TouchableOpacity>
+					</View>
+					<TouchableOpacity onPress={onSelectPin} style={styles.selectButton}>
+						<Text style={styles.buttonText}>Pin 지정</Text>
+					</TouchableOpacity>
+				</View>
+			</Modal>
+		);
+	};
+	const toggleImageVisibility = (imageUrl, imageBackUrl, date) => {
+		setCurrentImageUrls({ front: imageUrl, back: imageBackUrl, date: date });
+		setIsImageVisible(!isImageVisible);
+	};
 	const handleSelectPin = () => {
 		// 중복된 날짜의 핀이 있는지 확인
 		if (selectedPins.some(pin => pin.date === currentImageUrls.date)) {
@@ -207,12 +213,7 @@ const Calendar = ({ navigation }) => {
 		updatedPins[index].isFrontShowing = !updatedPins[index].isFrontShowing;
 		setSelectedPins(updatedPins);
 	};
-	const removePin = (index) => {
-		setSelectedPins(prevPins => prevPins.filter((_, i) => i !== index));
-	};
-	// 선택된 핀을 화면에 표시하는 컴포넌트
 	const SelectedPinsList = () => {
-		// 최대 5개의 칸을 가정
 		const maxSlots = 5;
 		const emptySlots = maxSlots - selectedPins.length;
 		const allSlots = [...selectedPins];
@@ -232,7 +233,7 @@ const Calendar = ({ navigation }) => {
 						) : (
 							<View key={index} style={styles.selectedImageContainer}>
 								<TouchableOpacity onPress={() => togglePinImage(index)}>
-									<Image
+									<ExpoImage
 										source={{ uri: pin.isFrontShowing ? pin.frontUrl : pin.backUrl }}
 										style={styles.selectedImage} />
 									<Text style={styles.pinDateText}>Date: {pin.date}</Text>
@@ -247,7 +248,14 @@ const Calendar = ({ navigation }) => {
 			</View>
 		);
 	};
+	const removePin = (index) => {
+		setSelectedPins(prevPins => prevPins.filter((_, i) => i !== index));
+	};
 	
+	useEffect(() => {
+		fetchCalendar();
+		loadSelectedPins();  // 앱 로드 시 선택된 핀을 로드
+	}, []);
 	useEffect(() => {
 		if (selectedPins) {
 			console.log(selectedPins);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
-import { Camera as ExpoCamera } from 'expo-camera';
+import { StyleSheet, View, TouchableOpacity, Text, Platform } from 'react-native';
+import { Camera as ExpoCamera } from 'expo-camera/legacy';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 
 const CameraScreen = ({ navigation }) => {
@@ -8,6 +8,8 @@ const CameraScreen = ({ navigation }) => {
   const [cameraType, setCameraType] = useState(ExpoCamera.Constants.Type.back);
   const [flashMode, setFlashMode] = useState(ExpoCamera.Constants.FlashMode.off);
   const [zoom, setZoom] = useState(0);
+  const [isFocused, setIsFocused] = useState(false);
+  const [timer, setTimer] = useState(180); // 타이머 상태 추가 (180초)
   const cameraRef = useRef(null);
   
   useEffect(() => {
@@ -17,54 +19,90 @@ const CameraScreen = ({ navigation }) => {
     })();
   }, []);
   
+  useEffect(() => {
+    const unsubscribeFocus = navigation.addListener('focus', () => {
+      setIsFocused(true);
+      setCameraType(ExpoCamera.Constants.Type.back);
+    });
+    
+    const unsubscribeBlur = navigation.addListener('blur', () => {
+      setIsFocused(false);
+    });
+    
+    return () => {
+      unsubscribeFocus();
+      unsubscribeBlur();
+    };
+  }, [navigation]);
+  
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setTimer(prevTimer => {
+        if (prevTimer > 0) return prevTimer - 1;
+        clearInterval(intervalId);
+        return 0;
+      });
+    }, 1000);
+    
+    return () => clearInterval(intervalId);
+  }, []);
+  
   const takePicture = async () => {
     if (cameraRef.current) {
       const options = { quality: 0.5, base64: true, skipProcessing: true };
       const data = await cameraRef.current.takePictureAsync(options);
       console.log(data.uri);
+      console.log(`Image dimensions: ${data.width} x ${data.height}`);
+      console.log(`Image size: ${data.base64.length} bytes`);
       return data;
     }
     return null;
   };
   
   const handleCapture = async () => {
-    const frontCameraUris = []; // 전면 카메라 사진 URI를 저장할 배열
-    const backCameraUris = []; // 후면 카메라 사진 URI를 저장할 배열
-
-    // 카메라 타입 설정(후면)
-    setCameraType(ExpoCamera.Constants.Type.back);
-
-    // 첫 번째 사진 촬영 (후면)
     const firstPictureData = await takePicture();
+    let frontCameraUris = [];
+    let backCameraUris = [];
+    
     if (firstPictureData && firstPictureData.uri) {
-      backCameraUris.push(firstPictureData.uri); // 후면 카메라 사진 URI 배열에 추가
+      if (cameraType === ExpoCamera.Constants.Type.back) {
+        backCameraUris.push(firstPictureData.uri);
+      } else {
+        frontCameraUris.push(firstPictureData.uri);
+      }
     }
-
-    // 카메라 타입 전환 (전면)
-    setCameraType(ExpoCamera.Constants.Type.front);
-
-    // 두 번째 사진 촬영을 위한 지연
+    
+    const nextCameraType = cameraType === ExpoCamera.Constants.Type.back ? ExpoCamera.Constants.Type.front : ExpoCamera.Constants.Type.back;
+    setCameraType(nextCameraType);
+    
     setTimeout(async () => {
-      const secondPictureData = await takePicture(); // 두 번째 사진 촬영 (전면)
+      const secondPictureData = await takePicture();
       if (secondPictureData && secondPictureData.uri) {
-        frontCameraUris.push(secondPictureData.uri); // 전면 카메라 사진 URI 배열에 추가
+        if (nextCameraType === ExpoCamera.Constants.Type.back) {
+          backCameraUris.push(secondPictureData.uri);
+        } else {
+          frontCameraUris.push(secondPictureData.uri);
+        }
       }
       
-      // 모든 사진 촬영이 완료된 후, 각 배열을 다음 화면으로 전달
-      if (frontCameraUris.length > 0 || backCameraUris.length > 0) {
-        navigation.navigate("SendPosts", { frontCameraUris: frontCameraUris, backCameraUris: backCameraUris }); // SendPost 페이지로 이동하면서 두 배열의 파라미터를 전달
-      }
+      navigation.navigate("SendPosts", { frontCameraUris, backCameraUris, remainingTime: timer });
     }, 1000);
   };
   
   const handleFlashMode = () => {
-    setFlashMode(
-      flashMode === ExpoCamera.Constants.FlashMode.off
-        ? ExpoCamera.Constants.FlashMode.on
-        : ExpoCamera.Constants.FlashMode.off
-    );
+    setFlashMode((prevMode) => {
+      switch (prevMode) {
+        case ExpoCamera.Constants.FlashMode.off:
+          return ExpoCamera.Constants.FlashMode.on;
+        case ExpoCamera.Constants.FlashMode.on:
+          return ExpoCamera.Constants.FlashMode.auto;
+        case ExpoCamera.Constants.FlashMode.auto:
+        default:
+          return ExpoCamera.Constants.FlashMode.off;
+      }
+    });
   };
-
+  
   const handleCameraType = () => {
     setCameraType(
       cameraType === ExpoCamera.Constants.Type.back
@@ -72,52 +110,68 @@ const CameraScreen = ({ navigation }) => {
         : ExpoCamera.Constants.Type.back
     );
   };
-
+  
   const handleZoomOut = () => {
-    setZoom(zoom - 0.1 >= 0 ? zoom - 0.1 : 0);
+    if (Platform.OS === 'ios') {
+      setZoom(zoom - 0.01 >= 0 ? zoom - 0.01 : 0);
+    } else if (Platform.OS === 'android') {
+      setZoom(zoom - 0.1 >= 0 ? zoom - 0.1 : 0);
+    }
   };
-
+  
   const handleZoomIn = () => {
-    setZoom(zoom + 0.1 <= 1 ? zoom + 0.1 : 1);
+    if (Platform.OS === 'ios') {
+      setZoom(zoom + 0.01 <= 1 ? zoom + 0.01 : 1);
+    } else if (Platform.OS === 'android') {
+      setZoom(zoom + 0.1 <= 10 ? zoom + 0.1 : 10);
+    }
   };
-
-  if (hasPermission === null) {
-    return <View />;
-  }
-
-  if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
-  }
-
+  
   return (
     <View style={styles.container}>
-      <ExpoCamera
-        style={styles.camera}
-        type={cameraType}
-        flashMode={flashMode}
-        zoom={zoom}
-        ref={cameraRef}
-      />
-      <View style={styles.zoomContainer}>
-        <TouchableOpacity style={styles.zoomButton} onPress={() => setZoom(Math.max(0, zoom - 0.1))}>
-          <Text style={styles.zoomText}>-</Text>
-        </TouchableOpacity>
-        <Text style={styles.zoomText}>{(zoom + 1).toFixed(1)}x</Text>
-        <TouchableOpacity style={styles.zoomButton} onPress={() => setZoom(Math.min(1, zoom + 0.1))}>
-          <Text style={styles.zoomText}>+</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.controlPanel}>
-        <TouchableOpacity style={styles.iconButton} onPress={handleFlashMode}>
-          <MaterialIcons name={flashMode === ExpoCamera.Constants.FlashMode.off ? 'flash-off' : 'flash-on'} size={24} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.captureButton} onPress={handleCapture}>
-          <FontAwesome name="camera" size={24} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton} onPress={handleCameraType}>
-          <MaterialIcons name="flip-camera-ios" size={24} color="white" />
-        </TouchableOpacity>
-      </View>
+      {hasPermission === null ? (
+        <View />
+      ) : hasPermission === false ? (
+        <Text>No access to camera</Text>
+      ) : (
+        <React.Fragment>
+          {isFocused && (
+            <ExpoCamera
+              style={styles.camera}
+              type={cameraType}
+              flashMode={flashMode}
+              zoom={zoom}
+              ref={cameraRef}
+            />
+          )}
+          <View style={styles.zoomContainer}>
+            <TouchableOpacity style={styles.zoomButton} onPress={handleZoomOut}>
+              <Text style={styles.zoomText}>-</Text>
+            </TouchableOpacity>
+            <Text style={styles.zoomText}>{(zoom * 10).toFixed(1)}x</Text>
+            <TouchableOpacity style={styles.zoomButton} onPress={handleZoomIn}>
+              <Text style={styles.zoomText}>+</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.timerContainer}>
+            <Text style={styles.timerText}>Timer: {Math.floor(timer / 60)}:{timer % 60 < 10 ? `0${timer % 60}` : timer % 60}</Text>
+          </View>
+          <View style={styles.controlPanel}>
+            <TouchableOpacity style={styles.iconButton} onPress={handleFlashMode}>
+              {flashMode === ExpoCamera.Constants.FlashMode.off && <MaterialIcons name="flash-off" size={24} color="white" />}
+              {flashMode === ExpoCamera.Constants.FlashMode.on && <MaterialIcons name="flash-on" size={24} color="white" />}
+              {flashMode === ExpoCamera.Constants.FlashMode.auto && <MaterialIcons name="flash-auto" size={24} color="white" />}
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={styles.captureButton} onPress={handleCapture}>
+              <FontAwesome name="camera" size={24} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton} onPress={handleCameraType}>
+              <MaterialIcons name="flip-camera-ios" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
+        </React.Fragment>
+      )}
     </View>
   );
 };
@@ -170,7 +224,19 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
   },
-  
+  timerContainer: { // 타이머 컨테이너 스타일 추가
+    position: 'absolute',
+    top: 20,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  timerText: { // 타이머 텍스트 스타일
+    color: 'white',
+    fontSize: 18,
+  },
 });
 
 export default CameraScreen;
+

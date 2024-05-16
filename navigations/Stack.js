@@ -1,8 +1,8 @@
 import React from 'react';
 import { createStackNavigator } from "@react-navigation/stack";
-import { Friends, MyPage, MyOptions, Calendar, MyInfo } from "./AppTabNavigator/ButtonStack"
+import { Friends, MyPage, MyOptions, Calendar, MyInfo, Alarm, FeedAlarm, UserAlarm, IsAlarm } from "./AppTabNavigator/ButtonStack"
 import { View } from 'react-native';
-import { Button1, Button2, Button3 } from "../components/Button";
+import { Button1, Button2 } from "../components/Button";
 import { MainPostTabScreen } from "./AppTabNavigator/PostTab/MainPostTab";
 import { CommunityTabScreen } from "./AppTabNavigator/CommunityTabs/CommunityTab";
 
@@ -43,6 +43,22 @@ export const MainPostStackScreen = () => { // 메인 피드 속 Stack 구성
 				name="내 설정 편집"
 				component={MyInfo}
 			/>
+			<MainPostStack.Screen
+				name="알람"
+				component={Alarm}
+			/>
+			<MainPostStack.Screen
+				name="피드 알람"
+				component={FeedAlarm}
+			/>
+			<MainPostStack.Screen
+				name="유저 알람"
+				component={UserAlarm}
+			/>
+			<MainPostStack.Screen
+				name="IsAlarm"
+				component={IsAlarm}
+			/>
 		</MainPostStack.Navigator>
 	);
 }
@@ -63,26 +79,6 @@ export const CommunityStackScreen = () => { // 커뮤니티 속 Stack 구성
 						</View>
 					)
 				})}
-			/>
-			<CommunityStack.Screen
-				name="MyP"
-				component={MyPage}
-			/>
-			<CommunityStack.Screen
-				name="Fri"
-				component={Friends}
-			/>
-			<CommunityStack.Screen
-				name="MyOp"
-				component={MyOptions}
-			/>
-			<CommunityStack.Screen
-				name="캘린더"
-				component={Calendar}
-			/>
-			<CommunityStack.Screen
-				name="내 설정 편집"
-				component={MyInfo}
 			/>
 		</ CommunityStack.Navigator>
 	);

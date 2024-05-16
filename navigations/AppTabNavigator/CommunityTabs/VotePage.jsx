@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Button, Image, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import SecureApi from '../../../SecureApi';
+
+
 import axios from 'axios';
 
 const VotePage = ({ question, onUserSelect }) => {
@@ -14,7 +17,7 @@ const VotePage = ({ question, onUserSelect }) => {
     
     const fetchUserData = async () => {
         try {
-            const response = await axios.get('http://192.168.123.121:3000/users');
+            const response = await SecureApi.get('/users');
             setUserData(response.data || []);
             setSelectedUser(null);
             setSelectedUserImgUrls(null); // 이미지 상태 초기화
@@ -71,25 +74,29 @@ const VotePage = ({ question, onUserSelect }) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex: 1, // 화면 전체를 차지
         justifyContent: 'center',
         alignItems: 'center',
+        padding: 20, // 일정 간격 유지
     },
     questionText: {
         fontSize: 20,
         fontWeight: 'bold',
-        marginBottom: 10,
+        textAlign: 'center', // 중앙 정렬
+        marginBottom: 20, // 여백 추가
     },
     usersContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        justifyContent: 'center',
+        justifyContent: 'space-around', // 요소들 사이에 공간을 균등하게 배분
         alignItems: 'center',
+        width: '100%', // 부모 컨테이너 전체 너비 사용
     },
     userButton: {
-        width: '45%',
+        flex: 1, // flex 레이아웃 사용
+        maxWidth: '45%', // 최대 너비 설정
         padding: 10,
-        margin: '2.5%',
+        margin: 5, // 마진 조정
         backgroundColor: '#eee',
         borderRadius: 5,
         justifyContent: 'center',
@@ -105,10 +112,10 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
     selectedUserImageContainer: {
+        width: '80%', // 화면의 80% 차지
+        aspectRatio: 1, // 1:1 비율 유지
         marginTop: 20,
         alignItems: 'center',
-        width: 300,
-        height: 300,
     },
     selectedUserImage: {
         width: '100%',

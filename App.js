@@ -1,29 +1,56 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import SignUpForm from './SignUp/SignUpForm';
-import TabNavigation from "./navigations/Tab";
+import React, { useState, useEffect, useRef } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import TabNavigation from './navigations/Tab';
 import * as SplashScreen from 'expo-splash-screen';
-import { useState, useEffect, useCallback } from'react';
-import LoginForm from './SignUp/LoginForm';
+import { Alert, Platform } from 'react-native';
+import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device';
+import Constants from 'expo-constants';
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
 
-// 로딩이 완료되기 전, 자동으로 loding 화면이 넘어가는 것을 방지
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [isReady, setIsReady] = useState(false);
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const navigationRef = useRef();
   
   useEffect(() => {
     async function prepare() {
       try {
-        // Pre-load 되어야 하는 API 등을 여기에 기술
-        // 2초 딜레이
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        const token = await registerForPushNotificationsAsync();
+        setExpoPushToken(token);
+        
+        const subscription = Notifications.addNotificationReceivedListener(notification => {
+          console.log('Notification received:', notification);
+        });
+        
+        const responseSubscription = Notifications.addNotificationResponseReceivedListener(response => {
+          console.log('Notification clicked:', response);
+          handleNotification(response.notification);
+        });
+        
+        // 앱이 백그라운드에서 시작될 때 알림 데이터를 처리합니다.
+        const lastNotificationResponse = await Notifications.getLastNotificationResponseAsync();
+        if (lastNotificationResponse) {
+          console.log('Last notification response:', lastNotificationResponse);
+          handleNotification(lastNotificationResponse.notification);
+        }
+        
+        return () => {
+          subscription.remove();
+          responseSubscription.remove();
+        };
       } catch (e) {
         console.warn(e);
       } finally {
-        // 어플에게 로딩이 되었음을 알림
         setIsReady(true);
         await SplashScreen.hideAsync();
       }
@@ -32,15 +59,108 @@ export default function App() {
     prepare();
   }, []);
   
+  async function registerForPushNotificationsAsync() {
+    if (!Device.isDevice) {
+      Alert.alert('Must use physical device for Push Notifications');
+      return;
+    }
+    
+    if (Platform.OS === 'android') {
+      await Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+    
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    
+    try {
+      const projectId = Constants.expoConfig?.extra?.eas?.projectId;
+      if (!projectId) {
+        throw new Error('No projectId configured');
+      }
+      const token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+      console.log('Push token:', token);
+      return token;
+    } catch (error) {
+      console.error('Error fetching Expo push token:', error);
+    }
+  }
+  
+  const handleNotification = (notification) => {
+    const data = notification.request.content.data;
+    const type = data.type;
+    
+    console.log('Notification type:', type);
+    console.log('Notification data:', data);
+    
+    // 네비게이션 초기화 대기 및 데이터 유효성 검사
+    const waitForNavigation = setInterval(() => {
+      if (navigationRef.current) {
+        clearInterval(waitForNavigation);
+        handleNavigation(type, data);
+      }
+    }, 100);
+  };
+  
+  const handleNavigation = (type, data) => {
+    switch (type) {
+      case 'goFriend':
+        handleFriend(data);
+        break;
+      case 'goPost':
+        handlePost(data);
+        break;
+      case 'goRanking':
+        handleRanking(data);
+        break;
+      case 'goUser':
+        handleUser(data);
+        break;
+      case 'random':
+        handleRandom(data);
+        break;
+      default:
+        console.log('Unknown notification type received.');
+    }
+  };
+  
+  const handleFriend = (data) => {
+    navigationRef.current?.navigate('Fri');
+    console.log('Navigating to Fri');
+  };
+  const handlePost = (data) => {
+    navigationRef.current?.navigate('피드 알람', { post_id: data.postId });
+    console.log('Navigating to 피드 알람 with post_id:', data.postId);
+  };
+  const handleRanking = (data) => {
+    console.log('Handling ranking:', data);
+    navigationRef.current?.navigate("결과");
+    console.log('Navigating to 결과');
+  };
+  const handleUser = (data) => {
+    console.log('Handling post:', data);
+    navigationRef.current?.navigate("유저 알람", {userId : data.user_id});
+    console.log('Navigating to 유저 알람 with user_id:', data.user_id);
+  };
+  const handleRandom = () => {
+    navigationRef.current?.navigate("CameraOption");
+    console.log('Navigating to CameraOption');
+  };
   return (
-    <TabNavigation/>
+    <NavigationContainer ref={navigationRef}>
+      <TabNavigation />
+    </NavigationContainer>
   );
-
-//  return (
-//    <View style={styles.container}>
-//      <SignUpForm />
-//      <LoginForm />
-//      <StatusBar style="auto" />
-//    </View>
-//  );
 }

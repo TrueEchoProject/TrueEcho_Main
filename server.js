@@ -12,6 +12,47 @@ server.delete('/user_pin', (req, res) => {
 	router.db.set('user_pin', []).write();
 	res.sendStatus(200);
 });
+server.post('/blocked_users', (req, res) => {
+	const newBlockedUsers = req.body; // 클라이언트에서 보낸 차단 사용자 정보
+	console.log(newBlockedUsers); // 서버 측 콘솔에 데이터 출력
+	
+	// 데이터가 객체인지 배열인지 확인 후 배열로 통일
+	const usersToBlock = Array.isArray(newBlockedUsers) ? newBlockedUsers : [newBlockedUsers];
+	
+	// 현재 차단된 사용자 목록 가져오기
+	const currentBlockedUsers = router.db.get('blocked_users').value();
+	
+	// 중복 검사: 현재 차단된 사용자 목록에 이미 있는지 확인
+	const filteredUsersToBlock = usersToBlock.filter(newUser =>
+		!currentBlockedUsers.some(existingUser => existingUser.username === newUser.username));
+	
+	// 중복된 사용자가 없는 경우만 추가
+	if (filteredUsersToBlock.length > 0) {
+		// 각 사용자 객체에 id가 없으면 새 id 부여
+		filteredUsersToBlock.forEach(user => {
+			if (!user.id) {
+				user.id = Date.now(); // 현재 시간을 기준으로 고유 ID 생성
+			}
+		});
+		
+		const updatedBlockedUsers = [...currentBlockedUsers, ...filteredUsersToBlock];
+		router.db.set('blocked_users', updatedBlockedUsers).write();
+		res.status(200).json(updatedBlockedUsers);
+	} else {
+		res.status(409).json({ message: "User is already blocked" });
+	}
+});
+
+server.delete('/blocked_users', (req, res) => {
+	// user_pin 배열을 빈 배열로 설정
+	router.db.set('blocked_users', []).write();
+	res.sendStatus(200);
+});
+server.delete('/user_me', (req, res) => {
+	// user_pin 배열을 빈 배열로 설정
+	router.db.set('user_me', []).write();
+	res.sendStatus(200);
+});
 server.post('/user_pin', (req, res) => {
 	const pins = req.body.pins;
 	pins.forEach((pin, index) => {

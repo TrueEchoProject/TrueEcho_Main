@@ -16,8 +16,15 @@ const FriendPosts = React.forwardRef((props, ref) => {
 	const [friendStatus, setFriendStatus] = useState([]);
 	const pagerViewRef = useRef(null);
 	const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
-	
 	const [lastFetchedIndex, setLastFetchedIndex] = useState(0);
+	
+	// 디버깅 로그 추가
+	useEffect(() => {
+		console.log('FriendPosts component mounted');
+		return () => {
+			console.log('FriendPosts component unmounted');
+		};
+	}, []);
 	
 	const fetchPostsAndRecommendations = async (start) => {
 		if (start <= lastFetchedIndex && contentList.length > 0) return;  // 이미 불러온 데이터 범위 내라면 요청 중지
@@ -25,7 +32,8 @@ const FriendPosts = React.forwardRef((props, ref) => {
 		const postLimit = 8;
 		const recommendationLimit = 4;
 		try {
-			const postResponse = await axios.get(`http://192.168.0.3:3000/posts?scope=FRIEND&_start=${start}&_limit=${postLimit}`);
+			console.log(`Fetching posts and recommendations starting from index ${start}`);
+			const postResponse = await axios.get(`http://192.168.0.27:3000/posts?scope=FRIEND&_start=${start}&_limit=${postLimit}`);
 			const newPosts = postResponse.data;
 			
 			const updatedContentList = [...contentList, ...newPosts.map(post => ({ type: 'post', data: post }))];
@@ -38,7 +46,7 @@ const FriendPosts = React.forwardRef((props, ref) => {
 			});
 			
 			if (newPosts.length === postLimit) {
-				const recsResponse = await axios.get(`http://192.168.0.3:3000/recommendations?_start=${contentList.filter(item => item.type === 'recommendation').length}&_limit=${recommendationLimit}`);
+				const recsResponse = await axios.get(`http://192.168.0.27:3000/recommendations?_start=${contentList.filter(item => item.type === 'recommendation').length}&_limit=${recommendationLimit}`);
 				const newRecs = recsResponse.data;
 				if (newRecs && newRecs.length > 0) {
 					updatedContentList.push({ type: 'recommendation', data: newRecs });
@@ -46,6 +54,7 @@ const FriendPosts = React.forwardRef((props, ref) => {
 				}
 			}
 			setContentList(updatedContentList);
+			console.log('Updated content list:', updatedContentList);
 		} catch (error) {
 			console.error('Error fetching posts and recommendations:', error);
 		} finally {
@@ -68,6 +77,31 @@ const FriendPosts = React.forwardRef((props, ref) => {
 		}
 	};
 	
+	const toggleFriendSend = async (index, item) => {
+		try {
+			await axios.post(`http://192.168.0.27:3000/friendSend`, {
+				friendSendUser: item.username
+			});
+			const newFriendStatus = [...friendStatus];
+			newFriendStatus[index] = true;
+			setFriendStatus(newFriendStatus);
+		} catch (error) {
+			console.error('Error sending friend request:', error);
+		}
+	};
+	
+	useFocusEffect(
+		useCallback(() => {
+			console.log('useFocusEffect triggered');
+			getPosts();
+		}, [])
+	);
+	
+	const handleBlock = async (postId) => {
+		setContentList(prev => prev.filter(item => item.data.post_id !== postId));
+		await new Promise(resolve => setTimeout(resolve, 0)); // 비동기 업데이트를 위한 Promise
+	};
+	
 	const handlePageChange = useCallback((e) => {
 		const newIndex = e.nativeEvent.position;
 		if (newIndex === currentPage) return; // 페이지가 실제로 변경되지 않았다면 종료
@@ -81,38 +115,19 @@ const FriendPosts = React.forwardRef((props, ref) => {
 	}, [currentPage]);
 	
 	useEffect(() => {
-		console.log(contentList);
-	}, [contentList]);
-	
-	React.useImperativeHandle(ref, () => ({
-		getPosts: getPosts,
-	}));
-	
-	useFocusEffect(
-		useCallback(() => {
-			getPosts();
-		}, [])
-	);
-	
-	const toggleFriendSend = async (index, item) => {
-		try {
-			await axios.post(`http://192.168.0.3:3000/friendSend`, {
-				friendSendUser: item.username
-			});
-			const newFriendStatus = [...friendStatus];
-			newFriendStatus[index] = true;
-			setFriendStatus(newFriendStatus);
-		} catch (error) {
-			console.error('Error sending friend request:', error);
-		}
-	};
-	
-	useEffect(() => {
 		const thresholdIndex = contentList.length - 5; // 데이터를 더 불러오기 시작할 임계점
 		if (currentPage >= thresholdIndex && !isLoading) {
 			fetchPostsAndRecommendations(contentList.length);
 		}
 	}, [currentPage, isLoading, contentList]);
+	
+	React.useImperativeHandle(ref, () => ({
+		getPosts: getPosts,
+	}));
+	
+	useEffect(() => {
+		console.log('Content list updated:', contentList);
+	}, [contentList]);
 	
 	if (contentList.length === 0) {
 		return <View style={styles.container}><Text>Loading...</Text></View>;
@@ -134,6 +149,7 @@ const FriendPosts = React.forwardRef((props, ref) => {
 						{item.type === 'post' ? (
 							<CardComponent
 								post={item.data}
+								onBlock={handleBlock}
 								isOptionsVisibleExternal={optionsVisibleStates[item.data.post_id]}
 								setIsOptionsVisibleExternal={(visible) => setOptionsVisibleStates(prev => ({ ...prev, [item.data.post_id]: visible }))}
 							/>
@@ -162,6 +178,12 @@ const FriendPosts = React.forwardRef((props, ref) => {
 });
 
 const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: 'white',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
 	postContainer: {
 		flex: 1,
 		backgroundColor: 'white',

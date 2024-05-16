@@ -29,10 +29,8 @@ export const MainPostTabScreen = () => {
 									title="친구"
 									onPress={() => {
 										if (currentRouteName === 'FriendFeed') { // 현재 활성화된 탭과 비교
-											friendPostsRef.current.getPosts(); // FriendFeed의 새로고침 함수 호출
-										} else {
-											navigation.navigate('FriendFeed'); // 아니면 이동
-										}
+											friendPostsRef.current.getPosts();}
+										else { navigation.navigate('FriendFeed')}
 									}}
 									isSelected={currentRouteName === 'FriendFeed'} // FeedButton 스타일 전환
 								/>
@@ -41,9 +39,7 @@ export const MainPostTabScreen = () => {
 									onPress={() => {
 										if (currentRouteName === 'OtherFeed') { // 현재 활성화된 탭과 비교
 											PublicPostsRef.current.getPosts(); // FriendFeed의 새로고침 함수 호출
-										} else {
-											navigation.navigate('OtherFeed'); // 아니면 이동
-										}
+										} else {navigation.navigate('OtherFeed');}
 									}}
 									isSelected={currentRouteName === 'OtherFeed'} // FeedButton 스타일 전환
 								/>
@@ -71,9 +67,7 @@ export const MainPostTabScreen = () => {
 									onPress={() => {
 										if (currentRouteName === 'FriendFeed') { // 현재 활성화된 탭과 비교
 											PublicPostsRef.current.getPosts(); // FriendFeed의 새로고침 함수 호출
-										} else {
-											navigation.navigate('FriendFeed'); // 아니면 이동
-										}
+										} else {navigation.navigate('FriendFeed')}
 									}}
 									isSelected={currentRouteName === 'FriendFeed'} // FeedButton 스타일 전환
 								/>
@@ -82,9 +76,7 @@ export const MainPostTabScreen = () => {
 									onPress={() => {
 										if (currentRouteName === 'OtherFeed') { // 현재 활성화된 탭과 비교
 											PublicPostsRef.current.getPosts(); // FriendFeed의 새로고침 함수 호출
-										} else {
-											navigation.navigate('OtherFeed'); // 아니면 이동
-										}
+										} else {navigation.navigate('OtherFeed')}
 									}}
 									isSelected={currentRouteName === 'OtherFeed'} // FeedButton 스타일 전환
 								/>
