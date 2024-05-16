@@ -6,6 +6,12 @@ const api = axios.create({
     baseURL: 'http://192.168.123.121:3000', // 서버의 기본 URL 설정
 });
 
+const nodeServerApi = axios.create({
+  baseURL: 'http://localhost:3000',
+  timeout: 1000,
+  headers: {'Content-Type': 'application/json'}
+});
+
 // 요청 인터셉터 설정
 api.interceptors.request.use(
     async config => {
@@ -20,4 +26,4 @@ api.interceptors.request.use(
     }
 );
 
-export default api;
+export default { api, nodeServerApi }

@@ -567,7 +567,7 @@ const MyOptions = ({ navigation, route }) => {
 		<View style={styles.container}>
 			<ScrollView style={styles.scrollView}>
 				<TouchableOpacity onPress={() => navigation.navigate('내 설정 편집', { user: user })} style={styles.View}>
-					<Image source={{ uri: user.profile_url }} style={styles.Image}/>
+					<ExpoImage source={{ uri: user.profile_url }} style={styles.Image}/>
 					<View style={{ marginLeft: 10 }}>
 						<Text style={styles.Text}>{user.username}</Text>
 						<Text style={styles.Text}>{user.user_Id}</Text>
