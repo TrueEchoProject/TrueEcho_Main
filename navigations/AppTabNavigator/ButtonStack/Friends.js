@@ -3,16 +3,14 @@ import { View, Button, StyleSheet } from 'react-native';
 import * as Notifications from 'expo-notifications';
 
 const Friends = () => {
-	const scheduleNotification = async () => {
+	const GoFriend = async () => {
 		try {
 			await Notifications.scheduleNotificationAsync({
 				content: {
-					title: "메시지가 왔어요",
-					body: '새로운 메시지의 내용',
+					title: "친구 요청",
+					body: '새로운 친구 요청이 있어요',
 					data: {  // 알림에 추가 데이터 포함
-						senderName: "박신형",
-						type: "message",
-						message: "Hello, World!"
+						type: "friend",
 					}
 				},
 				trigger: { seconds: 1 },
@@ -25,8 +23,8 @@ const Friends = () => {
 	return (
 		<View style={styles.container}>
 			<Button
-				title="메세지"
-				onPress={scheduleNotification}
+				title="친구 요청"
+				onPress={GoFriend}
 			/>
 		</View>
 	);

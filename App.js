@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
 import TabNavigation from './navigations/Tab';
 import * as SplashScreen from 'expo-splash-screen';
 import { Alert, Platform } from 'react-native';
@@ -19,7 +20,7 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
   const [isReady, setIsReady] = useState(false);
   const [expoPushToken, setExpoPushToken] = useState('');
-  const [notification, setNotification] = useState(false);
+  const navigationRef = useRef(); // 수정된 부분
   
   useEffect(() => {
     async function prepare() {
@@ -27,9 +28,13 @@ export default function App() {
         const token = await registerForPushNotificationsAsync();
         setExpoPushToken(token);
         
-        const subscription = Notifications.addNotificationReceivedListener(handleNotification);
+        const subscription = Notifications.addNotificationReceivedListener(notification => {
+          console.log('Notification received:', notification);
+        });
+        
         const responseSubscription = Notifications.addNotificationResponseReceivedListener(response => {
           console.log('Notification clicked:', response);
+          handleNotification(response.notification);
         });
         
         return () => {
@@ -87,29 +92,27 @@ export default function App() {
   }
   
   const handleNotification = notification => {
-    const { type, ...data } = notification.request.content.data;
+    const data = notification.request.content.data;
+    const type = data.type;
+    
+    console.log('Notification type:', type);
+    console.log('Notification data:', data);
     
     switch (type) {
-      case 'orderUpdate':
-        handleOrderUpdate(data);
+      case 'friend':
+        handleFriend();
         break;
       case 'message':
         handleMessageReceived(data);
-        break;
-      case 'promotion':
-        handlePromotion(data);
         break;
       default:
         console.log('Unknown notification type received.');
     }
   };
   
-  const handleOrderUpdate = (data) => {
-    Alert.alert(
-      'Order Update',
-      `Your order ${data.orderId} has been updated to status: ${data.status}`,
-      [{ text: 'View', onPress: () => console.log('View Order Pressed') }]
-    );
+  const handleFriend = () => {
+    navigationRef.current?.navigate('Fri');
+    console.log('Friend')
   };
   
   const handleMessageReceived = (data) => {
@@ -120,14 +123,9 @@ export default function App() {
     );
   };
   
-  const handlePromotion = (data) => {
-    Alert.alert(
-      'New Promotion',
-      `Check out our new promotion: ${data.description}`,
-      [{ text: 'Explore', onPress: () => console.log('Explore Promotion Pressed') }]
-    );
-  };
-  
-  return <TabNavigation />;
+  return (
+    <NavigationContainer ref={navigationRef}>
+      <TabNavigation />
+    </NavigationContainer>
+  );
 }
-
