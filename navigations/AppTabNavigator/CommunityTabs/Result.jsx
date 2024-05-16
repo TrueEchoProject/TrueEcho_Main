@@ -6,7 +6,7 @@ import axios from 'axios';
 
 const fetchData = async () => {
 	try {
-		const response = await axios.get('http://192.168.0.27:3000/rank');
+		const response = await axios.get('http://192.168.123.121:3000/rank');
 		return response.data || [];
 	} catch (error) {
 		console.error('Error fetching data:', error);
