@@ -281,23 +281,23 @@
       "community": [
         {
           "vote_ranking": true,
-          "vote": true
+          "vote": false
         }
       ],
       "post": [
         {
-          "newComment": false,
-          "subComment": false,
+          "newComment": true,
+          "subComment": true,
           "postLike": true
         }
       ],
       "friendRequest": true,
-      "PhotoTime": false
+      "PhotoTime": true
     }
   ],
   "Time": [
     {
-      "type": 2,
+      "type": 4,
       "id": 1
     }
   ],
@@ -369,7 +369,7 @@
     {
       "id": 1,
       "username": "박신형",
-      "user_Id": "hello@example.comafaf",
+      "user_Id": "hello@example.co",
       "user_vote": null,
       "profile_url": "https://i.ibb.co/wwfqn6V/DALL-E-2024-04-26-20-08-20-A-realistic-image-capturing-the-essence-of-a-photo-taken-by-a-young-man-i.webp",
       "your_location": "서울특별시 용산구 서빙고동"
@@ -390,6 +390,29 @@
       "id": 3,
       "username": "서희준",
       "user_Id": "holo@example.comafaf"
+    }
+  ],
+  "user_Data": [
+    {
+      "user_id": 1,
+      "username": "백종원",
+      "nickname": "jong",
+      "user_vote": "잘 웃을 거 같은 사람",
+      "profile_url": "https://i.ibb.co/wwfqn6V/DALL-E-2024-04-26-20-08-20-A-realistic-image-capturing-the-essence-of-a-photo-taken-by-a-young-man-i.webp",
+      "pin": [
+        {
+          "pin_id": 1,
+          "created_at": "2024-04-15",
+          "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+          "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+        },
+        {
+          "pin_id": 2,
+          "created_at": "2024-04-20",
+          "post_front_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5V0vli4BDIe-tTVDvhj0Leeeu3SuhydebTeelDMOHLA&s",
+          "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+        }
+      ]
     }
   ],
   "user_location": [
@@ -453,27 +476,7 @@
     {
       "username": "윤서_free_FRIEND_서빙고동",
       "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
-      "id": 1714417953288
-    },
-    {
-      "username": "진우_late_PUBLIC_일산동구",
-      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
-      "id": 1715621331596
-    },
-    {
-      "username": "민서_free_PUBLIC_일산동구",
-      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
-      "id": 1715621367819
-    },
-    {
-      "username": "나은_onTime_PUBLIC_일산동구",
-      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
-      "id": 1715621405422
-    },
-    {
-      "username": "서현_late_PUBLIC_장안구",
-      "profile_url": "https://blog.kakaocdn.net/dn/cfEOsf/btrqNMoTbXF/PGRI3sDPloIlBPHjWAxHv1/img.jpg",
-      "id": 1715621537153
+      "id": 1715507932785
     }
   ],
   "friendSend": [
@@ -548,6 +551,10 @@
     {
       "friendSendUser": "진우_late_PUBLIC_일산동구",
       "id": 18
+    },
+    {
+      "friendSendUser": "진우_late_PUBLIC_일산동구",
+      "id": 19
     }
   ],
   "recommendations": [
@@ -3315,10 +3322,18 @@
       "username": "신형",
       "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
       "created_at": "2024-04-1319:24",
-      "under_comments": [],
+      "under_comments": [
+        {
+          "id": "2024-05-1414:34",
+          "under_comment": "fdfdf",
+          "username": "신형",
+          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+          "created_at": "2024-05-1414:34"
+        }
+      ],
       "post_id": 2,
       "id": 1713036297461,
-      "reply_count": 0
+      "reply_count": 2
     },
     {
       "comment": "apfhd",

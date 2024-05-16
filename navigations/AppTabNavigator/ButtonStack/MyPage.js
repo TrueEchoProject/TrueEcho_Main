@@ -144,6 +144,13 @@ const MyPage = ({ navigation, route }) => {
 							style={{ height: 30, width:30, marginLeft: 10,}}
 						/>
 					</TouchableOpacity>
+					<TouchableOpacity onPress={() => navigation.navigate("IsAlarm")}>
+						<AntDesign
+							name="verticleleft"
+							size={30}
+							style={{ height: 30, width:30, marginLeft: 10,}}
+						/>
+					</TouchableOpacity>
 				</View>
 				<View style={styles.textContainer}>
 					<Text>{userData.user_vote ? userData.user_vote : "투표를 진행해주세요!"}</Text>
