@@ -20,7 +20,7 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
   const [isReady, setIsReady] = useState(false);
   const [expoPushToken, setExpoPushToken] = useState('');
-  const navigationRef = useRef(); // 수정된 부분
+  const navigationRef = useRef();
   
   useEffect(() => {
     async function prepare() {
@@ -36,6 +36,13 @@ export default function App() {
           console.log('Notification clicked:', response);
           handleNotification(response.notification);
         });
+        
+        // 앱이 백그라운드에서 시작될 때 알림 데이터를 처리합니다.
+        const lastNotificationResponse = await Notifications.getLastNotificationResponseAsync();
+        if (lastNotificationResponse) {
+          console.log('Last notification response:', lastNotificationResponse);
+          handleNotification(lastNotificationResponse.notification);
+        }
         
         return () => {
           subscription.remove();
@@ -91,36 +98,45 @@ export default function App() {
     }
   }
   
-  const handleNotification = notification => {
+  const handleNotification = (notification) => {
     const data = notification.request.content.data;
     const type = data.type;
     
     console.log('Notification type:', type);
     console.log('Notification data:', data);
     
+    // 네비게이션 초기화 대기 및 데이터 유효성 검사
+    const waitForNavigation = setInterval(() => {
+      if (navigationRef.current && data && data.postId) {
+        clearInterval(waitForNavigation);
+        handleNavigation(type, data);
+      }
+    }, 100);
+  };
+  
+  const handleNavigation = (type, data) => {
     switch (type) {
       case 'friend':
-        handleFriend();
+        navigationRef.current?.navigate('Fri');
+        console.log('Navigating to Fri');
         break;
-      case 'message':
-        handleMessageReceived(data);
+      case 'goPost':
+        handlePost(data);
         break;
       default:
         console.log('Unknown notification type received.');
     }
   };
   
-  const handleFriend = () => {
-    navigationRef.current?.navigate('Fri');
-    console.log('Friend')
-  };
-  
-  const handleMessageReceived = (data) => {
-    Alert.alert(
-      'New Message',
-      `You have a new message from ${data.senderName}: ${data.message}`,
-      [{ text: 'Reply', onPress: () => console.log('Reply Pressed') }]
-    );
+  const handlePost = (data) => {
+    if (!data || !data.postId) {
+      console.log('Invalid post data:', data);
+      return;
+    }
+    
+    console.log('Handling post:', data);
+    navigationRef.current?.navigate('피드 알람', { post_id: data.postId });
+    console.log('Navigating to 피드 알람 with post_id:', data.postId);
   };
   
   return (

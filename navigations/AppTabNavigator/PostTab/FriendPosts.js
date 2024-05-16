@@ -18,12 +18,21 @@ const FriendPosts = React.forwardRef((props, ref) => {
 	const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
 	const [lastFetchedIndex, setLastFetchedIndex] = useState(0);
 	
+	// 디버깅 로그 추가
+	useEffect(() => {
+		console.log('FriendPosts component mounted');
+		return () => {
+			console.log('FriendPosts component unmounted');
+		};
+	}, []);
+	
 	const fetchPostsAndRecommendations = async (start) => {
 		if (start <= lastFetchedIndex && contentList.length > 0) return;  // 이미 불러온 데이터 범위 내라면 요청 중지
 		setIsLoading(true); // 로딩 시작
 		const postLimit = 8;
 		const recommendationLimit = 4;
 		try {
+			console.log(`Fetching posts and recommendations starting from index ${start}`);
 			const postResponse = await axios.get(`http://192.168.0.27:3000/posts?scope=FRIEND&_start=${start}&_limit=${postLimit}`);
 			const newPosts = postResponse.data;
 			
@@ -45,6 +54,7 @@ const FriendPosts = React.forwardRef((props, ref) => {
 				}
 			}
 			setContentList(updatedContentList);
+			console.log('Updated content list:', updatedContentList);
 		} catch (error) {
 			console.error('Error fetching posts and recommendations:', error);
 		} finally {
@@ -52,6 +62,7 @@ const FriendPosts = React.forwardRef((props, ref) => {
 			setIsLoading(false);
 		}
 	};
+	
 	const getPosts = async (start = 0) => {
 		if (start === 0) {
 			setRefreshing(true);
@@ -81,13 +92,16 @@ const FriendPosts = React.forwardRef((props, ref) => {
 	
 	useFocusEffect(
 		useCallback(() => {
+			console.log('useFocusEffect triggered');
 			getPosts();
 		}, [])
 	);
+	
 	const handleBlock = async (postId) => {
 		setContentList(prev => prev.filter(item => item.data.post_id !== postId));
 		await new Promise(resolve => setTimeout(resolve, 0)); // 비동기 업데이트를 위한 Promise
 	};
+	
 	const handlePageChange = useCallback((e) => {
 		const newIndex = e.nativeEvent.position;
 		if (newIndex === currentPage) return; // 페이지가 실제로 변경되지 않았다면 종료
@@ -99,6 +113,7 @@ const FriendPosts = React.forwardRef((props, ref) => {
 			[contentList[currentPage]?.data?.post_id]: false
 		}));
 	}, [currentPage]);
+	
 	useEffect(() => {
 		const thresholdIndex = contentList.length - 5; // 데이터를 더 불러오기 시작할 임계점
 		if (currentPage >= thresholdIndex && !isLoading) {
@@ -111,12 +126,13 @@ const FriendPosts = React.forwardRef((props, ref) => {
 	}));
 	
 	useEffect(() => {
-		console.log(contentList);
+		console.log('Content list updated:', contentList);
 	}, [contentList]);
 	
 	if (contentList.length === 0) {
 		return <View style={styles.container}><Text>Loading...</Text></View>;
 	}
+	
 	return (
 		<ScrollView
 			contentContainerStyle={styles.scrollViewContent}

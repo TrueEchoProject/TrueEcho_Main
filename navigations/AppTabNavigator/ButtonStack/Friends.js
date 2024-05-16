@@ -3,6 +3,23 @@ import { View, Button, StyleSheet } from 'react-native';
 import * as Notifications from 'expo-notifications';
 
 const Friends = () => {
+	const GoPost = async () => {
+		try {
+			await Notifications.scheduleNotificationAsync({
+				content: {
+					title: "댓글 추가",
+					body: '새로 작성된 댓글이 있어요',
+					data: {  // 알림에 추가 데이터 포함
+						postId: 1,
+						type: "goPost",
+					}
+				},
+				trigger: { seconds: 1 },
+			});
+		} catch (error) {
+			console.error('Error scheduling notification:', error);
+		}
+	};
 	const GoFriend = async () => {
 		try {
 			await Notifications.scheduleNotificationAsync({
@@ -22,10 +39,8 @@ const Friends = () => {
 	
 	return (
 		<View style={styles.container}>
-			<Button
-				title="친구 요청"
-				onPress={GoFriend}
-			/>
+			<Button title="댓글 추가" onPress={GoPost}/>
+			<Button title="친구 요청" onPress={GoFriend}/>
 		</View>
 	);
 };
