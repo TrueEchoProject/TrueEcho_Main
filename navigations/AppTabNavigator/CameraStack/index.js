@@ -1,5 +1,5 @@
 import Camera from "./Camera";
-import SendPostStack from "./SendPost";
+import SendPost from "./SendPost";
 
 
-export { Camera, SendPostStack };
+export { Camera, SendPost };

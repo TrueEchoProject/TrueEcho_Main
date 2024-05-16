@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
-import { View, TouchableOpacity, Button, StyleSheet, Image } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, TouchableOpacity, Button, TextInput, StyleSheet, Image, Alert, Text } from 'react-native';
+import axios from 'axios';
+import * as ImageManipulator from 'expo-image-manipulator';
+import * as FileSystem from 'expo-file-system';
 
-const defaultImage = 'path_to_your_default_image_here'; // 기본 이미지 경로 설정
+const defaultImage = 'https://mblogthumb-phinf.pstatic.net/MjAyMjAyMDdfMjEy/MDAxNjQ0MTk0Mzk2MzY3.WAeeVCu2V3vqEz_98aWMOjK2RUKI_yHYbuZxrokf-0Ug.sV3LNWlROCJTkeS14PMu2UBl5zTkwK70aKX8B1w2oKQg.JPEG.41minit/1643900851960.jpg?type=w800';
 
-const ImageDouble = React.memo(({ cameraData, setCameraData }) => {
+export const ImageDouble = React.memo(({ cameraData, setCameraData }) => {
   const swapImageIndices = () => {
     setCameraData((prevData) => ({
       front: {
@@ -43,74 +46,122 @@ const SendPostStack = ({ navigation, route }) => {
       selectedIndex: 0,
     },
   });
+  const [title, setTitle] = useState('');
+  const [timer, setTimer] = useState(route.params.remainingTime); // 넘겨받은 타이머 값으로 초기화
 
-  const [postStatus, setPostStatus] = useState('0'); // 초기 post_status 값은 '0'으로 설정
-  const scopeValue = 1; // scope 값을 적절한 값으로 설정
+  // 타이머를 계속 진행시키는 로직
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setTimer(prevTimer => {
+        if (prevTimer > 0) return prevTimer - 1;
+        clearInterval(intervalId);
+        return 0;
+      });
+    }, 1000);
 
-  async function convertToBinary(uri) {
-    const response = await fetch(uri);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch ${uri}: ${response.statusText}`);
-    }
-    return response.blob();
-  }
+    return () => clearInterval(intervalId);
+  }, []);
 
-  const getPostStatusFromServer = async () => {
-    // 서버 요청이 성공했다고 가정하고 응답을 모의하는 부분
-    const serverResponseMock = {
-      status: '1', // [ 0: none, 1: "free", 2: late, 3: onTime ]
-    };
-
-    // 서버로부터 받은 결과에 따라 post_status를 설정
-    setPostStatus(serverResponseMock.status);
+  const goToCameraScreen = () => {
+    navigation.navigate("CameraOption");
   };
 
-  const handleSubmit = async () => {
-    // 먼저 post_status를 설정하기 위해 서버와 통신
-    await getPostStatusFromServer();
-
-    const frontImageUri = cameraData.front.uris[cameraData.front.selectedIndex];
-    const backImageUri = cameraData.back.uris[cameraData.back.selectedIndex];
-
+  const resizeImage = async (uri) => {
     try {
-      const frontImageData = await convertToBinary(frontImageUri); // 바이너리화
-      const backImageData = await convertToBinary(backImageUri);
+      const manipResult = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ resize: { width: 800, height: 800 } }],
+        { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
+      );
+      const fileInfo = await FileSystem.getInfoAsync(manipResult.uri);
+
+      console.log('Resized image URI:', manipResult.uri);
+      console.log(`Resized Image dimensions: ${manipResult.width} x ${manipResult.height}`);
+      console.log(`Resized image size: ${fileInfo.size} bytes`);
+
+      return { uri: manipResult.uri, type: 'image/jpeg', name: 'photo.jpg' };
+    } catch (error) {
+      console.error('Error resizing image:', error);
+      throw error;
+    }
+  };
+
+  const shareImage = async () => {
+    try {
+      const selectedFrontImageUri = cameraData.front.uris[cameraData.front.selectedIndex];
+      const selectedBackImageUri = cameraData.back.uris[cameraData.back.selectedIndex];
+
+      const resizedFrontImage = await resizeImage(selectedFrontImageUri);
+      const resizedBackImage = await resizeImage(selectedBackImageUri);
 
       const formData = new FormData();
-      formData.append('scope', scopeValue);
-      formData.append('post_front', frontImageData, 'front.jpg');
-      formData.append('post_back', backImageData, 'back.jpg');
-      formData.append('title', 'Your Post Title');
-      formData.append('post_status', postStatus);
+      formData.append('scope', 1);
+      formData.append('post_front', resizedFrontImage);
+      formData.append('post_back', resizedBackImage);
+      formData.append('title', title);
+      formData.append('post_status', 1);
 
-      // 서버 엔드포인트 URL
-      const serverUrl = 'https://your-server.com/api/upload';
-      const response = await fetch(serverUrl, { // fetch api 활용
-        method: 'POST',
-        body: formData,
+      await axios.post('http://192.168.0.102:8081', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
 
-      if (!response.ok) { // 서버의 응답을 확인
-        throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
-      }
+      navigation.navigate('FeedPostPage', {
+        frontImage: cameraData.front.uris[cameraData.front.selectedIndex],
+        backImage: cameraData.back.uris[cameraData.back.selectedIndex],
+        title: title,
+        remainingTime: timer  // 타이머 상태를 전달
+      });
 
-      const result = await response.json();
-      console.log('Server response:', result);
+      //Alert.alert("Success", "게시물이 성공적으로 등록되었습니다.");
     } catch (error) {
-      console.error('Error submitting data:', error);
+      //console.error('Error sharing images and post data:', error);
+      //Alert.alert("Error", "게시물 등록에 실패했습니다.");
     }
+  };
+
+  const FeedPage = ({ route }) => {
+    // route.params를 통해 전달된 이미지 URI 가져오기
+    const { frontImage, backImage } = route.params;
+    
+    return (
+      <View style={styles.feedContainer}>
+        <Text>Feed Page</Text>
+        <View style={styles.imagePreviewContainer}>
+          <Image source={{ uri: frontImage }} style={styles.previewImage} />
+          <Image source={{ uri: backImage }} style={styles.previewImage} />
+        </View>
+        {/* 피드 내 다른 게시물을 렌더링하는 로직 */}
+      </View>
+    );
   };
 
   return (
     <View style={styles.container}>
+      {/* 타이머 표시 */}
+      <Text>Timer: {Math.floor(timer / 60)}:{timer % 60 < 10 ? `0${timer % 60}` : timer % 60}</Text>
       <ImageDouble cameraData={cameraData} setCameraData={setCameraData} />
-      <Button title="Submit Post" onPress={handleSubmit} />
-      <Button title="Go to Camera" onPress={() => navigation.navigate("CameraOption")} />
+      <Button title="Go to Camera" onPress={goToCameraScreen} />
+      <Button title="Share" onPress={shareImage} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  feedContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  imagePreviewContainer: {
+    flexDirection: 'row',
+  },
+  previewImage: {
+    width: 100,
+    height: 100,
+    margin: 10,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -144,6 +195,13 @@ const styles = StyleSheet.create({
     height: '100%',
     zIndex: 0,
   },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+    width: '80%',
+  }
 });
 
 export default SendPostStack;

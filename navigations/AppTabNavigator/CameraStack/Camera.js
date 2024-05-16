@@ -11,30 +11,30 @@ const CameraScreen = ({ navigation }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [timer, setTimer] = useState(180); // 타이머 상태 추가 (180초)
   const cameraRef = useRef(null);
-  
+
   useEffect(() => {
     (async () => {
       const { status } = await ExpoCamera.requestCameraPermissionsAsync();
       setHasPermission(status === 'granted');
     })();
   }, []);
-  
+
   useEffect(() => {
     const unsubscribeFocus = navigation.addListener('focus', () => {
       setIsFocused(true);
       setCameraType(ExpoCamera.Constants.Type.back);
     });
-    
+
     const unsubscribeBlur = navigation.addListener('blur', () => {
       setIsFocused(false);
     });
-    
+
     return () => {
       unsubscribeFocus();
       unsubscribeBlur();
     };
   }, [navigation]);
-  
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       setTimer(prevTimer => {
@@ -43,10 +43,10 @@ const CameraScreen = ({ navigation }) => {
         return 0;
       });
     }, 1000);
-    
+
     return () => clearInterval(intervalId);
   }, []);
-  
+
   const takePicture = async () => {
     if (cameraRef.current) {
       const options = { quality: 0.5, base64: true, skipProcessing: true };
@@ -58,12 +58,12 @@ const CameraScreen = ({ navigation }) => {
     }
     return null;
   };
-  
+
   const handleCapture = async () => {
     const firstPictureData = await takePicture();
     let frontCameraUris = [];
     let backCameraUris = [];
-    
+
     if (firstPictureData && firstPictureData.uri) {
       if (cameraType === ExpoCamera.Constants.Type.back) {
         backCameraUris.push(firstPictureData.uri);
@@ -71,10 +71,10 @@ const CameraScreen = ({ navigation }) => {
         frontCameraUris.push(firstPictureData.uri);
       }
     }
-    
+
     const nextCameraType = cameraType === ExpoCamera.Constants.Type.back ? ExpoCamera.Constants.Type.front : ExpoCamera.Constants.Type.back;
     setCameraType(nextCameraType);
-    
+
     setTimeout(async () => {
       const secondPictureData = await takePicture();
       if (secondPictureData && secondPictureData.uri) {
@@ -88,7 +88,7 @@ const CameraScreen = ({ navigation }) => {
       navigation.navigate("SendPosts", { frontCameraUris, backCameraUris, remainingTime: timer });
     }, 1000);
   };
-  
+
   const handleFlashMode = () => {
     setFlashMode((prevMode) => {
       switch (prevMode) {
@@ -110,7 +110,7 @@ const CameraScreen = ({ navigation }) => {
         : ExpoCamera.Constants.Type.back
     );
   };
-  
+
   const handleZoomOut = () => {
     if (Platform.OS === 'ios') {
       setZoom(zoom - 0.01 >= 0 ? zoom - 0.01 : 0);
@@ -126,7 +126,7 @@ const CameraScreen = ({ navigation }) => {
       setZoom(zoom + 0.1 <= 10 ? zoom + 0.1 : 10);
     }
   };
-  
+
   return (
     <View style={styles.container}>
       {hasPermission === null ? (
@@ -162,7 +162,7 @@ const CameraScreen = ({ navigation }) => {
               {flashMode === ExpoCamera.Constants.FlashMode.on && <MaterialIcons name="flash-on" size={24} color="white" />}
               {flashMode === ExpoCamera.Constants.FlashMode.auto && <MaterialIcons name="flash-auto" size={24} color="white" />}
             </TouchableOpacity>
-            
+
             <TouchableOpacity style={styles.captureButton} onPress={handleCapture}>
               <FontAwesome name="camera" size={24} color="white" />
             </TouchableOpacity>
@@ -239,4 +239,3 @@ const styles = StyleSheet.create({
 });
 
 export default CameraScreen;
-

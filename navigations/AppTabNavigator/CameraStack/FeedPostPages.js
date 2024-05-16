@@ -113,7 +113,7 @@ const FeedPostPage = ({ route }) => {
 
     // 서버로 데이터 전송
     try {
-      const response = await axios.post('https://192.168.0.101:8081', formData, {
+      const response = await axios.post('https://192.168.0.102:8081', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
