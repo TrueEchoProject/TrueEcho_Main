@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import te.trueEcho.domain.friend.repository.FriendRepositoryImpl;
-import te.trueEcho.domain.post.converter.CommentToDtoConverter;
-import te.trueEcho.domain.post.converter.PostToDtoConverter;
+import te.trueEcho.domain.post.converter.CommentToDto;
+import te.trueEcho.domain.post.converter.PostToDto;
 import te.trueEcho.domain.post.dto.*;
 import te.trueEcho.domain.post.entity.Comment;
 import te.trueEcho.domain.post.entity.Post;
@@ -65,7 +65,7 @@ public class PostServiceImpl implements PostService {
         List<Post> postList = postRepository.readPost(readPostRequest.getPageCount(), readPostRequest.getIndex(), filteredUser);
 
         // post -> Dto 컨버터
-        return PostToDtoConverter.converter(postList, yourLocation);
+        return PostToDto.converter(postList, yourLocation);
     }
 
 
@@ -79,7 +79,7 @@ public class PostServiceImpl implements PostService {
     public CommentListResponse getComment(Long postId) {
         List<Comment> comments = postRepository.readCommentWithUnderComments(postId);
 
-        return CommentToDtoConverter.converter(comments, postId);
+        return CommentToDto.converter(comments, postId);
     }
 
     @Override
