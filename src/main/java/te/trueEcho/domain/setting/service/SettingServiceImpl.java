@@ -12,8 +12,14 @@ import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.post.repository.PostRepository;
 import te.trueEcho.domain.setting.converter.PinListToDto;
 import te.trueEcho.domain.setting.converter.PostListToDto;
-import te.trueEcho.domain.setting.dto.*;
 import te.trueEcho.domain.post.repository.PinsRepository;
+import te.trueEcho.domain.setting.dto.calendar.MonthlyPostListResponse;
+import te.trueEcho.domain.setting.dto.mypage.EditMyInfoRequest;
+import te.trueEcho.domain.setting.dto.mypage.MyInfoResponse;
+import te.trueEcho.domain.setting.dto.mypage.MyPageResponse;
+import te.trueEcho.domain.setting.dto.pin.PinListResponse;
+import te.trueEcho.domain.setting.dto.pin.PinsRequest;
+import te.trueEcho.domain.setting.dto.random.RandomNotifyTResponse;
 import te.trueEcho.domain.setting.repository.SettingRepository;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.UserAuthRepository;
@@ -35,6 +41,8 @@ public class SettingServiceImpl implements SettingService{
     private final AzureUploader azureUploader;
     private final PinsRepository pinsRepository;
     private final PostRepository postRepository;
+    private final PostListToDto postListToDto;
+    private final PinListToDto pinListToDto;
 
     @Override
     public MyPageResponse getMyPage() {
@@ -61,7 +69,7 @@ public class SettingServiceImpl implements SettingService{
             return null;
         }
 
-        return PostListToDto.converter(postList, month);
+        return postListToDto.converter(postList, month);
     }
 
     @Override
@@ -72,7 +80,7 @@ public class SettingServiceImpl implements SettingService{
             log.warn("No pin found for this user");
             return null;
         }
-        return PinListToDto.convert(pinList);
+        return pinListToDto.convert(pinList);
     }
 
     @Transactional

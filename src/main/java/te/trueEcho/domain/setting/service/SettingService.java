@@ -1,5 +1,12 @@
 package te.trueEcho.domain.setting.service;
-import te.trueEcho.domain.setting.dto.*;
+import te.trueEcho.domain.setting.dto.calendar.MonthlyPostListResponse;
+import te.trueEcho.domain.setting.dto.mypage.EditMyInfoRequest;
+import te.trueEcho.domain.setting.dto.mypage.MyInfoResponse;
+import te.trueEcho.domain.setting.dto.mypage.MyPageResponse;
+import te.trueEcho.domain.setting.dto.pin.PinListResponse;
+import te.trueEcho.domain.setting.dto.pin.PinsRequest;
+import te.trueEcho.domain.setting.dto.random.RandomNotifyTResponse;
+
 public interface SettingService {
 
     /**
