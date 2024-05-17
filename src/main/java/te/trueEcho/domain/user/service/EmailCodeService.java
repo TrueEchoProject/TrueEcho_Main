@@ -10,7 +10,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import te.trueEcho.domain.user.dto.EmailRequest;
+import te.trueEcho.domain.user.dto.UserCheckRequest;
 import te.trueEcho.domain.user.repository.EmailMemoryRepository;
 import te.trueEcho.infra.email.EmailService;
 
@@ -29,7 +29,7 @@ public class EmailCodeService {
     private final EmailService emailService;
     private String confirmEmailUI;
 
-    public void sendRegisterCode(EmailRequest emailRequestDto) {
+    public void sendRegisterCode(UserCheckRequest emailRequestDto) {
         final String code = generateRandomCode(); // 랜덤 번호 생성
 
         emailService.sendHtmlTextEmail(
