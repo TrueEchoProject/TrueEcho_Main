@@ -1,5 +1,4 @@
-package te.trueEcho.domain.setting.dto;
-import lombok.Builder;
+package te.trueEcho.domain.setting.dto.pin;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

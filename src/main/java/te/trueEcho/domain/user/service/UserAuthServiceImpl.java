@@ -19,6 +19,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final EmailCodeService emailCodeService;
     private final UserAuthRepository userAuthRepository;
     private final EmailMemoryRepository emailMemoryRepository;
+    private final SignUpDtoToUser signUpDtoToUser;
 
     public boolean isTypeDuplicated(UserCheckRequest emailRequestDto, ValidationType target) {
         if( target == ValidationType.EMAIL)
@@ -34,7 +35,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         final boolean status =emailMemoryRepository.checkStatusByEmail(registerRequest.getEmail());
         log.info("email status = {}",status);
         if(status){
-            final User newUser = SignUpDtoToUser.converter(registerRequest);
+            final User newUser = signUpDtoToUser.converter(registerRequest);
             log.info("user's nickname = {}",        newUser.getNickname());
 
             userAuthRepository.save(newUser);

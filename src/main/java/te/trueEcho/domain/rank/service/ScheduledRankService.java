@@ -57,6 +57,7 @@ public class ScheduledRankService {
 
     private final VoteRepository voteRepository;
     private final RankRepository rankRepository;
+    private final RankToDto rankToDto;
 
   @Scheduled(cron = "0 0 20 ? * 0", zone = "Asia/Seoul") //매주 일요일 20시에 랭킹을 만들어주는 서비스
     @Transactional
@@ -94,7 +95,7 @@ public class ScheduledRankService {
             });
         }
 
-        rankRepository.cacheThisWeekRank(RankToDto.converter(sortedResults)); // 이번주 랭킹을 캐싱
+        rankRepository.cacheThisWeekRank(rankToDto.converter(sortedResults)); // 이번주 랭킹을 캐싱
 
         log.info("Ranking is updated");
     }

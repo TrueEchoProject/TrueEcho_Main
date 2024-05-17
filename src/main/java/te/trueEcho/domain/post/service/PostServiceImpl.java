@@ -32,20 +32,8 @@ public class PostServiceImpl implements PostService {
     private final UserRepository userRepository;
     private final AuthUtil authUtil;
     private final AzureUploader azureUploader;
-
-
-    /**
-     * 우리는 피드페이지가 2개가 있어
-     * 친구 / 모두(퍼블릭)
-     * 스코프는  0[친구만] | 스코프 1[모두]
-     * <p>
-     * 1. 나랑 친구인데, 스코프 0[친구만] : 두페이지로 모두 가져오기
-     * 2. 나랑 친구인데, 스코프 1[모두] : 두 페이지로 모두 가져오기
-     * <p>
-     * 3. 나랑 친구아닌데, 스코프 0[친구만] : 랜덤인 페이지로만 가져오기
-     * 4. 나랑 친구아닌데, 스코프 1[[모두] : 랜덤인 페이지로만 가져오기
-     */
-
+    private final PostToDto postToDto;
+    private  final CommentToDto commentToDto;
 
     @Override
     public PostListResponse getAllPostByType(ReadPostRequest readPostRequest) {
@@ -65,7 +53,7 @@ public class PostServiceImpl implements PostService {
         List<Post> postList = postRepository.getAllPost(readPostRequest.getPageCount(), readPostRequest.getIndex(), filteredUser);
 
         // post -> Dto 컨버터
-        return PostToDto.converter(postList, yourLocation);
+        return postToDto.converter(postList, yourLocation);
     }
 
 
@@ -79,7 +67,7 @@ public class PostServiceImpl implements PostService {
     public CommentListResponse getComment(Long postId) {
         List<Comment> comments = postRepository.readCommentWithUnderComments(postId);
 
-        return CommentToDto.converter(comments, postId);
+        return commentToDto.converter(comments, postId);
     }
 
     @Override

@@ -1,9 +1,8 @@
-package te.trueEcho.domain.setting.dto;
+package te.trueEcho.domain.setting.dto.calendar;
 
 
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 

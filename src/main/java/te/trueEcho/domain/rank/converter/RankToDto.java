@@ -17,12 +17,10 @@ import java.util.Locale;
 import java.util.Map;
 
 
-@Component
 @NoArgsConstructor
 public class RankToDto {
 
-    public static RankListResponse converter(Map<Vote, Map<User, Integer>> thisWeekRanks) {
-
+    public  RankListResponse converter(Map<Vote, Map<User, Integer>> thisWeekRanks) {
         // 모든 랭킹 폼
         List<RankResponse> rankUserResponses = thisWeekRanks.entrySet().stream()
                 .map(voteUnit -> {

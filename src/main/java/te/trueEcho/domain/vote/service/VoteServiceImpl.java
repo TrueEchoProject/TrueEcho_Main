@@ -36,6 +36,8 @@ public class VoteServiceImpl implements VoteService {
     private final UserAuthRepository userAuthRepository;
     private final AuthUtil authUtil;
     private final PostRepository postRepository;
+    private final VoteUserToDto voteUserToDto;
+    private final VoteToDto voteToDto;
 
 
     private VoteType pickVoteTypeByRandom() {
@@ -63,7 +65,7 @@ public class VoteServiceImpl implements VoteService {
             return null;
         }
 
-        return  VoteToDto.coverter(todayVoteList);
+        return  voteToDto.coverter(todayVoteList);
     }
 
     @Override
@@ -74,7 +76,7 @@ public class VoteServiceImpl implements VoteService {
             return null;
         }
 
-        return VoteUserToDto.converter(randomUsers);
+        return voteUserToDto.converter(randomUsers);
     }
 
     @Override

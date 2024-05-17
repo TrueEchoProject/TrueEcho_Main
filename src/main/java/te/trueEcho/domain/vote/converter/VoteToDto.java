@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class VoteToDto {
 
-    public static VoteContentsResponse coverter(List<Vote> contentList){
+    public  VoteContentsResponse coverter(List<Vote> contentList){
         List<VoteResponse> titleList = contentList.stream().map(
                 content -> VoteResponse.builder()
                             .id(content.getId())

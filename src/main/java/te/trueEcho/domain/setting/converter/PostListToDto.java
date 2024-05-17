@@ -3,15 +3,17 @@ package te.trueEcho.domain.setting.converter;
 
 
 
+import lombok.NoArgsConstructor;
 import te.trueEcho.domain.post.entity.Post;
-import te.trueEcho.domain.setting.dto.MonthlyPostListResponse;
-import te.trueEcho.domain.setting.dto.MonthlyPostResponse;
+import te.trueEcho.domain.setting.dto.calendar.MonthlyPostListResponse;
+import te.trueEcho.domain.setting.dto.calendar.MonthlyPostResponse;
 
 import java.util.List;
 
 
+@NoArgsConstructor
 public class PostListToDto {
-    public static MonthlyPostListResponse converter(List<Post> postList, int month){
+    public  MonthlyPostListResponse converter(List<Post> postList, int month){
 
         List<MonthlyPostResponse> monthlyPostResponseList = postList.stream().map(post -> {
             return MonthlyPostResponse.builder()

@@ -2,17 +2,19 @@ package te.trueEcho.domain.setting.converter;
 
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import te.trueEcho.domain.post.entity.Pin;
-import te.trueEcho.domain.setting.dto.PinListResponse;
-import te.trueEcho.domain.setting.dto.PinResponse;
+import te.trueEcho.domain.setting.dto.pin.PinListResponse;
+import te.trueEcho.domain.setting.dto.pin.PinResponse;
 
 import java.util.List;
 
 
-@Getter
+
+@NoArgsConstructor
 public class PinListToDto {
 
-    public static PinListResponse convert(List<Pin> pins) {
+    public  PinListResponse convert(List<Pin> pins) {
 
         List<PinResponse> pinListResponse = pins.stream().map(pin -> {
             return PinResponse.builder()

@@ -11,7 +11,7 @@ import te.trueEcho.domain.user.entity.User;
 @Component
 @NoArgsConstructor
 public class SignUpDtoToUser {
-    public static User converter(RegisterRequest registerRequest) {
+    public User converter(RegisterRequest registerRequest) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encryptedPassword = passwordEncoder.encode(registerRequest.getPassword());
         return User.builder()

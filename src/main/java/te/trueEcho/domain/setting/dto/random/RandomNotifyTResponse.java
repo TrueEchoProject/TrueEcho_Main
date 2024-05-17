@@ -1,4 +1,4 @@
-package te.trueEcho.domain.setting.dto;
+package te.trueEcho.domain.setting.dto.random;
 
 
 import lombok.Builder;

@@ -1,11 +1,8 @@
-package te.trueEcho.domain.setting.dto;
+package te.trueEcho.domain.setting.dto.mypage;
 
 
 import lombok.Builder;
 import lombok.Getter;
-import te.trueEcho.domain.post.entity.Pin;
-
-import java.util.List;
 
 @Getter
 @Builder
