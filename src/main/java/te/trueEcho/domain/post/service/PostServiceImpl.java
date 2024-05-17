@@ -48,7 +48,7 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public PostListResponse getPost(ReadPostRequest readPostRequest) {
+    public PostListResponse getAllPostByType(ReadPostRequest readPostRequest) {
         // 요청자의 위치
         User foundUser = authUtil.getLoginUser();
         String yourLocation = foundUser.getLocation();
@@ -62,7 +62,7 @@ public class PostServiceImpl implements PostService {
                         friendRepository.findMyFriendsByUser(foundUser) :
                         userRepository.findUsersByLocation(filterLocation, foundUser);
 
-        List<Post> postList = postRepository.readPost(readPostRequest.getPageCount(), readPostRequest.getIndex(), filteredUser);
+        List<Post> postList = postRepository.getAllPost(readPostRequest.getPageCount(), readPostRequest.getIndex(), filteredUser);
 
         // post -> Dto 컨버터
         return PostToDto.converter(postList, yourLocation);
@@ -132,4 +132,6 @@ public class PostServiceImpl implements PostService {
             return false;
         }
     }
+
+
 }
