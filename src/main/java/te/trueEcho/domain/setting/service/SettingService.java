@@ -1,8 +1,5 @@
 package te.trueEcho.domain.setting.service;
-
-
 import te.trueEcho.domain.setting.dto.*;
-
 public interface SettingService {
 
     /**
@@ -27,7 +24,12 @@ public interface SettingService {
      Post id로 핸들링
      */
 
-     PinListResponse getPins();
+    PinListResponse getPins();
+
+    PinListResponse editPins(PinsRequest editPinsRequest);
+
+
+
     /**
      개인정보 수정 [GET / PUT]
      프로필 이미지

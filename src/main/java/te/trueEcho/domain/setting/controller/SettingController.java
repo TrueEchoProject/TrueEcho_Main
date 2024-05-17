@@ -49,6 +49,11 @@ public class SettingController {
     /**
      pins [GET]
      Post id로 핸들링
+
+     핀에 대한 요청 3가지
+     1. 이전에 정해진 핀이 아무것도 없을 때 오는 요청 (post)
+     2. 이전에 정해진 핀이 있을 때 수정된 핀이 오는 요청
+     3. 이전에 정해진 핀이 있을 때 삭제된 핀이 오는 요청 ->
      */
 
     @GetMapping("/pins")
@@ -59,10 +64,14 @@ public class SettingController {
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_PINS_FAIL));
     }
 
-    @PatchMapping("/pins")
-    public ResponseEntity<ResponseForm> editPins() {
-        return
-                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_RANK_FAIL));
+    @PutMapping("/pins")
+    public ResponseEntity<ResponseForm> editPins(@RequestBody PinsRequest PinsRequest) {
+
+        PinListResponse pinListResponse   = settingService.editPins(PinsRequest);
+
+        return pinListResponse != null ?
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.PUT_PINS_SUCCESS, pinListResponse)) :
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.PUT_PINS_FAIL));
     }
 
 

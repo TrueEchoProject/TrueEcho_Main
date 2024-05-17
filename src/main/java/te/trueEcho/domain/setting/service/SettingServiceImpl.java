@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import te.trueEcho.domain.post.entity.Pin;
 import te.trueEcho.domain.post.entity.Post;
-import te.trueEcho.domain.setting.converter.BlockedUserToDto;
+import te.trueEcho.domain.post.repository.PostRepository;
 import te.trueEcho.domain.setting.converter.PinListToDto;
 import te.trueEcho.domain.setting.converter.PostListToDto;
 import te.trueEcho.domain.setting.dto.*;
+import te.trueEcho.domain.post.repository.PinsRepository;
 import te.trueEcho.domain.setting.repository.SettingRepository;
-import te.trueEcho.domain.user.entity.Block;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.UserAuthRepository;
 import te.trueEcho.domain.user.service.UserService;
@@ -33,7 +33,8 @@ public class SettingServiceImpl implements SettingService{
     private final AuthUtil authUtil;
     private final SettingRepository settingRepository;
     private final AzureUploader azureUploader;
-
+    private final PinsRepository pinsRepository;
+    private final PostRepository postRepository;
 
     @Override
     public MyPageResponse getMyPage() {
@@ -53,7 +54,7 @@ public class SettingServiceImpl implements SettingService{
             month = LocalDate.now().getMonthValue();
         }
 
-        List<Post> postList =  settingRepository.getMontlyPosts(month, authUtil.getLoginUser());
+        List<Post> postList =  settingRepository.getMonthlyPosts(month, authUtil.getLoginUser());
 
         if(postList.isEmpty()){
             log.warn("No post found for this month");
@@ -66,7 +67,7 @@ public class SettingServiceImpl implements SettingService{
     @Override
     public PinListResponse getPins() {
         User loginUser = authUtil.getLoginUser();
-        List<Pin> pinList = settingRepository.getMyPins(loginUser);
+        List<Pin> pinList = settingRepository.getPinsByUser(loginUser);
         if(pinList.isEmpty()){
             log.warn("No pin found for this user");
             return null;
@@ -74,6 +75,30 @@ public class SettingServiceImpl implements SettingService{
         return PinListToDto.convert(pinList);
     }
 
+    @Transactional
+    @Override
+    public PinListResponse editPins(PinsRequest editPinsRequest) {
+        User loginUser = authUtil.getLoginUser();
+
+        if (!settingRepository.deletePinsByUser(loginUser)){
+            return null;
+        }
+
+        if (editPinsRequest.getUpdatedPostIdList().isEmpty()){
+            return getPins();
+        }
+
+        List<Post> postList =  postRepository.getPostByIdList(editPinsRequest.getUpdatedPostIdList());
+
+        List<Pin> newPins =
+                postList.stream().map(
+                        post -> new Pin(1, loginUser, post)
+                ).toList();
+
+        pinsRepository.saveAll(newPins);
+
+        return getPins();
+    }
 
 
     @Transactional
