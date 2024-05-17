@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoField;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-
+import static te.trueEcho.global.util.WeekUtil.getThisWeekAsNum;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
@@ -111,10 +111,7 @@ public class VoteRepositoryImpl implements VoteRepository {
         return selectedId;
     }
 
-    private int getThisWeekAsNum(){
-        LocalDate now = LocalDate.now();
-        return now.get(ChronoField.ALIGNED_WEEK_OF_YEAR);
-    }
+
 
     
     //랜덤한 16개

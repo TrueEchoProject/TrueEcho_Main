@@ -5,15 +5,14 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import te.trueEcho.domain.post.converter.PostToPhotoDtoConverter;
+import te.trueEcho.domain.post.converter.PostToPhotoDto;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.post.repository.PostRepository;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.UserAuthRepository;
 import te.trueEcho.domain.user.repository.UserRepository;
-import te.trueEcho.domain.user.service.UserAuthService;
-import te.trueEcho.domain.vote.converter.VoteToDtoConverter;
-import te.trueEcho.domain.vote.converter.VoteUserToDtoConverter;
+import te.trueEcho.domain.vote.converter.VoteToDto;
+import te.trueEcho.domain.vote.converter.VoteUserToDto;
 import te.trueEcho.domain.vote.dto.PhotoResponse;
 import te.trueEcho.domain.vote.dto.VoteContentsResponse;
 import te.trueEcho.domain.vote.dto.VoteResultRequest;
@@ -25,11 +24,9 @@ import te.trueEcho.domain.vote.repository.VoteType;
 import te.trueEcho.global.util.AuthUtil;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Service
@@ -67,7 +64,7 @@ public class VoteServiceImpl implements VoteService {
             return null;
         }
 
-        return  VoteToDtoConverter.coverter(todayVoteList);
+        return  VoteToDto.coverter(todayVoteList);
     }
 
     @Override
@@ -78,7 +75,7 @@ public class VoteServiceImpl implements VoteService {
             return null;
         }
 
-        return VoteUserToDtoConverter.converter(randomUsers);
+        return VoteUserToDto.converter(randomUsers);
     }
 
     @Override
@@ -104,7 +101,7 @@ public class VoteServiceImpl implements VoteService {
         List<Post> postList = postRepository.readPost(1, 0, usersToRead);
         if(postList==null || postList.isEmpty()) return null;
 
-        return PostToPhotoDtoConverter.converter(postList.getFirst());
+        return PostToPhotoDto.converter(postList.getFirst());
     }
 
 
