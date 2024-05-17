@@ -85,6 +85,7 @@ public class UserAuthRepositoryImpl implements UserAuthRepository {
         existUser.updateBirthDay(user.getBirthday());
         existUser.updateLocation(user.getLocation());
 
+        em.merge(existUser);
     }
 
 

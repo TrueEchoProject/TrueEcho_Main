@@ -12,9 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import te.trueEcho.domain.user.dto.CheckCodeRequest;
 import te.trueEcho.domain.user.dto.RegisterRequest;
-import te.trueEcho.domain.user.dto.EmailRequest;
+import te.trueEcho.domain.user.dto.UserCheckRequest;
+import te.trueEcho.domain.user.dto.ValidationType;
 import te.trueEcho.domain.user.service.UserAuthService;
 import te.trueEcho.global.response.ResponseForm;
+
+import java.util.Locale;
 
 import static te.trueEcho.global.response.ResponseCode.*;
 
@@ -54,16 +57,16 @@ public class UserAuthController {
             @RequestParam String nickname,
             @RequestParam String email) {
 
-        EmailRequest emailRequestDto =  EmailRequest.builder()
+        UserCheckRequest emailRequestDto =  UserCheckRequest.builder()
                 .email(email)
                 .nickname(nickname)
                 .build();
 
         final boolean isDuplicated = userAuthService.isTypeDuplicated(
-                EmailRequest.builder()
+                UserCheckRequest.builder()
                 .email(email)
                 .nickname(nickname)
-                .build(), type);
+                .build(), ValidationType.valueOf(type.toUpperCase(Locale.ROOT)));
 
         if (isDuplicated)
             return ResponseEntity.ok(ResponseForm.of(NOT_DUPLICATED_FAIL, type)); // 중복
@@ -135,7 +138,7 @@ public class UserAuthController {
             @RequestParam String nickname,
             @RequestParam String email) {
 
-        EmailRequest emailRequestDto =  EmailRequest.builder()
+        UserCheckRequest emailRequestDto =  UserCheckRequest.builder()
                 .email(email)
                 .nickname(nickname)
                 .build();
