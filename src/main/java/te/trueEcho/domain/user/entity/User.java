@@ -52,7 +52,6 @@ public class User extends CreatedDateAudit {
     private String name;
 
     @Column(name = "user_nick_name", nullable = false, length = 20, unique = true)
-
     private String nickname; // user 구분하는 식별자
 
     @Enumerated(EnumType.STRING)
@@ -76,7 +75,7 @@ public class User extends CreatedDateAudit {
     private String location;
 
     @Lob
-    @Column(name = "user_profile_url", nullable = true)
+    @Column(name = "user_profile_url", nullable = true, columnDefinition = "TEXT")
     private String profileURL;
 
     @Column(name = "user_password")
@@ -84,6 +83,9 @@ public class User extends CreatedDateAudit {
 
     @Column(name = "refresh_token", nullable = true)
     private String refreshToken;
+
+    @Column(name = "fcm_token", nullable = true)
+    private String fcmToken;
 
     @OneToMany(mappedBy = "sendUser", cascade = CascadeType.ALL)
     private List<Friend> friend;
@@ -98,19 +100,19 @@ public class User extends CreatedDateAudit {
     @JoinColumn(name = "rank_id")
     private Rank rank;
 
-    @OneToMany(mappedBy = "userVoter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "userVoter", fetch = FetchType.LAZY)
     private List<VoteResult> voteResults;
 
     @OneToMany(mappedBy = "userTarget", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<VoteResult> targetResults;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Post> posts;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Like> likes;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Comment> comments;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -154,6 +156,10 @@ public class User extends CreatedDateAudit {
 
     }
 
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
+
     public void updateName(String name) {
         this.name = name;
     }
@@ -179,6 +185,10 @@ public class User extends CreatedDateAudit {
         this.birthday = birthday;
     }
 
+    public void updateProfileUrl(String profileURL) {
+        this.profileURL = profileURL;
+    }
+
     public void updateLocation(String location) {
         // 위치 갱신하는 로직을 새로 작성
         this.location = location;
@@ -187,5 +197,7 @@ public class User extends CreatedDateAudit {
     public void removeSuspendedUser() {
         this.suspendedUser = null;
     }
+
+
 
 }
