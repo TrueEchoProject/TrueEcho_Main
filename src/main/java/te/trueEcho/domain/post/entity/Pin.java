@@ -25,9 +25,6 @@ public class Pin extends CreatedDateAudit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "pin_scope")
-    private int scope;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -38,7 +35,6 @@ public class Pin extends CreatedDateAudit {
 
     @Builder
     public Pin(int scope, User user, Post post) {
-        this.scope = scope;
         this.user = user;
         this.post = post;
     }
