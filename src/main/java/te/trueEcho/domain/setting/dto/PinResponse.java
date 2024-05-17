@@ -1,0 +1,17 @@
+package te.trueEcho.domain.setting.dto;
+
+import lombok.Builder;
+import lombok.Getter;
+
+import java.time.LocalDateTime;
+
+
+@Builder
+@Getter
+
+public class PinResponse {
+    private final Long pinId;
+    private final LocalDateTime createdAt;
+    private final String postFrontUrl;
+    private final String postBackUrl;
+}
