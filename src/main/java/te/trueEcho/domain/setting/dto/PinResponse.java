@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 
 public class PinResponse {
     private final Long pinId;
+    private final Long postId;
     private final LocalDateTime createdAt;
     private final String postFrontUrl;
     private final String postBackUrl;

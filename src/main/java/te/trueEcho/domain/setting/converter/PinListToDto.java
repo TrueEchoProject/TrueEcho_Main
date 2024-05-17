@@ -17,9 +17,11 @@ public class PinListToDto {
         List<PinResponse> pinListResponse = pins.stream().map(pin -> {
             return PinResponse.builder()
                     .pinId(pin.getId())
+                    .postId(pin.getPost().getId())
                     .postFrontUrl(pin.getPost().getUrlFront())
                     .postBackUrl(pin.getPost().getUrlBack())
                     .createdAt(pin.getCreatedAt())
+
                     .build();
         }).toList();
 
