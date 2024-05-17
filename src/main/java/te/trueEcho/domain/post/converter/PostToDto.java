@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Component
 @NoArgsConstructor
-public class PostToDtoConverter {
+public class PostToDto {
 
     public static PostListResponse converter(List<Post> postList, String yourLocation) {
 

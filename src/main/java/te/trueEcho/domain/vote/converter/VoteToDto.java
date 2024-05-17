@@ -10,7 +10,7 @@ import java.util.List;
 
 @Component
 @NoArgsConstructor
-public class VoteToDtoConverter {
+public class VoteToDto {
 
     public static VoteContentsResponse coverter(List<Vote> contentList){
         List<VoteResponse> titleList = contentList.stream().map(

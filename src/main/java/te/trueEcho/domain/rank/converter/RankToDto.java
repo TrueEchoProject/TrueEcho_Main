@@ -2,16 +2,12 @@ package te.trueEcho.domain.rank.converter;
 
 
 import lombok.NoArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import te.trueEcho.domain.rank.dto.RankListResponse;
 import te.trueEcho.domain.rank.dto.RankResponse;
 import te.trueEcho.domain.rank.dto.RankUserResponse;
-import te.trueEcho.domain.user.dto.RegisterRequest;
-import te.trueEcho.domain.user.entity.Role;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.vote.entity.Vote;
-import te.trueEcho.domain.vote.entity.VoteResult;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -19,12 +15,11 @@ import java.time.temporal.WeekFields;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 @Component
 @NoArgsConstructor
-public class RankToDtoConverter {
+public class RankToDto {
 
     public static RankListResponse converter(Map<Vote, Map<User, Integer>> thisWeekRanks) {
 

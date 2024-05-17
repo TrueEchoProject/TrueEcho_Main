@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Getter
 @Builder
-public class CommentToDtoConverter {
+public class CommentToDto {
     public static CommentListResponse converter(List<Comment> commentList, Long postId) {
 
         Map<Long, CommentResponse> mainCommentsMap = new HashMap<>();
