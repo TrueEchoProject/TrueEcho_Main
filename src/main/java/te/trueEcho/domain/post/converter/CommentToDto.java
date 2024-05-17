@@ -1,11 +1,9 @@
 package te.trueEcho.domain.post.converter;
-
 import lombok.Builder;
 import lombok.Getter;
 import te.trueEcho.domain.post.dto.CommentListResponse;
 import te.trueEcho.domain.post.dto.CommentResponse;
 import te.trueEcho.domain.post.entity.Comment;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

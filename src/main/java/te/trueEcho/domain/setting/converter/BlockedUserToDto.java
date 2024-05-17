@@ -1,6 +1,5 @@
 package te.trueEcho.domain.setting.converter;
 
-import org.apache.catalina.User;
 import te.trueEcho.domain.setting.dto.BlockedUserListResponse;
 import te.trueEcho.domain.setting.dto.BlockedUserResponse;
 import te.trueEcho.domain.user.entity.Block;

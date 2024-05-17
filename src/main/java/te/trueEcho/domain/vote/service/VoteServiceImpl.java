@@ -5,7 +5,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import te.trueEcho.domain.post.converter.PostToPhotoDto;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.post.repository.PostRepository;
 import te.trueEcho.domain.user.entity.User;
@@ -98,10 +97,15 @@ public class VoteServiceImpl implements VoteService {
        User targetUser =  userAuthRepository.findUserById(userId);
         List<User> usersToRead = new ArrayList<>();
         usersToRead.add(targetUser);
-        List<Post> postList = postRepository.readPost(1, 0, usersToRead);
+        List<Post> postList = postRepository.getAllPost(1, 0, usersToRead);
         if(postList==null || postList.isEmpty()) return null;
 
-        return PostToPhotoDto.converter(postList.getFirst());
+        return PhotoResponse.builder()
+                .photoBackUrl(postList.get(0).getUrlBack())
+                .photoFrontUrl(postList.get(0).getUrlFront())
+                .build();
+
+
     }
 
 
