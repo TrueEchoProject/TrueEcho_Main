@@ -96,6 +96,8 @@ public enum ResponseCode {
     // 핀
     GET_PINS_SUCCESS(202, "T002", "핀 조회를 성공했습니다."),
     GET_PINS_FAIL(202, "T002", "핀 조회를 실패했습니다."),
+    PUT_PINS_SUCCESS(202, "T002", "핀 수정을 성공했습니다."),
+    PUT_PINS_FAIL(202, "T002", "핀 수정을 실패했습니다."),
     // 캘린더 - 월별 게시물
     GET_MONTHLY_POST_SUCCESS(202, "T002", "월별 게시물 조회를 성공했습니다."),
     GET_MONTHLY_POST_FAIL(202, "T002", "월별 게시물 조회를 실패했습니다."),
