@@ -8,6 +8,7 @@ import com.azure.storage.blob.models.BlobStorageException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,7 +19,7 @@ import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @RequiredArgsConstructor
-@Service
+@Component
 public class AzureUploader {
 
     private final Environment env;
@@ -36,9 +37,12 @@ public class AzureUploader {
     }
 
     public String uploadImage(MultipartFile file) {
+
+        // 컨테이너 생성
         BlobServiceClient blobServiceClient = createBlobServiceClient();
         BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(getContainerName());
 
+        // 파일 이름 생성
         String originalFilename = file.getOriginalFilename();
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         String filename = originalFilename + "_" + timestamp;

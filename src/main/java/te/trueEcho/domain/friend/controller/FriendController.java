@@ -40,7 +40,6 @@ public class FriendController {
         return !confirmFriendResponses.isEmpty() ?
                 ResponseEntity.ok(ResponseForm.of(CONFIRM_REQUEST_SUCCESS, confirmFriendResponses)) :
                 ResponseEntity.ok(ResponseForm.of(CONFIRM_REQUEST_SUCCESS));
-
     }
 
 

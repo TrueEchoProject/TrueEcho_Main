@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import te.trueEcho.domain.notification.entity.LikeNoti;
+import te.trueEcho.domain.notification.entity.NotificationEntity;
 import te.trueEcho.domain.user.entity.User;
 
 @Getter
@@ -31,12 +31,12 @@ public class Like {
     private User user;
 
     @OneToOne(mappedBy = "like", cascade=CascadeType.ALL)
-    private LikeNoti likeNoti;
+    private NotificationEntity notificationEntity;
 
     @Builder
-    public Like( Post post, User user, LikeNoti likeNoti) {
+    public Like( Post post, User user,  NotificationEntity notificationEntity) {
         this.post = post;
         this.user = user;
-        this.likeNoti = likeNoti;
+        this.notificationEntity = notificationEntity;
     }
 }

@@ -76,6 +76,9 @@ dependencies {
 	implementation 'com.azure:azure-storage-blob:12.25.1'
 	implementation 'io.projectreactor.netty:reactor-netty-http:1.1.18'  // Replace '1.1.x' with the specific minor version you prefer
 	implementation 'io.projectreactor:reactor-core:3.6.5'
+
+	// firebase
+	implementation 'com.google.firebase:firebase-admin:8.0.1'
 }
 
 tasks.named('test') {

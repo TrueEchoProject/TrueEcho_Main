@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import te.trueEcho.domain.notification.entity.RankNoti;
+import te.trueEcho.domain.notification.entity.NotificationEntity;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.vote.entity.Vote;
 
@@ -29,7 +29,7 @@ public class Rank {
     @Column(name = "rank_week")
     private LocalDate rankWeek;
 
-    @OneToMany(mappedBy = "rank" , cascade= CascadeType.ALL)
+    @OneToMany(mappedBy = "rank" )
     private List<User> users;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -37,14 +37,14 @@ public class Rank {
     private Vote vote;
 
     @OneToOne(mappedBy = "rank", cascade=CascadeType.ALL)
-    private RankNoti rankNoti;
+    private NotificationEntity notificationEntity;
 
     @Builder
-    public Rank(int rankLevel, LocalDate rankWeek, List<User> users, Vote vote, RankNoti rankNoti) {
+    public Rank(int rankLevel, LocalDate rankWeek, List<User> users, Vote vote, NotificationEntity notificationEntity) {
         this.rankLevel = rankLevel;
         this.rankWeek = rankWeek;
         this.users = users;
         this.vote = vote;
-        this.rankNoti = rankNoti;
+        this.notificationEntity = notificationEntity;
     }
 }
