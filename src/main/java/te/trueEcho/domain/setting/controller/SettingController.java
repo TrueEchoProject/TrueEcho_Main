@@ -33,8 +33,11 @@ public class SettingController {
      제일 많이 받은 투표 (다 똑같으면 : 최신, 안 받으면 : null)
      개인당 핀 [게시물 3개 or 5개]
      */
-    @GetMapping("/myPage")
-    public ResponseEntity<ResponseForm> getMyPage(@RequestParam Long userId) {
+
+
+    // 해결해야 됨
+    @GetMapping("/myPage/{userId}")
+    public ResponseEntity<ResponseForm> getMyPage(@PathVariable Long userId) {
         if(userId==null){
             MyPageResponse myPageResponse = settingService.getMyPage();
             return myPageResponse != null ?
@@ -46,7 +49,6 @@ public class SettingController {
                     ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_OTHER_PAGE_SUCCESS, otherPageResponse)) :
                     ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_OTHER_PAGE_FAIL));
         }
-
     }
     /**
      캘린더 [GET]

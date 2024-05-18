@@ -62,7 +62,6 @@ public class SettingServiceImpl implements SettingService{
         User loginUser = authUtil.getLoginUser();
         String mostVotedTitle = settingRepository.getMostVotedTitle(loginUser);
 
-
         return MyPageResponse.builder().
                 profileUrl(loginUser.getProfileURL())
                 .username(authUtil.getLoginUser().getName())
@@ -212,7 +211,8 @@ public class SettingServiceImpl implements SettingService{
             return null;
         }
         return RandomNotifyTResponse.builder()
-                .randomNotifyTime(loginUser.getNotificationSetting().getNotificationTimeStatus())
+                .randomNotifyTime(loginUser.getNotificationSetting().
+                        getNotificationTimeStatus())
                 .build();
     }
 

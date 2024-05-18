@@ -8,7 +8,7 @@ import te.trueEcho.domain.setting.dto.pin.PinListResponse;
 @Builder
 public class OtherPageResponse {
     private final Long userId;
-    private final MyPageResponse pageIfo;
+    private final MyPageResponse pageInfo;
     private boolean isFriend;
     private final PinListResponse pinList;
 }

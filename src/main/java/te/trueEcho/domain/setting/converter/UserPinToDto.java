@@ -18,7 +18,7 @@ public class UserPinToDto {
 
         return OtherPageResponse.builder()
                 .userId(user.getId())
-                .pageIfo(
+                .pageInfo(
                         MyPageResponse.builder()
                                 .username(user.getName())
                                 .mostVotedTitle(mostVotedTitle)
