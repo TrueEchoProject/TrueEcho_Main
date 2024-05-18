@@ -78,7 +78,7 @@ dependencies {
 	implementation 'io.projectreactor:reactor-core:3.6.5'
 
 	// firebase
-	implementation 'com.google.firebase:firebase-admin:7.1.1'
+	implementation 'com.google.firebase:firebase-admin:8.0.1'
 }
 
 tasks.named('test') {

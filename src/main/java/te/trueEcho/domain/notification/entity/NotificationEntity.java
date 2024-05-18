@@ -13,7 +13,7 @@ import te.trueEcho.global.entity.CreatedDateAudit;
 @Setter
 @Entity
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "notifications")

@@ -6,13 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import te.trueEcho.domain.user.dto.EditUserResponse;
 import te.trueEcho.global.response.ResponseForm;
 import te.trueEcho.infra.firebase.dto.FCMTokenResponse;
 import te.trueEcho.infra.firebase.service.FCMService;
-
 import static te.trueEcho.global.response.ResponseCode.*;
-import static te.trueEcho.global.response.ResponseCode.GET_EDIT_PROFILE_FAIL;
 
 
 @Tag(name = "USER API")
