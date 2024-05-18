@@ -3,6 +3,7 @@ import te.trueEcho.domain.setting.dto.calendar.MonthlyPostListResponse;
 import te.trueEcho.domain.setting.dto.mypage.EditMyInfoRequest;
 import te.trueEcho.domain.setting.dto.mypage.MyInfoResponse;
 import te.trueEcho.domain.setting.dto.mypage.MyPageResponse;
+import te.trueEcho.domain.setting.dto.mypage.OtherPageResponse;
 import te.trueEcho.domain.setting.dto.notiset.NotificationSettingDto;
 import te.trueEcho.domain.setting.dto.pin.PinListResponse;
 import te.trueEcho.domain.setting.dto.pin.PinsRequest;
@@ -20,6 +21,7 @@ public interface SettingService {
      */
     MyPageResponse getMyPage() ;
 
+    OtherPageResponse getOtherPage(Long userId);
     /**
      캘린더 [GET]
      이번달 게시물 다 불러오기> -> 게시물
@@ -56,7 +58,7 @@ public interface SettingService {
      */
 
     RandomNotifyTResponse getRandomNotifyTime();
-    RandomNotifyTResponse editRandomNotifyTime();
+    boolean editRandomNotifyTime(int notifyTime);
 
 
     NotificationSettingDto getNotificationSetting();

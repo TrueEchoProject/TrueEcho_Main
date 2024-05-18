@@ -9,7 +9,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import te.trueEcho.domain.user.dto.LoginRequest;
-import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.UserAuthRepository;
 import te.trueEcho.global.security.jwt.Repository.RefreshTokenRepository;
 import te.trueEcho.global.security.jwt.TokenProvider;
@@ -29,7 +28,6 @@ public class JwtService {
     @Transactional
     public TokenDto login(LoginRequest loginRequest){
         setAuthentication(loginRequest); // 인증 & 인가
-
         return createToken();
     }
 
@@ -53,21 +51,19 @@ public class JwtService {
     public boolean deleteRefreshToken(){
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
         log.info("authentication.name ={}", authentication.getName());
-        User foundUser = userAuthRepository.findUserByEmail(authentication.getName());
-        refreshTokenRepository.deleteTokenByUser(foundUser);
-        return refreshTokenRepository.findTokenByUser(foundUser) == null;
+        return refreshTokenRepository.deleteTokenByEmail(authentication.getName());
     }
 
 
     public TokenDto createToken(){
-
-
+        log.trace("createToken");
         // authentication 객체를 createToken 메소드를 통해서 JWT Token을 생성
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
-        deleteRefreshToken();
+
+        //deleteRefreshToken();
         String accessToken = tokenProvider.createToken(authentication, TokenType.ACCESS);
         String refreshToken = tokenProvider.createToken(authentication, TokenType.REFRESH);
-        refreshTokenRepository.saveTokenByEmail(refreshToken,authentication.getName());
+        refreshTokenRepository.updateTokenByEmail(refreshToken,authentication.getName());
         return TokenDto.builder().accessToken(accessToken).refreshToken(refreshToken).build();
     }
     

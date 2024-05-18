@@ -3,12 +3,15 @@ package te.trueEcho.domain.user.repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import te.trueEcho.domain.user.entity.User;
 
 import java.util.List;
 
+
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class UserAuthRepositoryImpl implements UserAuthRepository {
@@ -36,12 +39,14 @@ public class UserAuthRepositoryImpl implements UserAuthRepository {
         try {
             return em.createQuery(
                             "select distinct u from User u " +
-                                    "join fetch u.suspendedUser " +
                                     "join fetch u.notificationSetting " +
+                                    "left join fetch u.suspendedUser " +
+                                    "left join fetch u.notificationEntity " +
                                     "where u.email = :email", User.class)
                     .setParameter("email", email)
                     .getSingleResult();
         } catch (NoResultException e) {
+            log.error("User not found with email: " + email);
             return null;
         }
     }

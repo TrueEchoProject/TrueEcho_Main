@@ -1,6 +1,7 @@
 package te.trueEcho.global.security.jwt.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +16,7 @@ import java.util.List;
 
 
 // 사용자 정보 -> UserDetails 객체로 변환
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
@@ -27,12 +29,13 @@ public class CustomUserDetailsService implements UserDetailsService {
         // 사용자 이메일로 데이터베이스에서 사용자 정보 가져오기
         User userData = userAuthRepository.findUserByEmail(email);
         if (userData == null) {
-            throw new UsernameNotFoundException(email + "로 가입된 유저가 없습니다.");
+            log.warn("해당 이메일로 가입된 유저가 없습니다.");
+            throw new UsernameNotFoundException("email not found");
         }
-        List<GrantedAuthority> grantedAuthorities = Collections.singletonList(new SimpleGrantedAuthority(userData.getRole().getKey()));
-
         // UserDetails 객체로 변환하여 반환
-        return new org.springframework.security.core.userdetails.User(userData.getEmail(),
-                userData.getPassword(), grantedAuthorities);
+        return new org.springframework.security.core.userdetails.User(
+                userData.getEmail(),
+                userData.getPassword(),
+                Collections.singletonList(new SimpleGrantedAuthority(userData.getRole().getKey())));
         }
 }

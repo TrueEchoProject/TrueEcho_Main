@@ -8,8 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import te.trueEcho.domain.post.entity.Pin;
 import te.trueEcho.domain.post.entity.Post;
+import te.trueEcho.domain.setting.entity.NotificationSetting;
 import te.trueEcho.domain.user.entity.User;
-import te.trueEcho.domain.vote.entity.VoteResult;
 
 import java.util.List;
 
@@ -54,7 +54,8 @@ public class SettingRepositoryImpl implements SettingRepository{
     @Override
     public List<Pin> getPinsByUser(User user) {
         try {
-            return em.createQuery("select p from Pin p where p.user =:user", Pin.class)
+            return em.createQuery("select p from Pin p join fetch p.user" +
+                            " where p.user =:user", Pin.class)
                     .setParameter("user", user)
                     .getResultList();
         } catch (Exception e) {
@@ -79,6 +80,30 @@ public class SettingRepositoryImpl implements SettingRepository{
                     .getSingleResult();
         } catch (Exception e) {
             log.error("getMostVotedTitle error : {}", e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public NotificationSetting getNotificationSettingByUser(User user) {
+        try{
+            return em.createQuery("select ns from NotificationSetting ns" +
+                            " where ns.user =:user", NotificationSetting.class)
+                    .setParameter("user", user)
+                    .getSingleResult();
+        }catch (Exception e){
+            log.error("getNotificationSettingByUser error : {}", e.getMessage());
+            return null;
+        }
+
+    }
+    @Transactional
+    @Override
+    public NotificationSetting editNotificationSetting(NotificationSetting notificationSetting) {
+        try{
+            return em.merge(notificationSetting);
+        }catch(Exception e){
+            log.error("editNotificationSetting error : {}", e.getMessage());
             return null;
         }
     }

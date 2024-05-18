@@ -7,20 +7,27 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import te.trueEcho.domain.friend.entity.Friend;
+import te.trueEcho.domain.friend.repository.FriendRepository;
 import te.trueEcho.domain.post.entity.Pin;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.post.repository.PostRepository;
+import te.trueEcho.domain.setting.converter.NotificationSettingToDto;
 import te.trueEcho.domain.setting.converter.PinListToDto;
 import te.trueEcho.domain.setting.converter.PostListToDto;
 import te.trueEcho.domain.post.repository.PinsRepository;
+import te.trueEcho.domain.setting.converter.UserPinToDto;
 import te.trueEcho.domain.setting.dto.calendar.MonthlyPostListResponse;
 import te.trueEcho.domain.setting.dto.mypage.EditMyInfoRequest;
 import te.trueEcho.domain.setting.dto.mypage.MyInfoResponse;
 import te.trueEcho.domain.setting.dto.mypage.MyPageResponse;
+import te.trueEcho.domain.setting.dto.mypage.OtherPageResponse;
 import te.trueEcho.domain.setting.dto.notiset.NotificationSettingDto;
 import te.trueEcho.domain.setting.dto.pin.PinListResponse;
 import te.trueEcho.domain.setting.dto.pin.PinsRequest;
 import te.trueEcho.domain.setting.dto.random.RandomNotifyTResponse;
+import te.trueEcho.domain.setting.entity.NotiTimeStatus;
+import te.trueEcho.domain.setting.entity.NotificationSetting;
 import te.trueEcho.domain.setting.repository.SettingRepository;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.UserAuthRepository;
@@ -45,12 +52,15 @@ public class SettingServiceImpl implements SettingService{
     private final PostRepository postRepository;
     private final PostListToDto postListToDto;
     private final PinListToDto pinListToDto;
+    private final NotificationSettingToDto notificationSettingToDto;
+    private final UserPinToDto userPinToDto;
+    private final FriendRepository friendRepository;
+    private final NotificationEditService notificationEditService;
 
     @Override
     public MyPageResponse getMyPage() {
         User loginUser = authUtil.getLoginUser();
         String mostVotedTitle = settingRepository.getMostVotedTitle(loginUser);
-
 
         return MyPageResponse.builder().
                 profileUrl(loginUser.getProfileURL())
@@ -58,6 +68,22 @@ public class SettingServiceImpl implements SettingService{
                 .mostVotedTitle(mostVotedTitle)
                 .location(loginUser.getLocation())
                 .build();
+    }
+
+    @Override
+    public OtherPageResponse getOtherPage(Long userId) {
+        User user = userAuthRepository.findUserById(userId);
+
+        if (user == null) {
+            log.error("No user found for this id");
+            return null;
+        }
+        List<Pin> pinList = settingRepository.getPinsByUser(user);
+        String mostVotedTitle = settingRepository.getMostVotedTitle(user);
+        List<User> friends = friendRepository.findMyFriendsByUser(user);
+
+        return userPinToDto.converter(user, pinList, mostVotedTitle, friends.contains(authUtil.getLoginUser()));
+
     }
 
     public MonthlyPostListResponse getMonthlyPosts(Integer month) {
@@ -185,22 +211,47 @@ public class SettingServiceImpl implements SettingService{
             return null;
         }
         return RandomNotifyTResponse.builder()
-                .randomNotifyTime(loginUser.getNotificationSetting().getNotificationTime())
+                .randomNotifyTime(loginUser.getNotificationSetting().
+                        getNotificationTimeStatus())
                 .build();
     }
 
+    //수정 권한 (알림을 못 받았으면, 대기 큐에 넣고, 나중에 알림을 받으면 큐에서 꺼내서 알림 시간대 수정)
     @Override
-    public RandomNotifyTResponse editRandomNotifyTime() {
-        return null;
+    public boolean editRandomNotifyTime(int notifyTime) {
+
+        try {
+            notificationEditService.isUserReceivedNotification(authUtil.getLoginUser(), NotiTimeStatus.values()[notifyTime]);
+            return true;
+        }catch (Exception e) {
+            log.error("Failed to edit notification time", e);
+            return false;
+        }
     }
 
     @Override
     public NotificationSettingDto getNotificationSetting() {
-        return null;
+        User loginUser = authUtil.getLoginUser();
+
+        if (loginUser == null) {
+            log.error("Authentication failed - No login user found");
+            return null;
+        }
+        return notificationSettingToDto.converter(loginUser.getNotificationSetting());
     }
 
     @Override
     public NotificationSettingDto editNotificationSetting(NotificationSettingDto notificationSettingDto) {
-        return null;
+        User loginUser = authUtil.getLoginUser();
+
+        if (loginUser == null) {
+            log.error("Authentication failed - No login user found");
+            return null;
+        }
+
+        NotificationSetting notificationSetting = loginUser.getNotificationSetting();
+        notificationSetting.editNotificationSetting(notificationSettingDto);
+
+        return notificationSettingToDto.converter(settingRepository.editNotificationSetting(notificationSetting));
     }
 }

@@ -15,30 +15,37 @@ import te.trueEcho.domain.user.entity.User;
 public class RefreshTokenRepository {
 
     private final EntityManager em;
-   public String findTokenByUser(User user){
-       User foundUser = em.find(User.class, user.getId());
-       log.info("getRefreshToken = {}",foundUser.getRefreshToken());
-       return foundUser.getRefreshToken();
-    }
-    @Transactional
-    public void saveTokenByEmail(String refreshToken, String email){
-       log.info("refreshToken ={}",refreshToken);
-       em.createQuery("update User u set u.refreshToken=:refreshToken where u.email =:email")
-               .setParameter("email",email)
-               .setParameter("refreshToken",refreshToken)
-                       .executeUpdate();
-       em.flush();
-       em.clear();
-    }
-    @Transactional
-   public void deleteTokenByUser(User user){
-        saveTokenByEmail(null, user.getEmail());
 
-   }
+    public String findTokenByUser(User user){
+       log.info("getRefreshToken = {}",user.getRefreshToken());
+       return user.getRefreshToken();
+    }
+
+    @Transactional
+    public boolean updateTokenByEmail(String refreshToken, String email){
+       log.info("refreshToken ={}",refreshToken);
+        try {
+            em.createQuery("update User u set u.refreshToken=:refreshToken where u.email =:email")
+                    .setParameter("email", email)
+                    .setParameter("refreshToken", refreshToken)
+                    .executeUpdate();
+            em.flush();
+            return true;
+        }catch (Exception e){
+            log.error("saveTokenByEmail error ={}",e.getMessage());
+            return false;
+        }
+    }
+
+    @Transactional
+    public boolean deleteTokenByEmail(String email){
+      return updateTokenByEmail(null, email);
+    }
 
    public String findTokenByToken(String refreshToken){
        try {
-          return (String) em.createQuery("select u.refreshToken from User u where u.refreshToken =: refreshToken")
+            return (String) em.createQuery("select u.refreshToken from User u " +
+                            "where u.refreshToken =: refreshToken")
                    .setParameter("refreshToken", refreshToken)
                    .getSingleResult();
        }catch (NoResultException e){

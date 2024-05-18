@@ -23,7 +23,7 @@ public class SignUpDtoToUser {
                 .birthday(registerRequest.getDob())
                 .gender(registerRequest.getGender())
                 .location(registerRequest.getLocation())
-                .notificationTime(registerRequest.getNotificationTime())
+                .notificationTimeStatus(registerRequest.getNotificationTime())
                 .build();
     }
 }

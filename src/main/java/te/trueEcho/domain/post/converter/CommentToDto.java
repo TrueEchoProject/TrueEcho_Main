@@ -22,6 +22,7 @@ public class CommentToDto {
             CommentResponse dto = CommentResponse.builder()
                     .commentId(comment.getId())
                     .content(comment.getContent())
+                    .userId(comment.getUser().getId())
                     .username(comment.getUser().getName())
                     .profileURL(comment.getUser().getProfileURL())
                     .createdAt(comment.getCreatedAt())

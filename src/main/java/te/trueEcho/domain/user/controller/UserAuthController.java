@@ -66,7 +66,7 @@ public class UserAuthController {
                 UserCheckRequest.builder()
                 .email(email)
                 .nickname(nickname)
-                .build(), ValidationType.valueOf(type.toUpperCase(Locale.ROOT)));
+                .build(), ValidationType.valueOf(type.toUpperCase()));
 
         if (isDuplicated)
             return ResponseEntity.ok(ResponseForm.of(NOT_DUPLICATED_FAIL, type)); // 중복
@@ -148,7 +148,6 @@ public class UserAuthController {
                 ResponseEntity.ok(ResponseForm.of(SEND_EMAIL_SUCCESS)) :
                 ResponseEntity.ok(ResponseForm.of(SEND_EMAIL_FAIL));
     }
-
 }
     
 

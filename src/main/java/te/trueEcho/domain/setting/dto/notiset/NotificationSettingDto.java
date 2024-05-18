@@ -1,6 +1,7 @@
 package te.trueEcho.domain.setting.dto.notiset;
 
 
+import jakarta.persistence.Column;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,4 +17,6 @@ public class NotificationSettingDto {
     private boolean friendRequest;
 
     private boolean PhotoTime;
+
+    private boolean service;
 }

@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 import te.trueEcho.domain.user.entity.Gender;
-import te.trueEcho.domain.user.entity.NotiTimeStatus;
+import te.trueEcho.domain.setting.entity.NotiTimeStatus;
 
 import java.time.LocalDate;
 

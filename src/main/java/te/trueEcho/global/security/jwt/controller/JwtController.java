@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import te.trueEcho.domain.user.entity.SuspendedUser;
@@ -43,15 +44,18 @@ public class JwtController {
 
     @PostMapping(value = "/accounts/login")
     public ResponseEntity<ResponseForm> login(@RequestBody LoginRequest loginRequest) {
-        log.info("login : {} {}", loginRequest.getEmail(), loginRequest.getPassword());
+        log.debug("login : {} {}", loginRequest.getEmail(), loginRequest.getPassword());
         boolean isEmpty = true;
 
         final TokenDto tokenDto = jwtService.login(loginRequest);
-        isEmpty = tokenDto.getRefreshToken().isBlank() || tokenDto.getAccessToken().isBlank();
+
+        isEmpty = (tokenDto == null) ||
+                tokenDto.getRefreshToken().isBlank() ||
+                tokenDto.getAccessToken().isBlank();
 
         SuspendedUser suspendedUser = suspendedUserRepository.findSuspendedUserByEmail(loginRequest.getEmail());
         if (suspendedUser != null) {
-            // If the user is in the SuspendedUser table, delete the user
+            // If the user is in the SuspendedUser table,    delete the user
             boolean isCanceled = userService.cancelDeleteUser(suspendedUser);
             return isCanceled ?
                     ResponseEntity.ok(ResponseForm.of(CANCEL_DELETE_USER_SUCCESS, tokenDto)) :

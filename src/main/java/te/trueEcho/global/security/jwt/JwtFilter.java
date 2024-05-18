@@ -25,19 +25,20 @@ public class JwtFilter extends GenericFilterBean {
     // 토큰의 인증정보를 SecurityContext에 저장
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        log.trace("doFilter");
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         String jwt = resolveToken(httpServletRequest);
 
         String requestURI = httpServletRequest.getRequestURI();
         TokenType type = isRefreshRequest(requestURI) ? TokenType.REFRESH : TokenType.ACCESS;
+        log.info("retrieved jwt in request = {}, token type ={} ",jwt,type);
 
-        log.warn("=============== this is do Filter " + jwt);
         if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt, type)) {
             UsernamePasswordAuthenticationToken authentication = tokenProvider.getAuthentication(jwt,type);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.debug("Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication.getName(), requestURI);
+            log.info("Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication.getName(), requestURI);
         } else {
-            log.debug("유효한 JWT 토큰이 없습니다, uri: {}", requestURI);
+            log.warn("유효한 JWT 토큰이 없습니다, uri: {}", requestURI);
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }
@@ -48,9 +49,9 @@ public class JwtFilter extends GenericFilterBean {
 
     // Request Header 에서 토큰 정보를 꺼내오기 위한 메소드
     private String resolveToken(HttpServletRequest request) {
-        log.warn("=============== this is resolveToken ");
+        log.trace("resolveToken, requestURI : {} ",request.getRequestURI());
+
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-        log.warn("=============== this is {} ",request.getRequestURI());
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }

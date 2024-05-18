@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import te.trueEcho.domain.user.entity.Gender;
-import te.trueEcho.domain.user.entity.NotiTimeStatus;
 import te.trueEcho.domain.user.entity.User;
 
 import java.time.LocalDate;

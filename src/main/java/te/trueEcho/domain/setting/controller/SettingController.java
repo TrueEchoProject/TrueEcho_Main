@@ -7,6 +7,7 @@ import te.trueEcho.domain.setting.dto.calendar.MonthlyPostListResponse;
 import te.trueEcho.domain.setting.dto.mypage.EditMyInfoRequest;
 import te.trueEcho.domain.setting.dto.mypage.MyInfoResponse;
 import te.trueEcho.domain.setting.dto.mypage.MyPageResponse;
+import te.trueEcho.domain.setting.dto.mypage.OtherPageResponse;
 import te.trueEcho.domain.setting.dto.notiset.NotificationSettingDto;
 import te.trueEcho.domain.setting.dto.pin.PinListResponse;
 import te.trueEcho.domain.setting.dto.pin.PinsRequest;
@@ -32,13 +33,22 @@ public class SettingController {
      제일 많이 받은 투표 (다 똑같으면 : 최신, 안 받으면 : null)
      개인당 핀 [게시물 3개 or 5개]
      */
-    @GetMapping("/myPage")
-    public ResponseEntity<ResponseForm> getMyPage() {
 
-        MyPageResponse myPageResponse = settingService.getMyPage();
-        return myPageResponse != null ?
-                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_MY_PAGE_SUCCESS, myPageResponse)) :
-                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_MY_PAGE_FAIL));
+
+    // 해결해야 됨
+    @GetMapping("/myPage/{userId}")
+    public ResponseEntity<ResponseForm> getMyPage(@PathVariable Long userId) {
+        if(userId==null){
+            MyPageResponse myPageResponse = settingService.getMyPage();
+            return myPageResponse != null ?
+                    ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_MY_PAGE_SUCCESS, myPageResponse)) :
+                    ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_MY_PAGE_FAIL));
+        }else{
+            OtherPageResponse otherPageResponse = settingService.getOtherPage(userId);
+            return otherPageResponse != null ?
+                    ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_OTHER_PAGE_SUCCESS, otherPageResponse)) :
+                    ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_OTHER_PAGE_FAIL));
+        }
     }
     /**
      캘린더 [GET]
@@ -175,10 +185,10 @@ public class SettingController {
     @PatchMapping("/notificationStatus")
     public ResponseEntity<ResponseForm> editNotificationStatus(@RequestBody int notifyTime) {
 
-        RandomNotifyTResponse randomNotifyTResponse = settingService.getRandomNotifyTime();
-        return randomNotifyTResponse != null ?
-                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_NOTIFY_TIME_SUCCESS, randomNotifyTResponse)) :
-                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_NOTIFY_TIME_FAIL));
+        boolean isEdited = settingService.editRandomNotifyTime(notifyTime);
+        return isEdited     ?
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.PUT_NOTIFY_TIME_SUCCESS)) :
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.PUT_NOTIFY_TIME_FAIL));
     }
 
 
@@ -206,6 +216,4 @@ public class SettingController {
             return ResponseEntity.ok(ResponseForm.of(ResponseCode.PUT_NOTIFICATION_OPTION_FAIL));
         }
     }
-
-
 }

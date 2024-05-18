@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import te.trueEcho.domain.user.entity.Gender;
-import te.trueEcho.domain.user.entity.NotiTimeStatus;
+import te.trueEcho.domain.setting.entity.NotiTimeStatus;
 
 import java.time.LocalDate;
 
