@@ -87,7 +87,14 @@ public enum ResponseCode {
 
     // 랭킹
     GET_RANK_SUCCESS(202, "T002", "투표지 읽기를 성공했습니다."),
-    GET_RANK_FAIL(202, "T002", "투표지 읽기를 실패했습니다.");
+    GET_RANK_FAIL(202, "T002", "투표지 읽기를 실패했습니다."),
+
+    // 알림
+    FCM_TOKEN_SAVED_SUCCESS(202, "T002", "FCM 토큰 저장에 성공했습니다."),
+    FCM_TOKEN_SAVED_FAIL(202, "T002", "FCM 토큰 저장에 실패했습니다."),
+    FCM_TOKEN_GET_SUCCESS(202, "T002", "FCM 토큰 조회에 성공했습니다."),
+    FCM_TOKEN_GET_FAIL(202, "T002", "FCM 토큰 조회에 실패했습니다.");
+
 
     private final int status;
     private final String code;
