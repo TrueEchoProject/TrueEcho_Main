@@ -8,7 +8,6 @@ import lombok.Getter;
 @Getter
 public class PostNotiSet {
 
-    private final boolean newPost;
+    private final boolean postLike;
     private final boolean newComment;
-    private final boolean subComment;
 }
