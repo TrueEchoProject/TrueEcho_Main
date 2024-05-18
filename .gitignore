@@ -38,7 +38,7 @@ out/
 
 
 # properties # do not share
-application.properties
-application-API.properties
-application-db.properties
-application-JWT.properties
+!src/main/resources/application.properties
+.env
+src/main/resources/.env
+serviceAccountKey.json
