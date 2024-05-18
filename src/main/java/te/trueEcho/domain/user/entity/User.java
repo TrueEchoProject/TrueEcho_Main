@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import te.trueEcho.domain.friend.entity.Friend;
 import te.trueEcho.domain.notification.entity.NotificationEntity;
-import te.trueEcho.domain.notification.entity.RankNoti;
 import te.trueEcho.domain.post.entity.Comment;
 import te.trueEcho.domain.post.entity.Like;
 import te.trueEcho.domain.post.entity.Post;
