@@ -36,7 +36,8 @@ public class UserAuthRepositoryImpl implements UserAuthRepository {
         try {
             return em.createQuery(
                             "select distinct u from User u " +
-                                    "left join fetch u.suspendedUser " +
+                                    "join fetch u.suspendedUser " +
+                                    "join fetch u.notificationSetting " +
                                     "where u.email = :email", User.class)
                     .setParameter("email", email)
                     .getSingleResult();
@@ -49,7 +50,10 @@ public class UserAuthRepositoryImpl implements UserAuthRepository {
     public User findUserByNickName(String nickName) {
         try {
             return
-                    em.createQuery("select u from User u where u.nickname=: nickName", User.class)
+                    em.createQuery("select u from User u " +
+                                    "join fetch u.suspendedUser " +
+                                    "join fetch u.notificationSetting " +
+                                    " where u.nickname=: nickName", User.class)
                             .setParameter("nickName", nickName)
                             .getSingleResult();
         }catch (NoResultException e){
