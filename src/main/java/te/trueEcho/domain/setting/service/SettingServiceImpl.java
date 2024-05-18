@@ -191,8 +191,6 @@ public class SettingServiceImpl implements SettingService{
 
     @Override
     public RandomNotifyTResponse editRandomNotifyTime() {
-
-
         return null;
     }
 
