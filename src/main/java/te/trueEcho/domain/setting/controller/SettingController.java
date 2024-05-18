@@ -7,6 +7,7 @@ import te.trueEcho.domain.setting.dto.calendar.MonthlyPostListResponse;
 import te.trueEcho.domain.setting.dto.mypage.EditMyInfoRequest;
 import te.trueEcho.domain.setting.dto.mypage.MyInfoResponse;
 import te.trueEcho.domain.setting.dto.mypage.MyPageResponse;
+import te.trueEcho.domain.setting.dto.notiset.NotificationSettingDto;
 import te.trueEcho.domain.setting.dto.pin.PinListResponse;
 import te.trueEcho.domain.setting.dto.pin.PinsRequest;
 import te.trueEcho.domain.setting.dto.random.RandomNotifyTResponse;
@@ -80,8 +81,6 @@ public class SettingController {
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.PUT_PINS_FAIL));
     }
 
-
-
     /**
      개인정보 수정 [GET / PUT]
      프로필 이미지
@@ -101,7 +100,6 @@ public class SettingController {
                                                    @RequestParam String nickname,
                                                    @RequestParam String username,
                                                    @RequestParam String location) {
-
 
         boolean isDuplicated =  userAuthService.isTypeDuplicated(
                 UserCheckRequest.builder()
@@ -154,5 +152,60 @@ public class SettingController {
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_NOTIFY_TIME_SUCCESS, randomNotifyTResponse)) :
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_NOTIFY_TIME_FAIL));
     }
+
+
+    /*
+    알림창 [GET / PUT]
+    댓글 답글 알림
+    친구 요청
+    게시물 좋아요
+    투표 마감 알림
+    랭킹 결과 -> 내 등수.
+    개인적으로 투표 받았을 때
+     */
+
+    @GetMapping("/notificationStatus")
+    public ResponseEntity<ResponseForm> getNotificationStatus() {
+        RandomNotifyTResponse randomNotifyTResponse = settingService.getRandomNotifyTime();
+        return randomNotifyTResponse != null ?
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_NOTIFY_TIME_SUCCESS, randomNotifyTResponse)) :
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_NOTIFY_TIME_FAIL));
+    }
+
+    @PatchMapping("/notificationStatus")
+    public ResponseEntity<ResponseForm> editNotificationStatus(@RequestBody int notifyTime) {
+
+        RandomNotifyTResponse randomNotifyTResponse = settingService.getRandomNotifyTime();
+        return randomNotifyTResponse != null ?
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_NOTIFY_TIME_SUCCESS, randomNotifyTResponse)) :
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_NOTIFY_TIME_FAIL));
+    }
+
+
+
+    @GetMapping("/notificationSetting")
+    public ResponseEntity<ResponseForm> getNotificationSetting() {
+        NotificationSettingDto notificationSettingDto = settingService.getNotificationSetting();
+
+        if (notificationSettingDto != null) {
+            return ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_NOTIFICATION_OPTION_SUCCESS, notificationSettingDto));
+        } else {
+            return ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_NOTIFICATION_OPTION_FAIL));
+        }
+    }
+
+    @PatchMapping("/notificationSetting")
+    public ResponseEntity<ResponseForm> editNotificationSetting(
+            @RequestBody NotificationSettingDto notificationSettingDto) {
+
+        NotificationSettingDto newDto = settingService.editNotificationSetting(notificationSettingDto);
+
+        if (notificationSettingDto != null) {
+            return ResponseEntity.ok(ResponseForm.of(ResponseCode.PUT_NOTIFICATION_OPTION_SUCCESS, newDto));
+        } else {
+            return ResponseEntity.ok(ResponseForm.of(ResponseCode.PUT_NOTIFICATION_OPTION_FAIL));
+        }
+    }
+
 
 }

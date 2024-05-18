@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import te.trueEcho.domain.post.entity.Pin;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.user.entity.User;
+import te.trueEcho.domain.vote.entity.VoteResult;
 
 import java.util.List;
 
@@ -31,9 +32,8 @@ public class SettingRepositoryImpl implements SettingRepository{
 
         }catch(Exception e){
             log.error("getMontlyPosts error : {}", e.getMessage());
+            return null;
         }
-
-        return List.of();
     }
 
     @Override
@@ -66,13 +66,13 @@ public class SettingRepositoryImpl implements SettingRepository{
     @Override
     public String getMostVotedTitle(User user) {
         try {
-              return  em.createQuery(
+            return em.createQuery(
                             "SELECT v.title " +
                                     "FROM VoteResult vr " +
-                                    "JOIN FETCH vr.vote v " +
+                                    "JOIN vr.vote v " +
                                     "WHERE vr.userTarget = :user " +
-                                    "GROUP BY v.title " +
-                                    "ORDER BY COUNT(vr) DESC, vr.createdAt DESC",
+                                    "GROUP BY v.id " +
+                                    "ORDER BY COUNT(vr) DESC, MAX(vr.createdAt) DESC",
                             String.class)
                     .setParameter("user", user)
                     .setMaxResults(1)

@@ -17,6 +17,7 @@ import te.trueEcho.domain.setting.dto.calendar.MonthlyPostListResponse;
 import te.trueEcho.domain.setting.dto.mypage.EditMyInfoRequest;
 import te.trueEcho.domain.setting.dto.mypage.MyInfoResponse;
 import te.trueEcho.domain.setting.dto.mypage.MyPageResponse;
+import te.trueEcho.domain.setting.dto.notiset.NotificationSettingDto;
 import te.trueEcho.domain.setting.dto.pin.PinListResponse;
 import te.trueEcho.domain.setting.dto.pin.PinsRequest;
 import te.trueEcho.domain.setting.dto.random.RandomNotifyTResponse;
@@ -24,6 +25,7 @@ import te.trueEcho.domain.setting.repository.SettingRepository;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.UserAuthRepository;
 import te.trueEcho.domain.user.service.UserService;
+import te.trueEcho.domain.vote.entity.VoteResult;
 import te.trueEcho.global.util.AuthUtil;
 import te.trueEcho.infra.azure.AzureUploader;
 import java.time.LocalDate;
@@ -48,6 +50,7 @@ public class SettingServiceImpl implements SettingService{
     public MyPageResponse getMyPage() {
         User loginUser = authUtil.getLoginUser();
         String mostVotedTitle = settingRepository.getMostVotedTitle(loginUser);
+
 
         return MyPageResponse.builder().
                 profileUrl(loginUser.getProfileURL())
@@ -146,7 +149,7 @@ public class SettingServiceImpl implements SettingService{
         try {
             loginUser.updateProfileUrl(profileUrl);
             loginUser.updateName(editMyInfoRequest.getUsername());
-            loginUser.updateName(editMyInfoRequest.getNickname());
+            loginUser.updateNickName(editMyInfoRequest.getNickname());
             loginUser.updateLocation(editMyInfoRequest.getLocation());
             userAuthRepository.updateUser(loginUser);
             return true;
@@ -174,11 +177,6 @@ public class SettingServiceImpl implements SettingService{
 
 
     @Override
-    public void editNotifyTime() {
-
-    }
-
-    @Override
     public RandomNotifyTResponse getRandomNotifyTime() {
         User loginUser = authUtil.getLoginUser();
 
@@ -186,9 +184,25 @@ public class SettingServiceImpl implements SettingService{
             log.error("Authentication failed - No login user found");
             return null;
         }
-
         return RandomNotifyTResponse.builder()
-                .randomNotifyTime(loginUser.getNotificationTime())
+                .randomNotifyTime(loginUser.getNotificationSetting().getNotificationTime())
                 .build();
+    }
+
+    @Override
+    public RandomNotifyTResponse editRandomNotifyTime() {
+
+
+        return null;
+    }
+
+    @Override
+    public NotificationSettingDto getNotificationSetting() {
+        return null;
+    }
+
+    @Override
+    public NotificationSettingDto editNotificationSetting(NotificationSettingDto notificationSettingDto) {
+        return null;
     }
 }

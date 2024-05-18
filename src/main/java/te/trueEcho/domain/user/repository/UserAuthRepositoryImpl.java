@@ -37,7 +37,6 @@ public class UserAuthRepositoryImpl implements UserAuthRepository {
             return em.createQuery(
                             "select distinct u from User u " +
                                     "left join fetch u.suspendedUser " +
-                                    "left join fetch u.notiTimeQ " +
                                     "where u.email = :email", User.class)
                     .setParameter("email", email)
                     .getSingleResult();
@@ -80,8 +79,6 @@ public class UserAuthRepositoryImpl implements UserAuthRepository {
         existUser.updateName(user.getName());
         existUser.setEncryptedPassword(user.getPassword());
         existUser.updateGender(user.getGender());
-        existUser.updateNotificationTime(user.getNotificationTime());
-        existUser.updateNotificationSetting(user.getNotificationSetting());
         existUser.updateBirthDay(user.getBirthday());
         existUser.updateLocation(user.getLocation());
 

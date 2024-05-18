@@ -7,7 +7,7 @@ import lombok.Getter;
 @Builder
 @Getter
 
-public class NotiSetRequest {
+public class NotificationSettingDto {
 
     private CommunityNotiSet communityNotiSet;
 

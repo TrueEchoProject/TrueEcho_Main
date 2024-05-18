@@ -53,9 +53,9 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Override
     public boolean checkEmailCode(CheckCodeRequest emailCheckCodeDto) {
-        final String registerdCode =emailMemoryRepository.findCheckCodeByEmail(emailCheckCodeDto.getEmail());
+        final String registeredCode =emailMemoryRepository.findCheckCodeByEmail(emailCheckCodeDto.getEmail());
 
-       if (emailCheckCodeDto.getCheckCode().equals(registerdCode)){
+       if (emailCheckCodeDto.getCheckCode().equals(registeredCode)){
            emailMemoryRepository.verifyEmail(emailCheckCodeDto.getEmail());
            return true;
        }
@@ -65,8 +65,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Override
     public boolean sendEmailCode(UserCheckRequest emailRequestDto) {
-        emailCodeService.sendRegisterCode(emailRequestDto);
-        return true;
+       return emailCodeService.sendRegisterCode(emailRequestDto);
     }
 
 

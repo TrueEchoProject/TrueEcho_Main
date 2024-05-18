@@ -8,11 +8,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import te.trueEcho.domain.friend.entity.Friend;
-import te.trueEcho.domain.notification.entity.NotiTimeQ;
+import te.trueEcho.domain.notification.entity.RankNoti;
 import te.trueEcho.domain.post.entity.Comment;
 import te.trueEcho.domain.post.entity.Like;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.rank.entity.Rank;
+import te.trueEcho.domain.setting.entity.NotificationSetting;
 import te.trueEcho.domain.vote.entity.VoteResult;
 import te.trueEcho.global.entity.CreatedDateAudit;
 
@@ -61,12 +62,6 @@ public class User extends CreatedDateAudit {
     @Column(name = "connect_by_friend", nullable = true)
     private Boolean connectByFriend; //친구의 친구에게 내 계정 노출
 
-    @Column(name = "user_noti_time", nullable = true)
-    @Enumerated(EnumType.STRING)
-    private NotiTimeStatus notificationTime;
-
-    @Column(name = "user_noti_setting", nullable = true)
-    private Boolean notificationSetting;
 
     @Column(name = "user_birthday", nullable = true)
     private LocalDate birthday;
@@ -115,41 +110,44 @@ public class User extends CreatedDateAudit {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Comment> comments;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private NotiTimeQ notiTimeQ;
+    @OneToOne(mappedBy = "user", cascade=CascadeType.ALL)
+    private NotificationSetting notificationSetting;
 
     @Builder
     public User( String email,
                  String nickname,
                  String name,
                  Gender gender,
-                 NotiTimeStatus notificationTime,
-                 boolean notificationSetting,
                  LocalDate birthday,
+                 NotiTimeStatus notificationTime,
                  String location,
                  String password,
                  Role role) {
         this.email = email;
         this.nickname = nickname;
         this.gender = gender;
-        this.notificationSetting = notificationSetting;
-        this.notificationTime = notificationTime;
         this.birthday = birthday;
         this.location = location;
         this.password = password;
         this.role = role;
         this.name = name;
-        // 자동 초기화
+        
+        // 자동 초기화 : 디폴트
         this.connectByFriend = true;
+
+
+        // NotificationSetting 엔티티 생성 및 설정
+        this.notificationSetting =
+                NotificationSetting.builder()
+                        .user(this).
+                        notificationTime(notificationTime)
+                        .build();
     }
 
     public int getAge(){
         return LocalDate.now().getYear() - this.birthday.getYear();
     }
 
-    public boolean getNotificationSetting() {
-        return this.notificationSetting;
-    }
 
     public void setEncryptedPassword(String encryptedPassword) {
         this.password = encryptedPassword;
@@ -164,6 +162,10 @@ public class User extends CreatedDateAudit {
         this.name = name;
     }
 
+    public void updateNickName(String nickname) {
+        this.nickname = nickname;
+    }
+
 
     public void updatePassword(String updatepassword) {
         this.password = password;
@@ -172,14 +174,7 @@ public class User extends CreatedDateAudit {
     public void updateGender(Gender gender) {
         this.gender = gender;
     }
-
-    public void updateNotificationTime(NotiTimeStatus notificationTime) {
-        this.notificationTime = notificationTime;
-    }
-
-    public void updateNotificationSetting(boolean notificationSetting) {
-        this.notificationSetting = notificationSetting;
-    }
+    
 
     public void updateBirthDay(LocalDate birthday) {
         this.birthday = birthday;

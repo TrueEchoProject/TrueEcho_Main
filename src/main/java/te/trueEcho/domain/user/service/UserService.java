@@ -91,8 +91,6 @@ public class UserService {
         user.updateName(editUserRequest.getName());
         user.updatePassword(editUserRequest.getPassword());
         user.updateGender(editUserRequest.getGender());
-        user.updateNotificationTime(editUserRequest.getNotificationTime());
-        user.updateNotificationSetting(editUserRequest.isNotificationSetting());
         user.updateBirthDay(editUserRequest.getBirthday());
         user.updateLocation(editUserRequest.getLocation());
     }

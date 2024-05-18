@@ -3,6 +3,7 @@ import te.trueEcho.domain.setting.dto.calendar.MonthlyPostListResponse;
 import te.trueEcho.domain.setting.dto.mypage.EditMyInfoRequest;
 import te.trueEcho.domain.setting.dto.mypage.MyInfoResponse;
 import te.trueEcho.domain.setting.dto.mypage.MyPageResponse;
+import te.trueEcho.domain.setting.dto.notiset.NotificationSettingDto;
 import te.trueEcho.domain.setting.dto.pin.PinListResponse;
 import te.trueEcho.domain.setting.dto.pin.PinsRequest;
 import te.trueEcho.domain.setting.dto.random.RandomNotifyTResponse;
@@ -54,6 +55,10 @@ public interface SettingService {
      수정 권한 (알림을 못 받았으면, 대기 큐에 넣고, 나중에 알림을 받으면 큐에서 꺼내서 알림 시간대 수정)
      */
 
-     void editNotifyTime() ;
     RandomNotifyTResponse getRandomNotifyTime();
+    RandomNotifyTResponse editRandomNotifyTime();
+
+
+    NotificationSettingDto getNotificationSetting();
+    NotificationSettingDto editNotificationSetting(NotificationSettingDto notificationSettingDto);
 }
