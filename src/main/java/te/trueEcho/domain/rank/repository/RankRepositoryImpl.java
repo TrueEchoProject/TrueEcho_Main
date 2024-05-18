@@ -11,6 +11,8 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoField;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static te.trueEcho.global.util.WeekUtil.getThisWeekAsNum;
+
 
 @Slf4j
 @Repository
@@ -66,10 +68,7 @@ public class RankRepositoryImpl implements RankRepository{
         ranksByWeek.clear();
     }
 
-    private int getThisWeekAsNum(){
-        LocalDate now = LocalDate.now();
-        return now.get(ChronoField.ALIGNED_WEEK_OF_YEAR);
-    }
+
 
 
 }

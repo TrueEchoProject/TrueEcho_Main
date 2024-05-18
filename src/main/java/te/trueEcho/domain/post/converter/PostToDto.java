@@ -9,12 +9,9 @@ import te.trueEcho.domain.post.entity.Post;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
 @NoArgsConstructor
-public class PostToDtoConverter {
-
-    public static PostListResponse converter(List<Post> postList, String yourLocation) {
-
+public class PostToDto {
+    public  PostListResponse converter(List<Post> postList, String yourLocation) {
         List<ReadPostResponse> readPostResponseList = postList.stream()
                 .map(post -> {
                     return ReadPostResponse.builder()

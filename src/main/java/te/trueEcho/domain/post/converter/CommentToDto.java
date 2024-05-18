@@ -1,20 +1,17 @@
 package te.trueEcho.domain.post.converter;
-
-import lombok.Builder;
-import lombok.Getter;
+import lombok.NoArgsConstructor;
 import te.trueEcho.domain.post.dto.CommentListResponse;
 import te.trueEcho.domain.post.dto.CommentResponse;
 import te.trueEcho.domain.post.entity.Comment;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Getter
-@Builder
-public class CommentToDtoConverter {
-    public static CommentListResponse converter(List<Comment> commentList, Long postId) {
+
+@NoArgsConstructor
+public class CommentToDto {
+    public CommentListResponse converter(List<Comment> commentList, Long postId) {
 
         Map<Long, CommentResponse> mainCommentsMap = new HashMap<>();
         List<CommentResponse> commentResponseList = new ArrayList<>();

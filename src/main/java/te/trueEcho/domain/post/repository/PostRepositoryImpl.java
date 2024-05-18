@@ -2,6 +2,7 @@ package te.trueEcho.domain.post.repository;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import te.trueEcho.domain.post.entity.Comment;
@@ -10,6 +11,8 @@ import te.trueEcho.domain.user.entity.User;
 
 import java.util.List;
 
+
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepository{
@@ -18,7 +21,7 @@ public class PostRepositoryImpl implements PostRepository{
 
     @Transactional(readOnly = true)
     @Override
-    public List<Post> readPost(int pageCount, int index,  List<User> filteredUser) {
+    public List<Post> getAllPost(int pageCount, int index, List<User> filteredUser) {
         int currentIndex = index * pageCount;
 
         return em.createQuery("select p from Post p " +
@@ -57,5 +60,18 @@ public class PostRepositoryImpl implements PostRepository{
         } else {
             em.merge(post);
         }
+    }
+
+    @Override
+    public List<Post> getPostByIdList(List<Long> postIdList) {
+        try {
+            return em.createQuery("select p from Post p where p.id in :postIdList", Post.class)
+                    .setParameter("postIdList", postIdList)
+                    .getResultList();
+        } catch (Exception e) {
+            log.error("getPostByIdList error : {}", e.getMessage());
+            return null;
+        }
+
     }
 }

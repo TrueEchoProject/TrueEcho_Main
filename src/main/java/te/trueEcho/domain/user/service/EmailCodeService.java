@@ -6,11 +6,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import te.trueEcho.domain.user.dto.EmailRequest;
+import te.trueEcho.domain.user.dto.UserCheckRequest;
 import te.trueEcho.domain.user.repository.EmailMemoryRepository;
 import te.trueEcho.infra.email.EmailService;
 
@@ -18,26 +19,31 @@ import te.trueEcho.infra.email.EmailService;
 @RequiredArgsConstructor
 @Service
 public class EmailCodeService {
-
     private static final int REGISTER_CODE_LENGTH = 6;
     private static final int RESET_PASSWORD_CODE_LENGTH = 30;
     private static final String REGISTER_EMAIL_SUBJECT_POSTFIX = " 님의 진실된 모습을 공유해주세요!";
     private static final String RESET_PASSWORD_EMAIL_SUBJECT_POSTFIX = " 님, 계정의 비밀번호를 복구해주세요";
-
     private final EmailMemoryRepository emailMemoryRepository;
-
     private final EmailService emailService;
     private String confirmEmailUI;
 
-    public void sendRegisterCode(EmailRequest emailRequestDto) {
-        final String code = generateRandomCode(); // 랜덤 번호 생성
+    public boolean sendRegisterCode(UserCheckRequest emailRequestDto) {
+        try {
+            final String code = generateRandomCode(); // 랜덤 번호 생성
 
-        emailService.sendHtmlTextEmail(
-                emailRequestDto.getNickname() + REGISTER_EMAIL_SUBJECT_POSTFIX,
-                getRegisterEmailText(emailRequestDto.getEmail(), code),
-                emailRequestDto.getEmail()); // 메일 전송
+            emailService.sendHtmlTextEmail(
+                    emailRequestDto.getNickname() + REGISTER_EMAIL_SUBJECT_POSTFIX,
+                    getRegisterEmailText(emailRequestDto.getEmail(), code),
+                    emailRequestDto.getEmail()); // 메일 전송
 
-        emailMemoryRepository.saveCheckCode(emailRequestDto.getEmail(),code); // 랜덤 번호/이메일 저장.
+            emailMemoryRepository.saveCheckCode(emailRequestDto.getEmail(), code); // 랜덤 번호/이메일 저장.
+
+            return true;
+
+        }catch (Exception e){
+            log.error("Error sending email code: {}", e.getMessage());
+            return false;
+        }
     }
 
     public boolean checkRegisterCode( String email, String code) {

@@ -5,11 +5,14 @@ import te.trueEcho.domain.post.dto.AddPostRequest;
 import te.trueEcho.domain.post.dto.CommentListResponse;
 import te.trueEcho.domain.post.dto.ReadPostRequest;
 import te.trueEcho.domain.post.dto.PostListResponse;
+import te.trueEcho.domain.post.entity.Post;
+
+import java.util.List;
 
 
 public interface PostService {
 
-    PostListResponse getPost(ReadPostRequest readPostRequest);
+    PostListResponse getAllPostByType(ReadPostRequest readPostRequest);
 
     CommentListResponse getComment(Long postId);
 

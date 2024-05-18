@@ -11,9 +11,9 @@ import java.util.List;
 
 @Component
 @NoArgsConstructor
-public class VoteUserToDtoConverter {
+public class VoteUserToDto {
 
-    public static VoteUsersResponse converter(List<User> targetuserList){
+    public  VoteUsersResponse converter(List<User> targetuserList){
     List<TargetUserResponse> targetUserResponseList =  targetuserList.stream().map(
             user -> TargetUserResponse.builder()
                         .id(user.getId())

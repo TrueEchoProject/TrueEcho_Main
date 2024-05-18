@@ -44,7 +44,7 @@ public class PostController {
             @RequestParam int index,
             @RequestParam int pageCount){
 
-        PostListResponse postGetDtoList =  postService.getPost(
+        PostListResponse postGetDtoList =  postService.getAllPostByType(
                 ReadPostRequest.builder()
                         .index(index)
                         .pageCount(pageCount)

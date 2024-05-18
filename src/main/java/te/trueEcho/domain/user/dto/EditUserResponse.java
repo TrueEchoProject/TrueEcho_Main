@@ -18,10 +18,6 @@ public class EditUserResponse {
 
     private Gender gender;
 
-    private NotiTimeStatus notificationTime;
-
-    private boolean notificationSetting;
-
     //    @Pattern(regexp = "^\\d{3}-\\d{3,4}-\\d{4}$", message = "휴대폰 번호 양식이 맞지 않습니다") 차후 패턴 추가
     private LocalDate birthday;
 
@@ -30,8 +26,6 @@ public class EditUserResponse {
     public EditUserResponse(User user) {
         this.name = user.getName();
         this.gender = user.getGender();
-        this.notificationTime = user.getNotificationTime();
-        this.notificationSetting = user.getNotificationSetting();
         this.birthday = user.getBirthday();
         this.location = user.getLocation();
     }
