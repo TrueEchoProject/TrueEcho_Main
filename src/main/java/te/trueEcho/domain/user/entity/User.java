@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import te.trueEcho.domain.friend.entity.Friend;
+import te.trueEcho.domain.notification.entity.NotificationEntity;
 import te.trueEcho.domain.post.entity.Comment;
 import te.trueEcho.domain.post.entity.Like;
 import te.trueEcho.domain.post.entity.Post;
@@ -114,6 +115,9 @@ public class User extends CreatedDateAudit {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Comment> comments;
 
+    @OneToOne(mappedBy = "targetUser", cascade= CascadeType.ALL)
+    private NotificationEntity notificationEntity;
+
     @Builder
     public User( String email,
                  String nickname,
@@ -124,7 +128,8 @@ public class User extends CreatedDateAudit {
                  LocalDate birthday,
                  String location,
                  String password,
-                 Role role) {
+                 Role role,
+                 NotificationEntity notificationEntity) {
         this.email = email;
         this.nickname = nickname;
         this.gender = gender;
@@ -137,6 +142,7 @@ public class User extends CreatedDateAudit {
         this.name = name;
         // 자동 초기화
         this.connectByFriend = true;
+        this.notificationEntity = notificationEntity;
     }
 
     public int getAge(){

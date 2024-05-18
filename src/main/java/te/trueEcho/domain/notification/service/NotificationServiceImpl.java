@@ -32,7 +32,6 @@ public class NotificationServiceImpl implements NotificationService {
         NotificationEntity notification = NotificationEntity.builder()
                 .title(request.getTitle())
                 .body(request.getBody())
-                .targetUserId(user.getId())
                 .data(NotificationEntity.Data.builder()
                         .sendUserId(request.getData().getSendUserId())
                         .postId(request.getData().getPostId())

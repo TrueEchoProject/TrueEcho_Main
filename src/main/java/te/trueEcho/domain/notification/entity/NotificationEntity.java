@@ -6,6 +6,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import te.trueEcho.domain.post.entity.Comment;
 import te.trueEcho.domain.post.entity.Like;
 import te.trueEcho.domain.rank.entity.Rank;
+import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.vote.entity.VoteResult;
 import te.trueEcho.global.entity.CreatedDateAudit;
 
@@ -26,8 +27,6 @@ public class NotificationEntity extends CreatedDateAudit {
     private String title;
     private String body;
     private Data data;
-    private Long targetUserId;
-
     @Embeddable
     @Setter
     @Getter
@@ -35,11 +34,17 @@ public class NotificationEntity extends CreatedDateAudit {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Data {
+
         private Long sendUserId;
         private Long postId;
         private int notiType;
         private String logicType;
     }
+
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User targetUser;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")

@@ -49,7 +49,6 @@ public class Comment extends CreatedDateAudit {
 
     @Builder
     public Comment( String content, Post post, User user, NotificationEntity notificationEntity) {
-
         this.content = content;
         this.post = post;
         this.user = user;
