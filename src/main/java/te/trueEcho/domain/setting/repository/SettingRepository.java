@@ -20,4 +20,6 @@ public interface SettingRepository {
 
     NotificationSetting getNotificationSettingByUser(User user);
 
+    NotificationSetting editNotificationSetting(NotificationSetting notificationSetting);
+
 }

@@ -8,6 +8,8 @@ import te.trueEcho.domain.rank.converter.RankToDto;
 import te.trueEcho.domain.setting.converter.NotificationSettingToDto;
 import te.trueEcho.domain.setting.converter.PinListToDto;
 import te.trueEcho.domain.setting.converter.PostListToDto;
+import te.trueEcho.domain.setting.converter.UserPinToDto;
+import te.trueEcho.domain.setting.dto.mypage.OtherPageResponse;
 import te.trueEcho.domain.user.converter.SignUpDtoToUser;
 import te.trueEcho.domain.vote.converter.VoteToDto;
 import te.trueEcho.domain.vote.converter.VoteUserToDto;
@@ -54,5 +56,9 @@ public class UtilConfig {
     @Bean
     public NotificationSettingToDto notificationSettingToDtoConverter() {
         return new NotificationSettingToDto();
+    }
+    @Bean
+    public UserPinToDto otherPageResponse() {
+        return new UserPinToDto();
     }
 }

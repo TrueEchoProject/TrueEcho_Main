@@ -13,18 +13,19 @@ public class NotificationSettingToDto {
         return NotificationSettingDto.builder()
                 .communityNotiSet(
                         CommunityNotiSet.builder()
-                                .rankResult(notificationSetting.getRankingNotification())
+                                .newRank(notificationSetting.getNewRankNotification())
                                 .voteResult(notificationSetting.getVoteResultNotification())
+                                .inRank(notificationSetting.getInRankNotification())
                                 .build())
                 .postNotiSet(
                         PostNotiSet.builder()
                                 .postLike(notificationSetting.getLikeNotification())
                                 .newComment(notificationSetting.getCommentNotification())
+                                .subComment(notificationSetting.getSubCommentNotification())
                                 .build())
                 .friendRequest(notificationSetting.getFriendRequestNotification())
                 .PhotoTime(notificationSetting.getPhotoTimeNotification())
                 .service(notificationSetting.getServiceNotification())
                 .build();
-
     }
 }

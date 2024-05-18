@@ -93,6 +93,9 @@ public enum ResponseCode {
     // 마이페이지
     GET_MY_PAGE_SUCCESS(202, "T002", "마이페이지 조회를 성공했습니다."),
     GET_MY_PAGE_FAIL(202, "T002", "마이페이지 조회를 실패했습니다."),
+    GET_OTHER_PAGE_SUCCESS(202, "T002", "다른 유저의 마이페이지 조회를 성공했습니다."),
+    GET_OTHER_PAGE_FAIL(202, "T002", "다른 유저의 마이페이지 조회를 실패했습니다."),
+
     // 핀
     GET_PINS_SUCCESS(202, "T002", "핀 조회를 성공했습니다."),
     GET_PINS_FAIL(202, "T002", "핀 조회를 실패했습니다."),

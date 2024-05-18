@@ -13,6 +13,7 @@ import te.trueEcho.domain.post.entity.Comment;
 import te.trueEcho.domain.post.entity.Like;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.rank.entity.Rank;
+import te.trueEcho.domain.setting.entity.NotiTimeStatus;
 import te.trueEcho.domain.setting.entity.NotificationSetting;
 import te.trueEcho.domain.vote.entity.VoteResult;
 import te.trueEcho.global.entity.CreatedDateAudit;
@@ -91,23 +92,23 @@ public class User extends CreatedDateAudit {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private SuspendedUser suspendedUser;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY , cascade=CascadeType.ALL)
     @JoinColumn(name = "rank_id")
     private Rank rank;
 
-    @OneToMany(mappedBy = "userVoter", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "userVoter", cascade=CascadeType.ALL, fetch = FetchType.LAZY)
     private List<VoteResult> voteResults;
 
     @OneToMany(mappedBy = "userTarget", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<VoteResult> targetResults;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade=CascadeType.ALL)
     private List<Post> posts;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade=CascadeType.ALL)
     private List<Like> likes;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY , cascade=CascadeType.ALL)
     private List<Comment> comments;
 
     @OneToOne(mappedBy = "user", cascade=CascadeType.ALL)
@@ -122,7 +123,7 @@ public class User extends CreatedDateAudit {
                  String name,
                  Gender gender,
                  LocalDate birthday,
-                 NotiTimeStatus notificationTime,
+                 NotiTimeStatus notificationTimeStatus,
                  String location,
                  String password,
                  Role role,
@@ -144,8 +145,8 @@ public class User extends CreatedDateAudit {
         // NotificationSetting 엔티티 생성 및 설정
         this.notificationSetting =
                 NotificationSetting.builder()
-                        .user(this).
-                        notificationTime(notificationTime)
+                        .user(this)
+                        .notificationTimeStatus(notificationTimeStatus)
                         .build();
     }
 

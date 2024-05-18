@@ -78,7 +78,11 @@ public class FriendRepositoryImpl implements FriendRepository {
     public List<User> getFriendList(User loginUser) {
         try {
 
-            List<Friend> friends = em.createQuery("select f from Friend f join fetch f.sendUser join fetch f.targetUser where (f.sendUser = :loginUser or f.targetUser = :loginUser) and f.status = :friendStatus", Friend.class)
+            List<Friend> friends = em.createQuery("select f from Friend f" +
+                            " join fetch f.sendUser" +
+                            " join fetch f.targetUser " +
+                            "where (f.sendUser = :loginUser or f.targetUser = :loginUser)" +
+                            " and f.status = :friendStatus", Friend.class)
                     .setParameter("loginUser", loginUser)
                     .setParameter("friendStatus", FRIEND)
                     .getResultList();

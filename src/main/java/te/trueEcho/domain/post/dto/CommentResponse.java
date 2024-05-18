@@ -10,6 +10,7 @@ import java.util.List;
 @Getter
 public class CommentResponse {
    private final Long commentId;
+   private final Long userId;
     private final  String username;
     private final String profileURL;
     private final String content;

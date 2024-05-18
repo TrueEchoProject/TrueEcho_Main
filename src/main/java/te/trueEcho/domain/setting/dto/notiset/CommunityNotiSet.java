@@ -1,6 +1,7 @@
 package te.trueEcho.domain.setting.dto.notiset;
 
 
+import jakarta.persistence.Column;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,6 +9,7 @@ import lombok.Getter;
 @Builder
 
 public class CommunityNotiSet {
-    private final boolean rankResult;
+    private final boolean inRank;
+    private final boolean newRank;
     private final boolean voteResult;
 }
