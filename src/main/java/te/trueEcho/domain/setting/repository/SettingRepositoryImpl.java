@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import te.trueEcho.domain.post.entity.Pin;
 import te.trueEcho.domain.post.entity.Post;
+import te.trueEcho.domain.setting.entity.NotificationSetting;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.vote.entity.VoteResult;
 
@@ -81,6 +82,20 @@ public class SettingRepositoryImpl implements SettingRepository{
             log.error("getMostVotedTitle error : {}", e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public NotificationSetting getNotificationSettingByUser(User user) {
+        try{
+            return em.createQuery("select ns from NotificationSetting ns" +
+                            " where ns.user =:user", NotificationSetting.class)
+                    .setParameter("user", user)
+                    .getSingleResult();
+        }catch (Exception e){
+            log.error("getNotificationSettingByUser error : {}", e.getMessage());
+            return null;
+        }
+
     }
 
 

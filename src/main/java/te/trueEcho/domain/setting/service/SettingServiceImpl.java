@@ -196,6 +196,23 @@ public class SettingServiceImpl implements SettingService{
 
     @Override
     public NotificationSettingDto getNotificationSetting() {
+        User loginUser = authUtil.getLoginUser();
+
+        if (loginUser == null) {
+            log.error("Authentication failed - No login user found");
+            return null;
+        }
+
+        return NotificationSettingDto.builder()
+                .commentNotification(loginUser.getNotificationSetting().getCommentNotification())
+                .likeNotification(loginUser.getNotificationSetting().getLikeNotification())
+                .rankingNotification(loginUser.getNotificationSetting().getRankingNotification())
+                .voteResultNotification(loginUser.getNotificationSetting().getVoteResultNotification())
+                .photoTimeNotification(loginUser.getNotificationSetting().getPhotoTimeNotification())
+                .friendRequestNotification(loginUser.getNotificationSetting().getFriendRequestNotification())
+                .serviceNotification(loginUser.getNotificationSetting().getServiceNotification())
+                .build();
+
         return null;
     }
 

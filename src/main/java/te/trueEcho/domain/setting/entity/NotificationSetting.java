@@ -47,10 +47,14 @@ public class NotificationSetting {
     @Column(name = "setting_noti_friend")
     private Boolean friendRequestNotification;
 
+    @Column(name = "setting_noti_service")
+    private Boolean serviceNotification;
+
     @Builder
     public NotificationSetting(User user, NotiTimeStatus notificationTime) {
         this.user = user;
         this.notificationTime = notificationTime;
+        this.serviceNotification = true;
         this.commentNotification = true;
         this.likeNotification = true;
         this.rankingNotification = true;
