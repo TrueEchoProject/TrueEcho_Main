@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class NotificationRequest {
+public class NotificationDto {
     private String title;
     private String body;
     private Data data;
@@ -18,7 +18,7 @@ public class NotificationRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Data {
-        private Long sendUserId;
+        private Long userId;
         private Long postId;
         private int notiType;
         private String logicType;

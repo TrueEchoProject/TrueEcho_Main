@@ -1,10 +1,10 @@
 package te.trueEcho.domain.notification.service;
 
 
-import te.trueEcho.domain.notification.dto.NotificationRequest;
+import te.trueEcho.domain.notification.dto.NotificationDto;
 
 public interface NotificationService  {
 
-    void sendNotificationCtoStoC(NotificationRequest request);
+    void sendNotificationCtoStoC(NotificationDto request);
 }
 

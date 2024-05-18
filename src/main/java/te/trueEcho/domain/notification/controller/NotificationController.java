@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import te.trueEcho.domain.notification.dto.NotificationRequest;
+import te.trueEcho.domain.notification.dto.NotificationDto;
 import te.trueEcho.domain.notification.service.NotificationService;
 
 @Tag(name = "USER API")
@@ -18,7 +18,7 @@ public class NotificationController {
         private NotificationService notificationService;
 
     @PostMapping("/sendToFCM")
-    public String sendNotification(@RequestBody NotificationRequest request) {
+    public String sendNotification(@RequestBody NotificationDto request) {
         notificationService.sendNotificationCtoStoC(request);
         return "Notification request sent for type: " + request.getData().getNotiType();
     }

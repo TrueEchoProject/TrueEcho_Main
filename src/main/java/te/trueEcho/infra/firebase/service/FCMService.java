@@ -8,12 +8,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import te.trueEcho.domain.notification.entity.NotificationEntity;
+import te.trueEcho.domain.notification.dto.NotificationDto;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.UserAuthRepository;
 import te.trueEcho.global.util.AuthUtil;
-import te.trueEcho.infra.firebase.dto.FCMTokenResponse;
-
 
 
 @Slf4j
@@ -47,18 +45,14 @@ public class FCMService {
         }
     }
 
-    public FCMTokenResponse getToken() {
-        final User user = authUtil.getLoginUser();
+    public String getToken(User receiver) {
 
-        if (user == null) {
+        if (receiver == null) {
             log.error("User not found");
             return null;
         }
 
-        return FCMTokenResponse.builder()
-                .userId(user.getId())
-                .fcmToken(user.getFcmToken())
-                .build();
+        return receiver.getFcmToken();
     }
 
     @Transactional
@@ -68,14 +62,14 @@ public class FCMService {
         userAuthRepository.save(user);
     }
 
-    public void sendNotification(String token, String title, String body, NotificationEntity.Data data) {
+    public void sendNotification(String token, String title, String body, NotificationDto dto) {
         Message message = Message.builder()
                 .setToken(token)
                 .setNotification(Notification.builder().setTitle(title).setBody(body).build())
-                .putData("sendUserId", String.valueOf(data.getSendUserId()))
-                .putData("postId", String.valueOf(data.getPostId()))
-                .putData("notiType", String.valueOf(data.getNotiType()))
-                .putData("logicType", data.getLogicType())
+                .putData("userId", String.valueOf(dto.getData().getUserId()))
+                .putData("postId", String.valueOf(dto.getData().getPostId()))
+                .putData("notiType", String.valueOf(dto.getData().getNotiType()))
+                .putData("logicType", dto.getData().getLogicType())
                 .build();
 
         try {

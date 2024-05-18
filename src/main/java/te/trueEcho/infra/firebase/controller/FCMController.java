@@ -30,13 +30,4 @@ public class FCMController {
                 ResponseEntity.ok(ResponseForm.of(FCM_TOKEN_SAVED_SUCCESS)) :
                 ResponseEntity.ok(ResponseForm.of(FCM_TOKEN_SAVED_FAIL));
     }
-
-    @GetMapping(value = "/read") // 기존의 토큰 정보 조회, 디버깅이나 특수한 검증 작업에만 사용
-    public ResponseEntity<ResponseForm> getToken() {
-
-        FCMTokenResponse fcmTokenResponse = fcmService.getToken();
-        return fcmTokenResponse != null ?
-                ResponseEntity.ok(ResponseForm.of(FCM_TOKEN_GET_SUCCESS, fcmTokenResponse)) :
-                ResponseEntity.ok(ResponseForm.of(FCM_TOKEN_GET_FAIL));
-    }
 }

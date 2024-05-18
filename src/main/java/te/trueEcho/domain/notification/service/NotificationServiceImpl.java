@@ -3,16 +3,13 @@ package te.trueEcho.domain.notification.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import te.trueEcho.domain.notification.dto.NotificationRequest;
+import te.trueEcho.domain.notification.dto.NotificationDto;
 import te.trueEcho.domain.notification.entity.NotificationEntity;
 import te.trueEcho.domain.notification.repository.NotificationRepository;
-import te.trueEcho.domain.user.entity.NotiTimeStatus;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.UserAuthRepository;
 import te.trueEcho.global.util.AuthUtil;
 import te.trueEcho.infra.firebase.service.FCMService;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -25,15 +22,17 @@ public class NotificationServiceImpl implements NotificationService {
     private final UserAuthRepository userAuthRepository;
 
     @Override
-    public void sendNotificationCtoStoC(NotificationRequest request) {
+    public void sendNotificationCtoStoC(NotificationDto request) {
         // 데이터베이스에 알림 저장
-        final User user = authUtil.getLoginUser();
+        final User sender = authUtil.getLoginUser();
+        final User receiver = userAuthRepository.findUserById(request.getData().getUserId());
 
         NotificationEntity notification = NotificationEntity.builder()
                 .title(request.getTitle())
                 .body(request.getBody())
+                .receiver(receiver)
                 .data(NotificationEntity.Data.builder()
-                        .sendUserId(request.getData().getSendUserId())
+                        .senderId(sender.getId())
                         .postId(request.getData().getPostId())
                         .notiType(request.getData().getNotiType())
                         .logicType(request.getData().getLogicType())
@@ -42,15 +41,21 @@ public class NotificationServiceImpl implements NotificationService {
         notificationRepository.save(notification);
 
         // FCM을 통해 알림 전송
-        String token = String.valueOf(fcmService.getToken()); // 토큰 가져오기
+        String token = String.valueOf(fcmService.getToken(receiver)); // 토큰 가져오기
+
         if (token != null) {
-            // NotificationRequest.Data 객체를 NotificationEntity.Data 객체로 변환
-            NotificationEntity.Data fcmData = NotificationEntity.Data.builder()
-                    .sendUserId(request.getData().getSendUserId())
-                    .postId(request.getData().getPostId())
-                    .notiType(request.getData().getNotiType())
-                    .logicType(request.getData().getLogicType())
+            // NotificationRequest.Data 객체를 NotificationDto로 변환
+            NotificationDto fcmData = NotificationDto.builder()
+                    .title(request.getTitle())
+                    .body(request.getBody())
+                    .data(NotificationDto.Data.builder()
+                            .userId(sender.getId())
+                            .postId(request.getData().getPostId())
+                            .notiType(request.getData().getNotiType())
+                            .logicType(request.getData().getLogicType())
+                            .build())
                     .build();
+
 
             // notiType에 따라 알림을 보낼지 말지 결정
             switch (request.getData().getNotiType()) {

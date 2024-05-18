@@ -35,7 +35,7 @@ public class NotificationEntity extends CreatedDateAudit {
     @AllArgsConstructor
     public static class Data {
 
-        private Long sendUserId;
+        private Long senderId; //알림 전송자
         private Long postId;
         private int notiType;
         private String logicType;
@@ -44,7 +44,7 @@ public class NotificationEntity extends CreatedDateAudit {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User targetUser;
+    private User receiver; // 알림의 소유자 (받는 사람)
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")

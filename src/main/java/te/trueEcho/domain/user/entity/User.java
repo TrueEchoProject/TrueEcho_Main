@@ -115,7 +115,7 @@ public class User extends CreatedDateAudit {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Comment> comments;
 
-    @OneToOne(mappedBy = "targetUser", cascade= CascadeType.ALL)
+    @OneToOne(mappedBy = "receiver", cascade= CascadeType.ALL)
     private NotificationEntity notificationEntity;
 
     @Builder
