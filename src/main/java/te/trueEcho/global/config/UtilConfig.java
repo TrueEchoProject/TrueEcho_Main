@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import te.trueEcho.domain.post.converter.CommentToDto;
 import te.trueEcho.domain.post.converter.PostToDto;
 import te.trueEcho.domain.rank.converter.RankToDto;
+import te.trueEcho.domain.setting.converter.NotificationSettingToDto;
 import te.trueEcho.domain.setting.converter.PinListToDto;
 import te.trueEcho.domain.setting.converter.PostListToDto;
 import te.trueEcho.domain.user.converter.SignUpDtoToUser;
@@ -48,5 +49,10 @@ public class UtilConfig {
     @Bean
     public PostListToDto postListToDtoConverter() {
         return new PostListToDto();
+    }
+
+    @Bean
+    public NotificationSettingToDto notificationSettingToDtoConverter() {
+        return new NotificationSettingToDto();
     }
 }
