@@ -19,6 +19,8 @@ import te.trueEcho.domain.user.service.UserAuthService;
 import te.trueEcho.global.response.ResponseCode;
 import te.trueEcho.global.response.ResponseForm;
 
+import javax.annotation.Nullable;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/setting")
@@ -34,10 +36,8 @@ public class SettingController {
      개인당 핀 [게시물 3개 or 5개]
      */
 
-
-    // 해결해야 됨
-    @GetMapping("/myPage/{userId}")
-    public ResponseEntity<ResponseForm> getMyPage(@PathVariable Long userId) {
+    @GetMapping("/myPage")
+    public ResponseEntity<ResponseForm> getMyPage(@RequestParam @Nullable Long userId) {
         if(userId==null){
             MyPageResponse myPageResponse = settingService.getMyPage();
             return myPageResponse != null ?

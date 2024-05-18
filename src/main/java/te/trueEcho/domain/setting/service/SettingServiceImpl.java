@@ -219,9 +219,9 @@ public class SettingServiceImpl implements SettingService{
     //수정 권한 (알림을 못 받았으면, 대기 큐에 넣고, 나중에 알림을 받으면 큐에서 꺼내서 알림 시간대 수정)
     @Override
     public boolean editRandomNotifyTime(int notifyTime) {
-
         try {
-            notificationEditService.isUserReceivedNotification(authUtil.getLoginUser(), NotiTimeStatus.values()[notifyTime]);
+            notificationEditService.isUserReceivedNotification(
+                    authUtil.getLoginUser(), NotiTimeStatus.values()[notifyTime]);
             return true;
         }catch (Exception e) {
             log.error("Failed to edit notification time", e);
