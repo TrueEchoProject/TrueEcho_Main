@@ -147,7 +147,7 @@ public class SettingController {
      */
 
     @PatchMapping("/notifyTime")
-    public ResponseEntity<ResponseForm> editNotifyTime(@RequestBody int notifyTime) {
+    public ResponseEntity<ResponseForm> editNotifyTime(@RequestParam int editTime) {
 
         RandomNotifyTResponse randomNotifyTResponse = settingService.getRandomNotifyTime();
         return randomNotifyTResponse != null ?

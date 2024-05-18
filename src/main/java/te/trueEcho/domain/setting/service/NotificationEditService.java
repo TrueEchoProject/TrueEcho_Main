@@ -69,7 +69,7 @@ public class NotificationEditService {
                         user, LocalTime.now().plusHours(MAX_WAITING_HOUR)));
     }
 
-    @Scheduled(fixedRate = 1000 * 60 * 60)
+    @Scheduled(fixedRate = 1000 * 60 * 60, initialDelay = 1000 * 60 * 60)
     @Transactional
     void processPermittedUser() {
 
@@ -102,7 +102,7 @@ public class NotificationEditService {
 
     // 케이스 2: 특정 유저에게 랜덤 알림을 보낸 후 [준형이형]
     @Transactional
-    public void checkIfUserIsWaiting(User user) {
+    public void checkIfUserIsWaitingAfterNotification(User user) { // receiver
         if( waitingMap.containsKey(user) ) {
             authorizeUserToModify(user);
         }
@@ -112,7 +112,7 @@ public class NotificationEditService {
     private static class PermittedClient {
         private final User user;
         private final NotiTimeStatus notiTimeStatus;
-        private final LocalTime scheduledTime; // 알림 시간
+        private final LocalTime scheduledTime; // 기다려야 햐는 시간
 
         private PermittedClient(NotiTimeStatus notiTimeStatus, User user, LocalTime scheduledTime) {
             this.notiTimeStatus = notiTimeStatus;
