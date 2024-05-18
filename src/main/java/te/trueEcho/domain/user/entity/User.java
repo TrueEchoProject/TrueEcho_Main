@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import te.trueEcho.domain.friend.entity.Friend;
-import te.trueEcho.domain.notification.entity.NotiTimeQ;
 import te.trueEcho.domain.post.entity.Comment;
 import te.trueEcho.domain.post.entity.Like;
 import te.trueEcho.domain.post.entity.Post;
@@ -52,7 +51,6 @@ public class User extends CreatedDateAudit {
     private String name;
 
     @Column(name = "user_nick_name", nullable = false, length = 20, unique = true)
-
     private String nickname; // user 구분하는 식별자
 
     @Enumerated(EnumType.STRING)
@@ -85,6 +83,9 @@ public class User extends CreatedDateAudit {
     @Column(name = "refresh_token", nullable = true)
     private String refreshToken;
 
+    @Column(name = "fcm_token", nullable = true)
+    private String fcmToken;
+
     @OneToMany(mappedBy = "sendUser", cascade = CascadeType.ALL)
     private List<Friend> friend;
 
@@ -114,7 +115,7 @@ public class User extends CreatedDateAudit {
     private List<Comment> comments;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private NotiTimeQ notiTimeQ;
+    private RandomNoti randomNoti;
 
     @Builder
     public User( String email,
@@ -154,6 +155,10 @@ public class User extends CreatedDateAudit {
 
     }
 
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
+
     public void updateName(String name) {
         this.name = name;
     }
@@ -188,4 +193,7 @@ public class User extends CreatedDateAudit {
         this.suspendedUser = null;
     }
 
+    public NotiTimeStatus getNotiTimeStatus() {
+        return this.notificationTime;
+    }
 }

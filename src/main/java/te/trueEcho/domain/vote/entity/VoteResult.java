@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import te.trueEcho.domain.notification.entity.VoteResultNoti;
+import te.trueEcho.domain.notification.entity.NotificationEntity;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.global.entity.CreatedDateAudit;
 
@@ -41,10 +41,14 @@ public class VoteResult extends CreatedDateAudit {
     @JoinColumn(name = "vote_id")
     private Vote vote;
 
+    @OneToOne(mappedBy = "voteResult", cascade=CascadeType.ALL)
+    private NotificationEntity notificationEntity;
+
     @Builder
-    public VoteResult(User userVoter, User userTarget, Vote vote){
+    public VoteResult(User userVoter, User userTarget, Vote vote, NotificationEntity notificationEntity){
         this.userVoter = userVoter;
         this.userTarget = userTarget;
         this.vote = vote;
+        this.notificationEntity = notificationEntity;
     }
 }

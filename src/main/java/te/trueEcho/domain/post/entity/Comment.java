@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import te.trueEcho.domain.notification.entity.CommentNoti;
+import te.trueEcho.domain.notification.entity.NotificationEntity;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.global.entity.CreatedDateAudit;
 import java.util.ArrayList;
@@ -45,14 +45,14 @@ public class Comment extends CreatedDateAudit {
     private List<Comment> subComments = new ArrayList<>();
 
     @OneToOne(mappedBy = "comment", cascade= CascadeType.ALL)
-    private CommentNoti commentNoti;
+    private NotificationEntity notificationEntity;
 
     @Builder
-    public Comment( String content, Post post, User user, CommentNoti commentNoti) {
+    public Comment( String content, Post post, User user, NotificationEntity notificationEntity) {
 
         this.content = content;
         this.post = post;
         this.user = user;
-        this.commentNoti = commentNoti;
+        this.notificationEntity = notificationEntity;
     }
 }
