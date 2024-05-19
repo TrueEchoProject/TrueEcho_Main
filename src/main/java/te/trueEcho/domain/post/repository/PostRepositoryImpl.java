@@ -33,6 +33,20 @@ public class PostRepositoryImpl implements PostRepository {
                 .getResultList();
     }
 
+    @Override
+    public Post getPostById(Long postId) {
+        try {
+            return em.createQuery("select p from Post p " +
+                            "join fetch p.user " +
+                            "where p.id = :postId", Post.class)
+                    .setParameter("postId", postId)
+                    .getSingleResult();
+        } catch (Exception e) {
+            log.error("getPostById error : {}", e.getMessage());
+            return null;
+        }
+    }
+
     /**
      * 먼저 그 게시물에 해당하는 메인 댓글을 조회하고,
      * 그 댓글을 이용해 서브 댓글 조회하기.
@@ -50,6 +64,32 @@ public class PostRepositoryImpl implements PostRepository {
                 .getResultList();
     }
 
+    @Override
+    public Comment getParentComment(Long commentId) {
+        try {
+            return em.createQuery("SELECT c FROM Comment c " +
+                            "JOIN FETCH c.user " +
+                            "WHERE c.id = :commentId", Comment.class)
+                    .setParameter("commentId", commentId)
+                    .getSingleResult();
+        } catch (Exception e) {
+            log.error("getParentComment error : {}", e.getMessage());
+            return null;
+
+        }
+    }
+
+    @Override
+    public boolean writeComment(Comment comment) {
+        try {
+            em.persist(comment);
+            return true;
+        } catch (Exception e) {
+            log.error("writeComment error : {}", e.getMessage());
+            return false;
+        }
+    }
+
     @Transactional
     @Override
     public void save(Post post) {
@@ -57,6 +97,36 @@ public class PostRepositoryImpl implements PostRepository {
             em.persist(post);
         } else {
             em.merge(post);
+        }
+    }
+
+    @Transactional
+    public boolean deletePost(Long postId) {
+        try{
+            Post post = em.find(Post.class, postId);
+            if (post != null) {
+                em.remove(post);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            log.error("deletePost error : {}", e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deleteComment(Long commentId) {
+        try {
+            Comment comment = em.find(Comment.class, commentId);
+            if (comment != null) {
+                em.remove(comment);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            log.error("deleteComment error : {}", e.getMessage());
+            return false;
         }
     }
 

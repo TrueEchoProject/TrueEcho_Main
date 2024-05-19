@@ -56,5 +56,6 @@ public class Comment extends CreatedDateAudit {
         this.user = user;
         this.mainComment = mainComment;
         this.notificationEntity = notificationEntity;
+
     }
 }
