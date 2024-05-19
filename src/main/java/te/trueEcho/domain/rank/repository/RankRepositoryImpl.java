@@ -6,9 +6,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import te.trueEcho.domain.rank.dto.RankListResponse;
+import te.trueEcho.domain.user.entity.User;
+import te.trueEcho.domain.vote.entity.Vote;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoField;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static te.trueEcho.global.util.WeekUtil.getThisWeekAsNum;
@@ -50,13 +51,14 @@ public class RankRepositoryImpl implements RankRepository{
         }
     }
 
-    public void cacheThisWeekRank( RankListResponse voteResultMap){
+    public Map<Vote, Map<User, Integer>> cacheThisWeekRank(RankListResponse voteResultMap){
         try {
             resetRank();
             ranksByWeek.put(getThisWeekAsNum(), voteResultMap);
         } catch (Exception e) {
             log.error("Error occurred while caching this week's rank", e);
         }
+        return null;
     }
 
 
