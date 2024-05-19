@@ -1,29 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet, ActivityIndicator } from 'react-native';
 import * as Location from 'expo-location';
+import * as Linking from 'expo-linking';
+import { View, Text, Button } from 'react-native';
 
-const GetLocation = ({ onLocationReceived }) => {
+const GetLocation = ({ onLocationReceived, refresh }) => {
   const [location, setLocation] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
 
+  const getLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      setErrorMsg('위치 접근 권한이 거부되었습니다. 설정에서 권한을 허용해주세요.');
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
+    onLocationReceived(location.coords.latitude, location.coords.longitude);
+  };
+
   useEffect(() => {
-    const getLocation = async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        setLoading(false);
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-      setLoading(false);
-      onLocationReceived(location.coords.latitude, location.coords.longitude);
-    };
-
     getLocation();
-  }, []);
+  }, [refresh]); // refresh prop이 변경될 때마다 getLocation 호출
+
+  const openSettings = () => {
+    Linking.openSettings();
+  };
+
+  if (errorMsg) {
+    return (
+      <View>
+        <Text>{errorMsg}</Text>
+        <Button title="Retry" onPress={getLocation} />
+        <Button title="Open Settings" onPress={openSettings} />
+      </View>
+    );
+  }
 
   return null;
 };
