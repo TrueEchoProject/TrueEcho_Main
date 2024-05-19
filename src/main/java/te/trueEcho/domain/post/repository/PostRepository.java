@@ -9,7 +9,16 @@ import java.util.List;
 public interface PostRepository {
     List<Post> getAllPost(int pageCount, int index, List<User> filteredUser);
 
+    Post getPostById(Long postId);
+
     List<Comment> readCommentWithUnderComments(Long postId);
+
+    Comment getParentComment(Long commentId);
+
+
+    boolean writeComment(Comment comment);
+    boolean deletePost(Long postId);
+    boolean deleteComment(Long commentId);
 
     void save(Post post);
 
