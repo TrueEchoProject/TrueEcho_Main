@@ -11,12 +11,13 @@ import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public class PostToDto {
-    public  PostListResponse converter(List<Post> postList, String yourLocation) {
+    public  PostListResponse converter(List<Post> postList, String yourLocation, long userId) {
         List<ReadPostResponse> readPostResponseList = postList.stream()
                 .map(post -> {
                     return ReadPostResponse.builder()
                             .postId(post.getId())
                             .userId(post.getUser().getId())
+                            .isMine(post.getUser().getId()==userId)
                             .title(post.getTitle())
                             .postFrontUrl(post.getUrlFront())
                             .postBackUrl(post.getUrlBack())
@@ -32,7 +33,7 @@ public class PostToDto {
 
         return  PostListResponse.builder()
                 .yourLocation(yourLocation)
-                .readPostRespons(readPostResponseList)
+                .readPostResponse(readPostResponseList)
                 .postCount(readPostResponseList.size()).build();
     }
 }
