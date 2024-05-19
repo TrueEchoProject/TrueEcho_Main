@@ -3,7 +3,7 @@ import * as SecureStore from 'expo-secure-store';
 
 // Axios 인스턴스 생성
 const secureApi = axios.create({
-    baseURL: 'http://192.168.123.121:3000', // 서버의 기본 URL 설정. 백과 통합때 설정. 
+    baseURL: 'http://192.168.0.27:3000/', // 서버의 기본 URL 설정. 백과 통합때 설정.
 });
 
 // 요청 인터셉터 설정

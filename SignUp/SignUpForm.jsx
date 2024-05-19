@@ -18,6 +18,7 @@ import SettingTime from "./SettingTime";
 import GetLocation from './GetLocation';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import MapView, { Marker } from 'react-native-maps';
 
 
 const SignUpForm = () => {
@@ -64,7 +65,7 @@ const SignUpForm = () => {
         if (userData.password !== confirmPassword) return "비밀번호 확인 불일치";
         return "";
       case 4:
-          if(userData.gender === "") return "성별 미입력"
+        if (userData.gender === "") return "성별 미입력"
       case 3:
         if (userData.userAge === "") return "생년월일 미입력";
         return "";
@@ -138,14 +139,16 @@ const SignUpForm = () => {
     try {
       const response = await axios.post('https://jsonplaceholder.typicode.com/users', userData);
       console.log("백엔드로 전송", response.data);
-  
+
       // 응답 헤더에서 토큰 추출
       const token = response.headers['Authorization'];
-  
+
       if (token) {
         // 성공적으로 서버에 데이터 전송 후, 로컬 스토리지에 저장
         await SecureStore.setItemAsync('userEmail', userData.email);
         await SecureStore.setItemAsync('userPassword', userData.password);
+        await SecureStore.setItemAsync('latitude', userData.latitude); // 유저 위치를 캐싱.
+        await SecureStore.setItemAsync('longitude', userData.longitude); // 유저 위치를 캐싱.
         await SecureStore.setItemAsync('userToken', token);
         console.log("로컬 스토리지에 저장 완료");
       } else {
@@ -195,7 +198,7 @@ const SignUpForm = () => {
     } catch (error) {
       console.error('인증 코드 확인 실패:', error);
     }
-  };  
+  };
 
   const sendEmailAuth = () => {
     setIsCodeSent(true);
@@ -225,7 +228,7 @@ const SignUpForm = () => {
     }
     return () => clearInterval(interval);
   }, [isCodeSent, timer]);
-  
+
   useEffect(() => {
     let interval = null;
     if (!canResend && resendTimer > 0) {
@@ -242,7 +245,9 @@ const SignUpForm = () => {
     setLoadingLocation(false);
   };
 
-  const handleGetLocation = () => setLoadingLocation(true);
+  const handleGetLocation = () => {
+    setLoadingLocation(true);
+  };
 
   return (
     <View style={styles.container}>
@@ -384,21 +389,40 @@ const SignUpForm = () => {
         {step === 6 && (
           <>
             <Text style={styles.text}>위치 정보를 활성화 해주세요.</Text>
-            <Text style={styles.description}>주변 친구들에게 노출될 수 있어요!</Text>
             {loadingLocation ? (
               <ActivityIndicator size="large" color="#0000ff" />
             ) : (
-              <Button title="Get Location" onPress={handleGetLocation} />
+              <Button
+                title={userData.latitude && userData.longitude ? "Refresh Location" : "Get Location"}
+                onPress={handleGetLocation}
+              />
             )}
-            <GetLocation onLocationReceived={handleLocationReceived} />
+            <GetLocation onLocationReceived={handleLocationReceived} refresh={loadingLocation} />
             {userData.latitude && userData.longitude && (
-              <Text style={styles.locationText}>
-                Latitude: {userData.latitude}, Longitude: {userData.longitude}
-              </Text>
+              <>
+                <MapView
+                  style={styles.map}
+                  initialRegion={{
+                    latitude: parseFloat(userData.latitude),
+                    longitude: parseFloat(userData.longitude),
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
+                  }}
+                >
+                  <Marker
+                    coordinate={{
+                      latitude: parseFloat(userData.latitude),
+                      longitude: parseFloat(userData.longitude),
+                    }}
+                  />
+                </MapView>
+              </>
             )}
             {warning === "위치 정보 미수집" && <Text style={styles.warningText}>위치 정보를 활성화해주세요.</Text>}
           </>
         )}
+
+
         {step === 7 && (
           <>
             <Text style={styles.text}>언제 게시물을 작성할까요?</Text>
@@ -520,6 +544,11 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     paddingBottom: hp(2),
+  },
+  map: {
+    width: '100%',
+    borderRadius: 30,
+    height: 250,
   },
 });
 

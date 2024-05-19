@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
-import { View, TouchableOpacity, Button, StyleSheet, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, TouchableOpacity, Button, StyleSheet, Image, Text } from 'react-native';
+import * as ImageManipulator from 'expo-image-manipulator'; // 이미지 조작 라이브러리
+import * as FileSystem from 'expo-file-system'; // 파일 시스템 라이브러리
+import { useNavigation } from '@react-navigation/native';
 
-const defaultImage = 'path_to_your_default_image_here'; // 기본 이미지 경로 설정
+const defaultImage = 'https://mblogthumb-phinf.pstatic.net/MjAyMjAyMDdfMjEy/MDAxNjQ0MTk0Mzk2MzY3.WAeeVCu2V3vqEz_98aWMOjK2RUKI_yHYbuZxrokf-0Ug.sV3LNWlROCJTkeS14PMu2UBl5zTkwK70aKX8B1w2oKQg.JPEG.41minit/1643900851960.jpg?type=w800';
 
-const ImageDouble = React.memo(({ cameraData, setCameraData }) => {
+export const ImageDouble = React.memo(({ cameraData, setCameraData }) => {
   const swapImageIndices = () => {
     setCameraData((prevData) => ({
       front: {
@@ -32,7 +35,8 @@ const ImageDouble = React.memo(({ cameraData, setCameraData }) => {
   );
 });
 
-const SendPostStack = ({ navigation, route }) => {
+const SendPostStack = ({ route }) => {
+  const navigation = useNavigation();
   const [cameraData, setCameraData] = useState({
     front: {
       uris: route.params.frontCameraUris || [],
@@ -43,69 +47,68 @@ const SendPostStack = ({ navigation, route }) => {
       selectedIndex: 0,
     },
   });
+  const [timer, setTimer] = useState(route.params.remainingTime); // 타이머 상태
 
-  const [postStatus, setPostStatus] = useState('0'); // 초기 post_status 값은 '0'으로 설정
-  const scopeValue = 1; // scope 값을 적절한 값으로 설정
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setTimer(prevTimer => {
+        if (prevTimer > 0) return prevTimer - 1; // 타이머 감소
+        clearInterval(intervalId); // 타이머가 0이 되면 멈춤
+        return 0;
+      });
+    }, 1000);
 
-  async function convertToBinary(uri) {
-    const response = await fetch(uri);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch ${uri}: ${response.statusText}`);
-    }
-    return response.blob();
-  }
+    return () => clearInterval(intervalId);
+  }, []);
 
-  const getPostStatusFromServer = async () => {
-    // 서버 요청이 성공했다고 가정하고 응답을 모의하는 부분
-    const serverResponseMock = {
-      status: '1', // [ 0: none, 1: "free", 2: late, 3: onTime ]
-    };
-
-    // 서버로부터 받은 결과에 따라 post_status를 설정
-    setPostStatus(serverResponseMock.status);
+  const goToCameraScreen = () => {
+    navigation.navigate("CameraOption"); // CameraOption 화면으로 이동
   };
 
-  const handleSubmit = async () => {
-    // 먼저 post_status를 설정하기 위해 서버와 통신
-    await getPostStatusFromServer();
-
-    const frontImageUri = cameraData.front.uris[cameraData.front.selectedIndex];
-    const backImageUri = cameraData.back.uris[cameraData.back.selectedIndex];
-
+  const resizeImage = async (uri) => {
     try {
-      const frontImageData = await convertToBinary(frontImageUri); // 바이너리화
-      const backImageData = await convertToBinary(backImageUri);
+      const manipResult = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ resize: { width: 800, height: 800 } }],
+        { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
+      );
+      const fileInfo = await FileSystem.getInfoAsync(manipResult.uri);
 
-      const formData = new FormData();
-      formData.append('scope', scopeValue);
-      formData.append('post_front', frontImageData, 'front.jpg');
-      formData.append('post_back', backImageData, 'back.jpg');
-      formData.append('title', 'Your Post Title');
-      formData.append('post_status', postStatus);
+      console.log('Resized image URI:', manipResult.uri);
+      console.log(`Resized Image dimensions: ${manipResult.width} x ${manipResult.height}`);
+      console.log(`Resized image size: ${fileInfo.size} bytes`);
 
-      // 서버 엔드포인트 URL
-      const serverUrl = 'https://your-server.com/api/upload';
-      const response = await fetch(serverUrl, { // fetch api 활용
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) { // 서버의 응답을 확인
-        throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      console.log('Server response:', result);
+      return { uri: manipResult.uri, type: 'image/jpeg', name: 'photo.jpg' };
     } catch (error) {
-      console.error('Error submitting data:', error);
+      console.error('Error resizing image:', error);
+      throw error;
+    }
+  };
+
+  const handleNext = async () => {
+    try {
+      const selectedFrontImageUri = cameraData.front.uris[cameraData.front.selectedIndex];
+      const selectedBackImageUri = cameraData.back.uris[cameraData.back.selectedIndex];
+
+      const resizedFrontImage = await resizeImage(selectedFrontImageUri); // 전면 사진 리사이즈
+      const resizedBackImage = await resizeImage(selectedBackImageUri); // 후면 사진 리사이즈
+
+      navigation.navigate('FeedPostPage', {
+        frontImage: resizedFrontImage.uri,
+        backImage: resizedBackImage.uri,
+        remainingTime: timer, // 남은 시간 전달
+      });
+    } catch (error) {
+      console.error('Error resizing images:', error);
     }
   };
 
   return (
     <View style={styles.container}>
+      <Text>Timer: {Math.floor(timer / 60)}:{timer % 60 < 10 ? `0${timer % 60}` : timer % 60}</Text>
       <ImageDouble cameraData={cameraData} setCameraData={setCameraData} />
-      <Button title="Submit Post" onPress={handleSubmit} />
-      <Button title="Go to Camera" onPress={() => navigation.navigate("CameraOption")} />
+      <Button title="Go to Camera" onPress={goToCameraScreen} />
+      <Button title="Next" onPress={handleNext} />
     </View>
   );
 };
