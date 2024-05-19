@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class PostRepositoryImpl implements PostRepository{
+public class PostRepositoryImpl implements PostRepository {
     private final EntityManager em;
 
 
@@ -48,14 +48,12 @@ public class PostRepositoryImpl implements PostRepository{
     }
 
     /**
-     *
-        먼저 그 게시물에 해당하는 메인 댓글을 조회하고,
-     그 댓글을 이용해 서브 댓글 조회하기.
-
-     서브댓글에서 시작해서 조호히하기
-
-     메인 댓글에서 시작해서 조회하기.
-
+     * 먼저 그 게시물에 해당하는 메인 댓글을 조회하고,
+     * 그 댓글을 이용해 서브 댓글 조회하기.
+     * <p>
+     * 서브댓글에서 시작해서 조호히하기
+     * <p>
+     * 메인 댓글에서 시작해서 조회하기.
      */
     public List<Comment> readCommentWithUnderComments(Long postId) {
         return em.createQuery("SELECT c FROM Comment c " +
@@ -143,5 +141,20 @@ public class PostRepositoryImpl implements PostRepository{
             return null;
         }
 
+    }
+
+    @Override
+    public Comment findCommentById(Long commentId) {
+        try {
+            return em.createQuery(
+                            "SELECT c FROM Comment c " +
+                                    "JOIN FETCH c.user " +
+                                    "WHERE c.id = :commentId", Comment.class)
+                    .setParameter("commentId", commentId)
+                    .getSingleResult();
+        } catch (Exception e) {
+            log.error("findCommentById error : {}", e.getMessage());
+            return null;
+        }
     }
 }

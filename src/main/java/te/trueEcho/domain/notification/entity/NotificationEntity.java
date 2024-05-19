@@ -25,6 +25,7 @@ public class NotificationEntity extends CreatedDateAudit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     private String title;
     private String body;
     private Data data;
@@ -37,11 +38,9 @@ public class NotificationEntity extends CreatedDateAudit {
     public static class Data {
 
         private Long senderId; //알림 전송자
-        private Long postId;
+        private Long contentId;
         private int notiType;
-        private String logicType;
     }
-
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

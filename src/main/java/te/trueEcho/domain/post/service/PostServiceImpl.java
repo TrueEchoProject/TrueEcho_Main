@@ -118,6 +118,12 @@ public class PostServiceImpl implements PostService {
 
     }
 
+    public Comment comment;
+
+    public Comment getCommentById(Long commentId) {
+        return postRepository.findCommentById(commentId);
+    }
+
     @Override
     @Transactional
     public boolean writePost(AddPostRequest addPostRequest) {

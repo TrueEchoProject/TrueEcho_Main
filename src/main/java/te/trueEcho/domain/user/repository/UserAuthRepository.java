@@ -1,5 +1,6 @@
 package te.trueEcho.domain.user.repository;
 
+import te.trueEcho.domain.setting.entity.NotiTimeStatus;
 import te.trueEcho.domain.user.entity.User;
 
 import java.util.List;
@@ -22,4 +23,7 @@ public interface UserAuthRepository {
 
     String getPasswordByEmail(String email);
 
+    User findUserByFcmToken(String token);
+
+    List<User> findAllByNotiTimeStatus(NotiTimeStatus notiTimeStatus);
 }

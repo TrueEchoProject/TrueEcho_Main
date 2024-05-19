@@ -19,8 +19,7 @@ public class NotificationDto {
     @AllArgsConstructor
     public static class Data {
         private Long userId;
-        private Long postId;
+        private Long contentId;
         private int notiType;
-        private String logicType;
     }
 }

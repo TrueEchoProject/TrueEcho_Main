@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import te.trueEcho.domain.setting.dto.notiset.NotificationSettingDto;
 import te.trueEcho.domain.user.entity.User;
 
-
-
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

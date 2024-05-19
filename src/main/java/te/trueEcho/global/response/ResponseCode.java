@@ -137,8 +137,13 @@ public enum ResponseCode {
     FCM_TOKEN_SAVED_SUCCESS(202, "T002", "FCM 토큰 저장에 성공했습니다."),
     FCM_TOKEN_SAVED_FAIL(202, "T002", "FCM 토큰 저장에 실패했습니다."),
     FCM_TOKEN_GET_SUCCESS(202, "T002", "FCM 토큰 조회에 성공했습니다."),
-    FCM_TOKEN_GET_FAIL(202, "T002", "FCM 토큰 조회에 실패했습니다.");
-
+    FCM_TOKEN_GET_FAIL(202, "T002", "FCM 토큰 조회에 실패했습니다."),
+    SEND_NOTIFICATION_SUCCESS(202, "T002", "알림 전송에 성공했습니다."),
+    SEND_NOTIFICATION_FAIL(202, "T002", "알림 전송에 실패했습니다."),
+    GET_COMMUNITIFEED_NOTIFICATION_SUCCESS(202, "T002", "커뮤니티 알림 피드 조회에 성공했습니다."),
+    GET_COMMUNITIFEED_NOTIFICATION_FAIL(202, "T002", "커뮤니티 알림 피드 조회에 실패했습니다."),
+    GET_POST_NOTIFICATION_SUCCESS(202, "T002", "게시물 알림 피드 조회에 성공했습니다."),
+    GET_POST_NOTIFICATION_FAIL(202, "T002", "게시물 알림 피드 조회에 실패했습니다.");
 
     private final int status;
     private final String code;
