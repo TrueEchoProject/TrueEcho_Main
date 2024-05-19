@@ -4,7 +4,7 @@
 //import lombok.AccessLevel;
 //import lombok.Getter;
 //import lombok.NoArgsConstructor;
-//import te.trueEcho.domain.user.entity.NotiTimeStatus;
+//import te.trueEcho.domain.setting.entity.NotiTimeStatus;
 //import te.trueEcho.domain.user.entity.User;
 //
 //@Entity

@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import te.trueEcho.domain.user.converter.SignUpDtoToUserConverter;
+import te.trueEcho.domain.user.converter.SignUpDtoToUser;
 import te.trueEcho.domain.user.dto.*;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.EmailMemoryRepository;
@@ -19,11 +19,12 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final EmailCodeService emailCodeService;
     private final UserAuthRepository userAuthRepository;
     private final EmailMemoryRepository emailMemoryRepository;
+    private final SignUpDtoToUser signUpDtoToUser;
 
-    public boolean isTypeDuplicated(EmailRequest emailRequestDto, String target) {
-        if( target.equals("email"))
+    public boolean isTypeDuplicated(UserCheckRequest emailRequestDto, ValidationType target) {
+        if( target == ValidationType.EMAIL)
              return  userAuthRepository.findUserByEmail(emailRequestDto.getEmail())!=null;
-        if( target.equals("nickname"))
+        if(target == ValidationType.NICKNAME)
             return userAuthRepository.findUserByNickName(emailRequestDto.getNickname())!=null;
 
         return false;
@@ -34,7 +35,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         final boolean status =emailMemoryRepository.checkStatusByEmail(registerRequest.getEmail());
         log.info("email status = {}",status);
         if(status){
-            final User newUser = SignUpDtoToUserConverter.converter(registerRequest);
+            final User newUser = signUpDtoToUser.converter(registerRequest);
             log.info("user's nickname = {}",        newUser.getNickname());
 
             userAuthRepository.save(newUser);
@@ -52,9 +53,9 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Override
     public boolean checkEmailCode(CheckCodeRequest emailCheckCodeDto) {
-        final String registerdCode =emailMemoryRepository.findCheckCodeByEmail(emailCheckCodeDto.getEmail());
+        final String registeredCode =emailMemoryRepository.findCheckCodeByEmail(emailCheckCodeDto.getEmail());
 
-       if (emailCheckCodeDto.getCheckCode().equals(registerdCode)){
+       if (emailCheckCodeDto.getCheckCode().equals(registeredCode)){
            emailMemoryRepository.verifyEmail(emailCheckCodeDto.getEmail());
            return true;
        }
@@ -63,9 +64,8 @@ public class UserAuthServiceImpl implements UserAuthService {
     }
 
     @Override
-    public boolean sendEmailCode(EmailRequest emailRequestDto) {
-        emailCodeService.sendRegisterCode(emailRequestDto);
-        return true;
+    public boolean sendEmailCode(UserCheckRequest emailRequestDto) {
+       return emailCodeService.sendRegisterCode(emailRequestDto);
     }
 
 

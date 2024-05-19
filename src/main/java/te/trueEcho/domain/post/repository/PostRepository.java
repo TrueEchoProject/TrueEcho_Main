@@ -7,9 +7,11 @@ import te.trueEcho.domain.user.entity.User;
 import java.util.List;
 
 public interface PostRepository {
-    List<Post> readPost(int pageCount, int index,  List<User> filteredUser);
+    List<Post> getAllPost(int pageCount, int index, List<User> filteredUser);
 
     List<Comment> readCommentWithUnderComments(Long postId);
 
     void save(Post post);
+
+    List<Post> getPostByIdList(List<Long> postIdList);
 }

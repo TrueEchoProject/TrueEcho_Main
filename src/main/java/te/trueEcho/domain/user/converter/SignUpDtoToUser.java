@@ -10,8 +10,8 @@ import te.trueEcho.domain.user.entity.User;
 
 @Component
 @NoArgsConstructor
-public class SignUpDtoToUserConverter {
-    public static User converter(RegisterRequest registerRequest) {
+public class SignUpDtoToUser {
+    public User converter(RegisterRequest registerRequest) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encryptedPassword = passwordEncoder.encode(registerRequest.getPassword());
         return User.builder()
@@ -23,7 +23,7 @@ public class SignUpDtoToUserConverter {
                 .birthday(registerRequest.getDob())
                 .gender(registerRequest.getGender())
                 .location(registerRequest.getLocation())
-                .notificationTime(registerRequest.getNotificationTime())
+                .notificationTimeStatus(registerRequest.getNotificationTime())
                 .build();
     }
 }

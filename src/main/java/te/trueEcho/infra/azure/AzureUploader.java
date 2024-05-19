@@ -4,7 +4,9 @@ import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
+import com.azure.storage.blob.models.BlobStorageException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class AzureUploader {
@@ -54,4 +57,16 @@ public class AzureUploader {
 
         return blobClient.getBlobUrl();
     }
+
+    public void deleteImage(String blobName) {
+        BlobServiceClient blobServiceClient = createBlobServiceClient();
+        BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(getContainerName());
+        BlobClient blobClient = containerClient.getBlobClient(blobName);
+        try{
+            blobClient.delete();
+        }catch (BlobStorageException e){
+            log.warn("Failed to delete file from Azure Storage", e);
+        }
+    }
+
 }

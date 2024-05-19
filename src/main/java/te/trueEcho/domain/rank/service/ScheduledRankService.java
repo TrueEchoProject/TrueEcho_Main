@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import te.trueEcho.domain.rank.converter.RankToDtoConverter;
+import te.trueEcho.domain.rank.converter.RankToDto;
 import te.trueEcho.domain.rank.repository.RankRepository;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.vote.entity.Vote;
@@ -57,6 +57,7 @@ public class ScheduledRankService {
 
     private final VoteRepository voteRepository;
     private final RankRepository rankRepository;
+    private final RankToDto rankToDto;
 
   @Scheduled(cron = "0 0 20 ? * 0", zone = "Asia/Seoul") //매주 일요일 20시에 랭킹을 만들어주는 서비스
     @Transactional
@@ -94,7 +95,7 @@ public class ScheduledRankService {
             });
         }
 
-        rankRepository.cacheThisWeekRank(RankToDtoConverter.converter(sortedResults)); // 이번주 랭킹을 캐싱
+        rankRepository.cacheThisWeekRank(rankToDto.converter(sortedResults)); // 이번주 랭킹을 캐싱
 
         log.info("Ranking is updated");
     }

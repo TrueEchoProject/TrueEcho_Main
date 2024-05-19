@@ -13,6 +13,8 @@ import te.trueEcho.domain.post.entity.Comment;
 import te.trueEcho.domain.post.entity.Like;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.rank.entity.Rank;
+import te.trueEcho.domain.setting.entity.NotiTimeStatus;
+import te.trueEcho.domain.setting.entity.NotificationSetting;
 import te.trueEcho.domain.vote.entity.VoteResult;
 import te.trueEcho.global.entity.CreatedDateAudit;
 
@@ -61,12 +63,6 @@ public class User extends CreatedDateAudit {
     @Column(name = "connect_by_friend", nullable = true)
     private Boolean connectByFriend; //친구의 친구에게 내 계정 노출
 
-    @Column(name = "user_noti_time", nullable = true)
-    @Enumerated(EnumType.STRING)
-    private NotiTimeStatus notificationTime;
-
-    @Column(name = "user_noti_setting", nullable = true)
-    private Boolean notificationSetting;
 
     @Column(name = "user_birthday", nullable = true)
     private LocalDate birthday;
@@ -75,7 +71,7 @@ public class User extends CreatedDateAudit {
     private String location;
 
     @Lob
-    @Column(name = "user_profile_url", nullable = true)
+    @Column(name = "user_profile_url", nullable = true, columnDefinition = "TEXT")
     private String profileURL;
 
     @Column(name = "user_password")
@@ -96,24 +92,27 @@ public class User extends CreatedDateAudit {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private SuspendedUser suspendedUser;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY , cascade=CascadeType.ALL)
     @JoinColumn(name = "rank_id")
     private Rank rank;
 
-    @OneToMany(mappedBy = "userVoter", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "userVoter", cascade=CascadeType.ALL, fetch = FetchType.LAZY)
     private List<VoteResult> voteResults;
 
     @OneToMany(mappedBy = "userTarget", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<VoteResult> targetResults;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade=CascadeType.ALL)
     private List<Post> posts;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade=CascadeType.ALL)
     private List<Like> likes;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY , cascade=CascadeType.ALL)
     private List<Comment> comments;
+
+    @OneToOne(mappedBy = "user", cascade=CascadeType.ALL)
+    private NotificationSetting notificationSetting;
 
     @OneToOne(mappedBy = "receiver", cascade= CascadeType.ALL)
     private NotificationEntity notificationEntity;
@@ -123,9 +122,8 @@ public class User extends CreatedDateAudit {
                  String nickname,
                  String name,
                  Gender gender,
-                 NotiTimeStatus notificationTime,
-                 boolean notificationSetting,
                  LocalDate birthday,
+                 NotiTimeStatus notificationTimeStatus,
                  String location,
                  String password,
                  Role role,
@@ -133,25 +131,29 @@ public class User extends CreatedDateAudit {
         this.email = email;
         this.nickname = nickname;
         this.gender = gender;
-        this.notificationSetting = notificationSetting;
-        this.notificationTime = notificationTime;
         this.birthday = birthday;
         this.location = location;
         this.password = password;
         this.role = role;
         this.name = name;
-        // 자동 초기화
+
+        // 자동 초기화 : 디폴트
         this.connectByFriend = true;
         this.notificationEntity = notificationEntity;
+
+
+        // NotificationSetting 엔티티 생성 및 설정
+        this.notificationSetting =
+                NotificationSetting.builder()
+                        .user(this)
+                        .notificationTimeStatus(notificationTimeStatus)
+                        .build();
     }
 
     public int getAge(){
         return LocalDate.now().getYear() - this.birthday.getYear();
     }
 
-    public boolean getNotificationSetting() {
-        return this.notificationSetting;
-    }
 
     public void setEncryptedPassword(String encryptedPassword) {
         this.password = encryptedPassword;
@@ -166,6 +168,10 @@ public class User extends CreatedDateAudit {
         this.name = name;
     }
 
+    public void updateNickName(String nickname) {
+        this.nickname = nickname;
+    }
+
 
     public void updatePassword(String updatepassword) {
         this.password = password;
@@ -175,16 +181,13 @@ public class User extends CreatedDateAudit {
         this.gender = gender;
     }
 
-    public void updateNotificationTime(NotiTimeStatus notificationTime) {
-        this.notificationTime = notificationTime;
-    }
-
-    public void updateNotificationSetting(boolean notificationSetting) {
-        this.notificationSetting = notificationSetting;
-    }
 
     public void updateBirthDay(LocalDate birthday) {
         this.birthday = birthday;
+    }
+
+    public void updateProfileUrl(String profileURL) {
+        this.profileURL = profileURL;
     }
 
     public void updateLocation(String location) {
@@ -196,7 +199,6 @@ public class User extends CreatedDateAudit {
         this.suspendedUser = null;
     }
 
-    public NotiTimeStatus getNotiTimeStatus() {
-        return this.notificationTime;
-    }
+
+
 }

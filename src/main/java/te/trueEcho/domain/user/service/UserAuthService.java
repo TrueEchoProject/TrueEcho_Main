@@ -10,7 +10,7 @@ public interface UserAuthService {
     @Transactional
     boolean registerUser(RegisterRequest registerRequest);
 
-    boolean isTypeDuplicated(EmailRequest email, String type) ;
+    boolean isTypeDuplicated(UserCheckRequest email, ValidationType type) ;
 
     // 유저 찾기
     User findUserByID(Long id);
@@ -20,7 +20,7 @@ public interface UserAuthService {
 
     @Transactional
     // 이메일 인증코드 전송
-    boolean sendEmailCode(EmailRequest emailRequestDto);
+    boolean sendEmailCode(UserCheckRequest emailRequestDto);
     //개인정보 수정
     boolean login(LoginRequest loginRequest);
 }

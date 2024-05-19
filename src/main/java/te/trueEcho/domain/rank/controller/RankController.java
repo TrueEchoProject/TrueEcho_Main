@@ -5,12 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import te.trueEcho.domain.rank.dto.RankListResponse;
-import te.trueEcho.domain.rank.dto.RankResponse;
 import te.trueEcho.domain.rank.service.RankService;
-import te.trueEcho.domain.vote.dto.VoteContentsResponse;
 import te.trueEcho.global.response.ResponseCode;
 import te.trueEcho.global.response.ResponseForm;
 
@@ -26,7 +23,7 @@ public class RankController {
         final RankListResponse rankListResponse = rankService.getRank();
 
         return rankListResponse != null ?
-                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_COMMENT_SUCCESS,rankListResponse)) :
-                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_COMMENT_FAIL));
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_RANK_SUCCESS,rankListResponse)) :
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_RANK_FAIL));
     }
 }
