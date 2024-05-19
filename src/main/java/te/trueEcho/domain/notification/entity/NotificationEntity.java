@@ -21,8 +21,10 @@ import te.trueEcho.global.entity.CreatedDateAudit;
 public class NotificationEntity extends CreatedDateAudit {
 
     @Id
+    @Column(name = "notifications_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
 
     private String title;
     private String body;
@@ -36,18 +38,15 @@ public class NotificationEntity extends CreatedDateAudit {
     public static class Data {
 
         private Long senderId; //알림 전송자
-        private Long postId;
+        private Long contentId;
         private int notiType;
-        private String logicType;
     }
-
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User receiver; // 알림의 소유자 (받는 사람)
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id")
+    @OneToOne(mappedBy = "notificationEntity" , cascade= CascadeType.ALL )
     private Comment comment;
 
     @OneToOne(fetch = FetchType.LAZY)
