@@ -11,5 +11,5 @@ import java.util.List;
 public class PostListResponse {
     String yourLocation;
     int postCount;
-    List<ReadPostResponse> readPostRespons;
+    List<ReadPostResponse> readPostResponse;
 }
