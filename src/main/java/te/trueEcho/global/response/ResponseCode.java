@@ -71,18 +71,10 @@ public enum ResponseCode {
     // 게시물
     GET_POST_SUCCESS(202, "T002", "게시물을 조회를 성공했습니다."),
     GET_POST_FAIL(202, "T002", "게시물을 조회를 실패했습니다."),
-    WRITE_POST_SUCCESS(202, "T002", "게시물 작성을 성공했습니다."),
-    WRITE_POST_FAIL(202, "T002", "게시물 작성을 실패했습니다."),
-    DELETE_POST_SUCCESS(202, "T002", "게시물을 삭제를 성공했습니다."),
-    DELETE_POST_FAIL(202, "T002", "게시물을 삭제를 실패했습니다."),
-    // 댓글
     GET_COMMENT_SUCCESS(202, "T002", "해당 게시물의 댓글 조회를 성공했습니다."),
     GET_COMMENT_FAIL(202, "T002", "해당 게시물의 댓글 조회를 실패했습니다."),
-    POST_COMMENT_SUCCESS(202, "T002", "해당 게시물의 댓글 생성을 성공했습니다."),
-    POST_COMMENT_FAIL(202, "T002", "해당 게시물의 댓글 생성을 실패했습니다."),
-    DELETE_COMMENT_SUCCESS(202, "T002", "댓글 삭제를 성공했습니다."),
-    DELETE_COMMENT_FAIL(202, "T002", "댓글 삭제를 실패했습니다."),
-
+    WRITE_POST_SUCCESS(202, "T002", "게시물 작성을 성공했습니다."),
+    WRITE_POST_FAIL(202, "T002", "게시물 작성을 실패했습니다."),
 
 
     // 투표

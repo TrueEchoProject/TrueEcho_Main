@@ -9,8 +9,7 @@ import lombok.RequiredArgsConstructor;
 public enum FeedType{
 
     FRIEND(0),
-    PUBLIC(1),
-    MINE(2);
+    PUBLIC(1);
 
     private final int value;
 }

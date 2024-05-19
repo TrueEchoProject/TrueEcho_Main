@@ -3,13 +3,13 @@ package te.trueEcho.global.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import te.trueEcho.domain.post.converter.CommentToDto;
-import te.trueEcho.domain.post.converter.DtoToComment;
 import te.trueEcho.domain.post.converter.PostToDto;
 import te.trueEcho.domain.rank.converter.RankToDto;
 import te.trueEcho.domain.setting.converter.NotificationSettingToDto;
 import te.trueEcho.domain.setting.converter.PinListToDto;
 import te.trueEcho.domain.setting.converter.PostListToDto;
 import te.trueEcho.domain.setting.converter.UserPinToDto;
+import te.trueEcho.domain.setting.dto.mypage.OtherPageResponse;
 import te.trueEcho.domain.user.converter.SignUpDtoToUser;
 import te.trueEcho.domain.vote.converter.VoteToDto;
 import te.trueEcho.domain.vote.converter.VoteUserToDto;
@@ -20,7 +20,7 @@ public class UtilConfig {
     public SignUpDtoToUser signUpDtoToUserConverter() {return new SignUpDtoToUser();   }
 
     @Bean
-    public VoteToDto voteToDto() {
+    public VoteToDto voteToDtoConverter() {
         return new VoteToDto();
     }
 
@@ -29,27 +29,27 @@ public class UtilConfig {
     }
 
     @Bean
-    public PostToDto postToDto() {
+    public PostToDto postToDtoConverter() {
         return new PostToDto();
     }
 
     @Bean
-    public CommentToDto commentToDto() {
+    public CommentToDto commentToDtoConverter() {
         return new CommentToDto();
     }
 
     @Bean
-    public RankToDto rankToDto() {
+    public RankToDto rankToDtoConverter() {
         return new RankToDto();
     }
 
     @Bean
-    public PinListToDto pinListToDto() {
+    public PinListToDto pinListToDtoConverter() {
         return new PinListToDto();
     }
 
     @Bean
-    public PostListToDto postListToDto() {
+    public PostListToDto postListToDtoConverter() {
         return new PostListToDto();
     }
 
@@ -58,12 +58,7 @@ public class UtilConfig {
         return new NotificationSettingToDto();
     }
     @Bean
-    public UserPinToDto userPinToDto() {
+    public UserPinToDto otherPageResponse() {
         return new UserPinToDto();
-    }
-
-    @Bean
-    public DtoToComment dtoToComment() {
-        return new DtoToComment();
     }
 }
