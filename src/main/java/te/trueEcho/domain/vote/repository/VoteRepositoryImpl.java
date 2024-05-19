@@ -94,6 +94,32 @@ public class VoteRepositoryImpl implements VoteRepository {
         }
    }
 
+    public VoteResult findVoteResultById(Long voteId) {
+        try {
+            return em.createQuery("SELECT vr FROM VoteResult vr WHERE vr.vote.id = :voteId", VoteResult.class)
+                    .setParameter("voteId", voteId)
+                    .getSingleResult();
+        } catch (Exception e) {
+            log.warn("this is error {}", e);
+            return null;
+        }
+    }
+
+   // userId를 통해서 찾은 userTarget이  마지막에 받은 vote의 title을 찾는 로직
+    public String findLastVoteTitleByUserId(Long userId){
+          try{
+                return em.createQuery("SELECT v.title FROM Vote v " +
+                      "JOIN VoteResult vr ON v.id = vr.vote.id " +
+                      "WHERE vr.userTarget.id = :userId " +
+                      "ORDER BY vr.createdAt DESC", String.class)
+                      .setParameter("userId", userId)
+                      .setMaxResults(1)
+                      .getSingleResult();
+          }catch (Exception e){
+                log.warn("this is error {}",e);
+                return null;
+          }}
+
     //룰에 의한 16개
     private List<Long> selectVoteIdByRule() {
 
@@ -110,9 +136,6 @@ public class VoteRepositoryImpl implements VoteRepository {
 
         return selectedId;
     }
-
-
-
     
     //랜덤한 16개
     private List<Long> selectRandomVoteId(){

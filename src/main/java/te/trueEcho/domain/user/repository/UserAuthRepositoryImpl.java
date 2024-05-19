@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import te.trueEcho.domain.setting.entity.NotiTimeStatus;
 import te.trueEcho.domain.user.entity.User;
 
 import java.util.List;
@@ -27,11 +28,11 @@ public class UserAuthRepositoryImpl implements UserAuthRepository {
     }
     @Override
     public User findUserById(Long id) {
-       try {
-           return em.find(User.class, id);
-       }catch (NoResultException e){
-           return null;
-       }
+        try {
+            return em.find(User.class, id);
+        }catch (NoResultException e){
+            return null;
+        }
     }
 
     @Override
@@ -97,12 +98,34 @@ public class UserAuthRepositoryImpl implements UserAuthRepository {
 
     @Override
     public   String getPasswordByEmail(String email){
-       try {
-           return (String) em.createQuery("select u.password from User u where email =: email")
-                   .setParameter("email", email).getSingleResult();
-       }catch(NoResultException e){
-           return null;
-       }
+        try {
+            return (String) em.createQuery("select u.password from User u where email =: email")
+                    .setParameter("email", email).getSingleResult();
+        }catch(NoResultException e){
+            return null;
+        }
+    }
+
+    @Override
+    public User findUserByFcmToken(String token) {
+        try {
+            return em.createQuery("select u from User u where u.fcmToken =: token", User.class)
+                    .setParameter("token", token)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<User> findAllByNotiTimeStatus(NotiTimeStatus notiTimeStatus) {
+        try {
+            return em.createQuery("select u from User u where u.notificationSetting.notificationTimeStatus =: notiTimeStatus", User.class)
+                    .setParameter("notiTimeStatus", notiTimeStatus)
+                    .getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
 
