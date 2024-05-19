@@ -45,31 +45,29 @@ public class FCMService {
         }
     }
 
-    public String getToken(User receiver) {
+    public String getToken(User user) {
 
-        if (receiver == null) {
+        if (user == null) {
             log.error("User not found");
             return null;
         }
 
-        return receiver.getFcmToken();
+        return user.getFcmToken();
     }
 
     @Transactional
-    public void removeToken() {
-        final User user = authUtil.getLoginUser();
+    public void removeToken(User user) {
         user.setFcmToken(null);
         userAuthRepository.save(user);
     }
 
-    public void sendNotification(String token, String title, String body, NotificationDto dto) {
+    public void sendNotification(String token, NotificationDto dto) {
         Message message = Message.builder()
                 .setToken(token)
-                .setNotification(Notification.builder().setTitle(title).setBody(body).build())
+                .setNotification(Notification.builder().setTitle(dto.getTitle()).setBody(dto.getBody()).build())
                 .putData("userId", String.valueOf(dto.getData().getUserId()))
-                .putData("postId", String.valueOf(dto.getData().getPostId()))
+                .putData("postId", String.valueOf(dto.getData().getContentId()))
                 .putData("notiType", String.valueOf(dto.getData().getNotiType()))
-                .putData("logicType", dto.getData().getLogicType())
                 .build();
 
         try {
@@ -86,9 +84,8 @@ public class FCMService {
         String errorCode = String.valueOf(e.getErrorCode());
         switch (errorCode) {
             case "invalid-registration-token":
-            case "registration-token-not-registered":
-                log.warn("Invalid or expired token: " + token);
-                removeToken();
+                log.error("Invalid registration token", e);
+                removeToken(userAuthRepository.findUserByFcmToken(token));
                 break;
             case "messaging/invalid-argument":
                 log.error("Invalid argument provided for sending message", e);

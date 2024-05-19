@@ -14,4 +14,6 @@ public interface PostRepository {
     void save(Post post);
 
     List<Post> getPostByIdList(List<Long> postIdList);
+
+    Comment findCommentById(Long commentId);
 }

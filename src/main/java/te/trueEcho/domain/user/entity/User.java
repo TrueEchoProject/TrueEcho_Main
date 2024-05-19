@@ -17,7 +17,6 @@ import te.trueEcho.domain.setting.entity.NotiTimeStatus;
 import te.trueEcho.domain.setting.entity.NotificationSetting;
 import te.trueEcho.domain.vote.entity.VoteResult;
 import te.trueEcho.global.entity.CreatedDateAudit;
-
 import java.time.LocalDate;
 import java.util.List;
 
