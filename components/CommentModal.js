@@ -217,9 +217,11 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 				<ExpoImage style={styles.profileImage} source={{ uri: comment.profile_url }} />
 				<Text>Date: {comment.created_at}</Text>
 				<Text style={styles.commentText}>{comment.username}: {comment.comment}</Text>
-				<TouchableOpacity onPress={() => handleDeleteComment(comment.id)}>
-					<Text>삭제</Text>
-				</TouchableOpacity>
+				{comment.IsMine ?
+					<TouchableOpacity onPress={() => handleDeleteComment(comment.id)}>
+						<Text>삭제</Text>
+					</TouchableOpacity> : null
+				}
 				<TouchableOpacity onPress={() => setReplyingTo(comment.id)}>
 					<Text>답글 달기</Text>
 				</TouchableOpacity>
@@ -238,9 +240,11 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 				<ExpoImage style={styles.profileImage} source={{ uri: underComment.profile_url }} />
 				<Text>Date: {underComment.created_at}</Text>
 				<Text style={styles.underCommentText}>{underComment.username}: {underComment.under_comment}</Text>
+				{underComment.IsMine ?
 				<TouchableOpacity onPress={() => handleDeleteUnderComment(commentId, underComment.id)}>
 					<Text>삭제</Text>
-				</TouchableOpacity>
+				</TouchableOpacity> : null
+				}
 			</View>
 		);
 	};
