@@ -645,7 +645,8 @@
       "created_at": "2024-04-01",
       "title": "오늘의 일상 #힐링",
       "location": "경기도 고양시 일산동구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "true"
     },
     {
       "post_id": 2,
@@ -659,7 +660,8 @@
       "created_at": "2024-03-31",
       "title": "먹스타그램: 오늘의 점심",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "true"
     },
     {
       "post_id": 3,
@@ -673,7 +675,8 @@
       "created_at": "2024-03-30",
       "title": "운동 끝! #헬스타그램",
       "location": "경기도 고양시 일산동구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "true"
     },
     {
       "post_id": 4,
@@ -687,7 +690,8 @@
       "created_at": "2024-03-29",
       "title": "이번 주말 여행 계획!",
       "location": "경기도 고양시 일산동구",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "true"
     },
     {
       "post_id": 5,
@@ -701,7 +705,8 @@
       "created_at": "2024-03-28",
       "title": "집꾸미기 프로젝트 시작",
       "location": "경기도 수원시 장안구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "true"
     },
     {
       "post_id": 6,
@@ -715,7 +720,8 @@
       "created_at": "2024-03-27",
       "title": "책 추천해주세요 #독서",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "true"
     },
     {
       "post_id": 7,
@@ -729,7 +735,8 @@
       "created_at": "2024-03-26",
       "title": "오늘의 OOTD #패션",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "true"
     },
     {
       "post_id": 8,
@@ -743,7 +750,8 @@
       "created_at": "2024-03-25",
       "title": "커피 한 잔의 여유 #카페투어",
       "location": "경기도 수원시 장안구",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "true"
     },
     {
       "post_id": 9,
@@ -757,7 +765,8 @@
       "created_at": "2024-03-24",
       "title": "새로운 취미 생활 #포토그래피",
       "location": "경기도 수원시 장안구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "true"
     },
     {
       "post_id": 10,
@@ -771,7 +780,8 @@
       "created_at": "2024-03-23",
       "title": "일상 속 작은 행복 찾기",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "true"
     },
     {
       "post_id": 11,
@@ -785,7 +795,8 @@
       "created_at": "2024-03-22",
       "title": "맛집 탐방 #먹방",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 12,
@@ -799,7 +810,8 @@
       "created_at": "2024-03-21",
       "title": "오늘의 운세 #별자리",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 13,
@@ -813,7 +825,8 @@
       "created_at": "2024-03-20",
       "title": "새로운 언어 학습하기",
       "location": "경기도 고양시 일산동구",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 14,
@@ -827,7 +840,8 @@
       "created_at": "2024-03-19",
       "title": "영화 추천 받아요 #영화",
       "location": "경기도 고양시 일산동구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 15,
@@ -841,7 +855,8 @@
       "created_at": "2024-03-18",
       "title": "게임 추천해주세요 #게임",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 16,
@@ -855,7 +870,8 @@
       "created_at": "2024-03-17",
       "title": "요리 레시피 공유 #홈쿡",
       "location": "경기도 고양시 일산동구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 17,
@@ -869,7 +885,8 @@
       "created_at": "2024-03-16",
       "title": "피트니스 도전기 #운동",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 18,
@@ -883,7 +900,8 @@
       "created_at": "2024-03-15",
       "title": "DIY 프로젝트 #수제",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 19,
@@ -897,7 +915,8 @@
       "created_at": "2024-03-14",
       "title": "여행 계획과 팁 #여행스타그램",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 20,
@@ -911,7 +930,8 @@
       "created_at": "2024-03-13",
       "title": "개발 공부 기록 #개발자",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 21,
@@ -925,7 +945,8 @@
       "created_at": "2024-03-12",
       "title": "일러스트 연습 작품 #드로잉",
       "location": "경기도 고양시 일산서구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 22,
@@ -939,7 +960,8 @@
       "created_at": "2024-03-11",
       "title": "오늘의 명언 #인스피레이션",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 23,
@@ -953,7 +975,8 @@
       "created_at": "2024-03-10",
       "title": "실내 정원 가꾸기 #가드닝",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 24,
@@ -967,7 +990,8 @@
       "created_at": "2024-03-09",
       "title": "나만의 레시피 공개 #요리",
       "location": "경기도 고양시 일산서구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 25,
@@ -981,7 +1005,8 @@
       "created_at": "2024-03-08",
       "title": "최근 읽은 책 리뷰 #독서",
       "location": "경기도 고양시 일산서구",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 26,
@@ -995,7 +1020,8 @@
       "created_at": "2024-03-07",
       "title": "하루를 되돌아보며 #일기",
       "location": "경기도 수원시 장안구",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 27,
@@ -1009,7 +1035,8 @@
       "created_at": "2024-03-06",
       "title": "최애 드라마 소개 #드라마",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 28,
@@ -1023,7 +1050,8 @@
       "created_at": "2024-03-05",
       "title": "음악 추천해요 #음악",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 29,
@@ -1037,7 +1065,8 @@
       "created_at": "2024-03-04",
       "title": "퍼스널 트레이닝 #피트니스",
       "location": "서울특별시 용산구 이태원1동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 30,
@@ -1051,7 +1080,8 @@
       "created_at": "2024-03-03",
       "title": "오늘의 스케치 #스케치",
       "location": "경기도 고양시 일산서구",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 31,
@@ -1065,7 +1095,8 @@
       "created_at": "2024-03-02",
       "title": "자연에서 찾은 아름다움 #자연",
       "location": "서울특별시 용산구 이태원1동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 32,
@@ -1079,7 +1110,8 @@
       "created_at": "2024-03-01",
       "title": "집에서 즐기는 문화 생활 #홈캉스",
       "location": "서울특별시 용산구 이태원1동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 33,
@@ -1093,7 +1125,8 @@
       "created_at": "2024-02-29",
       "title": "새로운 기술 습득 #테크",
       "location": "서울특별시 용산구 이태원1동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 34,
@@ -1107,7 +1140,8 @@
       "created_at": "2024-02-28",
       "title": "펫과의 일상 #펫스타그램",
       "location": "경기도 수원시 영통구",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 35,
@@ -1121,7 +1155,8 @@
       "created_at": "2024-02-27",
       "title": "명상과 요가 #요가",
       "location": "서울특별시 용산구 이태원1동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 36,
@@ -1135,7 +1170,8 @@
       "created_at": "2024-02-26",
       "title": "긍정의 힘 #포지티브",
       "location": "서울특별시 용산구 이태원1동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 37,
@@ -1149,7 +1185,8 @@
       "created_at": "2024-02-25",
       "title": "사진 촬영 팁 #사진",
       "location": "서울특별시 강동구 고덕1동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 38,
@@ -1163,7 +1200,8 @@
       "created_at": "2024-02-24",
       "title": "매일의 운동 루틴 #건강",
       "location": "서울특별시 강동구 고덕1동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 39,
@@ -1177,7 +1215,8 @@
       "created_at": "2024-02-23",
       "title": "자기 개발 노트 #자기개발",
       "location": "경기도 수원시 영통구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 40,
@@ -1191,7 +1230,8 @@
       "created_at": "2024-02-22",
       "title": "새벽 감성 #새벽",
       "location": "서울특별시 강동구 고덕1동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 41,
@@ -1205,7 +1245,8 @@
       "created_at": "2024-02-21",
       "title": "일상에서 찾은 소소한 기쁨 #행복",
       "location": "서울특별시 강동구 고덕1동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 42,
@@ -1219,7 +1260,8 @@
       "created_at": "2024-02-20",
       "title": "오늘의 메이크업 #뷰티",
       "location": "경기도 고양시 일산서구",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 43,
@@ -1233,7 +1275,8 @@
       "created_at": "2024-02-19",
       "title": "손편지 쓰기 #레터링",
       "location": "서울특별시 강동구 고덕1동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 44,
@@ -1247,7 +1290,8 @@
       "created_at": "2024-02-18",
       "title": "나의 여행 이야기 #백패커",
       "location": "경기도 수원시 영통구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 45,
@@ -1261,7 +1305,8 @@
       "created_at": "2024-02-17",
       "title": "최근에 본 전시회 #전시",
       "location": "경기도 수원시 영통구",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 46,
@@ -1275,7 +1320,8 @@
       "created_at": "2024-02-16",
       "title": "프로그래밍 공부법 #코딩",
       "location": "서울특별시 강동구 고덕1동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 47,
@@ -1289,7 +1335,8 @@
       "created_at": "2024-02-15",
       "title": "영양 만점 아침 식사 #건강식",
       "location": "서울특별시 강동구 고덕1동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 48,
@@ -1303,7 +1350,8 @@
       "created_at": "2024-02-14",
       "title": "시간 관리 팁 #프로덕티비티",
       "location": "서울특별시 강동구 고덕1동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 49,
@@ -1317,7 +1365,8 @@
       "created_at": "2024-02-13",
       "title": "책상 정리법 #정리정돈",
       "location": "경기도 고양시 일산서구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 50,
@@ -1331,7 +1380,8 @@
       "created_at": "2024-02-12",
       "title": "나만의 비밀 장소 #탐험",
       "location": "서울특별시 강동구 고덕1동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     }
   ],
   "comments": [

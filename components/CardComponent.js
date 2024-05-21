@@ -56,6 +56,21 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 			}
 		}
 	};
+	const toggleDelete = async () => {
+		console.log(post.post_id);
+		try {
+			alert('정상적으로 게시물을 삭제했어요');
+			hideOptions();
+			onBlock(post.post_id); // 차단 이벤트를 상위 컴포넌트에 알림
+		} catch (error) {
+			console.error('Error while blocking the user:', error.response ? error.response.data : error.message);
+			// HTTP 상태 코드가 409인 경우 여기서 처리
+			if (error.response && error.response.status === 409) {
+				alert('This user is already blocked.');
+				hideOptions();
+			}
+		}
+	};
 	const toggleFriendSend = async () => {
 		console.log(post.username);  // 이것은 여전히 정상적으로 작동합니다.
 		try {
@@ -164,10 +179,17 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 							{ top: buttonLayout.y + buttonLayout.height, right: 0 } :
 							{ top: buttonLayout.y + buttonLayout.height + 30, right: 0 }
 					]}>
-						<TouchableOpacity onPress={toggleBlock} style={{ flexDirection:'row', alignItems: 'center', }}>
-							<Feather name='alert-triangle' style={{ marginLeft: 10, color: 'red' }}/>
-							<Text style={[styles.optionItem, {color: 'red'}]}>사용자 차단하기</Text>
-						</TouchableOpacity>
+						{post.IsMine ? (
+							<TouchableOpacity onPress={toggleDelete} style={{ flexDirection:'row', alignItems: 'center', }}>
+								<Feather name='alert-triangle' style={{ marginLeft: 10, color: 'red' }}/>
+								<Text style={[styles.optionItem, {color: 'red'}]}>삭제하기</Text>
+							</TouchableOpacity>
+						) : (
+							<TouchableOpacity onPress={toggleBlock} style={{ flexDirection:'row', alignItems: 'center', }}>
+								<Feather name='alert-triangle' style={{ marginLeft: 10, color: 'red' }}/>
+								<Text style={[styles.optionItem, {color: 'red'}]}>사용자 차단하기</Text>
+							</TouchableOpacity>
+						)}
 					</View>
 				)}
 				<View style={styles.imageButtonContainer} onLayout={onImageButtonLayout}>
