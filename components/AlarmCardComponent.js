@@ -57,7 +57,7 @@ const AlarmCardComponent = ({ post, navigation, onActionComplete }) => {
 		try {
 			alert('정상적으로 게시물을 삭제했어요');
 			hideOptions();
-			onActionComplete && onActionComplete();
+			onActionComplete && onActionComplete(post.post_id);
 		} catch (error) {
 			console.error('Error while blocking the user:', error.response ? error.response.data : error.message);
 			// HTTP 상태 코드가 409인 경우 여기서 처리

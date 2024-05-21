@@ -1,10 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Modal, Dimensions, ActivityIndicator, ScrollView} from 'react-native';
+import {
+	View,
+	Text,
+	StyleSheet,
+	TouchableOpacity,
+	Modal,
+	Dimensions,
+	ActivityIndicator,
+	ScrollView,
+} from 'react-native';
 import {AntDesign, FontAwesome5, MaterialIcons} from '@expo/vector-icons';
 import PagerView from "react-native-pager-view";
 import axios from "axios";
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import { Button3 } from "../../../components/Button";
+import AlarmCardComponent from "../../../components/AlarmCardComponent";
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -58,7 +68,7 @@ const MyPage = ({ navigation, route }) => {
 	const fetchData = async () => {
 		try {
 			const userResponse = await axios.get(`http://192.168.0.27:3000/user_me`);
-			const pinResponse = await axios.get(`http://192.168.0.27:3000/user_pin?_limit=5`);
+			const pinResponse = await axios.get(`http://192.168.0.27:3000/user_pin`);
 			setUserData(userResponse.data[0]);
 			setPinData(pinResponse.data);
 		} catch (error) {
@@ -110,9 +120,8 @@ const MyPage = ({ navigation, route }) => {
 			</Modal>
 		);
 	};
-	
 	return (
-		<ScrollView style={styles.container}>
+		<View style={styles.container}>
 			<View style={styles.topContainer}>
 				<View style={{flexDirection: "row"}}>
 					<View style={{marginRight: "auto"}}>
@@ -140,6 +149,13 @@ const MyPage = ({ navigation, route }) => {
 					<TouchableOpacity onPress={() => navigation.navigate("알람")}>
 						<MaterialIcons
 							name="alarm"
+							size={30}
+							style={{ height: 30, width:30, marginLeft: 10,}}
+						/>
+					</TouchableOpacity>
+					<TouchableOpacity onPress={() => navigation.navigate("MyFeed")}>
+						<AntDesign
+							name="book"
 							size={30}
 							style={{ height: 30, width:30, marginLeft: 10,}}
 						/>
@@ -212,11 +228,16 @@ const MyPage = ({ navigation, route }) => {
 					</>
 				)}
 			</View>
-		</ScrollView>
+		</View>
 	);
 }
 
 const styles = StyleSheet.create({
+	scrollView: {
+		height: 400,
+		width: "100%",
+		backgroundColor: "yellow",
+	},
 	container: {
 		flex: 1,
 		backgroundColor: '#fff',

@@ -7,6 +7,7 @@ import Alarm from "./AlarmPage";
 import FeedAlarm from "./FeedAlarm";
 import UserAlarm from "./UserAlarm";
 import IsAlarm from "./IsAlarm";
+import MyFeed from "./MyFeed";
 
 export {
 	Friends,
@@ -18,4 +19,5 @@ export {
 	FeedAlarm,
 	UserAlarm,
 	IsAlarm,
+	MyFeed,
 };
