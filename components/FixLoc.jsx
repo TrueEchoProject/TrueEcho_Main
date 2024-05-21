@@ -75,40 +75,31 @@ const FicLoc = () => {
     }, [refresh]);
 
     return (
-        <View style={styles.container}>
-            <Button title="Show Modal" onPress={() => setModalVisible(true)} />
-            <Modal
-                visible={modalVisible}
-                animationType="slide"
-                onRequestClose={() => setModalVisible(false)}
-            >
-                <View style={styles.modalContainer}>
-                    <Text style={styles.title}>이전에 저장된 주소</Text>
-                    {loading ? (
-                        <ActivityIndicator size="large" color="#0000ff" />
-                    ) : (
-                        latitude !== null && longitude !== null && (
-                            <MapView
-                                style={styles.map}
-                                region={{
-                                    latitude: latitude,
-                                    longitude: longitude,
-                                    latitudeDelta: 0.0922,
-                                    longitudeDelta: 0.0421,
-                                }}
-                            >
-                                <Marker coordinate={{ latitude, longitude }} />
-                            </MapView>
-                        )
-                    )}
-                    <GetLocation onLocationReceived={handleLocationReceived} refresh={refresh} />
-                    <View style={styles.buttonContainer}>
-                        <Button title="현재 위치로 변경" onPress={handleRefresh} />
-                        <Button title="Confirm" onPress={handleConfirm} />
-                        <Button title="취소" onPress={() => setModalVisible(false)} />
-                    </View>
-                </View>
-            </Modal>
+        <View style={styles.modalContainer}>
+            <Text style={styles.title}>이전에 저장된 주소</Text>
+            {loading ? (
+                <ActivityIndicator size="large" color="#0000ff" />
+            ) : (
+                latitude !== null && longitude !== null && (
+                    <MapView
+                        style={styles.map}
+                        region={{
+                            latitude: latitude,
+                            longitude: longitude,
+                            latitudeDelta: 0.0922,
+                            longitudeDelta: 0.0421,
+                        }}
+                    >
+                        <Marker coordinate={{ latitude, longitude }} />
+                    </MapView>
+                )
+            )}
+            <GetLocation onLocationReceived={handleLocationReceived} refresh={refresh} />
+            <View style={styles.buttonContainer}>
+                <Button title="현재 위치로 변경" onPress={handleRefresh} />
+                <Button title="Confirm" onPress={handleConfirm} />
+                <Button title="취소" onPress={() => setModalVisible(false)} />
+            </View>
         </View>
     );
 };
@@ -120,7 +111,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modalContainer: {
-        flex: 1,
+        width: 500,
+        height: 500,
         justifyContent: 'center',
         alignItems: 'center',
     },
