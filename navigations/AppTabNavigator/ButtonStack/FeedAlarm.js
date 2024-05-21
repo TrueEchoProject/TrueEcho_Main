@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import CardComponent from "../../../components/CardComponent";
+import AlarmCardComponent from "../../../components/AlarmCardComponent";
 import axios from "axios";
 
 const FeedAlarm = ({ navigation, route }) => {
 	const [postId, setPostId] = useState("")
 	const [post, setPost] = useState({})
-	const [optionsVisibleStates, setOptionsVisibleStates] = useState({});
 	
+	const handleActionComplete = () => {
+		navigation.goBack();
+	};
 	useEffect(() => {
 		if (route.params?.post_id) {
 			console.log('Received postId response:', route.params.post_id);
@@ -35,10 +37,9 @@ const FeedAlarm = ({ navigation, route }) => {
 	
 	return (
 		<View style={style.container}>
-			<CardComponent
+			<AlarmCardComponent
 				post={post}
-				isOptionsVisibleExternal={optionsVisibleStates[postId]}
-				setIsOptionsVisibleExternal={(visible) => setOptionsVisibleStates(prev => ({ ...prev, [postId]: visible }))}
+				onActionComplete={handleActionComplete}
 			/>
 		</View>
 	)

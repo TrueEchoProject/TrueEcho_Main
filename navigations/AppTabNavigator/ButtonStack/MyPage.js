@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, Dimensions, ActivityIndicator } from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Modal, Dimensions, ActivityIndicator, ScrollView} from 'react-native';
 import {AntDesign, FontAwesome5, MaterialIcons} from '@expo/vector-icons';
 import PagerView from "react-native-pager-view";
 import axios from "axios";
@@ -112,7 +112,7 @@ const MyPage = ({ navigation, route }) => {
 	};
 	
 	return (
-		<View style={styles.container}>
+		<ScrollView style={styles.container}>
 			<View style={styles.topContainer}>
 				<View style={{flexDirection: "row"}}>
 					<View style={{marginRight: "auto"}}>
@@ -212,7 +212,7 @@ const MyPage = ({ navigation, route }) => {
 					</>
 				)}
 			</View>
-		</View>
+		</ScrollView>
 	);
 }
 
