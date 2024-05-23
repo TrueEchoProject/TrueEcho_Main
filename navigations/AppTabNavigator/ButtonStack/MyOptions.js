@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
 	View,
 	Text,
+	TextInput,
 	StyleSheet,
 	ScrollView,
 	TouchableOpacity,
@@ -37,13 +38,14 @@ const MyOptions = ({ navigation, route }) => {
 	const [isBlockModal, setIsBlockModal] = useState(false);
 	const [isTimeModal, setIsTimeModal] = useState(false);
 	const [isQnAModal, setIsQnAModal] = useState(false);
+	const [isDeleteAccountModal, setIsDeleteAccountModal] = useState(false);
 	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
 	
 	const fetchDataFromServer = async () => {
 		try {
-			const response = await axios.get(`https://port-0-true-echo-85phb42blucciuvv.sel5.cloudtype.app/setting/myInfo`, {
+			const response = await axios.get(`${base_url}/setting/myInfo`, {
 				headers: {
-					Authorization: "Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwic3ViIjoicnlhbjEwOTIwQG5hdmVyLmNvbSIsImlhdCI6MTcxNjQ3NTUxMCwiZXhwIjoxNzE2NDc5MTEwfQ.HNF2nrM39NA1a0ZSr4L-1zgmyaLWG6x4M8PShV7hiUyAINCD1Lpmyg4FN6snOHpy7AOlL9QjqPyDYGyTJA79kw"
+					Authorization: `${token}`
 				}
 			});
 			setUser(response.data.data); // Correctly update the state here
@@ -74,6 +76,9 @@ const MyOptions = ({ navigation, route }) => {
 	};
 	const qnAModalVisible = () => {
 		setIsQnAModal(!isQnAModal);
+	};
+	const deleteAccountModalVisible = () => {
+		setIsDeleteAccountModal(!isDeleteAccountModal);
 	};
 	const NotificationModal = ({ isVisible, onClose }) => {
 		const [clickedStatus, setClickedStatus] = useState({});
@@ -568,12 +573,99 @@ const MyOptions = ({ navigation, route }) => {
 			</Modal>
 		);
 	};
-	const logOut = () => {
-		console.log("logOut")
+	const DeleteAccountModal = ({ isVisible, onClose, deleteAccount }) => {
+		const [inputText, setInputText] = useState('');
+		
+		useEffect(() => {
+			if (!isVisible) {
+				setInputText(''); // Modal이 닫힐 때 입력 필드를 초기화합니다.
+			}
+		}, [isVisible]);
+		
+		return (
+			<Modal
+				animationType="fade"
+				visible={isVisible}
+				onRequestClose={onClose}
+				transparent={true}
+			>
+				<View style={styles.modalContainer}>
+					<View style={[styles.imageContainer, {height: windowHeight * 0.5}]}>
+						<View style={{
+							height: "20%",
+						}}>
+							<Text style={styles.modalText}>계정 탈퇴</Text>
+							<Text style={styles.modalSmallText}>정말로 계정을 탈퇴하실 건가요?</Text>
+						</View>
+						<View style={{
+							height: "20%",
+							width: "100%",
+							alignItems: "center",
+							marginBottom: 50,
+						}}>
+							<Text style={{
+								color: "black",
+								fontSize: 12,
+								fontWeight: "bold",
+								textAlign: "center",
+								marginTop: 3,
+								marginBottom: 5,
+							}}>아래의 글자를 동일하게 작성해주세요</Text>
+							<Text style={{
+								color: "black",
+								fontSize: 20,
+								fontWeight: "bold",
+								textAlign: "center",
+								marginTop: 3,
+								marginBottom: 5,
+							}}>계정 삭제</Text>
+							<TextInput
+								style={styles.input}
+								placeholder=""
+								value={inputText}
+								onChangeText={setInputText}
+							/>
+						</View>
+						<TouchableOpacity
+							style={ inputText === '계정 삭제' ? styles.deleteModalButton : styles.disabledModalButton }
+							onPress={deleteAccount}
+							disabled={inputText !== '계정 삭제'}
+						>
+							<Text style={[styles.buttonText, { color: 'white' }]}>계정 탈퇴</Text>
+						</TouchableOpacity>
+						<TouchableOpacity style={[styles.modalButton, { backgroundColor: 'grey', margin: 15, }]} onPress={onClose}>
+							<Text style={styles.buttonText}>닫기</Text>
+						</TouchableOpacity>
+					</View>
+				</View>
+			</Modal>
+		);
 	};
-	const deleteAccount = () => {
-		console.log("deleteAccount")
+	const logOut = async () => {
+		try {
+			const response = await axios.delete(`${base_url}/accounts/logout`, {
+				headers: {
+					Authorization: `${token}`
+				}
+			});
+			console.log(response.data.message); // Correctly update the state here
+		} catch (error) {
+			console.error('Error logOut', error);
+		}
 	};
+	const deleteAccount = async () => {
+		try {
+			const response = await axios.delete(`${base_url}/accounts/deleteUser`, {
+				headers: {
+					Authorization: `${token}`,},
+			});
+			alert(response.data.message)
+			console.log(response.data.message); // Correctly update the state here
+		} catch (error) {
+			console.error('Error logOut', error);
+		}
+	};
+	
 	if (isLoading) {
 		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff"/></View>;
 	}
@@ -663,8 +755,15 @@ const MyOptions = ({ navigation, route }) => {
 						icon="alert-circle"
 						label="계정 삭제"
 						backgroundColor="red"
-						onPress={deleteAccount}
+						onPress={deleteAccountModalVisible}
 					/>
+					{isDeleteAccountModal && (
+						<DeleteAccountModal
+							isVisible={isDeleteAccountModal}
+							onClose={() => setIsDeleteAccountModal(false)}
+							deleteAccount = {deleteAccount}
+						/>
+					)}
 				</View>
 			</ScrollView>
 		</View>
@@ -815,6 +914,32 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		margin: "3%",
+	},
+	input: {
+		width: '80%',
+		padding: 10,
+		borderWidth: 1,
+		borderColor: '#ccc',
+		borderRadius: 5,
+		marginBottom: 20,
+	},
+	disabledModalButton: {
+		width: "80%",
+		padding: 15,
+		alignItems: 'center',
+		borderRadius: 10,
+		backgroundColor: 'grey',
+		opacity: 0.5,
+	},
+	deleteModalButton: {
+		width: "80%",
+		height: 50,
+		borderRadius: 10,
+		borderWidth: 1,
+		backgroundColor: "red",
+		borderColor: 'black',
+		alignItems: 'center',
+		justifyContent: 'center',
 	},
 	selectedModalButton: {
 		width: "80%",

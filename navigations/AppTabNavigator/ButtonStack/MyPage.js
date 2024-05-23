@@ -29,6 +29,7 @@ const MyPage = ({ navigation, route }) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const pagerRef = useRef(null);
 	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
+
 	
 	useEffect(() => {
 		if (route.params?.Update) {
@@ -69,15 +70,15 @@ const MyPage = ({ navigation, route }) => {
 	
 	const fetchDataFromServer = async () => {
 		try {
-			const response = await axios.get(`https://port-0-true-echo-85phb42blucciuvv.sel5.cloudtype.app/setting/myPage`, {
+			const response = await axios.get(`${base_url}/setting/myPage`, {
 				headers: {
-					Authorization: "Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwic3ViIjoicnlhbjEwOTIwQG5hdmVyLmNvbSIsImlhdCI6MTcxNjQ3NTUxMCwiZXhwIjoxNzE2NDc5MTEwfQ.HNF2nrM39NA1a0ZSr4L-1zgmyaLWG6x4M8PShV7hiUyAINCD1Lpmyg4FN6snOHpy7AOlL9QjqPyDYGyTJA79kw"
+					Authorization: `${token}`
 				}
 			});
 			setServerData(response.data.data); // Correctly update the state here
-			const pinResponse = await axios.get(`https://port-0-true-echo-85phb42blucciuvv.sel5.cloudtype.app/setting/pins`, {
+			const pinResponse = await axios.get(`${base_url}/setting/pins`, {
 				headers: {
-					Authorization: "Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwic3ViIjoicnlhbjEwOTIwQG5hdmVyLmNvbSIsImlhdCI6MTcxNjQ3NTUxMCwiZXhwIjoxNzE2NDc5MTEwfQ.HNF2nrM39NA1a0ZSr4L-1zgmyaLWG6x4M8PShV7hiUyAINCD1Lpmyg4FN6snOHpy7AOlL9QjqPyDYGyTJA79kw"
+					Authorization: `${token}`
 				}
 			});
 			setPinData(pinResponse.data); // Correctly update the state here
