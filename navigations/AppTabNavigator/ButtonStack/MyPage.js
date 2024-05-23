@@ -29,7 +29,6 @@ const MyPage = ({ navigation, route }) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const pagerRef = useRef(null);
 	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
-
 	
 	useEffect(() => {
 		if (route.params?.Update) {
