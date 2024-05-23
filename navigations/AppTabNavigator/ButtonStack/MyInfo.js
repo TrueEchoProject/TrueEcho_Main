@@ -27,7 +27,7 @@ const MyInfo = ({ navigation, route }) => {
 	const [warning, setWarning] = useState("");
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [isLocVisible, setIsLocVisible] = useState(false);
-	const defaultImage = "https://i.ibb.co/wwfqn6V/DALL-E-2024-04-26-20-08-20-A-realistic-image-capturing-the-essence-of-a-photo-taken-by-a-young-man-i.webp";
+	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
 	
 	const [latitude, setLatitude] = useState(null);
 	const [longitude, setLongitude] = useState(null);
@@ -37,9 +37,9 @@ const MyInfo = ({ navigation, route }) => {
 		if (route.params?.user) {
 			console.log('Received user response in Info:', route.params.user);
 			setUser(route.params.user);
-			setInitialUserId(route.params.user.user_Id); // 초기 user_Id 값 설정
-			setEditableUserId(route.params.user.user_Id); // editableUserId 초기값 설정
-			setImageUri(route.params.user.profile_url);
+			setInitialUserId(route.params.user.nickname); // 초기 user_Id 값 설정
+			setEditableUserId(route.params.user.nickname); // editableUserId 초기값 설정
+			setImageUri(route.params.user.profileUrl ? route.params.user.profileUrl : defaultImage);
 		}
 	}, [route.params?.user]);
 	const handleLocationReceived = (lat, lon) => {

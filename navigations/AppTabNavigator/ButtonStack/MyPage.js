@@ -154,7 +154,7 @@ const MyPage = ({ navigation, route }) => {
 							/>
 						</View>
 					</View>
-					<Button3 onPress={() => navigation.navigate('MyOp', { user: userData })}/>
+					<Button3 onPress={() => navigation.navigate('MyOp')}/>
 					<TouchableOpacity onPress={() => navigation.navigate("알람")}>
 						<MaterialIcons
 							name="alarm"

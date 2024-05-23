@@ -7,7 +7,7 @@ import {
 	TouchableOpacity,
 	Modal,
 	Dimensions,
-	Switch,
+	Switch, ActivityIndicator,
 } from 'react-native';
 import { FontAwesome5, AntDesign, FontAwesome6, MaterialIcons, Entypo, Ionicons } from '@expo/vector-icons';
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
@@ -31,25 +31,36 @@ const OptionItem = ({ onPress, icon, iconType, label, backgroundColor = "#99A1B6
 };
 
 const MyOptions = ({ navigation, route }) => {
+	const [isLoading, setIsLoading] = useState(true);
 	const [user, setUser] = useState({})
 	const [isNotificationModal, setIsNotificationModal] = useState(false);
 	const [isBlockModal, setIsBlockModal] = useState(false);
 	const [isTimeModal, setIsTimeModal] = useState(false);
 	const [isQnAModal, setIsQnAModal] = useState(false);
+	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
 	
-	useEffect(() => {
-		if (route.params?.user) {
-			console.log('Received user response:', route.params.user);
-			setUser(route.params.user);
+	const fetchDataFromServer = async () => {
+		try {
+			const response = await axios.get(`https://port-0-true-echo-85phb42blucciuvv.sel5.cloudtype.app/setting/myInfo`, {
+				headers: {
+					Authorization: "Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwic3ViIjoicnlhbjEwOTIwQG5hdmVyLmNvbSIsImlhdCI6MTcxNjQ3NTUxMCwiZXhwIjoxNzE2NDc5MTEwfQ.HNF2nrM39NA1a0ZSr4L-1zgmyaLWG6x4M8PShV7hiUyAINCD1Lpmyg4FN6snOHpy7AOlL9QjqPyDYGyTJA79kw"
+				}
+			});
+			setUser(response.data.data); // Correctly update the state here
+			setIsLoading(false);
+		} catch (error) {
+			console.error('Error fetching data', error);
 		}
-	}, [route.params?.user]);
+	};
+	useEffect(() => {
+		fetchDataFromServer();
+	},[]);
 	useEffect(() => {
 		if (user) {
-			console.log('profile_url:', user.profile_url);
-			console.log('user_vote:', user.user_vote);
+			console.log('profile_url:', user.profileUrl);
 			console.log('username:', user.username);
-			console.log('user_Id:', user.user_Id);
-			console.log('your_location:', user.your_location);
+			console.log('user_Id:', user.nickname);
+			console.log('user', user);
 		}
 	}, [user]);
 	const notificationModalVisible = () => {
@@ -563,14 +574,17 @@ const MyOptions = ({ navigation, route }) => {
 	const deleteAccount = () => {
 		console.log("deleteAccount")
 	};
+	if (isLoading) {
+		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff"/></View>;
+	}
 	return (
 		<View style={styles.container}>
 			<ScrollView style={styles.scrollView}>
 				<TouchableOpacity onPress={() => navigation.navigate('내 설정 편집', { user: user })} style={styles.View}>
-					<ExpoImage source={{ uri: user.profile_url }} style={styles.Image}/>
+					<ExpoImage source={{ uri: user.profileUrl ? user.profileUrl : defaultImage}} style={styles.Image}/>
 					<View style={{ marginLeft: 10 }}>
 						<Text style={styles.Text}>{user.username}</Text>
-						<Text style={styles.Text}>{user.user_Id}</Text>
+						<Text style={styles.Text}>{user.nickname}</Text>
 					</View>
 				</TouchableOpacity>
 				<View>
