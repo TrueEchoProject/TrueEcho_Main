@@ -40,7 +40,7 @@ const MyOptions = ({ navigation, route }) => {
 	const [isQnAModal, setIsQnAModal] = useState(false);
 	const [isDeleteAccountModal, setIsDeleteAccountModal] = useState(false);
 	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
-	
+
 	const fetchDataFromServer = async () => {
 		try {
 			const response = await axios.get(`${base_url}/setting/myInfo`, {
@@ -305,24 +305,26 @@ const MyOptions = ({ navigation, route }) => {
 		
 		const fetchBlockedUsers = async () => {
 			try {
-				const response = await axios.get(`http://192.168.0.27:3000/blocked_users`);
-				setBlockedUsers(response.data);
+				const serverResponse = await axios.get(`${base_url}/blocks/read`, {
+					headers: {
+						Authorization: `${token}`
+					}
+				});
+				setBlockedUsers(serverResponse.data.data);
 			} catch (error) {
 				console.error('Error fetching calendar data', error);
 			}
 		};
 		useEffect(() => {
-			console.log(blockedUsers);
-		}, [blockedUsers]);
-		
-		useEffect(() => {
 			fetchBlockedUsers();
 		}, []);
-		
+		useEffect(() => {
+			console.log(blockedUsers);
+		}, [blockedUsers]);
 		// 각 사용자의 차단 상태를 초기화합니다.
 		useEffect(() => {
 			const initialStatus = blockedUsers.reduce((status, user) => {
-				status[user.id] = false; // 초기 상태를 false로 설정합니다.
+				status[user.userId] = false; // 초기 상태를 false로 설정합니다.
 				return status;
 			}, {});
 			setBlockedStatus(initialStatus);
@@ -348,14 +350,23 @@ const MyOptions = ({ navigation, route }) => {
 			// 변경된 사항이 있는지 확인합니다.
 			const hasChanges = Object.keys(blockedStatus).some(id => blockedStatus[id] !== originalStatus[id]);
 			if (hasChanges) {
-				// blockedStatus에서 차단 해제된 사용자의 ID를 추출합니다.
-				const unblockedIds = Object.keys(blockedStatus).filter(id => !blockedStatus[id]);
-				// blockedUsers 배열에서 해당 ID의 사용자 정보를 찾습니다.
-				const unblockedUserInfo = blockedUsers.filter(user => unblockedIds.includes(String(user.id)));
-				
+				// blockedStatus에서 차단된 사용자의 ID를 추출합니다.
+				const blockedIds = Object.keys(blockedStatus).filter(id => blockedStatus[id]);
+				// 차단된 사용자 ID 배열을 만듭니다.
+				const blockUserIds = blockedUsers
+					.filter(user => blockedIds.includes(String(user.userId)))
+					.map(user => user.userId);
+				console.log('서버 보내기:', blockUserIds);
 				try {
-					await axios.delete('http://192.168.0.27:3000/blocked_users');
-					const response = await axios.post('http://192.168.0.27:3000/blocked_users', unblockedUserInfo);
+					// DELETE 요청 시 쿼리 파라미터로 blockUserIds를 포함하여 전송합니다.
+					const response = await axios.delete(`${base_url}/blocks/delete`, {
+						headers: {
+							Authorization: `${token}`
+						},
+						params: {
+							blockUserIds: blockUserIds.join(',')
+						}
+					});
 					console.log('서버 응답:', response.data);
 				} catch (error) {
 					console.error('Error updating blocked users:', error);
@@ -386,20 +397,20 @@ const MyOptions = ({ navigation, route }) => {
 									contentContainerStyle={styles.scrollContent}
 								>
 									{blockedUsers.map((user) => (
-										<View key={user.id} style={styles.scrollModalButton}>
+										<View key={user.userId} style={styles.scrollModalButton}>
 											<ExpoImage
 												style={styles.profileImage}
-												source={{ uri: user.profile_url }}
+												source={{ uri: user.userProfileUrl ? user.userProfileUrl : defaultImage}}
 											/>
-											<Text style={styles.buttonText}>{user.username}</Text>
+											<Text style={styles.buttonText}>{user.nickname}</Text>
 											{ editButton && (
 												<TouchableOpacity
 													style={[
 														styles.blockedButton,
 													]}
-													onPress={() => toggleBlockStatus(user.id)}
+													onPress={() => toggleBlockStatus(user.userId)}
 												>
-													{blockedStatus[user.id] ? (
+													{blockedStatus[user.userId] ? (
 														<AntDesign name="checksquare" size={30} color="black" />
 													) : (
 														<AntDesign name="checksquareo" size={30} color="black" />
