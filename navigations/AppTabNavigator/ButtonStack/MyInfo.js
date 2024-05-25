@@ -20,7 +20,9 @@ import GetLocation from "../../../SignUp/GetLocation";
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 const MyInfo = ({ navigation, route }) => {
-	const [user, setUser] = useState({});
+	const [isLoading, setIsLoading] = useState(true);
+	const [serverUserLocation, setServerUserLocation] = useState({}); // 서버 유저 데이터
+	const [username, setUsername] = useState("");
 	const [editableUserId, setEditableUserId] = useState(""); // 사용자가 수정할 수 있는 user_Id 상태
 	const [initialUserId, setInitialUserId] = useState(""); // 초기 user_Id 상태
 	const [imageUri, setImageUri] = useState("");
@@ -28,20 +30,11 @@ const MyInfo = ({ navigation, route }) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [isLocVisible, setIsLocVisible] = useState(false);
 	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
-
+	
 	const [latitude, setLatitude] = useState(null);
 	const [longitude, setLongitude] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [refresh, setRefresh] = useState(false);
-	useEffect(() => {
-		if (route.params?.user) {
-			console.log('Received user response in Info:', route.params.user);
-			setUser(route.params.user);
-			setInitialUserId(route.params.user.nickname); // 초기 user_Id 값 설정
-			setEditableUserId(route.params.user.nickname); // editableUserId 초기값 설정
-			setImageUri(route.params.user.profileUrl ? route.params.user.profileUrl : defaultImage);
-		}
-	}, [route.params?.user]);
 	const handleLocationReceived = (lat, lon) => {
 		console.log('Received new location:', { lat, lon });
 		setLatitude(lat);
@@ -94,7 +87,6 @@ const MyInfo = ({ navigation, route }) => {
 				});
 		}
 	}, [isLocVisible]);
-	
 	useEffect(() => {
 		if (refresh) {
 			setLoading(true); // refresh가 변경되면 로딩 시작
@@ -104,6 +96,28 @@ const MyInfo = ({ navigation, route }) => {
 	const LocVisible = () => {
 		setIsLocVisible(!isLocVisible)
 	}
+	
+	useEffect(() => {
+		fetchServerData();
+	}, []);
+	const fetchServerData = async () => {
+		try {
+			const response = await axios.get(`${base_url}/setting/myInfo`, {
+				headers: {
+					Authorization: `${token}`
+				}
+			});
+			setUsername(response.data.data.username);
+			setInitialUserId(response.data.data.nickname); // 초기 user_Id 값 설정
+			setEditableUserId(response.data.data.nickname); // editableUserId 초기값 설정
+			setImageUri(response.data.data.profileUrl ? response.data.data.profileUrl : defaultImage); // 이미지 URL 설정
+			setServerUserLocation(response.data.data.yourLocation);
+			setIsLoading(false);
+		} catch (error) {
+			console.error('Error fetching data', error);
+		}
+	};
+	
 	const PofileInitialization = () => {
 		setImageUri(defaultImage);
 		setIsModalVisible(false)
@@ -136,27 +150,35 @@ const MyInfo = ({ navigation, route }) => {
 	const handleUserIdChange = (text) => {
 		setEditableUserId(text);
 	};
-	const duplicateCheck = () => {
+	const duplicateCheck = async () => {
 		if (editableUserId === "") {
 			Alert.alert("알림", "이름을 입력해주세요!");
+			setEditableUserId(initialUserId);
 			return;
 		}
-		
+		if (editableUserId === initialUserId) {
+			Alert.alert("알림", "아이디를 변경해주세요!");
+			return;
+		}
 		console.log('Checking user ID:', editableUserId);
-		axios.get(`http://192.168.0.27:3000/user?user_Id=${editableUserId}`)
-			.then(response => {
-				console.log('Response data:', response.data); // 응답 데이터 로깅
-				if (response.data.length > 0) { //get을 통해 무언가 반환이 되면, 중복이므로 중복 알림 표시.
-					alert('이미 사용 중인 아이디입니다.');
-					setWarning('이미 사용 중인 아이디입니다.');
-				} else { // 빈배열이 반환되면 중복이 아니므로 사용가능 알림 표시.
-					alert('사용 가능한 아이디입니다.');
-					setWarning('사용 가능한 아이디입니다.');
-				}
-			})
-			.catch(error => { // 에러처리.
-				console.error('Error:', error);
-			});
+		await axios.get(`${base_url}/accounts/nickname/duplication?nickname=dd11`, {
+			headers: {
+				Authorization: `${token}`
+			}
+		})
+		.then(response => {
+		console.log('Response data:', response.data); // 응답 데이터 로깅
+		if (response.data.length > 0) { //get을 통해 무언가 반환이 되면, 중복이므로 중복 알림 표시.
+			alert('이미 사용 중인 아이디입니다.');
+			setWarning('이미 사용 중인 아이디입니다.');
+		} else { // 빈배열이 반환되면 중복이 아니므로 사용가능 알림 표시.
+			alert('사용 가능한 아이디입니다.');
+			setWarning('사용 가능한 아이디입니다.');
+		}
+		})
+		.catch(error => { // 에러처리.
+			console.error('Error:', error);
+		});
 	};
 	
 	const handleSave = async () => {
@@ -198,6 +220,9 @@ const MyInfo = ({ navigation, route }) => {
 		}
 	};
 	
+	const profileModalVisible = () => {
+		setIsModalVisible(!isModalVisible);
+	};
 	const ProfileModal = ({ isVisible, onClose }) => { // 수정: 프로퍼티 이름 Image -> imageUrl 변경
 		return (
 			<Modal
@@ -237,9 +262,10 @@ const MyInfo = ({ navigation, route }) => {
 			</Modal>
 		);
 	};
-	const profileModalVisible = () => {
-		setIsModalVisible(!isModalVisible);
-	};
+	
+	if (isLoading) {
+		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff"/></View>;
+	}
 	return (
 		<View style={styles.container}>
 			<View style={{ padding: 20, alignItems:"center",}}>
@@ -260,7 +286,7 @@ const MyInfo = ({ navigation, route }) => {
 			<View style={{ width: "90%", }}>
 				<View style={styles.View}>
 					<Text style={styles.smallText}>이름</Text>
-					<Text style={styles.text}>{user.username}</Text>
+					<Text style={styles.text}>{username}</Text>
 				</View>
 			</View>
 			<View style={{ width: "90%",}}>
@@ -301,7 +327,7 @@ const MyInfo = ({ navigation, route }) => {
 			<View style={{ width: "90%",}}>
 				<TouchableOpacity onPress={LocVisible} style={styles.View}>
 					<Text style={styles.smallText}>위치</Text>
-					<Text style={styles.text}>{user.your_location}</Text>
+					<Text style={styles.text}>{serverUserLocation}</Text>
 				</TouchableOpacity>
 			</View>
 			{isLocVisible && (
