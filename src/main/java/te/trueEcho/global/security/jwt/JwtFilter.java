@@ -11,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
+import te.trueEcho.global.security.jwt.Repository.RefreshTokenRepository;
 import te.trueEcho.global.security.jwt.dto.TokenType;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ import java.io.IOException;
 public class JwtFilter extends GenericFilterBean {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     private final TokenProvider tokenProvider;
-
+    private final RefreshTokenRepository refreshTokenRepository;
     // 가장 먼저 실행되는 필터
     // 토큰의 인증정보를 SecurityContext에 저장
     @Override
@@ -33,7 +34,9 @@ public class JwtFilter extends GenericFilterBean {
         TokenType type = isRefreshRequest(requestURI) ? TokenType.REFRESH : TokenType.ACCESS;
         log.info("retrieved jwt in request = {}, token type ={} ",jwt,type);
 
-        if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt, type)) {
+        if (StringUtils.hasText(jwt) &&
+                tokenProvider.validateToken(jwt, type) &&
+                !refreshTokenRepository.isInvalidToken(jwt)) { // accessToken이 유효하고, refreshToken이 유효한지 확인
             UsernamePasswordAuthenticationToken authentication = tokenProvider.getAuthentication(jwt,type);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.info("Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication.getName(), requestURI);
