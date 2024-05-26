@@ -30,7 +30,6 @@ const MyPage = ({ navigation, route }) => {
 	const pagerRef = useRef(null);
 	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
 	
-	
 	useEffect(() => {
 		if (route.params?.Update) {
 			console.log('Received Update response:', route.params.Update);
@@ -50,10 +49,9 @@ const MyPage = ({ navigation, route }) => {
 			setIsFrontShowing(showingStates);
 		}
 	}, [route.params?.pinRes]);
-	
 	useEffect(() => {
 		if (pinData) {
-			console.log('pinData updated:', pinData.data);
+			console.log('pinData updated:', pinData);
 		}
 		if (pinData.length > 0 && pagerRef.current) {
 			pagerRef.current.setPageWithoutAnimation(0);
@@ -81,7 +79,7 @@ const MyPage = ({ navigation, route }) => {
 					Authorization: `${token}`
 				}
 			});
-			setPinData(pinResponse.data); // Correctly update the state here
+			setPinData(pinResponse.data.data.pinList); // Correctly update the state here
 			setIsLoading(false);
 		} catch (error) {
 			console.error('Error fetching data', error);
@@ -130,6 +128,7 @@ const MyPage = ({ navigation, route }) => {
 			</Modal>
 		);
 	};
+	
 	return (
 		<View style={styles.container}>
 			<View style={styles.topContainer}>
@@ -194,7 +193,7 @@ const MyPage = ({ navigation, route }) => {
 						/>
 					</TouchableOpacity>
 				</View>
-				{pinData.message === "핀 조회를 실패했습니다." ? (
+				{pinData.length === 0 ? (
 					<View style={styles.pinPlus}>
 						<TouchableOpacity
 							style={{alignItems: "center", padding: 30,}}
@@ -217,7 +216,7 @@ const MyPage = ({ navigation, route }) => {
 							onPageSelected={handlePageChange}
 							ref={pagerRef}
 						>
-							{pinData.data.pinList.map((item) => (
+							{pinData.map((item) => (
 								<View key={item.pinId} style={{ position: 'relative' }}>
 									<TouchableOpacity onPress={() => changeImage(item.pinId)}>
 										<ExpoImage
@@ -229,7 +228,7 @@ const MyPage = ({ navigation, route }) => {
 							))}
 						</PagerView>
 						<View style={styles.indicatorContainer}>
-							{pinData.data.pinList.map((item, index) => ( // index를 item에 추가
+							{pinData.map((item, index) => (
 								<Text key={index} style={[styles.indicator, index === currentPage ? styles.activeIndicator : null]}>
 									&#9679;
 								</Text>
@@ -240,7 +239,7 @@ const MyPage = ({ navigation, route }) => {
 			</View>
 		</View>
 	);
-}
+};
 
 const styles = StyleSheet.create({
 	scrollView: {

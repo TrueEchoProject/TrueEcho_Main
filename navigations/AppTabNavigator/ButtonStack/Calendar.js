@@ -8,7 +8,7 @@ import {
 	ImageBackground,
 	Modal,
 	Dimensions,
-	ScrollView,
+	ScrollView, ActivityIndicator,
 } from 'react-native';
 import axios from "axios";
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
@@ -18,22 +18,73 @@ const months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11"
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 const Calendar = ({ navigation }) => {
-	const [currentMonth, setCurrentMonth] = useState(new Date());
+	const [selectedPins, setSelectedPins] = useState([]); // 선택된 핀들의 정보를 저장할 상태
+	const [serverSelectedPins, setServerSelectedPins] = useState([]); // 서버로부터 받아온 선택된 핀들의 정보를 저장할 상태
+	const [isLoading, setIsLoading] = useState(true);
 	const [specificDates, setSpecificDates] = useState({});
+	const [currentMonth, setCurrentMonth] = useState(new Date());
 	const [isImageVisible, setIsImageVisible] = useState(false);
 	const [currentImageUrls, setCurrentImageUrls] = useState({ front: null, back: null });
-	const [selectedPins, setSelectedPins] = useState([]);  // 선택된 핀들의 정보를 저장할 상태
-	const fetchCalendar = async () => {
+	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
+	
+	
+	useEffect(() => {
+		fetchCalendarAndPins();
+	}, []);
+	useEffect(() => {
+		if (selectedPins) {
+			console.log(selectedPins);
+		}
+	}, [selectedPins]); // userData 변화 감지
+	useEffect(() => {
+		console.log("specificDates is", specificDates);
+	}, [specificDates]);
+	useEffect(() => {
+		console.log("serverSelectedPins is", serverSelectedPins);
+	}, [serverSelectedPins]);
+	
+	const fetchCalendarAndPins = async () => {
 		try {
-			const response = await axios.get(`http://192.168.0.27:3000/user_calendar`);
-			const calendarData = response.data;
-			const newSpecificDates = {};
+			// Fetch monthly posts
+			const calendarResponse = await axios.get(`${base_url}/setting/monthlyPosts`, {
+				headers: {
+					Authorization: token
+				}
+			});
+			const calendarData = calendarResponse.data.data.monthlyPostList;
+			// Process calendar data to keep the latest post for each date
+			const latestPostsByDate = {};
 			calendarData.forEach(item => {
-				newSpecificDates[item.created_at] = { front: item.post_front_url, back: item.post_back_url };
+				const date = item.createdAt.split('T')[0];
+				if (!latestPostsByDate[date] || new Date(item.createdAt) > new Date(latestPostsByDate[date].createdAt)) {
+					latestPostsByDate[date] = item;
+				}
+			});
+			const newSpecificDates = {};
+			Object.keys(latestPostsByDate).forEach(date => {
+				const item = latestPostsByDate[date];
+				newSpecificDates[date] = { front: item.postFrontUrl, back: item.postBackUrl, postId: item.postId };
 			});
 			setSpecificDates(newSpecificDates);
+			// Fetch selected pins
+			const pinsResponse = await axios.get(`${base_url}/setting/pins`, {
+				headers: {
+					Authorization: token
+				}
+			});
+			const selectedPinsData = pinsResponse.data.data.pinList;
+			const newSelectedPins = selectedPinsData.map(pin => ({
+				pinId: pin.pinId,
+				postId: pin.postId,
+				date: pin.createdAt.split('T')[0], // 'T' 이후를 잘라서 저장
+				frontUrl: pin.postFrontUrl ? pin.postFrontUrl : defaultImage,
+				backUrl: pin.postBackUrl ? pin.postBackUrl : defaultImage,
+				isFrontShowing: false // 기본적으로 전면 이미지를 보여줌
+			}));
+			setSelectedPins(newSelectedPins);
+			setIsLoading(false);
 		} catch (error) {
-			console.error('Error fetching calendar data', error);
+			console.error('Error fetching calendar data or selected pins', error);
 		}
 	};
 	const postPins = async () => {
@@ -41,39 +92,32 @@ const Calendar = ({ navigation }) => {
 			alert("선택된 핀이 없습니다.");
 			return;
 		}
+		const updatedPostIdList = selectedPins.map(pin => pin.postId);
+		const postData = { updatedPostIdList };
+		console.log(postData);
+		
 		const pinData = {
 			pins: selectedPins.map((pin, index) => ({
-				pin_id: index + 1,
-				created_at: pin.date,
-				post_front_url: pin.frontUrl,
-				post_back_url: pin.backUrl
+				pinId: index + 1,
+				createdAt: pin.date,
+				postFrontUrl: pin.frontUrl,
+				postBackUrl: pin.backUrl
 			}))
 		};
-		
 		try {
-			const PostResponse = await axios.delete('http://192.168.0.27:3000/user_pin')
-			const response = await axios.post('http://192.168.0.27:3000/user_pin', pinData);
-			alert("핀이 성공적으로 제출되었습니다.");
+			const response = await axios.put(`${base_url}/setting/pins`, postData, {
+				headers: {
+					Authorization: token
+				}
+			});
+			alert("핀 업데이트가 성공적으로 제출되었습니다.");
 			if (response) {
-				navigation.navigate("MyP", { pinRes: pinData }); // SendPost 페이지로 이동하면서 두 배열의 파라미터를 전달
+				console.log(pinData);
+				navigation.navigate("MyP", { pinRes: pinData }); // SendPost 페이지로 이동하면서 pinData를 전달
 			}
 		} catch (error) {
 			console.error('Error posting pins', error);
 			alert("핀을 제출하는 중 오류가 발생했습니다.");
-		}
-	};
-	const loadSelectedPins = async () => {
-		try {
-			const response = await axios.get('http://192.168.0.27:3000/user_pin');
-			const selectedPinsData = response.data;
-			setSelectedPins(selectedPinsData.map(pin => ({
-				date: pin.created_at,
-				frontUrl: pin.post_front_url,
-				backUrl: pin.post_back_url,
-				isFrontShowing: false //기본적으로 전면 이미지를 보여줌
-			})));
-		} catch (error) {
-			console.error('Error fetching selected pins', error);
 		}
 	};
 	
@@ -95,7 +139,9 @@ const Calendar = ({ navigation }) => {
 					isInCurrentMonth: day !== '',
 					imageUrl: specificDates[dateKey]?.front,
 					imageBackUrl: specificDates[dateKey]?.back,
-					date: dateKey  // 날짜 정보 추가
+					date: dateKey,  // 날짜 정보 추가
+					pinId: specificDates[dateKey]?.pinId, // pinId 추가
+					postId: specificDates[dateKey]?.postId // postId 추가
 				};
 			}
 		}
@@ -112,7 +158,7 @@ const Calendar = ({ navigation }) => {
 								<TouchableOpacity
 									key={colIndex}
 									style={styles.cell}
-									onPress={() => toggleImageVisibility(item.imageUrl, item.imageBackUrl, item.date)}
+									onPress={() => toggleImageVisibility(item.imageUrl, item.imageBackUrl, item.date, item.postId)}
 								>
 									<ImageBackground source={{ uri: item.imageBackUrl }} style={styles.backgroundImage}>
 										<Text style={styles.dateImageText}>{item.day}</Text>
@@ -181,8 +227,8 @@ const Calendar = ({ navigation }) => {
 			</Modal>
 		);
 	};
-	const toggleImageVisibility = (imageUrl, imageBackUrl, date) => {
-		setCurrentImageUrls({ front: imageUrl, back: imageBackUrl, date: date });
+	const toggleImageVisibility = (imageUrl, imageBackUrl, date, postId, pinId) => {
+		setCurrentImageUrls({ front: imageUrl, back: imageBackUrl, date: date, pinId: pinId, postId: postId });
 		setIsImageVisible(!isImageVisible);
 	};
 	const handleSelectPin = () => {
@@ -200,10 +246,12 @@ const Calendar = ({ navigation }) => {
 		}
 		// 새로운 핀 추가
 		const newPin = {
+			pinId: currentImageUrls.pinId,
+			postId: currentImageUrls.postId,
 			frontUrl: currentImageUrls.front,
 			backUrl: currentImageUrls.back,
 			date: currentImageUrls.date,
-			isFrontShowing: true // 초기 전면 이미지 상태 설정
+			isFrontShowing: false // 초기 전면 이미지 상태 설정
 		};
 		setSelectedPins(prevPins => [...prevPins, newPin].sort((a, b) => new Date(a.date) - new Date(b.date)));
 		setIsImageVisible(false);
@@ -252,16 +300,9 @@ const Calendar = ({ navigation }) => {
 		setSelectedPins(prevPins => prevPins.filter((_, i) => i !== index));
 	};
 	
-	useEffect(() => {
-		fetchCalendar();
-		loadSelectedPins();  // 앱 로드 시 선택된 핀을 로드
-	}, []);
-	useEffect(() => {
-		if (selectedPins) {
-			console.log(selectedPins);
-		}
-	}, [selectedPins]); // userData 변화 감지
-	
+	if (isLoading) {
+		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff"/></View>;
+	}
 	return (
 		<SafeAreaView style={styles.bg}>
 			<View style={styles.container}>
