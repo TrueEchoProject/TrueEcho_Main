@@ -9,14 +9,16 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const UserAlarm = ({ route }) => {
-	const [userId, setUserId] = useState()
-	const [userData, setUserData] = useState(null);
-	const [pinData, setPinData] = useState([]);
+	const [userId, setUserId] = useState(251)
+	const [serverUserData, setServerUserData] = useState({}); // 서버 유저 데이터
+	const [serverPinData, setServerPinData] = useState([]); // 서버 핀 데이터
+	const [isFriend, setIsFriend] = useState(false); // 친구 여부
+	const [friendLook, setFriendLook] = useState(true); // 친구 여부
 	const [isFrontShowing, setIsFrontShowing] = useState({});
 	const [currentPage, setCurrentPage] = useState(0);
-	
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const pagerRef = useRef(null);
+	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
 	
 	useEffect(() => {
 		if (route.params?.userId) {
@@ -25,28 +27,35 @@ const UserAlarm = ({ route }) => {
 		}
 	}, [route.params?.Update]);
 	useEffect(() => {
-		if (userData) {
-			console.log(userData);
+		if (serverUserData) {
+			console.log("server user",serverUserData);
 		}
-	}, [userData]); // userData 변화 감지
+	}, [serverUserData]);
 	useEffect(() => {
-		if (pinData) {
-			console.log(pinData);
+		if (serverPinData) {
+			console.log("server pin",serverPinData);
 		}
-	}, [pinData]);
+	}, [serverPinData]);
 	useEffect(() => {
-		if (userId) {
-			fetchData();
+		if (isFriend) {
+			console.log("friend",isFriend);
 		}
-	}, [userId]);  // userId 변경 시 fetchData 호출
+	}, [isFriend]);
+	useEffect(() => {
+		fetchData();
+	}, []);
 	
 	const fetchData = async () => {
 		try {
-			const response = await axios.get(`http://192.168.0.27:3000/user_Data?user_id=${userId}`);
-			if (response.data && response.data.length > 0) {
-				const userData = response.data[0]; // 첫 번째 사용자 데이터를 가져옴
-				setUserData(userData);
-				setPinData(userData.pin); // userData 내의 pin 배열을 설정
+			const serverResponse = await axios.get(`${base_url}/setting/myPage?userId=${userId}`, {
+				headers: {
+					Authorization: `${token}`
+				}
+			});
+			if (serverResponse.data) {
+				setServerUserData(serverResponse.data.data.pageInfo);
+				setServerPinData(serverResponse.data.data.pinList.pinList);
+				setIsFriend(serverResponse.data.data.friend);
 			} else {
 				console.log('No user data returned from API');
 			}
@@ -54,6 +63,24 @@ const UserAlarm = ({ route }) => {
 			console.error('Error fetching data', error);
 		}
 	}
+	const toggleFriendSend = async () => {
+		console.log(userId, 'userId');
+		try {
+			const formData = new FormData();
+			formData.append('targetUserId', userId);
+			
+			const response = await axios.post(`${base_url}/friends/add`, formData, {
+				headers: {
+					Authorization: `${token}`,
+					'Content-Type': 'multipart/form-data',
+				}
+			});
+			console.log('Send updated successfully', response.data, userId);
+			setFriendLook(false);
+		} catch (error) {
+			console.error('Error updating Send:', error);
+		}
+	};
 	
 	const changeImage = (pinId) => {
 		setIsFrontShowing(prev => ({
@@ -93,7 +120,7 @@ const UserAlarm = ({ route }) => {
 	
 	return (
 		<View style={styles.container}>
-			{!userData ? (
+			{!serverUserData ? (
 				<View style={styles.loader}>
 					<ActivityIndicator size="large" color="#0000ff" />
 				</View>
@@ -103,17 +130,17 @@ const UserAlarm = ({ route }) => {
 						<View style={{flexDirection: "row"}}>
 							<View style={{marginRight: "auto"}}>
 								<TouchableOpacity onPress={profileImageModalVisible}>
-									<ExpoImage source={{ uri: userData.profile_url }} style={styles.avatar}/>
+									<ExpoImage source={{ uri: serverUserData.profileUrl ? serverUserData.profileUrl : defaultImage }} style={styles.avatar}/>
 								</TouchableOpacity>
 								{isModalVisible && (
 									<ProfileImageModal
 										isVisible={isModalVisible}
-										imageUrl={userData.profile_url} // 수정: imageUrl 프로퍼티 전달
+										imageUrl={serverUserData.profileUrl} // 수정: imageUrl 프로퍼티 전달
 										onClose={() => setIsModalVisible(false)}
 									/>
 								)}
 								<View style={styles.textContainer}>
-									<Text style={styles.name}>{userData.username}</Text>
+									<Text style={styles.name}>{serverUserData.username}</Text>
 									<FontAwesome5
 										name="crown"
 										style={{marginLeft: 10, marginBottom: 10}}
@@ -122,18 +149,34 @@ const UserAlarm = ({ route }) => {
 									/>
 								</View>
 							</View>
+							{!isFriend && ( friendLook === true ? (
+									<View style={styles.friendButton}>
+										<TouchableOpacity onPress={toggleFriendSend}>
+											<Text style={{fontSize: 15, color: "white",}}>
+												친구 추가
+											</Text>
+										</TouchableOpacity>
+									</View>
+								) : (
+									<View style={styles.friendButton}>
+										<Text style={{fontSize: 15, color: "white",}}>
+											추가 완료
+										</Text>
+									</View>
+								)
+							)}
 						</View>
 						<View style={styles.textContainer}>
-							<Text>{userData.user_vote}</Text>
+							<Text>{serverUserData.mostVotedTitle ? serverUserData.mostVotedTitle : "투표를 진행해주세요!"}</Text>
 						</View>
 					</View>
 					<View style={styles.pinsContainer}>
 						<View style={{ flexDirection: "row" }}>
 							<Text style={styles.pinsTitle}>Pins</Text>
 						</View>
-						{pinData.length === 0 ? (
+						{serverPinData.length === 0 ? (
 							<View style={styles.pinPlus}>
-								<TouchableOpacity
+								<View
 									style={{alignItems: "center", padding: 30,}}
 								>
 									<AntDesign
@@ -142,8 +185,8 @@ const UserAlarm = ({ route }) => {
 										style={{margin: 20,}}
 										color="white"
 									/>
-									<Text style={[styles.pinsText, {textAlign: 'center'}]}>핀을{'\n'}추가해보세요!</Text>
-								</TouchableOpacity>
+									<Text style={[styles.pinsText, {textAlign: 'center'}]}>아직{'\n'}핀이 없어요...</Text>
+								</View>
 							</View>
 						) : (
 							<>
@@ -153,11 +196,11 @@ const UserAlarm = ({ route }) => {
 									onPageSelected={handlePageChange}
 									ref={pagerRef}
 								>
-									{pinData.map((item) => (
-										<View key={item.pin_id} style={{ position: 'relative' }}>
-											<TouchableOpacity onPress={() => changeImage(item.pin_id)}>
+									{serverPinData.map((item) => (
+										<View key={item.pinId} style={{ position: 'relative' }}>
+											<TouchableOpacity onPress={() => changeImage(item.pinId)}>
 												<ExpoImage
-													source={{ uri: isFrontShowing[item.pin_id] ? item.post_front_url : item.post_back_url }}
+													source={{ uri: isFrontShowing[item.pinId] ? item.postFrontUrl : item.postBackUrl }}
 													style={styles.pageStyle}
 												/>
 											</TouchableOpacity>
@@ -165,7 +208,7 @@ const UserAlarm = ({ route }) => {
 									))}
 								</PagerView>
 								<View style={styles.indicatorContainer}>
-									{pinData.map((_, index) => (
+									{serverPinData.map((item, index) => (
 										<Text key={index} style={[styles.indicator, index === currentPage ? styles.activeIndicator : null]}>
 											&#9679;
 										</Text>
@@ -278,6 +321,14 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
+	},
+	friendButton: {
+		backgroundColor: "#3B4664",
+		padding: 5,
+		height: 35,
+		marginBottom: 5,
+		borderRadius: 3,
+		justifyContent: "center",
 	},
 })
 export default UserAlarm;
