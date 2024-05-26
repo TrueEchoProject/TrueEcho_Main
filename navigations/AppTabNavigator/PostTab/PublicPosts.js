@@ -32,7 +32,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		
 		if (selectedRange) {
 			try {
-				const locationResponse = await axios.get('http://192.168.0.27:3000/user_location');
+				const locationResponse = await axios.get('http://192.168.0.3:3000/user_location');
 				const words = locationResponse.data[0].your_location.split(' ');
 				let newLocation = '';
 				switch (selectedRange) {

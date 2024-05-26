@@ -28,7 +28,7 @@ const FeedAlarm = ({ navigation, route }) => {
 	}, [postId]);
 	const fetchData = async ( postId ) => {
 		try {
-			const response = await axios.get(`http://192.168.0.27:3000/posts?post_id=${postId}`);
+			const response = await axios.get(`http://192.168.0.3:3000/posts?post_id=${postId}`);
 			setPost(response.data[0]);
 		} catch (error) {
 			console.error('Error fetching data', error);
