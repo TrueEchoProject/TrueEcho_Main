@@ -22,6 +22,16 @@
         }
       ],
       "id": 2
+    },
+    {
+      "location": [
+        {
+          "id": 1,
+          "loc": "37.68003413846758",
+          "lon": "126.74876529951464"
+        }
+      ],
+      "id": 3
     }
   ],
   "questions": [
@@ -645,7 +655,8 @@
       "created_at": "2024-04-01",
       "title": "오늘의 일상 #힐링",
       "location": "경기도 고양시 일산동구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "true"
     },
     {
       "post_id": 2,
@@ -659,7 +670,8 @@
       "created_at": "2024-03-31",
       "title": "먹스타그램: 오늘의 점심",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "true"
     },
     {
       "post_id": 3,
@@ -673,7 +685,8 @@
       "created_at": "2024-03-30",
       "title": "운동 끝! #헬스타그램",
       "location": "경기도 고양시 일산동구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "true"
     },
     {
       "post_id": 4,
@@ -687,7 +700,8 @@
       "created_at": "2024-03-29",
       "title": "이번 주말 여행 계획!",
       "location": "경기도 고양시 일산동구",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "true"
     },
     {
       "post_id": 5,
@@ -701,7 +715,8 @@
       "created_at": "2024-03-28",
       "title": "집꾸미기 프로젝트 시작",
       "location": "경기도 수원시 장안구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "true"
     },
     {
       "post_id": 6,
@@ -715,7 +730,8 @@
       "created_at": "2024-03-27",
       "title": "책 추천해주세요 #독서",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "true"
     },
     {
       "post_id": 7,
@@ -729,7 +745,8 @@
       "created_at": "2024-03-26",
       "title": "오늘의 OOTD #패션",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "true"
     },
     {
       "post_id": 8,
@@ -743,7 +760,8 @@
       "created_at": "2024-03-25",
       "title": "커피 한 잔의 여유 #카페투어",
       "location": "경기도 수원시 장안구",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "true"
     },
     {
       "post_id": 9,
@@ -757,7 +775,8 @@
       "created_at": "2024-03-24",
       "title": "새로운 취미 생활 #포토그래피",
       "location": "경기도 수원시 장안구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "true"
     },
     {
       "post_id": 10,
@@ -771,7 +790,8 @@
       "created_at": "2024-03-23",
       "title": "일상 속 작은 행복 찾기",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "true"
     },
     {
       "post_id": 11,
@@ -785,7 +805,8 @@
       "created_at": "2024-03-22",
       "title": "맛집 탐방 #먹방",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 12,
@@ -799,7 +820,8 @@
       "created_at": "2024-03-21",
       "title": "오늘의 운세 #별자리",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 13,
@@ -813,7 +835,8 @@
       "created_at": "2024-03-20",
       "title": "새로운 언어 학습하기",
       "location": "경기도 고양시 일산동구",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 14,
@@ -827,7 +850,8 @@
       "created_at": "2024-03-19",
       "title": "영화 추천 받아요 #영화",
       "location": "경기도 고양시 일산동구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 15,
@@ -841,7 +865,8 @@
       "created_at": "2024-03-18",
       "title": "게임 추천해주세요 #게임",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 16,
@@ -855,7 +880,8 @@
       "created_at": "2024-03-17",
       "title": "요리 레시피 공유 #홈쿡",
       "location": "경기도 고양시 일산동구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 17,
@@ -869,7 +895,8 @@
       "created_at": "2024-03-16",
       "title": "피트니스 도전기 #운동",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 18,
@@ -883,7 +910,8 @@
       "created_at": "2024-03-15",
       "title": "DIY 프로젝트 #수제",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 19,
@@ -897,7 +925,8 @@
       "created_at": "2024-03-14",
       "title": "여행 계획과 팁 #여행스타그램",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 20,
@@ -911,7 +940,8 @@
       "created_at": "2024-03-13",
       "title": "개발 공부 기록 #개발자",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 21,
@@ -925,7 +955,8 @@
       "created_at": "2024-03-12",
       "title": "일러스트 연습 작품 #드로잉",
       "location": "경기도 고양시 일산서구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 22,
@@ -939,7 +970,8 @@
       "created_at": "2024-03-11",
       "title": "오늘의 명언 #인스피레이션",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 23,
@@ -953,7 +985,8 @@
       "created_at": "2024-03-10",
       "title": "실내 정원 가꾸기 #가드닝",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 24,
@@ -967,7 +1000,8 @@
       "created_at": "2024-03-09",
       "title": "나만의 레시피 공개 #요리",
       "location": "경기도 고양시 일산서구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 25,
@@ -981,7 +1015,8 @@
       "created_at": "2024-03-08",
       "title": "최근 읽은 책 리뷰 #독서",
       "location": "경기도 고양시 일산서구",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 26,
@@ -995,7 +1030,8 @@
       "created_at": "2024-03-07",
       "title": "하루를 되돌아보며 #일기",
       "location": "경기도 수원시 장안구",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 27,
@@ -1009,7 +1045,8 @@
       "created_at": "2024-03-06",
       "title": "최애 드라마 소개 #드라마",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 28,
@@ -1023,7 +1060,8 @@
       "created_at": "2024-03-05",
       "title": "음악 추천해요 #음악",
       "location": "서울특별시 용산구 서빙고동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 29,
@@ -1037,7 +1075,8 @@
       "created_at": "2024-03-04",
       "title": "퍼스널 트레이닝 #피트니스",
       "location": "서울특별시 용산구 이태원1동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 30,
@@ -1051,7 +1090,8 @@
       "created_at": "2024-03-03",
       "title": "오늘의 스케치 #스케치",
       "location": "경기도 고양시 일산서구",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 31,
@@ -1065,7 +1105,8 @@
       "created_at": "2024-03-02",
       "title": "자연에서 찾은 아름다움 #자연",
       "location": "서울특별시 용산구 이태원1동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 32,
@@ -1079,7 +1120,8 @@
       "created_at": "2024-03-01",
       "title": "집에서 즐기는 문화 생활 #홈캉스",
       "location": "서울특별시 용산구 이태원1동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 33,
@@ -1093,7 +1135,8 @@
       "created_at": "2024-02-29",
       "title": "새로운 기술 습득 #테크",
       "location": "서울특별시 용산구 이태원1동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 34,
@@ -1107,7 +1150,8 @@
       "created_at": "2024-02-28",
       "title": "펫과의 일상 #펫스타그램",
       "location": "경기도 수원시 영통구",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 35,
@@ -1121,7 +1165,8 @@
       "created_at": "2024-02-27",
       "title": "명상과 요가 #요가",
       "location": "서울특별시 용산구 이태원1동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 36,
@@ -1135,7 +1180,8 @@
       "created_at": "2024-02-26",
       "title": "긍정의 힘 #포지티브",
       "location": "서울특별시 용산구 이태원1동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 37,
@@ -1149,7 +1195,8 @@
       "created_at": "2024-02-25",
       "title": "사진 촬영 팁 #사진",
       "location": "서울특별시 강동구 고덕1동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 38,
@@ -1163,7 +1210,8 @@
       "created_at": "2024-02-24",
       "title": "매일의 운동 루틴 #건강",
       "location": "서울특별시 강동구 고덕1동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 39,
@@ -1177,7 +1225,8 @@
       "created_at": "2024-02-23",
       "title": "자기 개발 노트 #자기개발",
       "location": "경기도 수원시 영통구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 40,
@@ -1191,7 +1240,8 @@
       "created_at": "2024-02-22",
       "title": "새벽 감성 #새벽",
       "location": "서울특별시 강동구 고덕1동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 41,
@@ -1205,7 +1255,8 @@
       "created_at": "2024-02-21",
       "title": "일상에서 찾은 소소한 기쁨 #행복",
       "location": "서울특별시 강동구 고덕1동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 42,
@@ -1219,7 +1270,8 @@
       "created_at": "2024-02-20",
       "title": "오늘의 메이크업 #뷰티",
       "location": "경기도 고양시 일산서구",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 43,
@@ -1233,7 +1285,8 @@
       "created_at": "2024-02-19",
       "title": "손편지 쓰기 #레터링",
       "location": "서울특별시 강동구 고덕1동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 44,
@@ -1247,7 +1300,8 @@
       "created_at": "2024-02-18",
       "title": "나의 여행 이야기 #백패커",
       "location": "경기도 수원시 영통구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 45,
@@ -1261,7 +1315,8 @@
       "created_at": "2024-02-17",
       "title": "최근에 본 전시회 #전시",
       "location": "경기도 수원시 영통구",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 46,
@@ -1275,7 +1330,8 @@
       "created_at": "2024-02-16",
       "title": "프로그래밍 공부법 #코딩",
       "location": "서울특별시 강동구 고덕1동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 47,
@@ -1289,7 +1345,8 @@
       "created_at": "2024-02-15",
       "title": "영양 만점 아침 식사 #건강식",
       "location": "서울특별시 강동구 고덕1동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 48,
@@ -1303,7 +1360,8 @@
       "created_at": "2024-02-14",
       "title": "시간 관리 팁 #프로덕티비티",
       "location": "서울특별시 강동구 고덕1동",
-      "friend": 0
+      "friend": 0,
+      "IsMine": "false"
     },
     {
       "post_id": 49,
@@ -1317,7 +1375,8 @@
       "created_at": "2024-02-13",
       "title": "책상 정리법 #정리정돈",
       "location": "경기도 고양시 일산서구",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
     },
     {
       "post_id": 50,
@@ -1331,7 +1390,170 @@
       "created_at": "2024-02-12",
       "title": "나만의 비밀 장소 #탐험",
       "location": "서울특별시 강동구 고덕1동",
-      "friend": 1
+      "friend": 1,
+      "IsMine": "false"
+    }
+  ],
+  "postPins": [
+    {
+      "post_id": 1,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 2,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 3,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 4,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 5,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 6,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 7,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 8,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 9,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 10,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 11,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 12,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 13,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 14,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 15,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 16,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 17,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 18,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 19,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 20,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 21,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 22,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 23,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 24,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 25,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 26,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 27,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 28,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 29,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 30,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 31,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 32,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 33,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 34,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 35,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 36,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 37,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 38,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 39,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
+    },
+    {
+      "post_id": 40,
+      "post_back_url": "https://lin.sfo2.cdn.digitaloceanspaces.com/coverimages/m_34/%EB%8C%80%EC%B2%B4%ED%95%98%EB%8B%A4_34.jpg"
     }
   ],
   "comments": [
@@ -1346,33 +1568,38 @@
           "username": "혜민",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224154616413945886/ace039371_On_a_quiet_night_as_moonlight_bathed_an_ordinary_indi_5b62b8d9-ee13-4721-a029-5aeb627ce771.png?ex=661c75d4&is=660a00d4&hm=8204ecdb5f11739615aac2a535b6da2ffd42b76f107fea7cb3e45cf3d088d976&",
           "created_at": "2024-04-01",
-          "id": 1
+          "id": 1,
+          "IsMine": true
         },
         {
           "under_comment": "맞아요, 저도 똑같이 느꼈어요!",
           "username": "소율",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224153851956035776/barcaopeth1989_Construct_an_ultra-realistic_architectural_maque_7da5b513-3390-4e28-92d8-46a2de1ac612.png?ex=661c751d&is=660a001d&hm=64d4cf50a2d0864a839ffbc9e1b72c70b27cd729361fa1857a9318e8f0fdbe48&",
           "created_at": "2024-04-01",
-          "id": 2
+          "id": 2,
+          "IsMine": true
         },
         {
           "id": "2024-04-1320:39",
           "under_comment": "dkssud",
           "username": "신형",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
-          "created_at": "2024-04-1320:39"
+          "created_at": "2024-04-1320:39",
+          "IsMine": false
         },
         {
           "id": "2024-04-1409:51",
           "under_comment": "hello",
           "username": "신형",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
-          "created_at": "2024-04-1409:51"
+          "created_at": "2024-04-1409:51",
+          "IsMine": true
         }
       ],
       "post_id": 1,
       "id": 1,
-      "reply_count": 4
+      "reply_count": 4,
+      "IsMine": false
     },
     {
       "comment": "패션 센스 진짜 좋다!",
@@ -1385,12 +1612,14 @@
           "username": "나현",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224152882710843452/jennifer_64572_realistic_photo_of_fledgling_great_horned_owlet__91a46a9f-f090-4f3d-8fb7-4a3650626cd6.png?ex=661c7436&is=6609ff36&hm=fe4960d57c0979539e4d91163f6d82387abfe99d9c90754ccb0d770759d84fbc&",
           "created_at": "2024-04-01",
-          "id": 3
+          "id": 3,
+          "IsMine": false
         }
       ],
       "post_id": 1,
       "id": 2,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": false
     },
     {
       "comment": "천국 같아, 여기 어디야?",
@@ -1403,19 +1632,22 @@
           "username": "혜민",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224154616413945886/ace039371_On_a_quiet_night_as_moonlight_bathed_an_ordinary_indi_5b62b8d9-ee13-4721-a029-5aeb627ce771.png?ex=661c75d4&is=660a00d4&hm=8204ecdb5f11739615aac2a535b6da2ffd42b76f107fea7cb3e45cf3d088d976&",
           "created_at": "2024-04-01",
-          "id": 4
+          "id": 4,
+          "IsMine": true
         },
         {
           "under_comment": "맞아요, 저도 똑같이 느꼈어요!",
           "username": "소율",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224153851956035776/barcaopeth1989_Construct_an_ultra-realistic_architectural_maque_7da5b513-3390-4e28-92d8-46a2de1ac612.png?ex=661c751d&is=660a001d&hm=64d4cf50a2d0864a839ffbc9e1b72c70b27cd729361fa1857a9318e8f0fdbe48&",
           "created_at": "2024-04-01",
-          "id": 5
+          "id": 5,
+          "IsMine": true
         }
       ],
       "post_id": 1,
       "id": 3,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": true
     },
     {
       "comment": "패션 센스 진짜 좋다!",
@@ -1428,12 +1660,14 @@
           "username": "나현",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224152882710843452/jennifer_64572_realistic_photo_of_fledgling_great_horned_owlet__91a46a9f-f090-4f3d-8fb7-4a3650626cd6.png?ex=661c7436&is=6609ff36&hm=fe4960d57c0979539e4d91163f6d82387abfe99d9c90754ccb0d770759d84fbc&",
           "created_at": "2024-04-01",
-          "id": 6
+          "id": 6,
+          "IsMine": false
         }
       ],
       "post_id": 1,
       "id": 4,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": true
     },
     {
       "comment": "천국 같아, 여기 어디야?",
@@ -1446,19 +1680,22 @@
           "username": "혜민",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224154616413945886/ace039371_On_a_quiet_night_as_moonlight_bathed_an_ordinary_indi_5b62b8d9-ee13-4721-a029-5aeb627ce771.png?ex=661c75d4&is=660a00d4&hm=8204ecdb5f11739615aac2a535b6da2ffd42b76f107fea7cb3e45cf3d088d976&",
           "created_at": "2024-04-01",
-          "id": 7
+          "id": 7,
+          "IsMine": false
         },
         {
           "under_comment": "맞아요, 저도 똑같이 느꼈어요!",
           "username": "소율",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224153851956035776/barcaopeth1989_Construct_an_ultra-realistic_architectural_maque_7da5b513-3390-4e28-92d8-46a2de1ac612.png?ex=661c751d&is=660a001d&hm=64d4cf50a2d0864a839ffbc9e1b72c70b27cd729361fa1857a9318e8f0fdbe48&",
           "created_at": "2024-04-01",
-          "id": 8
+          "id": 8,
+          "IsMine": true
         }
       ],
       "post_id": 1,
       "id": 5,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": true
     },
     {
       "comment": "패션 센스 진짜 좋다!",
@@ -1471,12 +1708,14 @@
           "username": "나현",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224152882710843452/jennifer_64572_realistic_photo_of_fledgling_great_horned_owlet__91a46a9f-f090-4f3d-8fb7-4a3650626cd6.png?ex=661c7436&is=6609ff36&hm=fe4960d57c0979539e4d91163f6d82387abfe99d9c90754ccb0d770759d84fbc&",
           "created_at": "2024-04-01",
-          "id": 9
+          "id": 9,
+          "IsMine": true
         }
       ],
       "post_id": 1,
       "id": 6,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": true
     },
     {
       "comment": "천국 같아, 여기 어디야?",
@@ -1489,19 +1728,22 @@
           "username": "혜민",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224154616413945886/ace039371_On_a_quiet_night_as_moonlight_bathed_an_ordinary_indi_5b62b8d9-ee13-4721-a029-5aeb627ce771.png?ex=661c75d4&is=660a00d4&hm=8204ecdb5f11739615aac2a535b6da2ffd42b76f107fea7cb3e45cf3d088d976&",
           "created_at": "2024-04-01",
-          "id": 10
+          "id": 10,
+          "IsMine": true
         },
         {
           "under_comment": "맞아요, 저도 똑같이 느꼈어요!",
           "username": "소율",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224153851956035776/barcaopeth1989_Construct_an_ultra-realistic_architectural_maque_7da5b513-3390-4e28-92d8-46a2de1ac612.png?ex=661c751d&is=660a001d&hm=64d4cf50a2d0864a839ffbc9e1b72c70b27cd729361fa1857a9318e8f0fdbe48&",
           "created_at": "2024-04-01",
-          "id": 11
+          "id": 11,
+          "IsMine": false
         }
       ],
       "post_id": 1,
       "id": 7,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": false
     },
     {
       "comment": "패션 센스 진짜 좋다!",
@@ -1514,12 +1756,14 @@
           "username": "나현",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224152882710843452/jennifer_64572_realistic_photo_of_fledgling_great_horned_owlet__91a46a9f-f090-4f3d-8fb7-4a3650626cd6.png?ex=661c7436&is=6609ff36&hm=fe4960d57c0979539e4d91163f6d82387abfe99d9c90754ccb0d770759d84fbc&",
           "created_at": "2024-04-01",
-          "id": 12
+          "id": 12,
+          "IsMine": false
         }
       ],
       "post_id": 1,
       "id": 8,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": true
     },
     {
       "comment": "삶이란 이런 것!",
@@ -1532,33 +1776,38 @@
           "username": "태윤",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224150738905595924/barcaopeth1989_Craft_an_ultra-realistic_architectural_maquette__65765d39-8e7a-401a-abcf-6954b6e42aa3.png?ex=661c7237&is=6609fd37&hm=3b45499857ab22bb01b1480a38ee81f832b6602fdf606af17d6fcd4b9e93dd19&",
           "created_at": "2024-03-31",
-          "id": 14
+          "id": 14,
+          "IsMine": true
         },
         {
           "id": "2024-04-1319:26",
           "under_comment": "apfhd",
           "username": "유저 이름",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
-          "created_at": "2024-04-13T19:26:02.830Z"
+          "created_at": "2024-04-13T19:26:02.830Z",
+          "IsMine": false
         },
         {
           "id": "2024-04-1319:30",
           "under_comment": "afafaddkssudgktpdy",
           "username": "유저 이름",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
-          "created_at": "2024-04-1319:30"
+          "created_at": "2024-04-1319:30",
+          "IsMine": false
         },
         {
           "id": "2024-04-1320:45",
           "under_comment": "fafafaaf",
           "username": "신형",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
-          "created_at": "2024-04-1320:45"
+          "created_at": "2024-04-1320:45",
+          "IsMine": true
         }
       ],
       "post_id": 2,
       "id": 23,
-      "reply_count": 3
+      "reply_count": 3,
+      "IsMine": true
     },
     {
       "comment": "저도 바로 그 생각이었어요!fafaaaaaa",
@@ -1571,33 +1820,38 @@
           "under_comment": "afaf",
           "username": "유저 이름",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
-          "created_at": "2024-04-13T19:24:17.914Z"
+          "created_at": "2024-04-13T19:24:17.914Z",
+          "IsMine": true
         },
         {
           "id": "2024-04-1319:30",
           "under_comment": "dkssudgktpdy",
           "username": "유저 이름",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
-          "created_at": "2024-04-1319:30"
+          "created_at": "2024-04-1319:30",
+          "IsMine": false
         },
         {
           "id": "2024-04-1319:42",
           "under_comment": "저도 바로 그 생각이었afa",
           "username": "신형",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
-          "created_at": "2024-04-1319:42"
+          "created_at": "2024-04-1319:42",
+          "IsMine": false
         },
         {
           "id": "2024-04-1320:30",
           "under_comment": "저도 바로 그 생각이었어요!fafaAAAA",
           "username": "신형",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
-          "created_at": "2024-04-1320:30"
+          "created_at": "2024-04-1320:30",
+          "IsMine": false
         }
       ],
       "post_id": 2,
       "id": 24,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": false
     },
     {
       "comment": "다음엔 어디 갈까?",
@@ -1610,26 +1864,30 @@
           "username": "하늘",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224149347411693578/urbanpot_A_Piper_Dakota_PA-28-236_parked_on_a_sunlit_California_51018e1e-b7a5-479d-9552-41cefb9b2b4e.png?ex=661c70ec&is=6609fbec&hm=2140faf7d21f697776fd7fffb00dcf0e7b15cb4f1f499c6d913277e33877df30&",
           "created_at": "2024-03-30",
-          "id": 17
+          "id": 17,
+          "IsMine": false
         },
         {
           "under_comment": "저도 보면서 너무 좋았어요!",
           "username": "현지",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224149127630159904/rocketmaninmars_Dolly_Wells_as_Marguerite_de_Navarre_a_French_p_5304d66f-6423-489a-bcbf-0f6379eb3626.png?ex=661c70b7&is=6609fbb7&hm=fd532e9c6f109550c9ec1c0744492ce66cd6c7ae25a0e138032c218a8325a748&",
           "created_at": "2024-03-30",
-          "id": 18
+          "id": 18,
+          "IsMine": true
         },
         {
           "under_comment": "저도 여러분과 같이 감동했어요!",
           "username": "태현",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224148967076401312/sheabutterlunch_black_female._chocolate_complexion._Braids_hang_5fce6e32-a273-4d6f-ab52-48c7a6dfdad4.png?ex=661c7091&is=6609fb91&hm=ae54a7d0d4647d3e6aaa21128d065de61a8257d3fe61e920f3fd48ad5c7a37f3&",
           "created_at": "2024-03-30",
-          "id": 19
+          "id": 19,
+          "IsMine": false
         }
       ],
       "post_id": 3,
       "id": 25,
-      "reply_count": 3
+      "reply_count": 3,
+      "IsMine": false
     },
     {
       "comment": "마음이 편안해지는 사진이야.",
@@ -1642,19 +1900,22 @@
           "username": "지한",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224147482779455488/Guggenheim-Museum-by-David-Heald-www.guggenheim.org_.jpg?ex=661c6f2f&is=6609fa2f&hm=7fb77122acc0a502268375612e1146cb710bc5be040bcd5eeaae4d1068d611b1&",
           "created_at": "2024-03-29",
-          "id": 20
+          "id": 20,
+          "IsMine": false
         },
         {
           "under_comment": "아, 정말요? 더 알아볼게요!",
           "username": "준영",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224144912480604290/pohe1917_beautiful_woman_standing_outside_of_a_door_waiting_to__6a77ff4e-990a-44ea-a743-30efedd93b78.png?ex=661c6cca&is=6609f7ca&hm=8be9996389fc87a829fd5b1ef10f7e90cadbe0f33b06f9cc2a33245478281e45&",
           "created_at": "2024-03-29",
-          "id": 21
+          "id": 21,
+          "IsMine": false
         }
       ],
       "post_id": 4,
       "id": 26,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": false
     },
     {
       "comment": "여긴 어디야? 너무 좋아 보인다!",
@@ -1667,12 +1928,14 @@
           "username": "서진",
           "profile_url": "https://media.discordapp.net/attachments/990816789246124032/1224142229510291496/journeyrhodes_70223_coloring_page_silly_doodles_of_animals_a_ch_17b8c0cf-2754-4009-97be-20994d97ea92.png?ex=661c6a4a&is=6609f54a&hm=1ac005f132213fe31884d7275c8ac71e6a38687143d4bbf7400babc903df36d4&=&format=webp&quality=lossless&width=612&height=612",
           "created_at": "2024-03-29",
-          "id": 22
+          "id": 22,
+          "IsMine": true
         }
       ],
       "post_id": 4,
       "id": 27,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": true
     },
     {
       "comment": "저장! 나중에 봐야지.",
@@ -1685,19 +1948,22 @@
           "username": "준호",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224140617152467085/journeyrhodes_70223_coloring_page_bold_lines_white_background_s_dadf8c69-15a7-4e16-9814-17cf5d6e5cd1.png?ex=661c68ca&is=6609f3ca&hm=d9d39734ee7910cd56ed5cfff860ca692bcb80a01ea4643af00c6f381b4021f8&",
           "created_at": "2024-03-28",
-          "id": 23
+          "id": 23,
+          "IsMine": true
         },
         {
           "under_comment": "항상 응원해주셔서 감사합니다!",
           "username": "지훈",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224140262587105433/tempestissimo_Overlooking_a_small_bridge_in_city_capture_the_g_92263059-1ff8-4e4a-ac1b-5bd6d48e1877.png?ex=661c6876&is=6609f376&hm=b1a7fbf56ed366ea194bc27d3ae794b656849549dda018a9852cb4211e4f608a&",
           "created_at": "2024-03-28",
-          "id": 24
+          "id": 24,
+          "IsMine": false
         }
       ],
       "post_id": 5,
       "id": 28,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": true
     },
     {
       "comment": "대박이야, 이건 봐야 해!",
@@ -1710,19 +1976,22 @@
           "username": "지훈",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224140037554442240/m373._beautiful_summer_morning_looking_out_of_open_bedside_wind_bf4e87a9-92d3-4797-ae03-48851dafac0d.png?ex=661c6840&is=6609f340&hm=0547a24d38d96d5055e86b97b040860516f8e01257c3d4a73f441cf8fe65161b&",
           "created_at": "2024-03-28",
-          "id": 25
+          "id": 25,
+          "IsMine": false
         },
         {
           "under_comment": "그렇게 말씀해주시니 더욱 의미가 있네요!",
           "username": "재민",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224139979366731846/tempestissimo_Overlooking_a_small_bridge_in_city_capture_the_g_fe230ba1-267b-4574-97bc-81bae32e6357.png?ex=661c6832&is=6609f332&hm=8642d79ae7e2cb333be4dee9b9476de52c0e845126b83e7e232de6a1a33c3bc9&",
           "created_at": "2024-03-28",
-          "id": 26
+          "id": 26,
+          "IsMine": true
         }
       ],
       "post_id": 5,
       "id": 29,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": true
     },
     {
       "comment": "이 카페 어딘가요? 분위기 최고인데!",
@@ -1735,19 +2004,22 @@
           "username": "나연",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224135434087436348/tempestissimo_Explore_the_intimate_details_of_a_small_city_bri_19f1f3f7-edb4-443f-9c9f-8f4143d57fbc.png?ex=661c63f6&is=6609eef6&hm=7f44b416f010978a6713e843dd39e74e1a913f679b5f363b7f9bbc14a5c6c887&",
           "created_at": "2024-03-27",
-          "id": 27
+          "id": 27,
+          "IsMine": true
         },
         {
           "under_comment": "여러분 덕분에 힘이 나네요!",
           "username": "현지",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224134865503649894/blackswan79_A_big_pot_with_a_tall_Monstera_deliciosa_in_a_moder_8c307644-8e0e-4910-816d-d57efeed4c02.png?ex=661c636f&is=6609ee6f&hm=baf27097594c784949ec43e9f9a8e6e0928092a55a28533b328db32932a57396&",
           "created_at": "2024-03-27",
-          "id": 28
+          "id": 28,
+          "IsMine": false
         }
       ],
       "post_id": 6,
       "id": 30,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": true
     },
     {
       "comment": "화이팅, 오늘도 힘내자!",
@@ -1760,26 +2032,30 @@
           "username": "서은",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224133179103903764/hadymarquez_set_of_soft_play_white_b255bac3-f5e4-4f75-8e08-f115a05c2301.png?ex=661c61dd&is=6609ecdd&hm=96fffd63fd6427853654ce191c1b237f409fc55d6546b62d7b1f645eb9dfe614&",
           "created_at": "2024-03-27",
-          "id": 29
+          "id": 29,
+          "IsMine": true
         },
         {
           "under_comment": "와, 정말 그렇게 생각해주시다니!",
           "username": "윤지",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224133175199010876/hadymarquez_set_of_soft_play_white_9bdcb47b-3677-428c-a305-eed3b328d0d3.png?ex=661c61dc&is=6609ecdc&hm=72e6913126aca09e98ad6a3206b4beff1e3fa24afeb574c1cf663d5ae94a8bd5&",
           "created_at": "2024-03-27",
-          "id": 30
+          "id": 30,
+          "IsMine": true
         },
         {
           "under_comment": "좋게 봐주셔서 기쁩니다!",
           "username": "다인",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224133167007666216/hadymarquez_set_of_soft_play_white_8601386b-8dde-4c88-9666-8d582a4f6f59.png?ex=661c61da&is=6609ecda&hm=5eb8146930d1c511b2740044ea8546b7c18f24d98ac49ca094f3a83196c8a613&",
           "created_at": "2024-03-27",
-          "id": 31
+          "id": 31,
+          "IsMine": false
         }
       ],
       "post_id": 6,
       "id": 31,
-      "reply_count": 3
+      "reply_count": 3,
+      "IsMine": true
     },
     {
       "comment": "최고의 사진이네!",
@@ -1792,12 +2068,14 @@
           "username": "유리",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224130159838367885/journeyrhodes_70223_coloring_page_bold_lines_white_background_s_5580a4bf-fe40-4ac7-a24d-331f818cb560.png?ex=661c5f0d&is=6609ea0d&hm=2c2b695daa2500b2bb8d85a3d94c66130fad14daace178f9c388a8666f67d1b3&",
           "created_at": "2024-03-26",
-          "id": 32
+          "id": 32,
+          "IsMine": true
         }
       ],
       "post_id": 7,
       "id": 32,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": true
     },
     {
       "comment": "동감이야, 나도 그래.",
@@ -1810,26 +2088,30 @@
           "username": "하진",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224125201495883867/ju_saraiva86_cartoon_of_nyhavn_Denmark_with_sidewalk_50c36d35-91b4-4f42-bd86-941bdc128436.png?ex=661c5a6f&is=6609e56f&hm=aaf3b9235efbac500c428df4925b5d7d010c85769c0f390e3492f5603e3260f3&",
           "created_at": "2024-03-25",
-          "id": 35
+          "id": 35,
+          "IsMine": true
         },
         {
           "under_comment": "좋아해주셔서 정말 감사드려요!",
           "username": "서현",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224124888558731284/ecnal1891_male_full_body_hispanic_business_owner_editorial_soft_d3f97f62-6595-4993-967a-94ad835dc4c2.png?ex=661c5a24&is=6609e524&hm=099b6a784f4011e23f5a22b21fe8607aaf69ba366e197eb218b6a0415672b88f&",
           "created_at": "2024-03-25",
-          "id": 36
+          "id": 36,
+          "IsMine": true
         },
         {
           "under_comment": "맞아요, 저도 똑같이 느꼈어요!",
           "username": "현우",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224122003766771833/onnaoneill_two_young_and_beautiful_nuns_have_a_long_black_veil__ae53b8c4-d051-41c9-be6d-7c38301ee677.png?ex=661c5774&is=6609e274&hm=38cc8d2167e8374cfb5910cfa648bd5db937b10257d3bbcfaf99bb3a0557048c&",
           "created_at": "2024-03-25",
-          "id": 37
+          "id": 37,
+          "IsMine": false
         }
       ],
       "post_id": 8,
       "id": 34,
-      "reply_count": 3
+      "reply_count": 3,
+      "IsMine": false
     },
     {
       "comment": "무슨 말 필요해? 최고야.",
@@ -1842,12 +2124,14 @@
           "username": "재민",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224117853473607800/onnaoneill_two_young_and_beautiful_frightened_nuns_have_a_semi-_43f16519-c809-4fe5-8534-a323566d2fec.png?ex=661c5397&is=6609de97&hm=176cdbc735df3dade7379615181b2d2a4a6525115fb6124cc39559a25fa45a44&",
           "created_at": "2024-03-24",
-          "id": 38
+          "id": 38,
+          "IsMine": true
         }
       ],
       "post_id": 9,
       "id": 35,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": false
     },
     {
       "comment": "분위기가 너무 좋아서 기분 전환 돼!",
@@ -1860,19 +2144,22 @@
           "username": "승우",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224115277781008434/onnaoneill_Bella_Baxter_in_the_movie_Poor_Things_vintage_illust_be5b62e9-1914-407a-afee-9203c025fe40.png?ex=661c5131&is=6609dc31&hm=b4d51eeef468b310e7900888ab1cab737a67dbd50104ea508b11706fb2689963&",
           "created_at": "2024-03-23",
-          "id": 39
+          "id": 39,
+          "IsMine": false
         },
         {
           "under_comment": "항상 응원해주셔서 감사합니다!",
           "username": "하진",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224114735310569635/onnaoneill_five_sad_and_really_worried_nuns_two_nuns_are_pretty_554234c5-3991-4314-871d-bf44313809a8.png?ex=661c50af&is=6609dbaf&hm=902cec8146a2b5fc8dfc35dc4e252889bef8961c73bdb3bc9582f1dfa0094651&",
           "created_at": "2024-03-23",
-          "id": 40
+          "id": 40,
+          "IsMine": false
         }
       ],
       "post_id": 10,
       "id": 36,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": true
     },
     {
       "comment": "어떤 카메라로 찍었어?",
@@ -1885,19 +2172,22 @@
           "username": "성현",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224113906344267917/meegant_colorful_cartoon_image_showing_a_woman_suspiciously_eye_7b41c6e3-b2e6-431c-8f9c-8ef47dd0ddcd.png?ex=661c4fea&is=6609daea&hm=5caaed427dcb7c133713bcaae18755f7b20f57b25d9b16a4671c4c503eafc7f3&",
           "created_at": "2024-03-23",
-          "id": 41
+          "id": 41,
+          "IsMine": false
         },
         {
           "under_comment": "다음에도 좋은 사진 올릴게요!",
           "username": "예빈",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224112847727104030/onnaoneill_five_sad_and_worried_nuns_two_nuns_are_pretty_and_yo_75f4078f-d6f9-408f-ae5d-5e4e4c1c9a21.png?ex=661c4eed&is=6609d9ed&hm=505846a6f014562775eb954c01991d8c5520c3cf2db0ea785b2e7ae45966eac1&",
           "created_at": "2024-03-23",
-          "id": 42
+          "id": 42,
+          "IsMine": true
         }
       ],
       "post_id": 10,
       "id": 37,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": true
     },
     {
       "comment": "다음엔 어디 갈까?",
@@ -1910,19 +2200,22 @@
           "username": "혜민",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224112185882447882/tinker_and_blanket_cartoon_style_of_rick_and_morty_9e47938c-1c09-4680-876e-5a66c326091d.png?ex=661c4e50&is=6609d950&hm=fd50771bbffc555bbd923994a8fa765d58839d60b48b59084bc454cba44dbf1e&",
           "created_at": "2024-03-22",
-          "id": 43
+          "id": 43,
+          "IsMine": true
         },
         {
           "under_comment": "다음에도 좋은 사진 올릴게요!",
           "username": "지혜",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224111864728911923/tinker_and_blanket_20_year_old_man_playing_video_games_cartoon__d54c2ec6-df3f-44b9-85f3-ae2253aae8ae.png?ex=661c4e03&is=6609d903&hm=22565e5412c31474e71e87186071a94e08a83374f623476c34a34da0a06f5ea9&",
           "created_at": "2024-03-22",
-          "id": 44
+          "id": 44,
+          "IsMine": false
         }
       ],
       "post_id": 11,
       "id": 38,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": false
     },
     {
       "comment": "이런 곳이 있다니, 놀라워!",
@@ -1935,12 +2228,14 @@
           "username": "하연",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224111644477751316/tinker_and_blanket_cockapoo_in_the_style_of_rick_and_morty_53d7e37c-6456-4325-81f8-8f65c8ae3054.png?ex=661c4dce&is=6609d8ce&hm=8692fb9c16d91fbccc7f151bd0f50135449c97af77637f01701a831fbd1cee46&",
           "created_at": "2024-03-22",
-          "id": 45
+          "id": 45,
+          "IsMine": true
         }
       ],
       "post_id": 11,
       "id": 39,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": false
     },
     {
       "comment": "감동이야, 진짜 좋네.",
@@ -1953,19 +2248,22 @@
           "username": "민재",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224109286699831446/meegant_high_quality_photo_of_a_neighborhood_you_might_find_in__7c04e68a-aed2-45f7-abd5-d61eb6669630.png?ex=661c4b9c&is=6609d69c&hm=2927e16dcc9bff11762a1d9bbeaba32500088a11e6f2f3f928cf116a1a0b2e16&",
           "created_at": "2024-03-21",
-          "id": 46
+          "id": 46,
+          "IsMine": false
         },
         {
           "under_comment": "다음에 또 만나요!",
           "username": "유빈",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224108951529062430/meegant_high_quality_photo_of_a_neighborhood_you_might_find_in__cfa5077e-0e8b-440a-bb9b-acdc97c5eec6.png?ex=661c4b4c&is=6609d64c&hm=560fa023c7bae4fb197e35384f4e30fb0ad1461dd00d30fdce92d64e0596143e&",
           "created_at": "2024-03-21",
-          "id": 47
+          "id": 47,
+          "IsMine": false
         }
       ],
       "post_id": 12,
       "id": 40,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": false
     },
     {
       "comment": "인상 깊네, 좋아!",
@@ -1978,19 +2276,22 @@
           "username": "지한",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224106625862865036/starfire4777_Easter_egg_with_SF_Giants_logo_100965fd-527c-4fca-a087-57f072227c10.png?ex=661c4922&is=6609d422&hm=9c36385b06b3566ef8c67bbb6a9365e4c758e73bcd15b72390ffe4939e50aac8&",
           "created_at": "2024-03-20",
-          "id": 48
+          "id": 48,
+          "IsMine": false
         },
         {
           "under_comment": "좋아해주셔서 정말 감사드려요!",
           "username": "유리",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224106170915229816/belladonna2013_draw_of_two_woman_having_a_tarot_reading_session_b609cefc-5bb0-4866-a499-7478a2ba52ff.png?ex=661c48b5&is=6609d3b5&hm=84737237897668d53e4956290fd1f090021a8d6a985739ddadbddcb1e4f3e071&",
           "created_at": "2024-03-20",
-          "id": 49
+          "id": 49,
+          "IsMine": false
         }
       ],
       "post_id": 13,
       "id": 41,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": false
     },
     {
       "comment": "좋은 책 있으면 추천해줘!",
@@ -2003,26 +2304,30 @@
           "username": "예준",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224105779716554762/belladonna2013_draw_of_two_woman_having_a_tarot_reading_session_2179924e-e46f-4b2d-9b66-8abe488b6b96.png?ex=661c4858&is=6609d358&hm=ca0413d989bd05b6c8fd9efbc7b13dd05f7a9016acf333b866af6f83ac6a70ef&",
           "created_at": "2024-03-20",
-          "id": 50
+          "id": 50,
+          "IsMine": true
         },
         {
           "under_comment": "오, 정말 좋은 정보네요!",
           "username": "민지",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224105515726934077/britthoffman_An_astronaut_floating_in_the_middle_of_a_galaxy_st_3397377a-d0a3-42a2-8060-6956a6327a7b.png?ex=661c4819&is=6609d319&hm=dc1b2e1912a9b5359c25be3134657dd8b857051468692be84115ff49fd3c4ca2&",
           "created_at": "2024-03-20",
-          "id": 51
+          "id": 51,
+          "IsMine": true
         },
         {
           "under_comment": "네, 그렇게 해볼게요!",
           "username": "진우",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224105450929389699/starfire4777_SF_Easter_egg_07a63014-9c84-480e-9859-05ea39c39ec6.png?ex=661c480a&is=6609d30a&hm=da20955824dd56939313ad4b6555327958eaa83e0bcb825747f7f053b43d717b&",
           "created_at": "2024-03-20",
-          "id": 52
+          "id": 52,
+          "IsMine": true
         }
       ],
       "post_id": 13,
       "id": 42,
-      "reply_count": 3
+      "reply_count": 3,
+      "IsMine": false
     },
     {
       "comment": "이런 곳이 있다니, 놀라워!",
@@ -2035,26 +2340,30 @@
           "username": "승현",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224103536237740082/sam_tasstic_realistic_photo_with_white_back_gound_with_can_of_b_f0636080-f316-4d3c-8f88-b4c6686f210a.png?ex=661c4641&is=6609d141&hm=364388e3b4dec907053e6999cb36d2c7fddf633dc53248aa3e503a8f60d623a7&",
           "created_at": "2024-03-19",
-          "id": 53
+          "id": 53,
+          "IsMine": false
         },
         {
           "under_comment": "계속해서 좋은 내용 공유할게요!",
           "username": "성민",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224103525521559672/andviven_a_plain_vector_art_of_a_wave_of_sparkling_coca_cola_wi_f22504ac-7fcc-4654-971b-57090433f75f.png?ex=661c463f&is=6609d13f&hm=e431d27a6e01bdd1f01b6a2b9804c8573ea2ae29e4b93863da19402d7bddb3b4&",
           "created_at": "2024-03-19",
-          "id": 54
+          "id": 54,
+          "IsMine": true
         },
         {
           "under_comment": "좋아해주셔서 정말 감사드려요!",
           "username": "윤지",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224103365668245616/sam_tasstic_hand_holding_silver_can_of_paint_pouring_black_pain_cb1fc4c3-b769-40d6-b116-c8cb284f91bf.png?ex=661c4619&is=6609d119&hm=8516ccb6953126dffe7195257a0d5261dbab18f8363a63487eb88cb2d1219608&",
           "created_at": "2024-03-19",
-          "id": 55
+          "id": 55,
+          "IsMine": false
         }
       ],
       "post_id": 14,
       "id": 43,
-      "reply_count": 3
+      "reply_count": 3,
+      "IsMine": false
     },
     {
       "comment": "아, 나도 가고 싶다!",
@@ -2067,19 +2376,22 @@
           "username": "윤석",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224098966711304363/meegant_high_quality_photo_of_a_fancy_teapot_sitting_on_a_table_7ce10adf-3191-4c14-af7e-3aa243b2905a.png?ex=661c4200&is=6609cd00&hm=bcb83dc3e2fd709ffd64c378da2fae5b7e1d26da0123d1cdfb2d0f8a95261edc&",
           "created_at": "2024-03-18",
-          "id": 56
+          "id": 56,
+          "IsMine": true
         },
         {
           "under_comment": "정말 감사해요!",
           "username": "하늘",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224098919013945516/belladonna2013_draw_of_roses_and_flowers_blooming_around_medita_9d500770-f69d-41f9-a07e-2a6881e2e6ab.png?ex=661c41f4&is=6609ccf4&hm=6ad69cdcfbf4c0b7010edb63dc0f6799f2482757ab524fa25a151ad39d467189&",
           "created_at": "2024-03-18",
-          "id": 57
+          "id": 57,
+          "IsMine": true
         }
       ],
       "post_id": 15,
       "id": 44,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": false
     },
     {
       "comment": "색감이 장난 아니네!",
@@ -2092,12 +2404,14 @@
           "username": "다인",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224098295257759764/sam_tasstic_hand_holding_silver_can_of_paint_pouring_black_pain_6f097e6c-a04a-432d-8034-63fd88fbee36.png?ex=661c4160&is=6609cc60&hm=b941338b24916f86332a6e6d8d0043c3eea064e7335d89d3a6b0793b298497f4&",
           "created_at": "2024-03-18",
-          "id": 58
+          "id": 58,
+          "IsMine": false
         }
       ],
       "post_id": 15,
       "id": 45,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": false
     },
     {
       "comment": "저장! 나중에 봐야지.",
@@ -2110,19 +2424,22 @@
           "username": "가은",
           "profile_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224171978940743742/129.png?ex=661c85ff&is=660a10ff&hm=9ac59b02343d84250253d508a636f9f144c1cc6157e1bd14ffe12f0a8e17a362&",
           "created_at": "2024-03-17",
-          "id": 59
+          "id": 59,
+          "IsMine": true
         },
         {
           "under_comment": "다음에 또 만나요!",
           "username": "나윤",
           "profile_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224171978584359103/128.png?ex=661c85ff&is=660a10ff&hm=df41d78ac23340742e12b2ef71a2a0f32de9aa18870bef63371e4068c42e3f4e&",
           "created_at": "2024-03-17",
-          "id": 60
+          "id": 60,
+          "IsMine": true
         }
       ],
       "post_id": 16,
       "id": 46,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": true
     },
     {
       "comment": "우와, 말이 안 나온다...",
@@ -2135,12 +2452,14 @@
           "username": "민아",
           "profile_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224172199099895818/124.png?ex=661c8634&is=660a1134&hm=59d1c7da42e6ef30e8c6095570a0faeee23e1eacf280333d0aa43c0acb3e3fef&",
           "created_at": "2024-03-17",
-          "id": 61
+          "id": 61,
+          "IsMine": false
         }
       ],
       "post_id": 16,
       "id": 47,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": true
     },
     {
       "comment": "음식 맛있겠다, 먹고파!",
@@ -2153,19 +2472,22 @@
           "username": "은비",
           "profile_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224162871521317036/arthurallmeida_Daily_VISIT_TO_of_a_old_lady_to_the_spa_real_pho_59a49a79-a6e3-46fd-8318-4ec4dae2c491.png?ex=661c7d84&is=660a0884&hm=6ac98590ef12f62f3ba89b61ea30223b0112c4f8734678b83bb5bb8d48138e62&",
           "created_at": "2024-03-16",
-          "id": 62
+          "id": 62,
+          "IsMine": false
         },
         {
           "under_comment": "좋게 봐주셔서 기쁩니다!",
           "username": "준",
           "profile_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224160113187618876/bones211_realistic_picture_of_foggy_mountains_of_Baguio_City_Su_794dca49-ce79-4b09-923a-db14aa6f3afd.png?ex=661c7af2&is=660a05f2&hm=d4f0d06748191c4b4ac32869b39292eb899af71ea59493ec5d2429cb603a8919&",
           "created_at": "2024-03-16",
-          "id": 63
+          "id": 63,
+          "IsMine": false
         }
       ],
       "post_id": 17,
       "id": 48,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": false
     },
     {
       "comment": "여긴 어디야? 너무 좋아 보인다!",
@@ -2178,26 +2500,30 @@
           "username": "승현",
           "profile_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224159428744319016/bmg_giver_anime_Anthropomorphic_American_Eagle_wearing_demon_sl_5e07bd3e-e167-4177-88d3-52bae6fb9f8e.png?ex=661c7a4f&is=660a054f&hm=d287dfcd7aaf5d8cbf0aaf714e229f364f8a92750423045df32b2c2e12e8718c&",
           "created_at": "2024-03-16",
-          "id": 64
+          "id": 64,
+          "IsMine": false
         },
         {
           "under_comment": "그런 말씀 들으니 힘이 나네요!",
           "username": "성윤",
           "profile_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224158705151643668/arthurallmeida_A_hyper_realistic_vintage_color_photograph_of_a__f13f580c-803f-4bf1-a120-952d8aca753a.png?ex=661c79a3&is=660a04a3&hm=eb3b6b72be3cbfc11b5bb638870949a8237066488921429e80d4ce91767d2493&",
           "created_at": "2024-03-16",
-          "id": 65
+          "id": 65,
+          "IsMine": false
         },
         {
           "under_comment": "맞아요, 최고의 순간이었죠!",
           "username": "준",
           "profile_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224153203785072730/arthurallmeida_An_abandoned_theater_with_an_indoor_pool_filled__03c6cf7f-2a25-411d-82e7-e3cb98a239e8.png?ex=661c7483&is=6609ff83&hm=b1553caf00ab7114608078aa2b9467592d4f1cde9b4340cea2852b8c9102492f&",
           "created_at": "2024-03-16",
-          "id": 66
+          "id": 66,
+          "IsMine": true
         }
       ],
       "post_id": 17,
       "id": 49,
-      "reply_count": 3
+      "reply_count": 3,
+      "IsMine": false
     },
     {
       "comment": "감동이야, 진짜 좋네.",
@@ -2210,26 +2536,30 @@
           "username": "예진",
           "profile_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224144806435881011/sheabutterlunch_young_black_female._Wearing_a_long_black_pleate_20309b3d-6251-4151-9a1d-1eedf342c873.png?ex=661c6cb1&is=6609f7b1&hm=09a66fc376b52e48e6e417e56e8982635576b3f601263ea522cfbc208f31461a&",
           "created_at": "2024-03-15",
-          "id": 67
+          "id": 67,
+          "IsMine": false
         },
         {
           "under_comment": "사진 찍는 걸 좋아해요, 감사합니다!",
           "username": "서아",
           "profile_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224144291874738176/bmg_giver_anthropomorphic_anime_American_Eagle_hiking_up_a_trai_bd78eae1-79ab-4b4d-8446-531f3026c85b.png?ex=661c6c36&is=6609f736&hm=a6fa3d5309d11a9a5ecce5b769e5a2eb846985a5f61903e783dac52bfccbe87f&",
           "created_at": "2024-03-15",
-          "id": 68
+          "id": 68,
+          "IsMine": true
         },
         {
           "id": "2024-04-1409:10",
           "under_comment": "fafaf",
           "username": "신형",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
-          "created_at": "2024-04-1409:10"
+          "created_at": "2024-04-1409:10",
+          "IsMine": false
         }
       ],
       "post_id": 18,
       "id": 50,
-      "reply_count": 3
+      "reply_count": 3,
+      "IsMine": false
     },
     {
       "comment": "사랑스러워요!!️",
@@ -2242,12 +2572,14 @@
           "username": "준영",
           "profile_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224134802748477550/kurumi_7825_Korean_beauty_style_woman_looking_happy_looking_at__96886d96-1d7c-4180-a227-5029c1b8ce01.png?ex=661c6360&is=6609ee60&hm=79c3a0ed18e60d2ef4cac7ab3d8efe3363be31af116315847a671b7d3f0bff01&",
           "created_at": "2024-03-14",
-          "id": 69
+          "id": 69,
+          "IsMine": true
         }
       ],
       "post_id": 19,
       "id": 51,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": true
     },
     {
       "comment": "마음이 편안해지는 사진이야.",
@@ -2260,12 +2592,14 @@
           "username": "도훈",
           "profile_url": "https://cdn.discordapp.com/attachments/981697533858414652/1224122194750210078/bmg_giver_anthropomorphic_anime_American_Eagle_meditating_on_a__a639ae62-f945-46a0-ab1c-3f8d0a60c94a.png?ex=661c57a2&is=6609e2a2&hm=c18e707b7a3859c5d327eb464393f6c640d66560a9aa926530d5dca03cd7d4aa&",
           "created_at": "2024-03-13",
-          "id": 70
+          "id": 70,
+          "IsMine": true
         }
       ],
       "post_id": 20,
       "id": 52,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": true
     },
     {
       "comment": "저장! 나중에 봐야지.",
@@ -2278,19 +2612,22 @@
           "username": "동현",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1224163811372830841/raijin5856_fashion_photography_Different_anglesan_Asian_model_w_ae0a5d27-dad0-4612-bd2d-1f4b9d7ba86b.png?ex=661c7e64&is=660a0964&hm=2435c6cb2dc03eb15873e8e02d26532e24c15db28b0c0a79920193453f138a06&",
           "created_at": "2024-03-12",
-          "id": 71
+          "id": 71,
+          "IsMine": true
         },
         {
           "under_comment": "사진 찍는 걸 좋아해요, 감사합니다!",
           "username": "예빈",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1224163726123339956/IMG_3442.webp?ex=661c7e50&is=660a0950&hm=7b9f68e14e0c46d0ba4f15990c2a77ed72e82863a841e2bcef0dff42068c753c&",
           "created_at": "2024-03-12",
-          "id": 72
+          "id": 72,
+          "IsMine": false
         }
       ],
       "post_id": 21,
       "id": 53,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": false
     },
     {
       "comment": "아, 나도 가고 싶다!",
@@ -2303,26 +2640,30 @@
           "username": "재현",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1223658339695857867/1223630038185021503remix-1711813280815.png?ex=661aa7a2&is=660832a2&hm=9532663dcef8ce3f76643fbfe2f64b9d25c343d64e49e4da93089613d2925680&",
           "created_at": "2024-03-11",
-          "id": 74
+          "id": 74,
+          "IsMine": false
         },
         {
           "under_comment": "아, 정말요? 저도 봐야겠어요!",
           "username": "은호",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1223658047776362556/1223454559020777523remix-1711813209606.png?ex=661aa75d&is=6608325d&hm=d841bde595e23b891d6e0727f7f8488975a79c5dd05545e39ef560bd721e1a45&",
           "created_at": "2024-03-11",
-          "id": 75
+          "id": 75,
+          "IsMine": false
         },
         {
           "under_comment": "저도 기대됩니다!",
           "username": "지안",
           "profile_url": "https://cdn.discordapp.com/attachments/995961702246010890/1223636404119146617/vacantbliss_happy_baby_kawaii_mushroom_sticker_689f0812-334e-4a8e-baeb-4f1e900c4b3e.png?ex=661a9334&is=66081e34&hm=41fd01580ca2d0154aa6f5df19ad2f228010c187930ba4b79008919a4488790a&",
           "created_at": "2024-03-11",
-          "id": 76
+          "id": 76,
+          "IsMine": true
         }
       ],
       "post_id": 22,
       "id": 55,
-      "reply_count": 3
+      "reply_count": 3,
+      "IsMine": true
     },
     {
       "comment": "정보 고마워, 유용하게 쓸게.",
@@ -2335,12 +2676,14 @@
           "username": "태윤",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1223125669660332032/buba_dubz_None_3_32dcb2b7-2012-4d91-abdd-46ecfbadb4d2.png?ex=6618b78c&is=6606428c&hm=64456068e3b66b06db877ce6bf301681a1f16afd44bb842e14520a18ccf0f51b&",
           "created_at": "2024-03-10",
-          "id": 77
+          "id": 77,
+          "IsMine": true
         }
       ],
       "post_id": 23,
       "id": 56,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": false
     },
     {
       "comment": "와, 정말 멋지다!",
@@ -2353,19 +2696,22 @@
           "username": "은지",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222862569346437202/deb1977_httpss.mj.runfxcIAxSVw7E_httpss.mj.runXj0JTK-izk0_--s_25dcf083-30fb-4ed2-92c8-1d68507f218e_0.png?ex=6617c284&is=66054d84&hm=dd2991c80692fd9021c293a1aa41b0fcc581317ee2c8e4135529376104ffe567&",
           "created_at": "2024-03-09",
-          "id": 78
+          "id": 78,
+          "IsMine": false
         },
         {
           "under_comment": "저도 덕분에 좋은 시간 보냈어요!",
           "username": "민아",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222847115836002355/buba_dubz_None_2_1c7efe81-9a44-4c52-8f46-047fe6f21cd9.png?ex=6617b41f&is=66053f1f&hm=1fc353d1c53d8392b7f312aba18c88c6e92b7816dd23fdeaea801d1ce40fdccc&",
           "created_at": "2024-03-09",
-          "id": 79
+          "id": 79,
+          "IsMine": false
         }
       ],
       "post_id": 24,
       "id": 57,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": false
     },
     {
       "comment": "여긴 어디야? 너무 좋아 보인다!",
@@ -2378,12 +2724,14 @@
           "username": "윤하",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222763849409888386/i.png?ex=66176693&is=6604f193&hm=1679676e0b3525f36277dc2477648e1c3cc09f3929e5e427a604e95f593e3c37&",
           "created_at": "2024-03-09",
-          "id": 80
+          "id": 80,
+          "IsMine": false
         }
       ],
       "post_id": 24,
       "id": 58,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": false
     },
     {
       "comment": "화이팅, 오늘도 힘내자!",
@@ -2396,26 +2744,30 @@
           "username": "준호",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222451417663541318/buba_dubz_None_2_34263587-af20-4dfb-a277-065911cc1d85.png?ex=6616439a&is=6603ce9a&hm=b31bf917cddf2defd351543396335996f99fb89117b20093f26ec7368290810c&",
           "created_at": "2024-03-08",
-          "id": 81
+          "id": 81,
+          "IsMine": false
         },
         {
           "under_comment": "정말 감사해요!",
           "username": "예서",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222451416942252052/buba_dubz_None_0_f88d6bf5-e0eb-46e6-afd7-2ae30b9e33c8.png?ex=66164399&is=6603ce99&hm=19d56e27ed1e8b8645374d24f151de95d1fcbe5cd4af9d3e4cfb394e85b33990&",
           "created_at": "2024-03-08",
-          "id": 82
+          "id": 82,
+          "IsMine": true
         },
         {
           "under_comment": "너무 기쁘네요, 고마워요!",
           "username": "승민",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222451414857420831/buba_dubz_None_3_0e7e74f5-0085-4817-8baf-8fceade1a89d.png?ex=66164399&is=6603ce99&hm=f018539fb3d7ac683dd8f34746e4b224b49e5a45808686442d95e057d34775c9&",
           "created_at": "2024-03-08",
-          "id": 83
+          "id": 83,
+          "IsMine": true
         }
       ],
       "post_id": 25,
       "id": 59,
-      "reply_count": 3
+      "reply_count": 3,
+      "IsMine": true
     },
     {
       "comment": "아, 나도 가고 싶다!",
@@ -2428,19 +2780,22 @@
           "username": "나연",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222418302022975619/buba_dubz_None_2_ed88e779-2f3d-4bb7-9dc0-2e4e1872d11a.png?ex=661624c2&is=6603afc2&hm=3eca577a6aaf2ee77e3bf09ccc3adc910a0c25cca02001f457a9a969f0ece425&",
           "created_at": "2024-03-07",
-          "id": 84
+          "id": 84,
+          "IsMine": true
         },
         {
           "under_comment": "여러분 덕분에 힘이 나네요!",
           "username": "현서",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222415575435710494/buba_dubz_None_2_b733e913-23f6-4758-a396-f70780da94c9.png?ex=66162238&is=6603ad38&hm=d7f981d8bb77f491aa50cc8b0071be0b927e5547d555c558cf0d3e0028c9ac43&",
           "created_at": "2024-03-07",
-          "id": 85
+          "id": 85,
+          "IsMine": false
         }
       ],
       "post_id": 26,
       "id": 60,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": false
     },
     {
       "comment": "여행 가고 싶게 만드는 사진이네!",
@@ -2453,26 +2808,30 @@
           "username": "유진",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222403954118234144/i.png?ex=66161765&is=6603a265&hm=9afb44dc846137c018ba39e6ac55bc4c66b578fcd302506b1fb3037de2d4f67a&",
           "created_at": "2024-03-07",
-          "id": 86
+          "id": 86,
+          "IsMine": false
         },
         {
           "under_comment": "여러분의 응원 덕분이에요!",
           "username": "민호",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222403748744400948/i.png?ex=66161734&is=6603a234&hm=bf89aad710f400db6479fd88a95e9a1984d458e3ae98c306c1e69917622c1bac&",
           "created_at": "2024-03-07",
-          "id": 87
+          "id": 87,
+          "IsMine": false
         },
         {
           "under_comment": "네, 정말 추천하는 곳이에요!",
           "username": "하영",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222393159456133140/buba_dubz_None_0_6cac622e-04f5-402a-b0f0-c035dc980542.png?ex=66160d58&is=66039858&hm=c364ea811d67fda6a85e46f2a8baebbd31f2dc5a962e7497c8fa36eec1343c43&",
           "created_at": "2024-03-07",
-          "id": 88
+          "id": 88,
+          "IsMine": false
         }
       ],
       "post_id": 26,
       "id": 61,
-      "reply_count": 3
+      "reply_count": 3,
+      "IsMine": true
     },
     {
       "comment": "음식 맛있겠다, 먹고파!",
@@ -2485,19 +2844,22 @@
           "username": "서현",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222262582627532840/buba_dubz_None_3_1b132c00-9017-484a-b35f-3a904648e737.png?ex=661593bc&is=66031ebc&hm=72cc5d94cd7de50758849c649ff8d56200577cb63f6d1cff4ef0f78ec459087a&",
           "created_at": "2024-03-06",
-          "id": 89
+          "id": 89,
+          "IsMine": true
         },
         {
           "under_comment": "네, 꼭 가보세요! 추천해요!",
           "username": "서율",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1222251251891175545/buba_dubz_None_0_94551573-37dc-4bf6-b0d3-a6b4697b2560.png?ex=6615892e&is=6603142e&hm=fffb865704d80fb2a0e57f3b6ebc757bfb9a56c3577a4b2e694f7078a0edf413&",
           "created_at": "2024-03-06",
-          "id": 90
+          "id": 90,
+          "IsMine": false
         }
       ],
       "post_id": 27,
       "id": 62,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": false
     },
     {
       "comment": "다음엔 어디 갈까?",
@@ -2510,19 +2872,22 @@
           "username": "다연",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1221960638792728626/buba_dubz_None_0_91bbe91d-33b5-4940-b35d-031a888263f9.png?ex=66147a87&is=66020587&hm=f5dbe5cb185dce9fc9c3f0c157e3dd054a417de7132d9ee9d27d18ff11baafc2&",
           "created_at": "2024-03-05",
-          "id": 91
+          "id": 91,
+          "IsMine": true
         },
         {
           "under_comment": "좋게 봐주셔서 기쁩니다!",
           "username": "준서",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1221937619307466922/buba_dubz_None_0_4a3b3301-9a4c-4804-9e60-5bc46fd17aaa.png?ex=66146516&is=6601f016&hm=50cfa1b088faf88cdc64a3018d7871f7e8adbc13d4c8bfb5307820f6807b5598&",
           "created_at": "2024-03-05",
-          "id": 92
+          "id": 92,
+          "IsMine": true
         }
       ],
       "post_id": 28,
       "id": 63,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": false
     },
     {
       "comment": "화이팅, 오늘도 힘내자!",
@@ -2535,12 +2900,14 @@
           "username": "소은",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1221918265375199272/buba_dubz_None_3_36935a94-6615-444e-9232-badd4c1cc0ff.png?ex=66145310&is=6601de10&hm=c890141ade8fce7d32e0d80d8b96d88be7c572fd7b78c0428a603f598921f4e5&",
           "created_at": "2024-03-05",
-          "id": 93
+          "id": 93,
+          "IsMine": true
         }
       ],
       "post_id": 28,
       "id": 64,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": true
     },
     {
       "comment": "너무 예뻐, 좋아!",
@@ -2553,19 +2920,22 @@
           "username": "현준",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1221698369735622667/sour_snapple_A_red_moon_over_Yosemite_an_orange_waterfall_in_th_6c3fbcb7-8855-45c5-a777-41c10dac3602.png?ex=66138645&is=66011145&hm=2af81386b50bd13d9151263516ae7805bae15261664736e3de328160195b0578&",
           "created_at": "2024-03-04",
-          "id": 94
+          "id": 94,
+          "IsMine": true
         },
         {
           "under_comment": "저도 여러분과 같이 감동했어요!",
           "username": "서영",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1221660835018178662/colleen_online__e1ecfc55-b23b-4fe3-8af0-80188fbc4cb5.png?ex=66136350&is=6600ee50&hm=fb80f9056b2290eed65031a36829dc966ef545c6caa33bad8b887cd657f9fbd5&",
           "created_at": "2024-03-04",
-          "id": 95
+          "id": 95,
+          "IsMine": true
         }
       ],
       "post_id": 29,
       "id": 65,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": false
     },
     {
       "comment": "분위기가 너무 좋아서 기분 전환 돼!",
@@ -2578,19 +2948,22 @@
           "username": "현준",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1220931485985673317/buba_dubz_None_0_e8ab9dcb-1348-4c9f-b912-86a836f094c5.png?ex=6619f68e&is=6607818e&hm=f972973a215af971b0658dd512b750602d0295b0fcc98a59a1cfd0ea1991803f&",
           "created_at": "2024-03-03",
-          "id": 96
+          "id": 96,
+          "IsMine": true
         },
         {
           "under_comment": "아, 정말요? 더 알아볼게요!",
           "username": "태민",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1220931434299129876/buba_dubz_None_1_823b5319-8f7d-4195-b2e1-bf7503ddf742.png?ex=6619f681&is=66078181&hm=de73d892f43bdfc01018d95916f63ca160e9be74b997439cfad5b963ca607447&",
           "created_at": "2024-03-03",
-          "id": 97
+          "id": 97,
+          "IsMine": true
         }
       ],
       "post_id": 30,
       "id": 66,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": true
     },
     {
       "comment": "화이팅, 오늘도 힘내자!",
@@ -2603,12 +2976,14 @@
           "username": "재현",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1220931368737968148/buba_dubz_None_2_8edc09d1-c498-4043-ade5-77d5a79f10ad.png?ex=6619f672&is=66078172&hm=e2fbd74acd9efee97b7446915487f29b02c970ca08344d92fde54b0afb874057&",
           "created_at": "2024-03-03",
-          "id": 98
+          "id": 98,
+          "IsMine": true
         }
       ],
       "post_id": 30,
       "id": 67,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": true
     },
     {
       "comment": "좋은 책 있으면 추천해줘!",
@@ -2621,12 +2996,14 @@
           "username": "하연",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1220470063245557780/buba_dubz_None_3_a5e02c72-ea53-42d7-a68e-a722c1e5139c.png?ex=661848d2&is=6605d3d2&hm=f5cc059c3972823aed11e823ad1fe1b9efcd9ff0f83c6be0d2811d2dc4c1cb81&",
           "created_at": "2024-03-02",
-          "id": 99
+          "id": 99,
+          "IsMine": false
         }
       ],
       "post_id": 31,
       "id": 68,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": true
     },
     {
       "comment": "어떤 카메라로 찍었어?",
@@ -2639,19 +3016,22 @@
           "username": "다혜",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1220113999082029067/buba_dubz_None_3_228a84cd-3d8f-4939-9512-faf6c7ebcc6a.png?ex=6616fd36&is=66048836&hm=c326ca650cd55bfcefde7fc91ada8215bb92c845501e21054117cf8b4f274a81&",
           "created_at": "2024-03-01",
-          "id": 100
+          "id": 100,
+          "IsMine": false
         },
         {
           "under_comment": "정말 그랬으면 좋겠네요, 고마워요!",
           "username": "동현",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1220114906012061857/buba_dubz_None_3_eebb31bc-d82a-4634-b189-3607bcee13fa.png?ex=6616fe0e&is=6604890e&hm=e640df635c8e1b7a848a3a1b4dca34d67a11213c20f04b3568d4f1d3e1ee9ef6&",
           "created_at": "2024-03-01",
-          "id": 101
+          "id": 101,
+          "IsMine": false
         }
       ],
       "post_id": 32,
       "id": 69,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": false
     },
     {
       "comment": "이 순간이 좋아.",
@@ -2664,12 +3044,14 @@
           "username": "지연",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219911995495546910/0_3_1.webp?ex=66164114&is=6603cc14&hm=b4a810a8a8756267a7fe27f55612980c657dd5db1c78a5b78e4be7ec6a43aa13&",
           "created_at": "2024-03-01",
-          "id": 102
+          "id": 102,
+          "IsMine": false
         }
       ],
       "post_id": 32,
       "id": 70,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": true
     },
     {
       "comment": "최고의 사진이네!",
@@ -2682,12 +3064,14 @@
           "username": "서아",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219535813512007680/430389379_440507728444235_2247098626134272534_n.png?ex=6614e2bb&is=66026dbb&hm=35815d27e801ed4e79f662a5327de2815671b68a0e6efbbf54d3a6b376818407&",
           "created_at": "2024-02-29",
-          "id": 103
+          "id": 103,
+          "IsMine": false
         }
       ],
       "post_id": 33,
       "id": 71,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": false
     },
     {
       "comment": "오, 꼭 가봐야겠다!",
@@ -2700,19 +3084,22 @@
           "username": "지유",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219440820957089872/buba_dubz_None_5eb81f71-b3da-4f62-b555-e45e6fe80d64.png?ex=66148a43&is=66021543&hm=8ea8941fa0a370497fb1db3ec833dc18077b27bbece6de826432193d0f81d79c&",
           "created_at": "2024-02-28",
-          "id": 104
+          "id": 104,
+          "IsMine": true
         },
         {
           "under_comment": "함께 할 수 있어서 좋았어요!",
           "username": "민서",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219356924223688764/buba_dubz_None_fd6e9746-c799-491c-ac82-a4fd959eb021.png?ex=66143c21&is=6601c721&hm=08be74c8f60c9718aaa853385a84a205360e04df24182c299f77bd8a5e5d930c&",
           "created_at": "2024-02-28",
-          "id": 105
+          "id": 105,
+          "IsMine": false
         }
       ],
       "post_id": 34,
       "id": 72,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": true
     },
     {
       "comment": "이 순간이 좋아.",
@@ -2725,26 +3112,30 @@
           "username": "예나",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219336509434364046/cedric225825_border_collie_dog_mixed_with_a_stromtrooper_in_a_s_214b7951-b8db-4843-9f0c-37803c030b30.png?ex=6614291e&is=6601b41e&hm=659caaf0d36cf69ab713acb5adfc1c89e40d24fbd3d799d08dae5180783afc33&",
           "created_at": "2024-02-28",
-          "id": 106
+          "id": 106,
+          "IsMine": true
         },
         {
           "under_comment": "네, 정말 추천하는 곳이에요!",
           "username": "은비",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219336321860898816/cedric225825_kylo_ren_by_Banksy_e203f985-666c-4aaf-8f17-2616c42782f6.png?ex=661428f1&is=6601b3f1&hm=a3950fffcc9b26326c75fabb9486cea75ccc1a396b3da97676b71e6fdbca2517&",
           "created_at": "2024-02-28",
-          "id": 107
+          "id": 107,
+          "IsMine": true
         },
         {
           "under_comment": "너무 행복한 말씀 감사합니다!",
           "username": "다혜",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219336419428798484/cedric225825_entrain_de_tagger_un_mur_dans_la_rue_94fdc9e7-19b5-4e82-876c-ec1d83faf486.png?ex=66142908&is=6601b408&hm=713fd952b5fe140303bf21468ca2941db07676297cdd65c6f8f4021ce581a85f&",
           "created_at": "2024-02-28",
-          "id": 108
+          "id": 108,
+          "IsMine": true
         }
       ],
       "post_id": 34,
       "id": 73,
-      "reply_count": 3
+      "reply_count": 3,
+      "IsMine": true
     },
     {
       "comment": "여행 가고 싶게 만드는 사진이네!",
@@ -2757,12 +3148,14 @@
           "username": "민서",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219335980486758521/cedric225825_une_course_de_formule_1_sur_un_circuit_enneige_ave_7ed8b06f-a9e2-47f0-bf54-ad1bf1d3f159.png?ex=6614289f&is=6601b39f&hm=5d56ac63e63fa75da5fc1706c2f763552c1657a0c1e51791c41fd96e972b84f2&",
           "created_at": "2024-02-27",
-          "id": 109
+          "id": 109,
+          "IsMine": false
         }
       ],
       "post_id": 35,
       "id": 74,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": true
     },
     {
       "comment": "오, 꼭 가봐야겠다!",
@@ -2775,19 +3168,22 @@
           "username": "소은",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219335499597090927/cedric225825_a_dog_mixed_with_a_storm_trooper_pilote_un_X-Wing__1166bcb3-b56e-4f8c-9878-9bbfe2e114ef.png?ex=6614282d&is=6601b32d&hm=898a5994788a418d911f26e4fe2c9c9e83b4a2b5b6aed40317efb5cb840e6d24&",
           "created_at": "2024-02-26",
-          "id": 110
+          "id": 110,
+          "IsMine": true
         },
         {
           "under_comment": "정보 공유해드릴게요! DM 확인해주세요.",
           "username": "유진",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219335279211577386/cedric225825_un_personnage_du_jeux_video_splatoon_deguise_en_da_c9596e76-5553-4e45-8114-2cc6aeefa7bd.png?ex=661427f8&is=6601b2f8&hm=569bf4f85f68230cccc343193f8d81a698959503c84d5ab6c24b3e2d8582fa83&",
           "created_at": "2024-02-26",
-          "id": 111
+          "id": 111,
+          "IsMine": true
         }
       ],
       "post_id": 36,
       "id": 75,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": true
     },
     {
       "comment": "우와, 말이 안 나온다...",
@@ -2800,19 +3196,22 @@
           "username": "예준",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219166715158593596/IMG_2018.jpg?ex=66138afb&is=660115fb&hm=91b1d639607de93bfde751732889a5ca6e5db2a312df0866e52ae7d2dcaad93f&",
           "created_at": "2024-02-26",
-          "id": 112
+          "id": 112,
+          "IsMine": false
         },
         {
           "under_comment": "네, 그렇게 해볼게요!",
           "username": "다영",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1219057547160322238/turbomancer4235__4b1316d6-535f-4f62-a8d5-3f3986f4970a.png?ex=661c5fd0&is=6609ead0&hm=6d4df7e7a6630be86c642e43b7bb9dbb2d899d102b11db55b32b3d4856831dc7&",
           "created_at": "2024-02-26",
-          "id": 113
+          "id": 113,
+          "IsMine": false
         }
       ],
       "post_id": 36,
       "id": 76,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": true
     },
     {
       "comment": "정보 고마워, 유용하게 쓸게.",
@@ -2825,12 +3224,14 @@
           "username": "민호",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218808567167979590/buba_dubz_None_0_21f41a50-349a-4f6a-9542-4a8964133868.png?ex=661b77ee&is=660902ee&hm=c0a89e3688834718de97ba7f15de8e0357f124fd6d980fa46ab9d4ca85bdad8e&",
           "created_at": "2024-02-25",
-          "id": 114
+          "id": 114,
+          "IsMine": false
         }
       ],
       "post_id": 37,
       "id": 77,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": true
     },
     {
       "comment": "감동이야, 진짜 좋네.",
@@ -2843,12 +3244,14 @@
           "username": "지은",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218752489877143562/buba_dubz_None_3_d5fb3952-6fb2-4159-b181-d0f220f87ee0.png?ex=661b43b4&is=6608ceb4&hm=a0ccb494a78aae78e404d2f9876f5351c764876d5c83bc4783ff6b8c3041065f&",
           "created_at": "2024-02-24",
-          "id": 115
+          "id": 115,
+          "IsMine": false
         }
       ],
       "post_id": 38,
       "id": 78,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": true
     },
     {
       "comment": "자주 올 것 같아, 좋아!",
@@ -2861,12 +3264,14 @@
           "username": "준희",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218745032992096407/buba_dubz_None_1_bd1ada86-2c02-4ff9-ab67-8a3fceb09173.png?ex=661b3cc3&is=6608c7c3&hm=96be463d3ed0c0faa4e1bf9db1f7e567093b34a78d5f6097bb393a034a42acad&",
           "created_at": "2024-02-24",
-          "id": 116
+          "id": 116,
+          "IsMine": false
         }
       ],
       "post_id": 38,
       "id": 79,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": true
     },
     {
       "comment": "이 순간이 좋아.",
@@ -2879,19 +3284,22 @@
           "username": "민준",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218643138051313825/buba_dubz_None_2_58b2db15-a1f9-4eae-bb9b-ea25ea74e93c.png?ex=661adddd&is=660868dd&hm=d2975d63aa2a10c7272bc8cfa46b9034c84d198f33081d102cf1c6ecae6ea168&",
           "created_at": "2024-02-23",
-          "id": 117
+          "id": 117,
+          "IsMine": false
         },
         {
           "under_comment": "정말? 저도요!",
           "username": "은호",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218643112772239502/buba_dubz_None_3_8806a466-0dd2-4e8c-85ff-09e24bb2b8cd.png?ex=661addd7&is=660868d7&hm=c7131bf3b0916bece2167b0c066cabfcaaf0d9228a85cb8f55c25ad3dc4ae1c3&",
           "created_at": "2024-02-23",
-          "id": 118
+          "id": 118,
+          "IsMine": false
         }
       ],
       "post_id": 39,
       "id": 80,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": true
     },
     {
       "comment": "너무 예뻐, 좋아!",
@@ -2904,12 +3312,14 @@
           "username": "유빈",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218643062667087982/buba_dubz_None_1_a2f40109-d257-49cd-9e0f-5c8eca66a546.png?ex=661addcb&is=660868cb&hm=52e69dc9905984d48d1e107c320f20f243986f548ea3809301835f67bbd3fff6&",
           "created_at": "2024-02-23",
-          "id": 119
+          "id": 119,
+          "IsMine": false
         }
       ],
       "post_id": 39,
       "id": 81,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": false
     },
     {
       "comment": "감동이야, 진짜 좋네.",
@@ -2922,26 +3332,30 @@
           "username": "가은",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218459598457933844/buba_dubz_None_3_b753a5fc-0bb9-4960-a7de-1f17b16ff43c.png?ex=661a32ee&is=6607bdee&hm=3cbc962950dd6a7a349f714f0bf4bd8f28d08d5af05c6e80b93521ec9f1f3a1d&",
           "created_at": "2024-02-22",
-          "id": 120
+          "id": 120,
+          "IsMine": false
         },
         {
           "under_comment": "귀한 의견 감사드립니다!",
           "username": "승민",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218458392746524702/buba_dubz_None_3_ff87d36c-12ca-4720-ae1d-920ae1cdc19c.png?ex=661a31ce&is=6607bcce&hm=1f6fcbbbd3d8319175d59e382c1b84aa5a9438234e5e699d2cd83c58704e9a4f&",
           "created_at": "2024-02-22",
-          "id": 121
+          "id": 121,
+          "IsMine": true
         },
         {
           "under_comment": "저도 동감이에요!",
           "username": "민재",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218458383032651856/buba_dubz_None_2_ff87d36c-12ca-4720-ae1d-920ae1cdc19c.png?ex=661a31cc&is=6607bccc&hm=f727348014437267c15ca28c8343d1e921a1b234278a1c9a0afa54bfd2fb039f&",
           "created_at": "2024-02-22",
-          "id": 122
+          "id": 122,
+          "IsMine": false
         }
       ],
       "post_id": 40,
       "id": 82,
-      "reply_count": 3
+      "reply_count": 3,
+      "IsMine": true
     },
     {
       "comment": "자주 올 것 같아, 좋아!",
@@ -2954,19 +3368,22 @@
           "username": "준희",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218286166546059275/buba_dubz_None_0_0d20613f-51dd-4cea-ba74-4566295e39d9.png?ex=66199168&is=66071c68&hm=4a58a6cfdf77fc799bb6f17477c29f62d23d0f34dcf068129b8d3b600044fac3&",
           "created_at": "2024-02-21",
-          "id": 123
+          "id": 123,
+          "IsMine": true
         },
         {
           "under_comment": "너무 행복한 말씀 감사합니다!",
           "username": "윤호",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218286143943082115/buba_dubz_None_2_bf4ba0ff-af29-4cf3-83f8-deca4ee6564e.png?ex=66199163&is=66071c63&hm=37f8d11feb2434c176b07bf6df031ab0131947b6e39d0b3af380c0f7b8bf6abd&",
           "created_at": "2024-02-21",
-          "id": 124
+          "id": 124,
+          "IsMine": true
         }
       ],
       "post_id": 41,
       "id": 83,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": true
     },
     {
       "comment": "이런 곳이 있다니, 놀라워!",
@@ -2979,26 +3396,30 @@
           "username": "수민",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218286118081007716/buba_dubz_None_1_2e96820f-22f5-4943-82da-da5b58607c37.png?ex=6619915d&is=66071c5d&hm=df51414b0ca855fde7447ee3add80def5cd6690fd946a0096c765b2e776702a8&",
           "created_at": "2024-02-21",
-          "id": 125
+          "id": 125,
+          "IsMine": true
         },
         {
           "under_comment": "사진 찍는 걸 좋아해요, 감사합니다!",
           "username": "태현",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218284147886264320/buba_dubz_None_1_5645ad5d-cd99-49c1-8acc-3ca21800b430.png?ex=66198f87&is=66071a87&hm=55c79104a2164a609a81127f209a54396840660006b0f3924f5441f5b6da2a42&",
           "created_at": "2024-02-21",
-          "id": 126
+          "id": 126,
+          "IsMine": true
         },
         {
           "under_comment": "정말 그랬으면 좋겠네요, 고마워요!",
           "username": "현우",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218283527351570544/buba_dubz_None_2_59f0a9c1-3067-4113-bd72-4354c658f370.png?ex=66198ef3&is=660719f3&hm=4a754676bc8351607c282ae75a914a66c2683f30031d5cd5f3d489a1e9182f8e&",
           "created_at": "2024-02-21",
-          "id": 127
+          "id": 127,
+          "IsMine": true
         }
       ],
       "post_id": 41,
       "id": 84,
-      "reply_count": 3
+      "reply_count": 3,
+      "IsMine": false
     },
     {
       "comment": "이 순간이 좋아.",
@@ -3011,12 +3432,14 @@
           "username": "도훈",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218258573037928591/buba_dubz_None_2_b612ac44-4c60-4023-8545-da1b8af4283f.png?ex=661977b5&is=660702b5&hm=700a7f60fe55954f0a271e4ac782c7c1314aace3d0241e724d5a15004d27eaf0&",
           "created_at": "2024-02-20",
-          "id": 128
+          "id": 128,
+          "IsMine": false
         }
       ],
       "post_id": 42,
       "id": 85,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": false
     },
     {
       "comment": "분위기가 너무 좋아서 기분 전환 돼!",
@@ -3029,12 +3452,14 @@
           "username": "성준",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218155325493088256/0_1.webp?ex=6619178d&is=6606a28d&hm=3426eb3088eb81e023f3c0cd6c12f8af25935e26a57ea57d474b01a9daa98950&",
           "created_at": "2024-02-20",
-          "id": 129
+          "id": 129,
+          "IsMine": false
         }
       ],
       "post_id": 42,
       "id": 86,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": true
     },
     {
       "comment": "여긴 어디야? 너무 좋아 보인다!",
@@ -3047,19 +3472,22 @@
           "username": "나윤",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218036381171843123/buba_dubz_None_1_4fa43ff2-cd55-4c6c-b67d-7580f645ff8c.png?ex=6618a8c7&is=660633c7&hm=89120fb0faf5f1397b1c20db35dd37863b5b39b4cb04eac72d3e227446067061&",
           "created_at": "2024-02-19",
-          "id": 130
+          "id": 130,
+          "IsMine": false
         },
         {
           "under_comment": "저도 기대됩니다!",
           "username": "소율",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218036048991358976/buba_dubz_A_detailed_map_of_a_large_city_radiating_from_a_mount_d0036b54-475b-4620-ad5f-86ef86e859a8.png?ex=6618a878&is=66063378&hm=57c7596925185ec2193aa33946302d0e69f3a8791d02564f577c93b4dceb3b32&",
           "created_at": "2024-02-19",
-          "id": 131
+          "id": 131,
+          "IsMine": false
         }
       ],
       "post_id": 43,
       "id": 87,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": true
     },
     {
       "comment": "마음이 편안해지는 사진이야.",
@@ -3072,12 +3500,14 @@
           "username": "준서",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1218011268825481346/0_2.png?ex=66189164&is=66061c64&hm=2b73adf6cc17ec6c4a84c7f3124456598dbfd4462753a528a9c192d78f3320d1&",
           "created_at": "2024-02-18",
-          "id": 132
+          "id": 132,
+          "IsMine": true
         }
       ],
       "post_id": 44,
       "id": 88,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": false
     },
     {
       "comment": "아름다운 순간 포착해줘서 고마워.",
@@ -3090,19 +3520,22 @@
           "username": "성민",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1217957842477256736/buba_dubz_None_2_092d807c-f459-4289-91c2-82d880b8c7e0.png?ex=66185fa2&is=6605eaa2&hm=078cd6b15a4a41f24408add02227108830b6437bc5baa9f42e015ad34ec79d73&",
           "created_at": "2024-02-17",
-          "id": 133
+          "id": 133,
+          "IsMine": false
         },
         {
           "under_comment": "함께 할 수 있어서 좋았어요!",
           "username": "예서",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1217956975422214204/buba_dubz_None_2_efa33f49-e1f0-4633-822c-fe4e0421cf3e.png?ex=66185ed3&is=6605e9d3&hm=036e3110eb33dad31558fae40e855e4433a1fec2001a88f6b8d02182e3b081f2&",
           "created_at": "2024-02-17",
-          "id": 134
+          "id": 134,
+          "IsMine": false
         }
       ],
       "post_id": 45,
       "id": 89,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": false
     },
     {
       "comment": "음식 맛있겠다, 먹고파!",
@@ -3115,19 +3548,22 @@
           "username": "지아",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1217954043297661052/buba_dubz_None_3_dbfb5ac0-3547-4e02-b4da-597497f57f3e.png?ex=66185c18&is=6605e718&hm=55cf35a584349fb90c997abf8f420401957aa289b3e381b81bb2993e447fb8fc&",
           "created_at": "2024-02-17",
-          "id": 135
+          "id": 135,
+          "IsMine": false
         },
         {
           "under_comment": "좋게 봐주셔서 기쁩니다!",
           "username": "은지",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1217936767278252122/IMG_1052.png?ex=66184c01&is=6605d701&hm=4964f094ffe04be6a4f2a69f750365393c7801ffc2fff9781c1d9ceaf05f3e34&",
           "created_at": "2024-02-17",
-          "id": 136
+          "id": 136,
+          "IsMine": false
         }
       ],
       "post_id": 45,
       "id": 90,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": true
     },
     {
       "comment": "오, 꼭 가봐야겠다!",
@@ -3140,12 +3576,14 @@
           "username": "지연",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1217705796431904948/buba_dubz_None_b7e8be28-fb1c-46bc-8371-c75e011eeab0.png?ex=661774e5&is=6604ffe5&hm=3d18b48ba64d04029df3ffe8178347fb7fcfae0ec92e658e57aa080663e8f724&",
           "created_at": "2024-02-16",
-          "id": 137
+          "id": 137,
+          "IsMine": true
         }
       ],
       "post_id": 46,
       "id": 91,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": true
     },
     {
       "comment": "다음엔 어디 갈까?",
@@ -3158,12 +3596,14 @@
           "username": "서영",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1217673796450783333/360_F_632542084_KfTfTggYXx9zynyETXWK2vJ3kUiw3a5e.jpg?ex=66175718&is=6604e218&hm=773796ddd8e0743410c11df12917d60fb6090f6e8ce3d5a49353e0f30719ab68&",
           "created_at": "2024-02-15",
-          "id": 138
+          "id": 138,
+          "IsMine": true
         }
       ],
       "post_id": 47,
       "id": 92,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": false
     },
     {
       "comment": "천국 같아, 여기 어디야?",
@@ -3176,19 +3616,22 @@
           "username": "은유",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1217656617147957309/buba_dubz_None_60d8c05f-a895-406c-8722-8b059f5dd06f.png?ex=66174718&is=6604d218&hm=5fe98efa332a4a80fe936e137ec4a0060180a3ec8241a5619072fc1f8f50601e&",
           "created_at": "2024-02-15",
-          "id": 139
+          "id": 139,
+          "IsMine": true
         },
         {
           "under_comment": "정보 공유해드릴게요! DM 확인해주세요.",
           "username": "혜수",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1217367750482071592/buba_dubz_None_c9de02e0-bbf2-452e-8a40-76890e5ac79f.png?ex=66163a11&is=6603c511&hm=d379796b4921357d439a433d371b3e264581da323cf1604de10ff79782a62091&",
           "created_at": "2024-02-15",
-          "id": 140
+          "id": 140,
+          "IsMine": true
         }
       ],
       "post_id": 47,
       "id": 93,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": true
     },
     {
       "comment": "분위기가 너무 좋아서 기분 전환 돼!",
@@ -3201,12 +3644,14 @@
           "username": "은유",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1216745086168207400/atriox117_photo_realistic_style_cinematic_beautiful_woman_princ_bad48414-b88c-4da7-8b6b-d9907920cd45.jpg?ex=6613f62a&is=6601812a&hm=2df4e3c36759f45b2ec80ef4b360abfefa9c9e8267c7d8076b5b8defeb030f95&",
           "created_at": "2024-02-14",
-          "id": 141
+          "id": 141,
+          "IsMine": true
         }
       ],
       "post_id": 48,
       "id": 94,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": false
     },
     {
       "comment": "처음 보는 풍경이야.",
@@ -3219,12 +3664,14 @@
           "username": "서진",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1216303688503791717/alicedaeyu_04578_3D_cartoon_style_rendering_the_beauty_is_stand_21a3b35b-62e0-4234-b1c8-f2e715a3c7ad.png?ex=661b9595&is=66092095&hm=6d53c226eb7be187e553c5c78d70c8e6a47738b199ce0e8fac97ecc7145db7b3&",
           "created_at": "2024-02-13",
-          "id": 142
+          "id": 142,
+          "IsMine": true
         }
       ],
       "post_id": 49,
       "id": 95,
-      "reply_count": 1
+      "reply_count": 1,
+      "IsMine": true
     },
     {
       "comment": "마음이 편안해지는 사진이야.",
@@ -3237,19 +3684,22 @@
           "username": "수민",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1216189148529033307/buba_dubz_None_13bcdc76-4618-4f36-95b2-e7e46efe72df.png?ex=661b2ae8&is=6608b5e8&hm=f62f4235bd777587ed8859f67bcdbc3a35b39e230c8d1bdf7634a3619eea3daf&",
           "created_at": "2024-02-13",
-          "id": 143
+          "id": 143,
+          "IsMine": true
         },
         {
           "under_comment": "잘 들었습니다, 좋은 의견 감사해요!",
           "username": "성현",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1216177127897042994/image.png?ex=661b1fb6&is=6608aab6&hm=5d5b58236737517878cf49ed89a000da5a49b3dc286429ba6ec256bae8aa5d81&",
           "created_at": "2024-02-13",
-          "id": 144
+          "id": 144,
+          "IsMine": true
         }
       ],
       "post_id": 49,
       "id": 96,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": true
     },
     {
       "comment": "사랑스러워요!",
@@ -3262,19 +3712,22 @@
           "username": "유정",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1216124236213780560/buba_dubz_None_50086c15-7a91-4ed3-9828-3523cf963165.png?ex=661aee74&is=66087974&hm=feb9465ac3f6d720c52ec1b81f640cde9b845d39f8ab149699a7e0243deafc10&",
           "created_at": "2024-02-12",
-          "id": 145
+          "id": 145,
+          "IsMine": false
         },
         {
           "under_comment": "네, 정말 추천하는 곳이에요!",
           "username": "성우",
           "profile_url": "https://cdn.discordapp.com/attachments/1064028865741197413/1216039961237786734/buba_dubz_None_fb7519fb-432d-4eb8-a580-ccec88613688.png?ex=661a9ff7&is=66082af7&hm=65ee530dce56fc8d09db44b104c78ccf137e73b1860ed788452ba7219f29ded8&",
           "created_at": "2024-02-12",
-          "id": 146
+          "id": 146,
+          "IsMine": true
         }
       ],
       "post_id": 50,
       "id": 97,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": false
     },
     {
       "comment": "fdfd",
@@ -3284,7 +3737,8 @@
       "under_comments": [],
       "post_id": 14,
       "id": 1713035474659,
-      "reply_count": 0
+      "reply_count": 0,
+      "IsMine": false
     },
     {
       "comment": "aaff",
@@ -3294,7 +3748,8 @@
       "under_comments": [],
       "post_id": 14,
       "id": 1713035532399,
-      "reply_count": 0
+      "reply_count": 0,
+      "IsMine": false
     },
     {
       "comment": "fff",
@@ -3304,7 +3759,8 @@
       "under_comments": [],
       "post_id": 14,
       "id": 1713035579363,
-      "reply_count": 0
+      "reply_count": 0,
+      "IsMine": true
     },
     {
       "comment": "fdfdf",
@@ -3317,12 +3773,21 @@
           "under_comment": "저도 바로 그 생각이었어요!aaaaaaaaaaaaa",
           "username": "신형",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
-          "created_at": "2024-04-1319:45"
+          "created_at": "2024-04-1319:45",
+          "IsMine": false
+        },
+        {
+          "id": "2024-05-2117:57",
+          "under_comment": "fafdaf",
+          "username": "신형",
+          "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
+          "created_at": "2024-05-2117:57"
         }
       ],
       "post_id": 2,
       "id": 1713035987573,
-      "reply_count": 0
+      "reply_count": 3,
+      "IsMine": true
     },
     {
       "comment": "fdfdfaaaaaaafffff",
@@ -3335,12 +3800,14 @@
           "under_comment": "apfhd",
           "username": "유저 이름",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
-          "created_at": "2024-04-13T19:24:56.964Z"
+          "created_at": "2024-04-13T19:24:56.964Z",
+          "IsMine": false
         }
       ],
       "post_id": 2,
       "id": 1713036002077,
-      "reply_count": 0
+      "reply_count": 0,
+      "IsMine": false
     },
     {
       "comment": "apfhd",
@@ -3353,12 +3820,14 @@
           "under_comment": "fdfdf",
           "username": "신형",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
-          "created_at": "2024-05-1414:34"
+          "created_at": "2024-05-1414:34",
+          "IsMine": false
         }
       ],
       "post_id": 2,
       "id": 1713036297461,
-      "reply_count": 2
+      "reply_count": 2,
+      "IsMine": false
     },
     {
       "comment": "apfhd",
@@ -3368,7 +3837,8 @@
       "under_comments": [],
       "post_id": 2,
       "id": 1713036363426,
-      "reply_count": 0
+      "reply_count": 0,
+      "IsMine": false
     },
     {
       "comment": "저도 바로 그 생각이었어요!aaaaaaaaaa",
@@ -3378,7 +3848,8 @@
       "under_comments": [],
       "post_id": 2,
       "id": 1713037459151,
-      "reply_count": 0
+      "reply_count": 0,
+      "IsMine": false
     },
     {
       "comment": "afafafafafafa",
@@ -3388,7 +3859,8 @@
       "under_comments": [],
       "post_id": 2,
       "id": 1713037473016,
-      "reply_count": 0
+      "reply_count": 0,
+      "IsMine": true
     },
     {
       "comment": "afafagagagagag",
@@ -3398,7 +3870,8 @@
       "under_comments": [],
       "post_id": 2,
       "id": 1713037552183,
-      "reply_count": 0
+      "reply_count": 0,
+      "IsMine": false
     },
     {
       "comment": "dkssud",
@@ -3408,7 +3881,8 @@
       "under_comments": [],
       "post_id": 3,
       "id": 1713041577899,
-      "reply_count": 0
+      "reply_count": 0,
+      "IsMine": false
     },
     {
       "comment": "apfhd",
@@ -3421,26 +3895,30 @@
           "under_comment": "답글을 작성 중입니다: 신형 daafaf by",
           "username": "신형",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
-          "created_at": "2024-04-1320:53"
+          "created_at": "2024-04-1320:53",
+          "IsMine": false
         },
         {
           "id": "2024-04-1320:54",
           "under_comment": "afafaf",
           "username": "신형",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
-          "created_at": "2024-04-1320:54"
+          "created_at": "2024-04-1320:54",
+          "IsMine": false
         },
         {
           "id": "2024-04-1320:54",
           "under_comment": "afafafaf",
           "username": "신형",
           "profile_url": "https://cdn.discordapp.com/attachments/990816789246124032/1224126578963906620/funnyclown123_A_military_theater_website_builder_interface._Pri_1627dd46-1d83-4728-a68a-ed6e163d64b7.png?ex=661c5bb7&is=6609e6b7&hm=caff3eeb850c8c3e11bf68cfa709bcf370426b73bdd105862a1d3d517c8b05d3&",
-          "created_at": "2024-04-1320:54"
+          "created_at": "2024-04-1320:54",
+          "IsMine": true
         }
       ],
       "post_id": 3,
       "id": 1713041580799,
-      "reply_count": 0
+      "reply_count": 0,
+      "IsMine": true
     },
     {
       "comment": "dkssud",
@@ -3450,7 +3928,8 @@
       "under_comments": [],
       "post_id": 3,
       "id": 1713041582915,
-      "reply_count": 0
+      "reply_count": 0,
+      "IsMine": false
     },
     {
       "comment": "hello",
@@ -3460,7 +3939,8 @@
       "under_comments": [],
       "post_id": 2,
       "id": 1713088149267,
-      "reply_count": 0
+      "reply_count": 0,
+      "IsMine": false
     },
     {
       "comment": "메롱",
@@ -3470,7 +3950,8 @@
       "under_comments": [],
       "post_id": 10,
       "id": 1713513338527,
-      "reply_count": 0
+      "reply_count": 0,
+      "IsMine": true
     }
   ]
 }

@@ -10,25 +10,28 @@ import {
 } from "react-native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import * as SecureStore from 'expo-secure-store';
-import axios from 'axios';
+import Api from '../Api';
+import { useNavigation } from '@react-navigation/native'; // useNavigation 훅을 임포트**
+import LoadingScreen from './LoadingScreen'; // 로딩 화면 컴포넌트 임포트
 
 const LoginForm = () => {
+  const navigation = useNavigation(); // navigation 초기화**
   const [warning, setWarning] = useState("");
   const [loading, setLoading] = useState(false);
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
-
+  
   const handleChange = (key, value) => {
     setLoginData({ ...loginData, [key]: value });
     setWarning(""); // 입력이 변경될 때 경고 메시지 초기화
   };
-
+  
   useEffect(() => {
     checkLoginCredentials();
   }, []);
-
+  
   const checkLoginCredentials = async () => {
     try {
       const storedEmail = await SecureStore.getItemAsync('userEmail');
@@ -40,12 +43,12 @@ const LoginForm = () => {
       console.error("자격 증명을 불러오는 데 실패했습니다.", error);
     }
   };
-
+  
   const validateEmail = (email) => {
     const re = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
     return re.test(String(email).toLowerCase());
   };
-
+  
   const submitLoginData = async (email, password) => {
     if (email === "") {
       setWarning("emailEmpty");
@@ -54,35 +57,46 @@ const LoginForm = () => {
       setWarning("passwordEmpty");
       return;
     }
-  
+    
     if (!validateEmail(email)) {
       setWarning("invalidEmail");
       return;
     }
-  
+    
     if (password.length < 6) {
       setWarning("shortPassword");
       return;
     }
-  
+    
     setLoading(true);
-
+    
     try {
-      const response = await axios.post('https://jsonplaceholder.typicode.com/users', {
+      const response = await Api.post('/accounts/login', {
         email,
         password
       });
-
+      
       console.log("백엔드로 전송", response.data);
-
-      if (response.data && response.data.login === 'success') {
-        const token = response.headers['auth-token']; // 토큰을 헤더에서 추출. 헤더 속성이름은 나중에 추후에 바꿈.
+      
+      if (response.data && response.data.status === 200) {
+        const { accessToken, refreshToken } = response.data.data;
+        
         await SecureStore.setItemAsync('userEmail', email);
         await SecureStore.setItemAsync('userPassword', password);
-        await SecureStore.setItemAsync('userToken', token); // 토큰 저장. 같은 키값으로 저장한다면, 덮어쓰기로 저장됨. 
+        await SecureStore.setItemAsync('accessToken', accessToken); // 액세스 토큰 저장
+        await SecureStore.setItemAsync('refreshToken', refreshToken); // 리프레쉬 토큰 저장
+        
         console.log("로그인 정보와 토큰이 성공적으로 저장되었습니다.");
         setWarning("");
-        // 성공 시 추가 동작 수행 (예: 페이지 이동)
+        
+        setTimeout(() => {
+          setLoading(false);
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'MainPostStackScreen' }],
+          });
+        }, 5000); // 로딩 스크린을 3초 동안 유지
+        
       } else {
         console.log("로그인 실패: 서버로부터 성공 메시지를 받지 못했습니다.");
         setWarning("loginFailed");
@@ -90,11 +104,13 @@ const LoginForm = () => {
     } catch (error) {
       console.error('데이터 전송 오류:', error);
       setWarning("networkError");
-    } finally {
-      setLoading(false);
     }
   };
-
+  
+  if (loading) {
+    return <LoadingScreen />;
+  }
+  
   return (
     <View style={styles.container}>
       <View>
@@ -110,7 +126,7 @@ const LoginForm = () => {
           />
           {warning === "emailEmpty" && <Text style={styles.warningText}>이메일을 입력해주세요.</Text>}
           {warning === "invalidEmail" && <Text style={styles.warningText}>유효한 이메일을 입력해주세요.</Text>}
-
+          
           <TextInput
             placeholder="비밀번호를 입력해주세요."
             value={loginData.password}
@@ -124,7 +140,7 @@ const LoginForm = () => {
           {warning === "networkError" && <Text style={styles.warningText}>네트워크 오류가 발생했습니다. 다시 시도해주세요.</Text>}
         </View>
       </View>
-
+      
       <Pressable style={styles.continueBtn} onPress={() => submitLoginData(loginData.email, loginData.password)}>
         {loading ? <ActivityIndicator size="small" color="#FFFFFF" /> : <Text style={styles.btnText}>Login</Text>}
       </Pressable>
@@ -187,3 +203,4 @@ const styles = StyleSheet.create({
 });
 
 export default LoginForm;
+

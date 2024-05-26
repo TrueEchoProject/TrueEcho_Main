@@ -1,32 +1,78 @@
 import React, {useEffect, useState,} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator} from 'react-native';
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import moment from 'moment';
 import 'moment/locale/ko';
 import axios from "axios";
 
 const Alarm = ({ navigation }) => {
+	const [isLoading, setIsLoading] = useState(true);
 	const [selected, setSelected] = useState("게시물");
 	const [alarmPost, setAlarmPost] = useState([])
 	const [alarmCommunity, setAlarmCommunity] = useState([])
 	const GraphImage = "https://i.ibb.co/NybJtMb/DALL-E-2024-05-06-18-33-20-A-simple-and-clear-bar-chart-representing-a-generic-voting-result-suitabl.webp"
+	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
 	
-	const fetchAlarm = async () => {
+	useEffect( () => {
+		fetchPost()
+	}, []);
+	
+	const fetchPost = async () => {
 		try {
-			const response = await axios.get(`http://192.168.0.27:3000/alarm_post`);
-			const processedData = processLikeAlarms(response.data.filter(alarm => alarm.type === 2));
-			setAlarmPost([...response.data.filter(alarm => alarm.type !== 2), ...processedData]);
+			const severResponse = await axios.get(`${base_url}/noti/readPost`, {
+				headers: {
+					Authorization: `${token}`
+				}
+			});
+			console.log("server Post", severResponse.data.data.allNotis);
+			const processedData = processLikeAlarms(severResponse.data.data.allNotis.filter(alarm => alarm.type === 6));
+			setAlarmPost([...severResponse.data.data.allNotis.filter(alarm => alarm.type !== 6), ...processedData]);
+			setIsLoading(false);
 		} catch (error) {
 			console.error('Error fetching data', error);
 		}
 	};
+	const fetchCommunity = async () => {
+		try {
+			const severResponse = await axios.get(`${base_url}/noti/readCommunity`, {
+				headers: {
+					Authorization: `${token}`
+				}
+			});
+			console.log("server Community", severResponse.data.data.allNotis);
+			setAlarmCommunity(severResponse.data.data.allNotis);
+			setIsLoading(false);
+		} catch (error) {
+			console.error('Error fetching data', error);
+		}
+	};
+	const toggleSetting = async (item) => {
+		setSelected(item); // 선택된 항목을 직접 설정
+		if (item === "게시물") {
+			try {
+				fetchPost();
+				setAlarmCommunity([]);
+			} catch (error) {
+				console.error('Error fetching data', error);
+			}
+		}
+		if (item === "커뮤니티") {
+			try {
+				fetchCommunity();
+				setAlarmPost([]);
+			} catch (error) {
+				console.error('Error fetching data', error);
+			}
+		}
+	};
+	
 	const processLikeAlarms = (alarms) => {
 		const groupedByPostId = alarms.reduce((acc, alarm) => {
 			if (!acc[alarm.post_id]) {
 				acc[alarm.post_id] = {
 					...alarm,
 					like_usernames: [alarm.like_username],
-					profile_urls: [alarm.profile_url], // 프로필 URL들을 배열로 저장
+					profile_urls: [alarm.profile_url ? alarm.profile_url : defaultImage], // 프로필 URL들을 배열로 저장
 				};
 			} else {
 				acc[alarm.post_id].like_usernames.push(alarm.like_username);
@@ -57,44 +103,25 @@ const Alarm = ({ navigation }) => {
 				외 {<Text style={styles.emphasizedText}>여러 명</Text>}이 회원님의 사진을 좋아합니다</Text>;
 		}
 	};
-	const toggleSetting = async (item) => {
-		setSelected(item); // 선택된 항목을 직접 설정
-		if (item === "게시물") {
-			try {
-				fetchAlarm();
-				setAlarmCommunity([]);
-			} catch (error) {
-				console.error('Error fetching data', error);
-			}
-		}
-		if (item === "커뮤니티") {
-			try {
-				const response = await axios.get(`http://192.168.0.27:3000/alarm_community`);
-				setAlarmCommunity(response.data);
-				setAlarmPost([]);
-			} catch (error) {
-				console.error('Error fetching data', error);
-			}
-		}
-	};
+	
 	
 	const handlePress = (alarm) => {
 		switch (alarm.type) {
-			case 0: // 타입 0에 대한 액션
+			case 4: // 타입 0에 대한 액션
 				navigation.navigate("피드 알람", { post_id : alarm.post_id })
 				console.log("댓글에 대한 상세 페이지로 이동");
 				break;
-			case 1: // 타입 1에 대한 액션
+			case 5: // 타입 1에 대한 액션
 				navigation.navigate("피드 알람")
 				navigation.navigate("피드 알람", { post_id : alarm.post_id })
 				console.log("답장에 대한 상세 페이지로 이동");
 				break;
-			case 2: // 타입 2에 대한 액션
+			case 6: // 타입 2에 대한 액션
 				navigation.navigate("피드 알람")
 				navigation.navigate("피드 알람", { post_id : alarm.post_id })
 				console.log("사진 좋아요에 대한 상세 정보 보기");
 				break;
-			case 3: // 타입 3에 대한 액션
+			case 7: // 타입 3에 대한 액션
 				navigation.navigate("Fri")
 				console.log("친구요청에 대한 상세 정보 보기");
 				break;
@@ -109,10 +136,10 @@ const Alarm = ({ navigation }) => {
 		const ageGroup = Math.floor(age / 10) * 10;
 		return `${ageGroup}대`;
 	};
-	useEffect( () => {
-		fetchAlarm()
-	}, []);
 	
+	if (isLoading) {
+		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff"/></View>;
+	}
 	return (
 		<View style={styles.container}>
 			<View style={styles.header}>
@@ -142,10 +169,10 @@ const Alarm = ({ navigation }) => {
 							style={styles.alarmContainer}
 						>
 							<View style={{ flex: 1 }}>
-								{alarm.type === 0 && (
+								{alarm.type === 4 && (
 									<View style={{alignItems: "center", flexDirection: "row"}}>
 										<ExpoImage
-											source={{ uri: alarm.profile_url }}
+											source={{ uri: alarm.profile_url ? alarm.profile_url : defaultImage}}
 											style={styles.avatar}
 										/>
 										<View style={{flex: 1 ,flexDirection: "column"}}>
@@ -157,15 +184,15 @@ const Alarm = ({ navigation }) => {
 											<Text>{moment(alarm.created_at).fromNow()}</Text>
 										</View>
 										<ExpoImage
-											source={{ uri: alarm.post_back_url }}
+											source={{ uri: alarm.post_back_url ? alarm.post_back_url : defaultImage}}
 											style={styles.post}
 										/>
 									</View>
 								)}
-								{alarm.type === 1 && (
+								{alarm.type === 5 && (
 									<View style={{alignItems: "center", flexDirection: "row"}}>
 										<ExpoImage
-											source={{ uri: alarm.profile_url }}
+											source={{ uri: alarm.profile_url ? alarm.profile_url : defaultImage}}
 											style={styles.avatar}
 										/>
 										<View style={{flex: 1 ,flexDirection: "column"}}>
@@ -177,12 +204,12 @@ const Alarm = ({ navigation }) => {
 											<Text>{moment(alarm.created_at).fromNow()}</Text>
 										</View>
 										<ExpoImage
-											source={{ uri: alarm.post_back_url }}
+											source={{ uri: alarm.post_back_url ? alarm.post_back_url : defaultImage}}
 											style={styles.post}
 										/>
 									</View>
 								)}
-								{alarm.type === 2 && (
+								{alarm.type === 6 && (
 									<View style={{alignItems: "center", flexDirection: "row"}}>
 										<View style={{
 											width: 60,
@@ -199,7 +226,7 @@ const Alarm = ({ navigation }) => {
 													/>
 												)) : (
 													<ExpoImage
-														source={{ uri: alarm.profile_url }}
+														source={{ uri: alarm.profile_url ? alarm.profile_url : defaultImage}}
 														style={styles.avatar}
 													/>
 												)
@@ -212,15 +239,15 @@ const Alarm = ({ navigation }) => {
 											<Text>{moment(alarm.created_at).fromNow()}</Text>
 										</View>
 										<ExpoImage
-											source={{ uri: alarm.post_back_url }}
+											source={{ uri: alarm.post_back_url ? alarm.post_back_url : defaultImage}}
 											style={styles.post}
 										/>
 									</View>
 								)}
-								{alarm.type === 3 && (
+								{alarm.type === 7 && (
 									<View style={{alignItems: "center", flexDirection: "row"}}>
 										<ExpoImage
-											source={{ uri: alarm.profile_url }}
+											source={{ uri: alarm.profile_url ? alarm.profile_url : defaultImage}}
 											style={styles.avatar}
 										/>
 										<View style={{flex: 1 ,flexDirection: "column"}}>
@@ -240,7 +267,7 @@ const Alarm = ({ navigation }) => {
 					alarmCommunity.map((alarm, index) => (
 						<View key={index} style={styles.alarmContainer}>
 							<View style={{ flex: 1, flexDirection: "row", }}>
-								{alarm.type === 0 && (
+								{alarm.type === 1 && (
 									<TouchableOpacity onPress={() => {navigation.navigate("결과")}} style={{alignItems: "center", flexDirection: "row"}}>
 										<ExpoImage
 											source={{ uri: GraphImage }}
@@ -258,7 +285,7 @@ const Alarm = ({ navigation }) => {
 										</View>
 									</TouchableOpacity>
 								)}
-								{alarm.type === 1 && (
+								{alarm.type === 2 && (
 									<TouchableOpacity onPress={() => {navigation.navigate("결과")}} style={{alignItems: "center", flexDirection: "row"}}>
 										<ExpoImage
 											source={{ uri: GraphImage }}
@@ -272,7 +299,7 @@ const Alarm = ({ navigation }) => {
 										</View>
 									</TouchableOpacity>
 								)}
-								{alarm.type === 2 && (
+								{alarm.type === 3 && (
 									<TouchableOpacity onPress={() => {navigation.navigate("유저 알람", {userId : alarm.user_id})}} style={{alignItems: "center", flexDirection: "row"}}>
 										<ExpoImage
 											source={{ uri: GraphImage }}

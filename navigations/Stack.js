@@ -1,6 +1,6 @@
 import React from 'react';
 import { createStackNavigator } from "@react-navigation/stack";
-import { Friends, MyPage, MyOptions, Calendar, MyInfo, Alarm, FeedAlarm, UserAlarm, IsAlarm } from "./AppTabNavigator/ButtonStack"
+import { Friends, MyPage, MyOptions, Calendar, MyInfo, Alarm, FeedAlarm, UserAlarm, IsAlarm, MyFeed } from "./AppTabNavigator/ButtonStack"
 import { View } from 'react-native';
 import { Button1, Button2 } from "../components/Button";
 import { MainPostTabScreen } from "./AppTabNavigator/PostTab/MainPostTab";
@@ -58,6 +58,10 @@ export const MainPostStackScreen = () => { // 메인 피드 속 Stack 구성
 			<MainPostStack.Screen
 				name="IsAlarm"
 				component={IsAlarm}
+			/>
+			<MainPostStack.Screen
+				name="MyFeed"
+				component={MyFeed}
 			/>
 		</MainPostStack.Navigator>
 	);

@@ -33,7 +33,7 @@ const FriendPosts = React.forwardRef((props, ref) => {
 		const recommendationLimit = 4;
 		try {
 			console.log(`Fetching posts and recommendations starting from index ${start}`);
-			const postResponse = await axios.get(`http://192.168.0.27:3000/posts?scope=FRIEND&_start=${start}&_limit=${postLimit}`);
+			const postResponse = await axios.get(`http://192.168.0.3:3000/posts?scope=FRIEND&_start=${start}&_limit=${postLimit}`);
 			const newPosts = postResponse.data;
 			
 			const updatedContentList = [...contentList, ...newPosts.map(post => ({ type: 'post', data: post }))];
@@ -46,7 +46,7 @@ const FriendPosts = React.forwardRef((props, ref) => {
 			});
 			
 			if (newPosts.length === postLimit) {
-				const recsResponse = await axios.get(`http://192.168.0.27:3000/recommendations?_start=${contentList.filter(item => item.type === 'recommendation').length}&_limit=${recommendationLimit}`);
+				const recsResponse = await axios.get(`http://192.168.0.3:3000/recommendations?_start=${contentList.filter(item => item.type === 'recommendation').length}&_limit=${recommendationLimit}`);
 				const newRecs = recsResponse.data;
 				if (newRecs && newRecs.length > 0) {
 					updatedContentList.push({ type: 'recommendation', data: newRecs });
@@ -79,7 +79,7 @@ const FriendPosts = React.forwardRef((props, ref) => {
 	
 	const toggleFriendSend = async (index, item) => {
 		try {
-			await axios.post(`http://192.168.0.27:3000/friendSend`, {
+			await axios.post(`http://192.168.0.3:3000/friendSend`, {
 				friendSendUser: item.username
 			});
 			const newFriendStatus = [...friendStatus];

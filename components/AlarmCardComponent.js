@@ -6,8 +6,8 @@ import { MaterialIcons, Ionicons, Feather, SimpleLineIcons } from "@expo/vector-
 import { ImageButton } from "./ImageButton";
 import { CommentModal } from './CommentModal'; // 댓글 창 컴포넌트 임포트
 
-const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExternal, onBlock }) => {
-	const [isOptionsVisible, setIsOptionsVisible] = useState(isOptionsVisibleExternal || false);
+const AlarmCardComponent = ({ post, navigation, onActionComplete }) => {
+	const [isOptionsVisible, setIsOptionsVisible] = useState(false);
 	const [buttonLayout, setButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
 	const [imageButtonHeight, setImageButtonHeight] = useState(0);
 	const [isLiked, setIsLiked] = useState(false); // 좋아요 상태 관리
@@ -17,10 +17,6 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 	const windowWidth = Dimensions.get('window').width;
 	const [friendLook, setFriendLook] = useState(true); // 좋아요 수 관리
 	
-	useEffect(() => {
-		setIsOptionsVisible(isOptionsVisibleExternal);
-		console.log(`Options Visible for ${post.post_id}: ${isOptionsVisibleExternal}`);
-	}, [isOptionsVisibleExternal]); // 이제 외부에서 받은 props가 변경될 때마다 로그를 찍고 상태를 업데이트합니다.
 	const toggleLike = async () => {
 		const newLikesCount = isLiked ? likesCount - 1 : likesCount + 1;
 		setIsLiked(!isLiked);
@@ -46,7 +42,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 			console.log('User blocked successfully');
 			alert('유저를 정상적으로 차단했습니다');
 			hideOptions();
-			onBlock(post.post_id); // 차단 이벤트를 상위 컴포넌트에 알림
+			onActionComplete && onActionComplete();
 		} catch (error) {
 			console.error('Error while blocking the user:', error.response ? error.response.data : error.message);
 			// HTTP 상태 코드가 409인 경우 여기서 처리
@@ -61,7 +57,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 		try {
 			alert('정상적으로 게시물을 삭제했어요');
 			hideOptions();
-			onBlock(post.post_id); // 차단 이벤트를 상위 컴포넌트에 알림
+			onActionComplete && onActionComplete(post.post_id);
 		} catch (error) {
 			console.error('Error while blocking the user:', error.response ? error.response.data : error.message);
 			// HTTP 상태 코드가 409인 경우 여기서 처리
@@ -85,14 +81,11 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 	};
 	
 	const toggleOptionsVisibility = () => {
-		const newVisibility = !isOptionsVisible;
-		setIsOptionsVisible(newVisibility); // 내부 상태 업데이트
-		setIsOptionsVisibleExternal(newVisibility); // 외부 상태 업데이트로 전파
+		setIsOptionsVisible(!isOptionsVisible);
 	};
 	const hideOptions = () => {
 		if (isOptionsVisible) {
 			setIsOptionsVisible(false);
-			setIsOptionsVisibleExternal(false); // 외부 상태도 업데이트
 		}
 	};
 	const toggleCommentVisibility = () => {
@@ -309,4 +302,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default React.memo(CardComponent)
+export default React.memo(AlarmCardComponent)

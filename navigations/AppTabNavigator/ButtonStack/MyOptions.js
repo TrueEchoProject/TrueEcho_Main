@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import {
 	View,
 	Text,
+	TextInput,
 	StyleSheet,
 	ScrollView,
 	TouchableOpacity,
 	Modal,
 	Dimensions,
-	Switch,
+	Switch, ActivityIndicator,
 } from 'react-native';
 import { FontAwesome5, AntDesign, FontAwesome6, MaterialIcons, Entypo, Ionicons } from '@expo/vector-icons';
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
@@ -31,25 +32,37 @@ const OptionItem = ({ onPress, icon, iconType, label, backgroundColor = "#99A1B6
 };
 
 const MyOptions = ({ navigation, route }) => {
+	const [isLoading, setIsLoading] = useState(true);
 	const [user, setUser] = useState({})
 	const [isNotificationModal, setIsNotificationModal] = useState(false);
 	const [isBlockModal, setIsBlockModal] = useState(false);
 	const [isTimeModal, setIsTimeModal] = useState(false);
 	const [isQnAModal, setIsQnAModal] = useState(false);
+	const [isDeleteAccountModal, setIsDeleteAccountModal] = useState(false);
+	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
 	
-	useEffect(() => {
-		if (route.params?.user) {
-			console.log('Received user response:', route.params.user);
-			setUser(route.params.user);
+	const fetchDataFromServer = async () => {
+		try {
+			const response = await axios.get(`${base_url}/setting/myInfo`, {
+				headers: {
+					Authorization: `${token}`
+				}
+			});
+			setUser(response.data.data); // Correctly update the state here
+			setIsLoading(false);
+		} catch (error) {
+			console.error('Error fetching data', error);
 		}
-	}, [route.params?.user]);
+	};
+	useEffect(() => {
+		fetchDataFromServer();
+	},[]);
 	useEffect(() => {
 		if (user) {
-			console.log('profile_url:', user.profile_url);
-			console.log('user_vote:', user.user_vote);
+			console.log('profile_url:', user.profileUrl);
 			console.log('username:', user.username);
-			console.log('user_Id:', user.user_Id);
-			console.log('your_location:', user.your_location);
+			console.log('user_Id:', user.nickname);
+			console.log('user', user);
 		}
 	}, [user]);
 	const notificationModalVisible = () => {
@@ -64,52 +77,74 @@ const MyOptions = ({ navigation, route }) => {
 	const qnAModalVisible = () => {
 		setIsQnAModal(!isQnAModal);
 	};
+	const deleteAccountModalVisible = () => {
+		setIsDeleteAccountModal(!isDeleteAccountModal);
+	};
 	const NotificationModal = ({ isVisible, onClose }) => {
 		const [clickedStatus, setClickedStatus] = useState({});
-		const [notificationSettings, setNotificationSettings] = useState({});
+		const [serverNotification, setServerNotification] = useState({});
 		const fetchNotification = async () => {
 			try {
-				const response = await axios.get(`http://192.168.0.27:3000/notificationSettings`);
-				setNotificationSettings(response.data[0]);
+				const severResponse = await axios.get(`${base_url}/setting/notificationSetting`, {
+					headers: {
+						Authorization: `${token}`
+					}
+				});
+				console.log(severResponse.data.data);
+				setServerNotification(severResponse.data.data);
 			} catch (error) {
 				console.error('Error fetching calendar data', error);
 			}
 		};
+		
 		useEffect(() => {
 			fetchNotification();
 		}, []);
+		
+		useEffect(() => {
+			console.log("server is", serverNotification);
+		}, [serverNotification]);
+		
 		const updateNotificationSetting = (key, subKey = null) => {
-			setNotificationSettings(prev => {
-				if (subKey) {  // 배열 내 객체의 서브키를 업데이트하는 경우
-					const newValue = !prev[key][0][subKey];
+			setServerNotification(prev => {
+				if (subKey) {
+					const newValue = !prev[key][subKey];
 					return {
 						...prev,
-						[key]: [{ ...prev[key][0], [subKey]: newValue }]
-					}} else {  // 단일 키를 업데이트하는 경우
+						[key]: { ...prev[key], [subKey]: newValue }
+					};
+				} else {
 					return {
 						...prev,
 						[key]: !prev[key]
-					}}
-			})};
+					};
+				}
+			});
+		};
+		
 		const toggleClickStatus = (optionId) => {
 			setClickedStatus(prev => ({
 				...prev,
 				[optionId]: !prev[optionId]
 			}));
 		};
-		// 변경사항을 저장하고 모달을 닫는 함수
+		
 		const saveChanges = async () => {
-			console.log("Saved notificationSettings:", notificationSettings);
+			console.log("Saved notificationSettings:", serverNotification);
 			try {
-				const Delete = await axios.delete(`http://192.168.0.27:3000/notificationSettings/1`);
-				const response = await axios.post(`http://192.168.0.27:3000/notificationSettings`, notificationSettings);
+				const response = await axios.patch(`${base_url}/setting/notificationSetting`, serverNotification, {
+					headers: {
+						Authorization: `${token}`
+					}
+				});
 				alert("알림 설정이 성공적으로\n제출되었습니다.");
 			} catch (error) {
 				console.error('Error posting notification', error);
 				alert("알림 설정을 제출하는 중\n오류가 발생했습니다.");
 			}
-			onClose(); // 설정을 저장한 후 모달을 닫습니다.
+			onClose();
 		};
+		
 		return (
 			<Modal
 				animationType="fade"
@@ -122,26 +157,37 @@ const MyOptions = ({ navigation, route }) => {
 						<Text style={styles.modalText}>알림 설정</Text>
 						<Text style={styles.modalSmallText}>알림의 on/off를 설정해주세요!</Text>
 						<ScrollView
-							style={{width: windowWidth * 0.8,}}
+							style={{ width: windowWidth * 0.8 }}
 							contentContainerStyle={styles.scrollContent}
 						>
 							<TouchableOpacity
 								style={styles.scrollModalButton}
-								onPress={() => toggleClickStatus('community')}
+								onPress={() => toggleClickStatus('communityNotiSet')}
 							>
 								<Text style={styles.switchButtonText}>커뮤니티</Text>
 							</TouchableOpacity>
-							{clickedStatus['community'] &&
+							{clickedStatus['communityNotiSet'] && (
 								<>
 									<View style={styles.switchModalButton}>
-										<Text style={styles.switchButtonText}>투표 마감/랭킹</Text>
+										<Text style={styles.switchButtonText}>랭킹 달성</Text>
 										<Switch
 											style={{ marginRight: 10 }}
 											trackColor={{ false: "#767577", true: "#3B4664" }}
-											thumbColor={ notificationSettings.community[0].vote_ranking ? "#81b0ff" : "#f4f3f4" }
+											thumbColor={serverNotification.communityNotiSet?.inRank ? "#81b0ff" : "#f4f3f4"}
 											ios_backgroundColor="#3e3e3e"
-											onValueChange={() => updateNotificationSetting('community', 'vote_ranking')}
-											value={ notificationSettings.community[0].vote_ranking }
+											onValueChange={() => updateNotificationSetting('communityNotiSet', 'inRank')}
+											value={serverNotification.communityNotiSet?.inRank}
+										/>
+									</View>
+									<View style={styles.switchModalButton}>
+										<Text style={styles.switchButtonText}>투표 마감</Text>
+										<Switch
+											style={{ marginRight: 10 }}
+											trackColor={{ false: "#767577", true: "#3B4664" }}
+											thumbColor={serverNotification.communityNotiSet?.newRank ? "#81b0ff" : "#f4f3f4"}
+											ios_backgroundColor="#3e3e3e"
+											onValueChange={() => updateNotificationSetting('communityNotiSet', 'newRank')}
+											value={serverNotification.communityNotiSet?.newRank}
 										/>
 									</View>
 									<View style={styles.switchModalButton}>
@@ -149,31 +195,42 @@ const MyOptions = ({ navigation, route }) => {
 										<Switch
 											style={{ marginRight: 10 }}
 											trackColor={{ false: "#767577", true: "#3B4664" }}
-											thumbColor={ notificationSettings.community[0].vote ? "#81b0ff" : "#f4f3f4" }
+											thumbColor={serverNotification.communityNotiSet?.voteResult ? "#81b0ff" : "#f4f3f4"}
 											ios_backgroundColor="#3e3e3e"
-											onValueChange={() => updateNotificationSetting('community', 'vote')}
-											value={ notificationSettings.community[0].vote }
+											onValueChange={() => updateNotificationSetting('communityNotiSet', 'voteResult')}
+											value={serverNotification.communityNotiSet?.voteResult}
 										/>
 									</View>
 								</>
-							}
+							)}
 							<TouchableOpacity
 								style={styles.scrollModalButton}
-								onPress={() => toggleClickStatus('post')}
+								onPress={() => toggleClickStatus('postNotiSet')}
 							>
 								<Text style={styles.switchButtonText}>게시물</Text>
 							</TouchableOpacity>
-							{clickedStatus['post'] &&
+							{clickedStatus['postNotiSet'] && (
 								<>
+									<View style={styles.switchModalButton}>
+										<Text style={styles.switchButtonText}>좋아요</Text>
+										<Switch
+											style={{ marginRight: 10 }}
+											trackColor={{ false: "#767577", true: "#3B4664" }}
+											thumbColor={serverNotification.postNotiSet?.postLike ? "#81b0ff" : "#f4f3f4"}
+											ios_backgroundColor="#3e3e3e"
+											onValueChange={() => updateNotificationSetting('postNotiSet', 'postLike')}
+											value={serverNotification.postNotiSet?.postLike}
+										/>
+									</View>
 									<View style={styles.switchModalButton}>
 										<Text style={styles.switchButtonText}>댓글 추가</Text>
 										<Switch
 											style={{ marginRight: 10 }}
 											trackColor={{ false: "#767577", true: "#3B4664" }}
-											thumbColor={ notificationSettings.post[0].newComment ? "#81b0ff" : "#f4f3f4" }
+											thumbColor={serverNotification.postNotiSet?.newComment ? "#81b0ff" : "#f4f3f4"}
 											ios_backgroundColor="#3e3e3e"
-											onValueChange={() => updateNotificationSetting('post', 'newComment')}
-											value={ notificationSettings.post[0].newComment }
+											onValueChange={() => updateNotificationSetting('postNotiSet', 'newComment')}
+											value={serverNotification.postNotiSet?.newComment}
 										/>
 									</View>
 									<View style={styles.switchModalButton}>
@@ -181,34 +238,34 @@ const MyOptions = ({ navigation, route }) => {
 										<Switch
 											style={{ marginRight: 10 }}
 											trackColor={{ false: "#767577", true: "#3B4664" }}
-											thumbColor={ notificationSettings.post[0].subComment ? "#81b0ff" : "#f4f3f4" }
+											thumbColor={serverNotification.postNotiSet?.subComment ? "#81b0ff" : "#f4f3f4"}
 											ios_backgroundColor="#3e3e3e"
-											onValueChange={() => updateNotificationSetting('post', 'subComment')}
-											value={ notificationSettings.post[0].subComment }
-										/>
-									</View>
-									<View style={styles.switchModalButton}>
-										<Text style={styles.switchButtonText}>좋아요</Text>
-										<Switch
-											style={{ marginRight: 10 }}
-											trackColor={{ false: "#767577", true: "#3B4664" }}
-											thumbColor={ notificationSettings.post[0].postLike ? "#81b0ff" : "#f4f3f4" }
-											ios_backgroundColor="#3e3e3e"
-											onValueChange={() => updateNotificationSetting('post', 'postLike')}
-											value={ notificationSettings.post[0].postLike }
+											onValueChange={() => updateNotificationSetting('postNotiSet', 'subComment')}
+											value={serverNotification.postNotiSet?.subComment}
 										/>
 									</View>
 								</>
-							}
+							)}
 							<View style={styles.scrollModalButton}>
 								<Text style={styles.switchButtonText}>친구요청</Text>
 								<Switch
 									style={{ marginRight: 10 }}
 									trackColor={{ false: "#767577", true: "#3B4664" }}
-									thumbColor={ notificationSettings.friendRequest ? "#81b0ff" : "#f4f3f4" }
+									thumbColor={serverNotification.friendRequest ? "#81b0ff" : "#f4f3f4"}
 									ios_backgroundColor="#3e3e3e"
 									onValueChange={() => updateNotificationSetting('friendRequest')}
-									value={ notificationSettings.friendRequest }
+									value={serverNotification.friendRequest}
+								/>
+							</View>
+							<View style={styles.scrollModalButton}>
+								<Text style={styles.switchButtonText}>서비스 알림</Text>
+								<Switch
+									style={{ marginRight: 10 }}
+									trackColor={{ false: "#767577", true: "#3B4664" }}
+									thumbColor={serverNotification.service ? "#81b0ff" : "#f4f3f4"}
+									ios_backgroundColor="#3e3e3e"
+									onValueChange={() => updateNotificationSetting('service')}
+									value={serverNotification.service}
 								/>
 							</View>
 							<View style={styles.scrollModalButton}>
@@ -216,21 +273,21 @@ const MyOptions = ({ navigation, route }) => {
 								<Switch
 									style={{ marginRight: 10 }}
 									trackColor={{ false: "#767577", true: "#3B4664" }}
-									thumbColor={ notificationSettings.PhotoTime ? "#81b0ff" : "#f4f3f4" }
+									thumbColor={serverNotification.photoTime ? "#81b0ff" : "#f4f3f4"}
 									ios_backgroundColor="#3e3e3e"
-									onValueChange={() => updateNotificationSetting('PhotoTime')}
-									value={ notificationSettings.PhotoTime }
+									onValueChange={() => updateNotificationSetting('photoTime')}
+									value={serverNotification.photoTime}
 								/>
 							</View>
 						</ScrollView>
 						<TouchableOpacity
-							style={[styles.modalButton, { backgroundColor: '#4CAF50', marginTop: 20, }]}
+							style={[styles.modalButton, { backgroundColor: '#4CAF50', marginTop: 20 }]}
 							onPress={saveChanges}
 						>
 							<Text style={styles.buttonText}>저장</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
-							style={[styles.modalButton, { backgroundColor: "grey", marginBottom: 20,  }]}
+							style={[styles.modalButton, { backgroundColor: "grey", marginBottom: 20 }]}
 							onPress={onClose}
 						>
 							<Text style={styles.buttonText}>닫기</Text>
@@ -248,27 +305,31 @@ const MyOptions = ({ navigation, route }) => {
 		
 		const fetchBlockedUsers = async () => {
 			try {
-				const response = await axios.get(`http://192.168.0.27:3000/blocked_users`);
-				setBlockedUsers(response.data);
+				const serverResponse = await axios.get(`${base_url}/blocks/read`, {
+					headers: {
+						Authorization: `${token}`
+					}
+				});
+				setBlockedUsers(serverResponse.data.data);
 			} catch (error) {
 				console.error('Error fetching calendar data', error);
 			}
 		};
 		useEffect(() => {
-			console.log(blockedUsers);
-		}, [blockedUsers]);
-		
-		useEffect(() => {
 			fetchBlockedUsers();
 		}, []);
-		
+		useEffect(() => {
+			console.log(blockedUsers);
+		}, [blockedUsers]);
 		// 각 사용자의 차단 상태를 초기화합니다.
 		useEffect(() => {
-			const initialStatus = blockedUsers.reduce((status, user) => {
-				status[user.id] = false; // 초기 상태를 false로 설정합니다.
-				return status;
-			}, {});
-			setBlockedStatus(initialStatus);
+			if (blockedUsers && blockedUsers.length > 0) {
+				const initialStatus = blockedUsers.reduce((status, user) => {
+					status[user.userId] = false;
+					return status;
+				}, {});
+				setBlockedStatus(initialStatus);
+			}
 		}, [blockedUsers]);
 		// 편집 상태를 시작할 때의 차단된 사용자 상태를 저장합니다.
 		const startEditing = () => {
@@ -291,14 +352,23 @@ const MyOptions = ({ navigation, route }) => {
 			// 변경된 사항이 있는지 확인합니다.
 			const hasChanges = Object.keys(blockedStatus).some(id => blockedStatus[id] !== originalStatus[id]);
 			if (hasChanges) {
-				// blockedStatus에서 차단 해제된 사용자의 ID를 추출합니다.
-				const unblockedIds = Object.keys(blockedStatus).filter(id => !blockedStatus[id]);
-				// blockedUsers 배열에서 해당 ID의 사용자 정보를 찾습니다.
-				const unblockedUserInfo = blockedUsers.filter(user => unblockedIds.includes(String(user.id)));
-				
+				// blockedStatus에서 차단된 사용자의 ID를 추출합니다.
+				const blockedIds = Object.keys(blockedStatus).filter(id => blockedStatus[id]);
+				// 차단된 사용자 ID 배열을 만듭니다.
+				const blockUserIds = blockedUsers
+					.filter(user => blockedIds.includes(String(user.userId)))
+					.map(user => user.userId);
+				console.log('서버 보내기:', blockUserIds);
 				try {
-					await axios.delete('http://192.168.0.27:3000/blocked_users');
-					const response = await axios.post('http://192.168.0.27:3000/blocked_users', unblockedUserInfo);
+					// DELETE 요청 시 쿼리 파라미터로 blockUserIds를 포함하여 전송합니다.
+					const response = await axios.delete(`${base_url}/blocks/delete`, {
+						headers: {
+							Authorization: `${token}`
+						},
+						params: {
+							blockUserIds: blockUserIds.join(',')
+						}
+					});
 					console.log('서버 응답:', response.data);
 				} catch (error) {
 					console.error('Error updating blocked users:', error);
@@ -329,20 +399,20 @@ const MyOptions = ({ navigation, route }) => {
 									contentContainerStyle={styles.scrollContent}
 								>
 									{blockedUsers.map((user) => (
-										<View key={user.id} style={styles.scrollModalButton}>
+										<View key={user.userId} style={styles.scrollModalButton}>
 											<ExpoImage
 												style={styles.profileImage}
-												source={{ uri: user.profile_url }}
+												source={{ uri: user.userProfileUrl ? user.userProfileUrl : defaultImage}}
 											/>
-											<Text style={styles.buttonText}>{user.username}</Text>
+											<Text style={styles.buttonText}>{user.nickname}</Text>
 											{ editButton && (
 												<TouchableOpacity
 													style={[
 														styles.blockedButton,
 													]}
-													onPress={() => toggleBlockStatus(user.id)}
+													onPress={() => toggleBlockStatus(user.userId)}
 												>
-													{blockedStatus[user.id] ? (
+													{blockedStatus[user.userId] ? (
 														<AntDesign name="checksquare" size={30} color="black" />
 													) : (
 														<AntDesign name="checksquareo" size={30} color="black" />
@@ -388,44 +458,68 @@ const MyOptions = ({ navigation, route }) => {
 		);
 	};
 	const TimeModal = ({ isVisible, onClose }) => {
-		const [Time_type, setTime_type] = useState({});
+		const [severTime_type, setSeverTime_type] = useState({});
+		
+		useEffect(() => {
+			fetchTime_type();
+		}, []);
+		useEffect(() => {
+			if (severTime_type) {
+				console.log(severTime_type);
+			}
+		}, [severTime_type]);
 		const fetchTime_type = async () => {
 			try {
-				const response = await axios.get(`http://192.168.0.27:3000/Time`);
-				setTime_type(response.data[0]);
-				console.log(response.data[0]);
+				const severResponse = await axios.get(`${base_url}/setting/notifyTime`, {
+					headers: {
+						Authorization: `${token}`
+					}
+				});
+				setSeverTime_type(severResponse.data.data);
+				console.log(severResponse.data.data);
 			} catch (error) {
 				console.error('Error fetching calendar data', error);
 			}
 		};
-		useEffect(() => {
-			fetchTime_type();
-		}, []);
-		// 변경사항을 저장하고 모달을 닫는 함수
 		const saveChanges = async () => {
-			console.log("Saved Time_type:", Time_type);
-			try {
-				const Delete = await axios.delete(`http://192.168.0.27:3000/Time/1`);
-				const response = await axios.post(`http://192.168.0.27:3000/Time`, Time_type);
-				// 서버의 응답 상태 코드에 따라 다른 메시지를 표시합니다.
-				if (response.status === 201) {
-					alert('변경 사항이 성공적으로 제출되었습니다.');
-				} else if (response.status === 400) {
-					alert('잘못된 요청입니다. 다시 시도해주세요.');
+			const selectedOption = timeOptions.find(option => option.value === severTime_type.randomNotifyTime);
+			const editTime = selectedOption ? selectedOption.number : null;
+			console.log('서버 응답:', token, editTime);
+			if (editTime !== null) {
+				try {
+					const severResponse = await axios.patch(`${base_url}/setting/notifyTime?editTime=${editTime}`,{}, {
+						headers: {
+							Authorization: `${token}`
+						}
+					});
+					alert(severResponse.data.message);
+					console.log('서버 응답:', severResponse.data.message);
+				} catch (error) {
+					console.error('Error posting data:', error);
+					alert('데이터를 제출하는 중 오류가 발생했습니다.');
+				} finally {
+					console.log("Saved Time_type:", editTime);
 				}
-			} catch (error) {
-				console.error('Error posting data:', error);
-				alert('데이터를 제출하는 중 오류가 발생했습니다.');
+			} else {
+				alert('올바른 시간을 선택해주세요.');
 			}
-			onClose(); // 설정을 저장한 후 모달을 닫습니다.
+			onClose();
 		};
-		const handleTimeTypeChange = (type) => {
-			setTime_type(prevState => ({
+		const handleTimeTypeChange = (randomNotifyTime) => {
+			setSeverTime_type(prevState => ({
 				...prevState,
-				type: type
+				randomNotifyTime: randomNotifyTime
 			}));
-			console.log('Time_type:', Time_type);
 		};
+		const timeOptions = [
+			{ label: '00 ~ 07', value: 'DAWN', number: 0 },
+			{ label: '07 ~ 12', value: 'MORNING', number: 1 },
+			{ label: '12 ~ 15', value: 'EARLY_AFTERNOON', number: 2 },
+			{ label: '15 ~ 18', value: 'LATE_AFTERNOON', number: 3 },
+			{ label: '18 ~ 21', value: 'EARLY_NIGHT', number: 4 },
+			{ label: '21 ~ 24', value: 'LATE_NIGHT', number: 5 }
+		];
+		
 		return (
 			<Modal
 				animationType="fade"
@@ -441,51 +535,24 @@ const MyOptions = ({ navigation, route }) => {
 							style={{width: windowWidth * 0.8,}}
 							contentContainerStyle={styles.scrollContent}
 						>
-							<TouchableOpacity
-								onPress={() => handleTimeTypeChange(0)}
-								style={Time_type.type === 0 ? styles.selectedModalButton : styles.modalButton }
-							>
-								<Text style={styles.buttonText}>00 ~ 07</Text>
-							</TouchableOpacity>
-							<TouchableOpacity
-								onPress={() => handleTimeTypeChange(1)}
-								style={Time_type.type === 1 ? styles.selectedModalButton : styles.modalButton }
-							>
-								<Text style={styles.buttonText}>07 ~ 12</Text>
-							</TouchableOpacity>
-							<TouchableOpacity
-								onPress={() => handleTimeTypeChange(2)}
-								style={Time_type.type === 2 ? styles.selectedModalButton : styles.modalButton }
-							>
-								<Text style={styles.buttonText}>12 ~ 15</Text>
-							</TouchableOpacity>
-							<TouchableOpacity
-								onPress={() => handleTimeTypeChange(3)}
-								style={Time_type.type === 3 ? styles.selectedModalButton : styles.modalButton }
-							>
-								<Text style={styles.buttonText}>15 ~ 18</Text>
-							</TouchableOpacity>
-							<TouchableOpacity
-								onPress={() => handleTimeTypeChange(4)}
-								style={Time_type.type === 4 ? styles.selectedModalButton : styles.modalButton }
-							>
-								<Text style={styles.buttonText}>18 ~ 21</Text>
-							</TouchableOpacity>
-							<TouchableOpacity
-								onPress={() => handleTimeTypeChange(5)}
-								style={Time_type.type === 5 ? styles.selectedModalButton : styles.modalButton }
-							>
-								<Text style={styles.buttonText}>21 ~ 24</Text>
-							</TouchableOpacity>
+							{timeOptions.map((option) => (
+								<TouchableOpacity
+									key={option.value}
+									onPress={() => handleTimeTypeChange(option.value)}
+									style={severTime_type.randomNotifyTime === option.value ? styles.selectedModalButton : styles.modalButton}
+								>
+									<Text style={styles.buttonText}>{option.label}</Text>
+								</TouchableOpacity>
+							))}
 						</ScrollView>
 						<TouchableOpacity
-							style={[styles.modalButton, { backgroundColor: '#4CAF50', }]}
+							style={[styles.modalButton, { backgroundColor: '#4CAF50' }]}
 							onPress={saveChanges}
 						>
 							<Text style={styles.buttonText}>저장</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
-							style={[styles.modalButton, { backgroundColor: "grey" }]}
+							style={[styles.modalButton, { marginBottom: "3%", margin: "1%", backgroundColor: "grey" }]}
 							onPress={onClose}
 						>
 							<Text style={styles.buttonText}>닫기</Text>
@@ -557,20 +624,109 @@ const MyOptions = ({ navigation, route }) => {
 			</Modal>
 		);
 	};
-	const logOut = () => {
-		console.log("logOut")
+	const DeleteAccountModal = ({ isVisible, onClose, deleteAccount }) => {
+		const [inputText, setInputText] = useState('');
+		
+		useEffect(() => {
+			if (!isVisible) {
+				setInputText(''); // Modal이 닫힐 때 입력 필드를 초기화합니다.
+			}
+		}, [isVisible]);
+		
+		return (
+			<Modal
+				animationType="fade"
+				visible={isVisible}
+				onRequestClose={onClose}
+				transparent={true}
+			>
+				<View style={styles.modalContainer}>
+					<View style={[styles.imageContainer, {height: windowHeight * 0.5}]}>
+						<View style={{
+							height: "20%",
+						}}>
+							<Text style={styles.modalText}>계정 탈퇴</Text>
+							<Text style={styles.modalSmallText}>정말로 계정을 탈퇴하실 건가요?</Text>
+						</View>
+						<View style={{
+							height: "20%",
+							width: "100%",
+							alignItems: "center",
+							marginBottom: 50,
+						}}>
+							<Text style={{
+								color: "black",
+								fontSize: 12,
+								fontWeight: "bold",
+								textAlign: "center",
+								marginTop: 3,
+								marginBottom: 5,
+							}}>아래의 글자를 동일하게 작성해주세요</Text>
+							<Text style={{
+								color: "black",
+								fontSize: 20,
+								fontWeight: "bold",
+								textAlign: "center",
+								marginTop: 3,
+								marginBottom: 5,
+							}}>계정 삭제</Text>
+							<TextInput
+								style={styles.input}
+								placeholder=""
+								value={inputText}
+								onChangeText={setInputText}
+							/>
+						</View>
+						<TouchableOpacity
+							style={ inputText === '계정 삭제' ? styles.deleteModalButton : styles.disabledModalButton }
+							onPress={deleteAccount}
+							disabled={inputText !== '계정 삭제'}
+						>
+							<Text style={[styles.buttonText, { color: 'white' }]}>계정 탈퇴</Text>
+						</TouchableOpacity>
+						<TouchableOpacity style={[styles.modalButton, { backgroundColor: 'grey', margin: 15, }]} onPress={onClose}>
+							<Text style={styles.buttonText}>닫기</Text>
+						</TouchableOpacity>
+					</View>
+				</View>
+			</Modal>
+		);
 	};
-	const deleteAccount = () => {
-		console.log("deleteAccount")
+	const logOut = async () => {
+		try {
+			const response = await axios.delete(`${base_url}/accounts/logout`, {
+				headers: {
+					Authorization: `${token}`
+				}
+			});
+			console.log(response.data.message); // Correctly update the state here
+		} catch (error) {
+			console.error('Error logOut', error);
+		}
 	};
+	const deleteAccount = async () => {
+		try {
+			const response = await axios.delete(`${base_url}/accounts/deleteUser`, {
+				headers: {
+					Authorization: `${token}`,},
+			});
+			alert(response.data.message)
+			console.log(response.data.message); // Correctly update the state here
+		} catch (error) {
+			console.error('Error logOut', error);
+		}
+	};
+	if (isLoading) {
+		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff"/></View>;
+	}
 	return (
 		<View style={styles.container}>
 			<ScrollView style={styles.scrollView}>
 				<TouchableOpacity onPress={() => navigation.navigate('내 설정 편집', { user: user })} style={styles.View}>
-					<ExpoImage source={{ uri: user.profile_url }} style={styles.Image}/>
+					<ExpoImage source={{ uri: user.profileUrl ? user.profileUrl : defaultImage}} style={styles.Image}/>
 					<View style={{ marginLeft: 10 }}>
 						<Text style={styles.Text}>{user.username}</Text>
-						<Text style={styles.Text}>{user.user_Id}</Text>
+						<Text style={styles.Text}>{user.nickname}</Text>
 					</View>
 				</TouchableOpacity>
 				<View>
@@ -649,8 +805,15 @@ const MyOptions = ({ navigation, route }) => {
 						icon="alert-circle"
 						label="계정 삭제"
 						backgroundColor="red"
-						onPress={deleteAccount}
+						onPress={deleteAccountModalVisible}
 					/>
+					{isDeleteAccountModal && (
+						<DeleteAccountModal
+							isVisible={isDeleteAccountModal}
+							onClose={() => setIsDeleteAccountModal(false)}
+							deleteAccount = {deleteAccount}
+						/>
+					)}
 				</View>
 			</ScrollView>
 		</View>
@@ -801,6 +964,32 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		margin: "3%",
+	},
+	input: {
+		width: '80%',
+		padding: 10,
+		borderWidth: 1,
+		borderColor: '#ccc',
+		borderRadius: 5,
+		marginBottom: 20,
+	},
+	disabledModalButton: {
+		width: "80%",
+		padding: 15,
+		alignItems: 'center',
+		borderRadius: 10,
+		backgroundColor: 'grey',
+		opacity: 0.5,
+	},
+	deleteModalButton: {
+		width: "80%",
+		height: 50,
+		borderRadius: 10,
+		borderWidth: 1,
+		backgroundColor: "red",
+		borderColor: 'black',
+		alignItems: 'center',
+		justifyContent: 'center',
 	},
 	selectedModalButton: {
 		width: "80%",
