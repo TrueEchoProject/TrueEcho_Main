@@ -14,12 +14,13 @@ import PagerView from "react-native-pager-view";
 import axios from "axios";
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import { Button3 } from "../../../components/Button";
-import AlarmCardComponent from "../../../components/AlarmCardComponent";
+import Api from "../../../Api.js";
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const MyPage = ({ navigation, route }) => {
+	const [serverData, setServerData] = useState({}); // 서버로부터 받아온 데이터를 저장할 상태
 	const [userData, setUserData] = useState({});
 	const [pinData, setPinData] = useState([]);
 	const [isFrontShowing, setIsFrontShowing] = useState({});
@@ -27,6 +28,8 @@ const MyPage = ({ navigation, route }) => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const pagerRef = useRef(null);
+	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
+	
 	
 	useEffect(() => {
 		if (route.params?.Update) {
@@ -50,33 +53,40 @@ const MyPage = ({ navigation, route }) => {
 	
 	useEffect(() => {
 		if (pinData) {
-			console.log('pinData updated:', pinData);
+			console.log('pinData updated:', pinData.data);
 		}
 		if (pinData.length > 0 && pagerRef.current) {
 			pagerRef.current.setPageWithoutAnimation(0);
 		}
 	}, [pinData]);
 	useEffect(() => {
-		if (userData) {
-			console.log(userData);
+		if (serverData) {
+			console.log('serverData updated:', serverData);
 		}
-	}, [userData]); // userData 변화 감지
+	}, [serverData]); // serverData 변화 감지
 	useEffect(() => {
-		fetchData();
+		fetchDataFromServer();
 	}, []);
 	
-	const fetchData = async () => {
+	const fetchDataFromServer = async () => {
 		try {
-			const userResponse = await axios.get(`http://192.168.0.27:3000/user_me`);
-			const pinResponse = await axios.get(`http://192.168.0.27:3000/user_pin`);
-			setUserData(userResponse.data[0]);
-			setPinData(pinResponse.data);
+			const response = await axios.get(`${base_url}/setting/myPage`, {
+				headers: {
+					Authorization: `${token}`
+				}
+			});
+			setServerData(response.data.data); // Correctly update the state here
+			const pinResponse = await axios.get(`${base_url}/setting/pins`, {
+				headers: {
+					Authorization: `${token}`
+				}
+			});
+			setPinData(pinResponse.data); // Correctly update the state here
+			setIsLoading(false);
 		} catch (error) {
 			console.error('Error fetching data', error);
-		} finally {
-			setIsLoading(false); // 데이터 로드 완료
 		}
-	}
+	};
 	
 	const changeImage = (pinId) => {
 		setIsFrontShowing(prev => ({
@@ -126,17 +136,17 @@ const MyPage = ({ navigation, route }) => {
 				<View style={{flexDirection: "row"}}>
 					<View style={{marginRight: "auto"}}>
 						<TouchableOpacity onPress={profileImageModalVisible}>
-							<ExpoImage source={{ uri: userData.profile_url }} style={styles.avatar}/>
+							<ExpoImage source={{ uri: serverData.profile_url ? serverData.profile_url : defaultImage}} style={styles.avatar}/>
 						</TouchableOpacity>
 						{isModalVisible && (
 							<ProfileImageModal
 								isVisible={isModalVisible}
-								imageUrl={userData.profile_url} // 수정: imageUrl 프로퍼티 전달
+								imageUrl={serverData.profile_url ? serverData.profile_url : defaultImage} // 수정: imageUrl 프로퍼티 전달
 								onClose={() => setIsModalVisible(false)}
 							/>
 						)}
 						<View style={styles.textContainer}>
-							<Text style={styles.name}>{userData.username}</Text>
+							<Text style={styles.name}>{serverData.username}</Text>
 							<FontAwesome5
 								name="crown"
 								style={{marginLeft: 10, marginBottom: 10}}
@@ -145,7 +155,7 @@ const MyPage = ({ navigation, route }) => {
 							/>
 						</View>
 					</View>
-					<Button3 onPress={() => navigation.navigate('MyOp', { user: userData })}/>
+					<Button3 onPress={() => navigation.navigate('MyOp')}/>
 					<TouchableOpacity onPress={() => navigation.navigate("알람")}>
 						<MaterialIcons
 							name="alarm"
@@ -169,7 +179,7 @@ const MyPage = ({ navigation, route }) => {
 					</TouchableOpacity>
 				</View>
 				<View style={styles.textContainer}>
-					<Text>{userData.user_vote ? userData.user_vote : "투표를 진행해주세요!"}</Text>
+					<Text>{serverData.mostVotedTitle ? serverData.mostVotedTitle : "투표를 진행해주세요!"}</Text>
 				</View>
 			</View>
 			<View style={styles.pinsContainer}>
@@ -184,7 +194,7 @@ const MyPage = ({ navigation, route }) => {
 						/>
 					</TouchableOpacity>
 				</View>
-				{pinData.length === 0 ? (
+				{pinData.message === "핀 조회를 실패했습니다." ? (
 					<View style={styles.pinPlus}>
 						<TouchableOpacity
 							style={{alignItems: "center", padding: 30,}}
@@ -207,11 +217,11 @@ const MyPage = ({ navigation, route }) => {
 							onPageSelected={handlePageChange}
 							ref={pagerRef}
 						>
-							{pinData.map((item) => (
-								<View key={item.pin_id} style={{ position: 'relative' }}>
-									<TouchableOpacity onPress={() => changeImage(item.pin_id)}>
+							{pinData.data.pinList.map((item) => (
+								<View key={item.pinId} style={{ position: 'relative' }}>
+									<TouchableOpacity onPress={() => changeImage(item.pinId)}>
 										<ExpoImage
-											source={{ uri: isFrontShowing[item.pin_id] ? item.post_front_url : item.post_back_url }}
+											source={{ uri: isFrontShowing[item.pinId] ? item.postFrontUrl : item.postBackUrl }}
 											style={styles.pageStyle}
 										/>
 									</TouchableOpacity>
@@ -219,7 +229,7 @@ const MyPage = ({ navigation, route }) => {
 							))}
 						</PagerView>
 						<View style={styles.indicatorContainer}>
-							{pinData.map((_, index) => (
+							{pinData.data.pinList.map((item, index) => ( // index를 item에 추가
 								<Text key={index} style={[styles.indicator, index === currentPage ? styles.activeIndicator : null]}>
 									&#9679;
 								</Text>

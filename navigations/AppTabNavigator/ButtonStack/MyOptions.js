@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import {
 	View,
 	Text,
+	TextInput,
 	StyleSheet,
 	ScrollView,
 	TouchableOpacity,
 	Modal,
 	Dimensions,
-	Switch,
+	Switch, ActivityIndicator,
 } from 'react-native';
 import { FontAwesome5, AntDesign, FontAwesome6, MaterialIcons, Entypo, Ionicons } from '@expo/vector-icons';
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
@@ -31,25 +32,37 @@ const OptionItem = ({ onPress, icon, iconType, label, backgroundColor = "#99A1B6
 };
 
 const MyOptions = ({ navigation, route }) => {
+	const [isLoading, setIsLoading] = useState(true);
 	const [user, setUser] = useState({})
 	const [isNotificationModal, setIsNotificationModal] = useState(false);
 	const [isBlockModal, setIsBlockModal] = useState(false);
 	const [isTimeModal, setIsTimeModal] = useState(false);
 	const [isQnAModal, setIsQnAModal] = useState(false);
+	const [isDeleteAccountModal, setIsDeleteAccountModal] = useState(false);
+	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
 	
-	useEffect(() => {
-		if (route.params?.user) {
-			console.log('Received user response:', route.params.user);
-			setUser(route.params.user);
+	const fetchDataFromServer = async () => {
+		try {
+			const response = await axios.get(`${base_url}/setting/myInfo`, {
+				headers: {
+					Authorization: `${token}`
+				}
+			});
+			setUser(response.data.data); // Correctly update the state here
+			setIsLoading(false);
+		} catch (error) {
+			console.error('Error fetching data', error);
 		}
-	}, [route.params?.user]);
+	};
+	useEffect(() => {
+		fetchDataFromServer();
+	},[]);
 	useEffect(() => {
 		if (user) {
-			console.log('profile_url:', user.profile_url);
-			console.log('user_vote:', user.user_vote);
+			console.log('profile_url:', user.profileUrl);
 			console.log('username:', user.username);
-			console.log('user_Id:', user.user_Id);
-			console.log('your_location:', user.your_location);
+			console.log('user_Id:', user.nickname);
+			console.log('user', user);
 		}
 	}, [user]);
 	const notificationModalVisible = () => {
@@ -63,6 +76,9 @@ const MyOptions = ({ navigation, route }) => {
 	};
 	const qnAModalVisible = () => {
 		setIsQnAModal(!isQnAModal);
+	};
+	const deleteAccountModalVisible = () => {
+		setIsDeleteAccountModal(!isDeleteAccountModal);
 	};
 	const NotificationModal = ({ isVisible, onClose }) => {
 		const [clickedStatus, setClickedStatus] = useState({});
@@ -557,20 +573,110 @@ const MyOptions = ({ navigation, route }) => {
 			</Modal>
 		);
 	};
-	const logOut = () => {
-		console.log("logOut")
+	const DeleteAccountModal = ({ isVisible, onClose, deleteAccount }) => {
+		const [inputText, setInputText] = useState('');
+		
+		useEffect(() => {
+			if (!isVisible) {
+				setInputText(''); // Modal이 닫힐 때 입력 필드를 초기화합니다.
+			}
+		}, [isVisible]);
+		
+		return (
+			<Modal
+				animationType="fade"
+				visible={isVisible}
+				onRequestClose={onClose}
+				transparent={true}
+			>
+				<View style={styles.modalContainer}>
+					<View style={[styles.imageContainer, {height: windowHeight * 0.5}]}>
+						<View style={{
+							height: "20%",
+						}}>
+							<Text style={styles.modalText}>계정 탈퇴</Text>
+							<Text style={styles.modalSmallText}>정말로 계정을 탈퇴하실 건가요?</Text>
+						</View>
+						<View style={{
+							height: "20%",
+							width: "100%",
+							alignItems: "center",
+							marginBottom: 50,
+						}}>
+							<Text style={{
+								color: "black",
+								fontSize: 12,
+								fontWeight: "bold",
+								textAlign: "center",
+								marginTop: 3,
+								marginBottom: 5,
+							}}>아래의 글자를 동일하게 작성해주세요</Text>
+							<Text style={{
+								color: "black",
+								fontSize: 20,
+								fontWeight: "bold",
+								textAlign: "center",
+								marginTop: 3,
+								marginBottom: 5,
+							}}>계정 삭제</Text>
+							<TextInput
+								style={styles.input}
+								placeholder=""
+								value={inputText}
+								onChangeText={setInputText}
+							/>
+						</View>
+						<TouchableOpacity
+							style={ inputText === '계정 삭제' ? styles.deleteModalButton : styles.disabledModalButton }
+							onPress={deleteAccount}
+							disabled={inputText !== '계정 삭제'}
+						>
+							<Text style={[styles.buttonText, { color: 'white' }]}>계정 탈퇴</Text>
+						</TouchableOpacity>
+						<TouchableOpacity style={[styles.modalButton, { backgroundColor: 'grey', margin: 15, }]} onPress={onClose}>
+							<Text style={styles.buttonText}>닫기</Text>
+						</TouchableOpacity>
+					</View>
+				</View>
+			</Modal>
+		);
 	};
-	const deleteAccount = () => {
-		console.log("deleteAccount")
+	const logOut = async () => {
+		try {
+			const response = await axios.delete(`${base_url}/accounts/logout`, {
+				headers: {
+					Authorization: `${token}`
+				}
+			});
+			console.log(response.data.message); // Correctly update the state here
+		} catch (error) {
+			console.error('Error logOut', error);
+		}
 	};
+	const deleteAccount = async () => {
+		try {
+			const response = await axios.delete(`${base_url}/accounts/deleteUser`, {
+				headers: {
+					Authorization: `${token}`,},
+			});
+			alert(response.data.message)
+			console.log(response.data.message); // Correctly update the state here
+		} catch (error) {
+			console.error('Error logOut', error);
+		}
+	};
+	
+	if (isLoading) {
+		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff"/></View>;
+	}
 	return (
 		<View style={styles.container}>
 			<ScrollView style={styles.scrollView}>
 				<TouchableOpacity onPress={() => navigation.navigate('내 설정 편집', { user: user })} style={styles.View}>
-					<ExpoImage source={{ uri: user.profile_url }} style={styles.Image}/>
+					<ExpoImage source={{ uri: user.profileUrl ? user.profileUrl : defaultImage}} style={styles.Image}/>
 					<View style={{ marginLeft: 10 }}>
 						<Text style={styles.Text}>{user.username}</Text>
-						<Text style={styles.Text}>{user.user_Id}</Text>
+						<Text style={styles.Text}>{user.nickname}</Text>
 					</View>
 				</TouchableOpacity>
 				<View>
@@ -649,8 +755,15 @@ const MyOptions = ({ navigation, route }) => {
 						icon="alert-circle"
 						label="계정 삭제"
 						backgroundColor="red"
-						onPress={deleteAccount}
+						onPress={deleteAccountModalVisible}
 					/>
+					{isDeleteAccountModal && (
+						<DeleteAccountModal
+							isVisible={isDeleteAccountModal}
+							onClose={() => setIsDeleteAccountModal(false)}
+							deleteAccount = {deleteAccount}
+						/>
+					)}
 				</View>
 			</ScrollView>
 		</View>
@@ -801,6 +914,32 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		margin: "3%",
+	},
+	input: {
+		width: '80%',
+		padding: 10,
+		borderWidth: 1,
+		borderColor: '#ccc',
+		borderRadius: 5,
+		marginBottom: 20,
+	},
+	disabledModalButton: {
+		width: "80%",
+		padding: 15,
+		alignItems: 'center',
+		borderRadius: 10,
+		backgroundColor: 'grey',
+		opacity: 0.5,
+	},
+	deleteModalButton: {
+		width: "80%",
+		height: 50,
+		borderRadius: 10,
+		borderWidth: 1,
+		backgroundColor: "red",
+		borderColor: 'black',
+		alignItems: 'center',
+		justifyContent: 'center',
 	},
 	selectedModalButton: {
 		width: "80%",
