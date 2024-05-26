@@ -1,30 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, TextInput, Modal, Image, Alert } from 'react-native';
-import secureApi from '../../../SecureApi'; // 보안 API
-import storage from '../../../AsyncStorage'; // AsyncStorage 사용
-import * as ImageManipulator from 'expo-image-manipulator'; // 이미지 조작 라이브러리
+import { View, Text, StyleSheet, Button, TextInput, Modal, Image, Alert, TouchableOpacity, Keyboard } from 'react-native';
+import * as ImageManipulator from 'expo-image-manipulator';
 import { useNavigation } from '@react-navigation/native';
 import { ImageDouble } from './SendPost';
-import FriendPosts from '../PostTab/FriendPosts'; 
-import PublicPosts from '../PostTab/PublicPosts'; 
-
-/**
- * 알림 시간을 백엔드에 보내 ontime 여부를 검증하는 함수
- * @returns {number} - postStatus 값
- */
-const checkPostStatus = async () => {
-  try {
-    const notificationTime = await storage.get('notificationTime');
-    if (notificationTime) {
-      const response = await secureApi.post('/check-post-status', { notificationTime });
-      return response.data.postStatus;
-    }
-    return 0;
-  } catch (error) {
-    console.error('Error checking post status:', error);
-    return 0;
-  }
-};
+import axios from 'axios';
+import storage from '../../../AsyncStorage';
 
 const FeedPostPage = ({ route }) => {
   const navigation = useNavigation();
@@ -38,72 +18,34 @@ const FeedPostPage = ({ route }) => {
       selectedIndex: 0,
     },
   });
-  const [title, setTitle] = useState(route.params.title || ''); // 게시물 제목
-  const [modalVisible, setModalVisible] = useState(false); // 카메라 선택 모달 가시성
-  const [friendRangeModalVisible, setFriendRangeModalVisible] = useState(false); // 친구 범위 모달 가시성
-  const [friendRange, setFriendRange] = useState(0); // 친구 범위 상태
-  const [selectedCamera, setSelectedCamera] = useState(null); // 선택된 카메라 상태
-  const [timer, setTimer] = useState(route.params.remainingTime); // 타이머 상태
-  const [postStatus, setPostStatus] = useState(0); // 게시물 상태
-  const [feedType, setFeedType] = useState('unknown'); // 피드 타입
-
-  // 타이머를 1초씩 감소시키는 useEffect
+  const [title, setTitle] = useState(route.params.title || '');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [friendRangeModalVisible, setFriendRangeModalVisible] = useState(false);
+  const [friendRange, setFriendRange] = useState(0);
+  const [selectedCamera, setSelectedCamera] = useState(null);
+  const [timer, setTimer] = useState(route.params.remainingTime || 180); // 3분 타이머로 초기화
+  const [postStatus, setPostStatus] = useState(route.params.postStatus || 0); // postStatus 추가
+  const [friendRangeButtonText, setFriendRangeButtonText] = useState('친구범위');
+  const [cameraButtonText, setCameraButtonText] = useState('사진설정');
+  
   useEffect(() => {
+    // 타이머 설정을 위한 useEffect
     const intervalId = setInterval(() => {
       setTimer((prevTimer) => {
         if (prevTimer > 0) {
-          return prevTimer - 1; // 타이머 감소
+          return prevTimer - 1;
         } else {
+          clearInterval(intervalId);
+          setPostStatus(1); // 타이머가 끝나면 postStatus를 1로 변경
           return 0;
         }
       });
     }, 1000);
-    return () => clearInterval(intervalId);
+    
+    return () => clearInterval(intervalId); // 컴포넌트 언마운트 시 타이머 정리
   }, []);
-
-  // 컴포넌트가 마운트될 때 초기 게시물 상태를 설정하는 useEffect
-  useEffect(() => {
-    const setInitialPostStatus = async () => {
-      const status = await checkPostStatus();
-      setPostStatus(status);
-      updateFeedType(status);
-    };
-
-    setInitialPostStatus();
-  }, []);
-
-  // 카메라 진입 시 postStatus를 검증하는 useEffect
-  useEffect(() => {
-    const verifyPostStatus = async () => {
-      const status = await checkPostStatus();
-      setPostStatus(status);
-      updateFeedType(status);
-    };
-
-    if (selectedCamera) {
-      verifyPostStatus();
-    }
-  }, [selectedCamera]); // 카메라 선택 시마다 검증
-
-  /**
-   * 게시물 상태에 따라 피드 타입을 설정하는 함수
-   * @param {number} status - 게시물 상태
-   */
-  const updateFeedType = (status) => {
-    if (status === 1) {
-      setFeedType('todayShot'); // 오늘 알림 발생 이후 사진을 찍은 사용자
-    } else if (status === 2) {
-      setFeedType('notTodayShot'); // 오늘 사진을 찍지 않은 사용자
-    } else {
-      setFeedType('recentShot'); // 그 외의 경우
-    }
-  };
-
-  /**
-   * 이미지를 리사이즈하는 함수
-   * @param {string} uri - 이미지 URI
-   * @returns {Object} - 리사이즈된 이미지 객체
-   */
+  
+  // 이미지를 리사이즈하는 함수
   const resizeImage = async (uri) => {
     try {
       const manipResult = await ImageManipulator.manipulateAsync(
@@ -118,32 +60,38 @@ const FeedPostPage = ({ route }) => {
       };
     } catch (error) {
       console.error('이미지 크기 조정 오류:', error);
+      return null;
     }
   };
-
-  /**
-   * 친구 범위를 선택하는 함수
-   * @param {string} range - 친구 범위 ('friends' 또는 'everyone')
-   */
+  
+  // 친구 범위 선택 처리 함수
   const handleFriendRangeSelection = (range) => {
     const newScope = range === 'friends' ? 0 : 1;
-    setFriendRange(newScope); // 친구 범위 설정
-    setFriendRangeModalVisible(false); // 모달 가리기
+    setFriendRange(newScope);
+    setFriendRangeModalVisible(false);
+    setFriendRangeButtonText(range === 'friends' ? '친구' : '전체');
   };
-
-  /**
-   * 카메라를 선택하는 함수
-   * @param {string} cameraType - 카메라 타입 ('front', 'back', 'double')
-   */
+  
+  // 카메라 선택 처리 함수
   const handleCameraSelection = (cameraType) => {
-    setModalVisible(false); // 모달 가리기
-    setSelectedCamera(cameraType); // 선택된 카메라 설정
+    setModalVisible(false);
+    setSelectedCamera(cameraType);
+    switch (cameraType) {
+      case 'front':
+        setCameraButtonText('전면사진');
+        break;
+      case 'back':
+        setCameraButtonText('후면사진');
+        break;
+      case 'double':
+        setCameraButtonText('전/후면사진');
+        break;
+      default:
+        setCameraButtonText('사진설정');
+    }
   };
-
-  /**
-   * 선택된 카메라 이미지 렌더링 함수
-   * @returns {React.Component} - 카메라 이미지 컴포넌트
-   */
+  
+  // 선택된 카메라 이미지를 렌더링하는 함수
   const renderCameraImage = () => {
     if (selectedCamera === 'front') {
       return <Image source={{ uri: cameraData.front.uris[cameraData.front.selectedIndex] }} style={styles.cameraImage} />;
@@ -153,76 +101,120 @@ const FeedPostPage = ({ route }) => {
       return <ImageDouble cameraData={cameraData} setCameraData={setCameraData} />;
     }
   };
-
-  /**
-   * 피드에 게시물을 공유하는 함수
-   */
+  
+  // 게시물을 서버에 공유하는 함수
   const shareFeed = async () => {
     const formData = new FormData();
-    formData.append('title', title); // 제목 추가
-    formData.append('type', friendRange); // 친구 범위 추가
-    formData.append('postStatus', postStatus); // 게시물 상태 추가
-
-    if (selectedCamera === 'front' && cameraData.front.uris[cameraData.front.selectedIndex]) {
-      const resizedImage = await resizeImage(cameraData.front.uris[cameraData.front.selectedIndex]);
-      formData.append('postFront', {
-        uri: resizedImage.uri,
-        type: 'image/jpeg',
-        name: 'front.jpg',
-      });
-    } else if (selectedCamera === 'back' && cameraData.back.uris[cameraData.back.selectedIndex]) {
-      const resizedImage = await resizeImage(cameraData.back.uris[cameraData.back.selectedIndex]);
-      formData.append('postBack', {
-        uri: resizedImage.uri,
-        type: 'image/jpeg',
-        name: 'back.jpg',
-      });
+    formData.append('title', title);
+    formData.append('type', friendRange);
+    formData.append('postStatus', postStatus);
+    
+    let resizedFrontImage = null;
+    let resizedBackImage = null;
+    
+    const cameraToUse = selectedCamera || 'double';
+    
+    // 전면 카메라 또는 전/후면 카메라 사용 시 전면 이미지 리사이즈 및 추가
+    if (cameraToUse === 'front' || cameraToUse === 'double') {
+      if (cameraData.front.uris[cameraData.front.selectedIndex]) {
+        resizedFrontImage = await resizeImage(cameraData.front.uris[cameraData.front.selectedIndex]);
+        if (resizedFrontImage) {
+          formData.append('postFront', {
+            uri: resizedFrontImage.uri,
+            type: 'image/jpeg',
+            name: 'resized_front.jpg',
+          });
+        } else {
+          formData.append('postFront', null);
+        }
+      }
+    } else {
+      formData.append('postFront', null);
     }
-
+    
+    // 후면 카메라 또는 전/후면 카메라 사용 시 후면 이미지 리사이즈 및 추가
+    if (cameraToUse === 'back' || cameraToUse === 'double') {
+      if (cameraData.back.uris[cameraData.back.selectedIndex]) {
+        resizedBackImage = await resizeImage(cameraData.back.uris[cameraData.back.selectedIndex]);
+        if (resizedBackImage) {
+          formData.append('postBack', {
+            uri: resizedBackImage.uri,
+            type: 'image/jpeg',
+            name: 'resized_back.jpg',
+          });
+        } else {
+          formData.append('postBack', null);
+        }
+      }
+    } else {
+      formData.append('postBack', null);
+    }
+    
+    // 서버에 게시물 업로드
     try {
-      const response = await secureApi.post('/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      console.log('서버로부터의 응답:', response.data);
-
+      const response = await axios.post('https://port-0-true-echo-85phb42blucciuvv.sel5.cloudtype.app/post/write', formData);
+      
       if (response.status === 200) {
+        const { data } = response;
         const currentTime = new Date();
         const formattedTime = `${currentTime.getFullYear()}-${String(currentTime.getMonth() + 1).padStart(2, '0')}-${String(currentTime.getDate()).padStart(2, '0')}-${String(currentTime.getHours()).padStart(2, '0')}-${String(currentTime.getMinutes()).padStart(2, '0')}`;
-
+        
+        // 스토리지에 게시물 세부 정보 저장
         await storage.set('todayShot', formattedTime);
-        await storage.set('ShotLog', formattedTime);
-
+        await storage.set('title', title);
+        await storage.set('postStatus', postStatus.toString());
+        if (resizedFrontImage) {
+          await storage.set('postFront', resizedFrontImage.uri);
+        }
+        if (resizedBackImage) {
+          await storage.set('postBack', resizedBackImage.uri);
+        }
+        
         Alert.alert('사진이 성공적으로 저장되었습니다.', `저장 시간: ${formattedTime}`);
-
-        if (friendRange === 0) {
-          navigation.navigate('FriendPosts', { refresh: true }); // 친구 게시물 화면으로 이동
+        
+        // 성공적으로 게시되었는지 확인 후 네비게이션
+        if (data.posted) {
+          if (friendRange === 0) {
+            navigation.navigate('FriendFeed', { posted: true });
+          } else {
+            navigation.navigate('OtherFeed', { posted: true });
+          }
         } else {
-          navigation.navigate('PublicPosts', { refresh: true }); // 다른 피드 화면으로 이동
+          navigation.navigate('CameraOption', { posted: false });
         }
       }
     } catch (error) {
       console.error('피드 업로드 오류:', error);
       Alert.alert('오류', '피드 업로드 중 오류가 발생했습니다.');
+      navigation.navigate('CameraOption', { posted: false });
     }
   };
-
+  
+  // 제목 입력 완료 처리 함수
+  const handleTitleSave = () => {
+    Keyboard.dismiss();
+  };
+  
   return (
     <View style={styles.container}>
       <Text>Timer: {Math.floor(timer / 60)}:{timer % 60 < 10 ? `0${timer % 60}` : timer % 60}</Text>
-      <Text>Post Status: {postStatus}</Text>
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.titleInput}
           onChangeText={setTitle}
           value={title}
           placeholder="제목을 입력해주세요."
+          onSubmitEditing={handleTitleSave}
         />
+        <Button title="입력" onPress={handleTitleSave} />
       </View>
       <View style={styles.buttonContainer}>
-        <Button title="친구범위" onPress={() => setFriendRangeModalVisible(true)} />
-        <Button title="사진설정" onPress={() => setModalVisible(true)} />
+        <TouchableOpacity style={styles.button} onPress={() => setFriendRangeModalVisible(true)}>
+          <Text style={styles.buttonText}>{friendRangeButtonText}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
+          <Text style={styles.buttonText}>{cameraButtonText}</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.imageContainer}>
         {renderCameraImage()}
@@ -255,13 +247,6 @@ const FeedPostPage = ({ route }) => {
           </View>
         </View>
       </Modal>
-
-      <View style={styles.feedContainer}>
-        {feedType === 'todayShot' && <FriendPosts />}
-        {feedType === 'recentShot' && <PublicPosts />}
-        {feedType === 'notTodayShot' && <PublicPosts />}
-        {feedType === 'unknown' && <Text>알 수 없는 상태</Text>}
-      </View>
     </View>
   );
 };
@@ -293,6 +278,16 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 10,
   },
+  button: {
+    backgroundColor: '#007bff',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+  },
   imageContainer: {
     width: '90%',
     aspectRatio: 1,
@@ -317,10 +312,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '80%',
     alignItems: 'center',
-  },
-  feedContainer: {
-    flex: 1,
-    width: '100%',
   },
 });
 

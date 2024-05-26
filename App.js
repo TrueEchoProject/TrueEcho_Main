@@ -6,7 +6,7 @@ import { Alert, Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
-import FixLoc from "./components/FixLoc";
+import AppNavigation from './AppNavigation';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -161,7 +161,7 @@ export default function App() {
   };
   return (
     <NavigationContainer ref={navigationRef}>
-      <TabNavigation />
+      <AppNavigation />
     </NavigationContainer>
   );
 }
