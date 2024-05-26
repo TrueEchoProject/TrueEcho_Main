@@ -323,11 +323,13 @@ const MyOptions = ({ navigation, route }) => {
 		}, [blockedUsers]);
 		// 각 사용자의 차단 상태를 초기화합니다.
 		useEffect(() => {
-			const initialStatus = blockedUsers.reduce((status, user) => {
-				status[user.userId] = false; // 초기 상태를 false로 설정합니다.
-				return status;
-			}, {});
-			setBlockedStatus(initialStatus);
+			if (blockedUsers && blockedUsers.length > 0) {
+				const initialStatus = blockedUsers.reduce((status, user) => {
+					status[user.userId] = false;
+					return status;
+				}, {});
+				setBlockedStatus(initialStatus);
+			}
 		}, [blockedUsers]);
 		// 편집 상태를 시작할 때의 차단된 사용자 상태를 저장합니다.
 		const startEditing = () => {

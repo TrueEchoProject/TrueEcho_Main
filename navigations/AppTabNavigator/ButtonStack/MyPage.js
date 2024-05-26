@@ -99,9 +99,6 @@ const MyPage = ({ navigation, route }) => {
 		setCurrentPage(e.nativeEvent.position);
 	};
 	
-	if (isLoading) {
-		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff"/></View>;
-	}
 	const ProfileImageModal = ({ isVisible, imageUrl, onClose }) => { // 수정: 프로퍼티 이름 Image -> imageUrl 변경
 		return (
 			<Modal
@@ -129,18 +126,21 @@ const MyPage = ({ navigation, route }) => {
 		);
 	};
 	
+	if (isLoading) {
+		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff"/></View>;
+	}
 	return (
 		<View style={styles.container}>
 			<View style={styles.topContainer}>
 				<View style={{flexDirection: "row"}}>
 					<View style={{marginRight: "auto"}}>
 						<TouchableOpacity onPress={profileImageModalVisible}>
-							<ExpoImage source={{ uri: serverData.profile_url ? serverData.profile_url : defaultImage}} style={styles.avatar}/>
+							<ExpoImage source={{ uri: serverData.profileUrl ? serverData.profileUrl : defaultImage}} style={styles.avatar}/>
 						</TouchableOpacity>
 						{isModalVisible && (
 							<ProfileImageModal
 								isVisible={isModalVisible}
-								imageUrl={serverData.profile_url ? serverData.profile_url : defaultImage} // 수정: imageUrl 프로퍼티 전달
+								imageUrl={serverData.profileUrl ? serverData.profileUrl : defaultImage} // 수정: imageUrl 프로퍼티 전달
 								onClose={() => setIsModalVisible(false)}
 							/>
 						)}
