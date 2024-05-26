@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import te.trueEcho.domain.notification.dto.CommunityFeedNotiResponse;
 import te.trueEcho.domain.notification.dto.NotificationDto;
+import te.trueEcho.domain.notification.dto.PostFeedNotiResponse;
 import te.trueEcho.domain.notification.service.NotificationService;
 import te.trueEcho.global.response.ResponseCode;
 import te.trueEcho.global.response.ResponseForm;

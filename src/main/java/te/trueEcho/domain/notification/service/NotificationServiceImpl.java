@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import te.trueEcho.domain.notification.controller.PostFeedNotiResponse;
+import te.trueEcho.domain.notification.dto.PostFeedNotiResponse;
 import te.trueEcho.domain.notification.dto.*;
 import te.trueEcho.domain.notification.entity.NotificationEntity;
 import te.trueEcho.domain.notification.repository.NotificationRepository;

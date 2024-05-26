@@ -18,6 +18,7 @@ import te.trueEcho.domain.setting.entity.NotificationSetting;
 import te.trueEcho.domain.vote.entity.VoteResult;
 import te.trueEcho.global.entity.CreatedDateAudit;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -113,8 +114,8 @@ public class User extends CreatedDateAudit {
     @OneToOne(mappedBy = "user", cascade=CascadeType.ALL)
     private NotificationSetting notificationSetting;
 
-    @OneToOne(mappedBy = "receiver", cascade= CascadeType.ALL)
-    private NotificationEntity notificationEntity;
+    @OneToMany(mappedBy = "receiver", fetch = FetchType.LAZY , cascade=CascadeType.ALL)
+    private List<NotificationEntity> notificationEntity = new ArrayList<>();
 
     @Builder
     public User( String email,
@@ -138,7 +139,6 @@ public class User extends CreatedDateAudit {
 
         // 자동 초기화 : 디폴트
         this.connectByFriend = true;
-        this.notificationEntity = notificationEntity;
 
 
         // NotificationSetting 엔티티 생성 및 설정
