@@ -42,6 +42,17 @@ public class PostController {
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.WRITE_POST_FAIL));
     }
 
+    @GetMapping("/read")
+    public ResponseEntity<ResponseForm> readSinglePost(@RequestParam Long postId){
+
+        ReadPostResponse postGetDtoList =  postService.getSinglePost(postId);
+
+        return  postGetDtoList != null ?
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_POST_SUCCESS, postGetDtoList)) :
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_POST_FAIL));
+    }
+
+
     @GetMapping("/read/{type}")
     public ResponseEntity<ResponseForm> readPost(
             @PathVariable int type,
