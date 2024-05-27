@@ -227,6 +227,8 @@ public class SettingServiceImpl implements SettingService{
                 .nickname(loginUser.getNickname())
                 .profileUrl(loginUser.getProfileURL())
                 .yourLocation(loginUser.getLocation())
+                .x(loginUser.getCoordinate().getX())
+                .y(loginUser.getCoordinate().getY())
                 .build();
     }
 

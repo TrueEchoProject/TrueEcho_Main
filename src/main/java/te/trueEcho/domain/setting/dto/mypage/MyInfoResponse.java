@@ -11,4 +11,6 @@ public class MyInfoResponse {
     private final String username;
     private final String profileUrl;
     private final String yourLocation;
+    private final double x;
+    private final double y;
 }
