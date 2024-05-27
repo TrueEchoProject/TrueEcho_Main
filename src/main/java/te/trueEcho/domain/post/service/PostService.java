@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface PostService {
 
+    ReadPostResponse  getSinglePost(Long postId);
+
     PostListResponse getAllPostByType(ReadPostRequest readPostRequest);
 
     CommentListResponse getComment(Long postId);

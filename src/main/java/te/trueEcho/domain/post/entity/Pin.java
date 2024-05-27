@@ -29,12 +29,11 @@ public class Pin extends CreatedDateAudit {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
+    @OneToOne( mappedBy = "pin", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Post post;
 
     @Builder
-    public Pin(int scope, User user, Post post) {
+    public Pin(User user, Post post) {
         this.user = user;
         this.post = post;
     }

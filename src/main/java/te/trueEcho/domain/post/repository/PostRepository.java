@@ -13,8 +13,8 @@ public interface PostRepository {
 
     List<Comment> readCommentWithUnderComments(Long postId);
 
+    List<Post> getRandomPost();
     Comment getParentComment(Long commentId);
-
 
     boolean writeComment(Comment comment);
     boolean deletePost(Long postId);

@@ -39,6 +39,32 @@ public class PostServiceImpl implements PostService {
     private final DtoToComment dtoToComment;
 
     @Override
+    public ReadPostResponse getSinglePost(Long postId) {
+        User requestUser = authUtil.getLoginUser();
+        Post targetPost = postRepository.getPostById(postId);
+
+        if (targetPost== null) {
+            log.error("Post not found - postId: {}", postId);
+            return null;
+        }
+
+        return ReadPostResponse.builder()
+                   .isMine(targetPost.getUser()!=requestUser)
+                   .postFrontUrl(targetPost.getUrlFront())
+                   .postBackUrl(targetPost.getUrlBack())
+                   .createdAt(targetPost.getCreatedAt())
+                   .commentCount(targetPost.getComments().size())
+                   .likesCount(targetPost.getLikes().size())
+                   .title(targetPost.getTitle())
+                   .postId(targetPost.getId())
+                   .status(targetPost.getStatus())
+                   .userId(targetPost.getUser().getId())
+                   .username(targetPost.getUser().getName())
+                   .profileUrl(targetPost.getUser().getProfileURL())
+                   .build();
+    }
+
+    @Override
     public PostListResponse getAllPostByType(ReadPostRequest readPostRequest) {
         // 요청자의 위치
         User foundUser = authUtil.getLoginUser();

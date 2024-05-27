@@ -9,7 +9,11 @@ import te.trueEcho.domain.post.entity.Comment;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.user.entity.User;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -17,7 +21,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepository {
     private final EntityManager em;
-
 
     @Transactional(readOnly = true)
     @Override
@@ -63,6 +66,24 @@ public class PostRepositoryImpl implements PostRepository {
                 .setParameter("postId", postId)
                 .getResultList();
     }
+
+    public List<Post> getRandomPost() {
+        try {
+            LocalDateTime twoDaysAgo = LocalDateTime.now().minusDays(50); // 나중에는 이틀로 제한
+            return em.createQuery("select p from Post p " +
+                            "join fetch p.user " +
+                            "left join fetch p.pin " +
+                            "where p.createdAt >= :twoDaysAgo " +
+                            "order by p.createdAt desc", Post.class)
+                    .setParameter("twoDaysAgo", twoDaysAgo)
+                    .getResultList();
+
+        } catch (Exception e) {
+            log.error("getRandomPost error : {}", e.getMessage());
+            return null;
+        }
+    }
+
 
     @Override
     public Comment getParentComment(Long commentId) {
