@@ -16,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import te.trueEcho.domain.user.entity.Role;
 import te.trueEcho.global.security.jwt.JwtFilter;
+import te.trueEcho.global.security.jwt.Repository.RefreshTokenRepository;
 import te.trueEcho.global.security.jwt.TokenProvider;
 import te.trueEcho.global.security.jwt.exception.JwtAccessDeniedHandler;
 import te.trueEcho.global.security.jwt.exception.JwtAuthenticationEntryPoint;
@@ -27,7 +28,7 @@ public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-
+    private final RefreshTokenRepository refreshTokenRepository;
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -60,10 +61,13 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/accounts/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/accounts/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/swagger-ui/**").permitAll()
+                                .requestMatchers(HttpMethod.PUT, "/swagger-ui/**").permitAll()
+                                .requestMatchers(HttpMethod.PATCH, "/swagger-ui/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/email/**").hasRole(Role.ADMIN.name()) // 인가 확인
                                 .anyRequest().authenticated() // 나머지는 인증 필요.
                 ).
-                addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+                addFilterBefore(new JwtFilter(tokenProvider,refreshTokenRepository), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
