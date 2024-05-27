@@ -42,11 +42,12 @@ public class NotificationEntity extends CreatedDateAudit {
         private int notiType;
     }
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User receiver; // 알림의 소유자 (받는 사람)
 
-    @OneToOne(mappedBy = "notificationEntity", cascade= CascadeType.ALL )
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_id")
     private Comment comment;
 
     @OneToOne(fetch = FetchType.LAZY)
