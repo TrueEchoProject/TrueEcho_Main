@@ -41,7 +41,8 @@ public class Post extends CreatedDateAudit {
     @Enumerated(EnumType.STRING)
     private PostStatus status;
 
-    @OneToOne(mappedBy = "post",  cascade = CascadeType.ALL)
+    @OneToOne( cascade = CascadeType.ALL)
+    @JoinColumn(name = "pin_id", nullable = true)
     private Pin pin;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -61,5 +62,9 @@ public class Post extends CreatedDateAudit {
         this.urlBack = urlBack;
         this.status = status;
         this.user = user;
+    }
+
+    public int getLikesCount() {
+        return likes.size();
     }
 }
