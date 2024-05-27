@@ -36,7 +36,11 @@ import te.trueEcho.domain.vote.entity.VoteResult;
 import te.trueEcho.global.util.AuthUtil;
 import te.trueEcho.infra.azure.AzureUploader;
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -98,7 +102,19 @@ public class SettingServiceImpl implements SettingService{
             return null;
         }
 
-        return postListToDto.converter(postList, month);
+        Map<LocalDate, Post> datePostMap = new HashMap<>();
+        List<Post> sortedPostList = postList.stream()
+                .sorted(Comparator.comparing(Post::getLikesCount).reversed()
+                        .thenComparing(Post::getCreatedAt).reversed()).toList();
+
+        sortedPostList.forEach (
+                post->{
+                    if(!datePostMap.containsKey(post.getCreatedAt().toLocalDate())){
+                        datePostMap.put(post.getCreatedAt().toLocalDate(), post);
+                    }
+                });
+
+        return postListToDto.converter(datePostMap.values().stream().toList(), month);
     }
 
     @Override
@@ -129,7 +145,7 @@ public class SettingServiceImpl implements SettingService{
 
         List<Pin> newPins =
                 postList.stream().map(
-                        post -> new Pin(1, loginUser, post)
+                        post -> new Pin(loginUser, post)
                 ).toList();
 
         pinsRepository.saveAll(newPins);
