@@ -11,7 +11,8 @@ public class EditMyInfoRequest {
     private MultipartFile profileImage;
     private String nickname;
     private String username;
-    private String location;
+    private Double x;
+    private Double y;
 }
 
 
