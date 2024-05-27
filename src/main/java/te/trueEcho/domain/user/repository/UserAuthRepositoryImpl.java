@@ -55,14 +55,14 @@ public class UserAuthRepositoryImpl implements UserAuthRepository {
     @Override
     public User findUserByNickName(String nickName) {
         try {
-            return
-                    em.createQuery("select u from User u " +
-                                    "join fetch u.suspendedUser " +
+            return  em.createQuery("select u from User u " +
+                                    "left join fetch u.suspendedUser " +
                                     "join fetch u.notificationSetting " +
-                                    " where u.nickname=: nickName", User.class)
+                                    " where u.nickname=:nickName", User.class)
                             .setParameter("nickName", nickName)
                             .getSingleResult();
         }catch (NoResultException e){
+           log.warn("User not found with nickname: " + nickName);
             return null;
         }
     }

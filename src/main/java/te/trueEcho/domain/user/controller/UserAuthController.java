@@ -54,8 +54,8 @@ public class UserAuthController {
     @GetMapping(value = "/{type}/duplication")
     public ResponseEntity<ResponseForm> checkEmailDuplication(
             @PathVariable String type,
-            @RequestParam String nickname,
-            @RequestParam String email) {
+            @RequestParam(required = false) String nickname,
+            @RequestParam(required = false) String email) {
 
         UserCheckRequest emailRequestDto =  UserCheckRequest.builder()
                 .email(email)

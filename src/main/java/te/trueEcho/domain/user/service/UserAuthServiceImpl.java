@@ -22,10 +22,18 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final SignUpDtoToUser signUpDtoToUser;
 
     public boolean isTypeDuplicated(UserCheckRequest emailRequestDto, ValidationType target) {
-        if( target == ValidationType.EMAIL)
-             return  userAuthRepository.findUserByEmail(emailRequestDto.getEmail())!=null;
-        if(target == ValidationType.NICKNAME)
-            return userAuthRepository.findUserByNickName(emailRequestDto.getNickname())!=null;
+        if(target == ValidationType.EMAIL) {
+            if (emailRequestDto.getEmail() == null) return false;
+
+            return  userAuthRepository.findUserByEmail(emailRequestDto.getEmail())!=null;
+        }
+
+        if(target == ValidationType.NICKNAME) {
+            if (emailRequestDto.getNickname() == null) return false;
+            User user = userAuthRepository.findUserByNickName(emailRequestDto.getNickname()) ;
+
+            return user != null;
+        }
 
         return false;
     }
