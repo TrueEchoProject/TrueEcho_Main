@@ -10,7 +10,6 @@ import te.trueEcho.domain.notification.dto.NotificationDto;
 import te.trueEcho.domain.notification.service.NotificationServiceImpl;
 import te.trueEcho.domain.rank.converter.RankToDto;
 import te.trueEcho.domain.rank.repository.RankRepository;
-import te.trueEcho.domain.setting.service.NotificationEditService;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.UserAuthRepositoryImpl;
 import te.trueEcho.domain.vote.entity.Vote;

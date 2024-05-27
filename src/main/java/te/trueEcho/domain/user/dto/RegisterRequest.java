@@ -46,7 +46,7 @@ public class RegisterRequest {
         private NotiTimeStatus notificationTime;
 
         @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "지역", example = "서울광역시 용산구",requiredMode = Schema.RequiredMode.REQUIRED)
-        private String location;
+        private double x;
 
-
+        private double y;
 }

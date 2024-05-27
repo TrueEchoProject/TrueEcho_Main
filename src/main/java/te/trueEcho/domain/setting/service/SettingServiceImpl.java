@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import te.trueEcho.domain.friend.entity.Friend;
 import te.trueEcho.domain.friend.repository.FriendRepository;
 import te.trueEcho.domain.post.entity.Pin;
 import te.trueEcho.domain.post.entity.Post;
@@ -32,22 +31,22 @@ import te.trueEcho.domain.setting.repository.SettingRepository;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.UserAuthRepository;
 import te.trueEcho.domain.user.service.UserService;
-import te.trueEcho.domain.vote.entity.VoteResult;
 import te.trueEcho.global.util.AuthUtil;
 import te.trueEcho.infra.azure.AzureUploader;
+import te.trueEcho.infra.kakao.dto.KakaoResponse;
+import te.trueEcho.infra.kakao.service.KakaoService;
+
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class SettingServiceImpl implements SettingService{
-    private final UserService userService;
     private final UserAuthRepository userAuthRepository;
     private final AuthUtil authUtil;
     private final SettingRepository settingRepository;
@@ -60,6 +59,7 @@ public class SettingServiceImpl implements SettingService{
     private final UserPinToDto userPinToDto;
     private final FriendRepository friendRepository;
     private final NotificationEditService notificationEditService;
+    private final KakaoService kakaoService;
 
     @Override
     public MyPageResponse getMyPage() {
@@ -187,12 +187,25 @@ public class SettingServiceImpl implements SettingService{
         }
         log.info("Profile image uploaded successfully");
         log.info("Profile image url: {}", profileUrl); ;
+        Double x = editMyInfoRequest.getX();
+        Double y = editMyInfoRequest.getY();
 
         try {
             loginUser.updateProfileUrl(profileUrl);
-            loginUser.updateName(editMyInfoRequest.getUsername());
-            loginUser.updateNickName(editMyInfoRequest.getNickname());
-            loginUser.updateLocation(editMyInfoRequest.getLocation());
+            loginUser.updateName(editMyInfoRequest.getUsername()==null?
+                    loginUser.getName():editMyInfoRequest.getUsername());
+            loginUser.updateNickName(editMyInfoRequest.getNickname()==null?
+                    loginUser.getNickname():editMyInfoRequest.getNickname());
+
+            if(x!=null && y!=null){
+                KakaoResponse kakaoResponse = kakaoService.getRegionByCoordinates(x,y);
+                loginUser.updateLocation(
+                        kakaoResponse.getDocuments().get(0).getX(),
+                        kakaoResponse.getDocuments().get(0).getY(),
+                        kakaoResponse.getDocuments().get(0).getAddressName()
+                        );
+            }
+
             userAuthRepository.updateUser(loginUser);
             return true;
         } catch (DataAccessException e) {
@@ -226,22 +239,34 @@ public class SettingServiceImpl implements SettingService{
             log.error("Authentication failed - No login user found");
             return null;
         }
-        return RandomNotifyTResponse.builder()
-                .randomNotifyTime(loginUser.getNotificationSetting().
-                        getNotificationTimeStatus())
-                .build();
+        String msg =  notificationEditService.checkIfUserIsWaiting(loginUser);
+
+        if(msg == null) {
+            return RandomNotifyTResponse.builder()
+                    .randomNotifyTime(loginUser.getNotificationSetting().
+                            getNotificationTimeStatus())
+                    .build();
+        }else{
+            return RandomNotifyTResponse.builder()
+                    .randomNotifyTime(loginUser.getNotificationSetting().
+                            getNotificationTimeStatus())
+                    .msg(msg)
+                    .build();
+        }
     }
 
     //수정 권한 (알림을 못 받았으면, 대기 큐에 넣고, 나중에 알림을 받으면 큐에서 꺼내서 알림 시간대 수정)
     @Override
-    public boolean editRandomNotifyTime(int notifyTime) {
+    public RandomNotifyTResponse editRandomNotifyTime(int notifyTime) {
         try {
-            notificationEditService.isUserReceivedNotification(
+            String msg =  notificationEditService.updateNotiTimeStatus(
                     authUtil.getLoginUser(), NotiTimeStatus.values()[notifyTime]);
-            return true;
+            return RandomNotifyTResponse.builder()
+                    .msg(msg)
+                    .build();
         }catch (Exception e) {
             log.error("Failed to edit notification time", e);
-            return false;
+            return null;
         }
     }
 

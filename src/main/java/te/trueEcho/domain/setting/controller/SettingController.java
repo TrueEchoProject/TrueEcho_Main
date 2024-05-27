@@ -106,10 +106,11 @@ public class SettingController {
     }
 
     @PatchMapping("/myInfo")
-    public ResponseEntity<ResponseForm> editMyInfo(@RequestParam MultipartFile profileImage,
-                                                   @RequestParam String nickname,
-                                                   @RequestParam String username,
-                                                   @RequestParam String location) {
+    public ResponseEntity<ResponseForm> editMyInfo(    @RequestParam(required = false) MultipartFile profileImage,
+                                                       @RequestParam(required = false) String nickname,
+                                                       @RequestParam(required = false) String username,
+                                                       @RequestParam(required = false) Double x,
+                                                       @RequestParam(required = false) Double y) {
 
         boolean isDuplicated =  userAuthService.isTypeDuplicated(
                 UserCheckRequest.builder()
@@ -124,7 +125,8 @@ public class SettingController {
                 .profileImage(profileImage)
                 .nickname(nickname)
                 .username(username)
-                .location(location)
+                .x(x)
+                .y(y)
                 .build());
 
         if (isEdited) {
@@ -148,10 +150,11 @@ public class SettingController {
 
     @PatchMapping("/notifyTime")
     public ResponseEntity<ResponseForm> editNotifyTime(@RequestParam int editTime) {
-        RandomNotifyTResponse randomNotifyTResponse = settingService.getRandomNotifyTime();
+        RandomNotifyTResponse randomNotifyTResponse = settingService.editRandomNotifyTime(editTime);
+
         return randomNotifyTResponse != null ?
-                ResponseEntity.ok(ResponseForm.of(ResponseCode.PUT_NOTIFY_TIME_SUCCESS, randomNotifyTResponse)) :
-                ResponseEntity.ok(ResponseForm.of(ResponseCode.PUT_NOTIFY_TIME_SUCCESS));
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.PUT_NOTIFY_TIME_SUCCESS, randomNotifyTResponse.getMsg())) :
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.PUT_NOTIFY_TIME_FAIL));
     }
 
     @GetMapping("/notifyTime")
@@ -172,25 +175,6 @@ public class SettingController {
     랭킹 결과 -> 내 등수.
     개인적으로 투표 받았을 때
      */
-
-    @GetMapping("/notificationStatus")
-    public ResponseEntity<ResponseForm> getNotificationStatus() {
-        RandomNotifyTResponse randomNotifyTResponse = settingService.getRandomNotifyTime();
-        return randomNotifyTResponse != null ?
-                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_NOTIFY_TIME_SUCCESS, randomNotifyTResponse)) :
-                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_NOTIFY_TIME_FAIL));
-    }
-
-    @PatchMapping("/notificationStatus")
-    public ResponseEntity<ResponseForm> editNotificationStatus(@RequestBody int notifyTime) {
-
-        boolean isEdited = settingService.editRandomNotifyTime(notifyTime);
-        return isEdited     ?
-                ResponseEntity.ok(ResponseForm.of(ResponseCode.PUT_NOTIFY_TIME_SUCCESS)) :
-                ResponseEntity.ok(ResponseForm.of(ResponseCode.PUT_NOTIFY_TIME_FAIL));
-    }
-
-
 
     @GetMapping("/notificationSetting")
     public ResponseEntity<ResponseForm> getNotificationSetting() {

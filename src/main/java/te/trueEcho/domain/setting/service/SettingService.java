@@ -58,7 +58,7 @@ public interface SettingService {
      */
 
     RandomNotifyTResponse getRandomNotifyTime();
-    boolean editRandomNotifyTime(int notifyTime);
+    RandomNotifyTResponse editRandomNotifyTime(int notifyTime);
 
 
     NotificationSettingDto getNotificationSetting();
