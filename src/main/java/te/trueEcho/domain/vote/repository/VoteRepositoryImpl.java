@@ -59,6 +59,18 @@ public class VoteRepositoryImpl implements VoteRepository {
         }
    }
 
+   public List<Vote> getRandomVoteWithSize(int size){
+        try{
+            return em.createQuery("select v from Vote v " +
+                    "order by rand()", Vote.class)
+                    .setMaxResults(size)
+                    .getResultList();
+        }catch(Exception e){
+            log.warn("");
+            return null;
+        }
+   }
+
 
     @Override
    public void createSelectedVoteContents() {

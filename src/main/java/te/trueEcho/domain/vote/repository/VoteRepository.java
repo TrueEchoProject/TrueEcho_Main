@@ -14,6 +14,7 @@ public interface VoteRepository {
      void createSelectedVoteContents();
 
      boolean saveVoteResult(VoteResult result);
+     List<Vote> getRandomVoteWithSize(int size);
 
      Vote findVoteById(Long voteId);
 

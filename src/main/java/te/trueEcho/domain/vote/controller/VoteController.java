@@ -32,7 +32,7 @@ public class VoteController {
     @GetMapping("/read/users")
     public ResponseEntity<ResponseForm> readUsers(@RequestParam int userCount) {
 
-        final VoteUsersResponse voteUsersResponse = voteService.getVoteRandomUsers(userCount);
+        final VoteUsersResponse voteUsersResponse = voteService.getVoteRandomUsersWithPost(userCount);
 
         return voteUsersResponse !=null?
              ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_VOTE_TARGET_SUCCESS, voteUsersResponse)) :

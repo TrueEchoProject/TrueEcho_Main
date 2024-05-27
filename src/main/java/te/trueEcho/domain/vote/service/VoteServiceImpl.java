@@ -9,13 +9,9 @@ import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.post.repository.PostRepository;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.UserAuthRepository;
-import te.trueEcho.domain.user.repository.UserRepository;
 import te.trueEcho.domain.vote.converter.VoteToDto;
 import te.trueEcho.domain.vote.converter.VoteUserToDto;
-import te.trueEcho.domain.vote.dto.PhotoResponse;
-import te.trueEcho.domain.vote.dto.VoteContentsResponse;
-import te.trueEcho.domain.vote.dto.VoteResultRequest;
-import te.trueEcho.domain.vote.dto.VoteUsersResponse;
+import te.trueEcho.domain.vote.dto.*;
 import te.trueEcho.domain.vote.entity.VoteResult;
 import te.trueEcho.domain.vote.repository.VoteRepository;
 import te.trueEcho.domain.vote.entity.Vote;
@@ -23,16 +19,13 @@ import te.trueEcho.domain.vote.repository.VoteType;
 import te.trueEcho.global.util.AuthUtil;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class VoteServiceImpl implements VoteService {
     private final VoteRepository voteRepository;
-    private final UserRepository userRepository;
     private final UserAuthRepository userAuthRepository;
     private final AuthUtil authUtil;
     private final PostRepository postRepository;
@@ -56,6 +49,7 @@ public class VoteServiceImpl implements VoteService {
 
         // 캐시 안되어 있으면 타입에 따라 오늘자꺼 만들기.
         if (todayVoteList==null) {
+
             voteRepository.createSelectedVoteContents();
             todayVoteList=   voteRepository.getTodayVoteContentsByType(votetype, LocalDate.now());
         }
@@ -65,18 +59,44 @@ public class VoteServiceImpl implements VoteService {
             return null;
         }
 
-        return  voteToDto.coverter(todayVoteList);
+        return  voteToDto.converter(todayVoteList);
     }
 
-    @Override
-    public VoteUsersResponse getVoteRandomUsers(int voteUserCount) {
-        List<User> randomUsers =  userRepository.getRandomUsersWithLimit(voteUserCount);
+    private RandomContentsResponse getRandomVoteContent(int size){
+        List<Vote> randomVoteList =  voteRepository.getRandomVoteWithSize(size);
 
-        if(randomUsers == null || randomUsers.isEmpty()) {
+        return RandomContentsResponse.builder()
+                .thisWeekCategory("this")
+                .voteContentsResponse(voteToDto.converter(randomVoteList))
+                .build();
+    }
+
+
+    @Override
+    public VoteUsersResponse getVoteRandomUsersWithPost(int voteUserCount) {
+
+        List<Post> randomPosts =  postRepository.getRandomPost();
+
+        if(randomPosts == null || randomPosts.isEmpty()) {
             return null;
         }
 
-        return voteUserToDto.converter(randomUsers);
+        Map<User, Post> latestPostsByUser = new LinkedHashMap<>();
+
+        for (Post post : randomPosts) {
+            User user = post.getUser();
+            if (!latestPostsByUser.containsKey(user)) {
+                latestPostsByUser.put(user, post);
+            }else{
+                Post latestPost = latestPostsByUser.get(user);
+                if (latestPost.getCreatedAt().isBefore(post.getCreatedAt())) {
+                    latestPostsByUser.put(user, post);
+                }
+            }
+        }
+        Collections.shuffle(randomPosts);
+
+        return voteUserToDto.converter(randomPosts.subList(0, Math.min(4, randomPosts.size())));
     }
 
     @Override
@@ -96,7 +116,7 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     public PhotoResponse getVotePhoto(Long userId) {
-       User targetUser =  userAuthRepository.findUserById(userId);
+        User targetUser =  userAuthRepository.findUserById(userId);
         List<User> usersToRead = new ArrayList<>();
         usersToRead.add(targetUser);
         List<Post> postList = postRepository.getAllPost(1, 0, usersToRead);
