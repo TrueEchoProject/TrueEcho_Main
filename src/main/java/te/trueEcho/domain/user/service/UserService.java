@@ -92,6 +92,5 @@ public class UserService {
         user.updatePassword(editUserRequest.getPassword());
         user.updateGender(editUserRequest.getGender());
         user.updateBirthDay(editUserRequest.getBirthday());
-        user.updateLocation(editUserRequest.getLocation());
     }
 }

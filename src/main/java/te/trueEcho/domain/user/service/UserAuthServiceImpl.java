@@ -7,9 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import te.trueEcho.domain.user.converter.SignUpDtoToUser;
 import te.trueEcho.domain.user.dto.*;
+import te.trueEcho.domain.user.entity.Coordinate;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.EmailMemoryRepository;
 import te.trueEcho.domain.user.repository.UserAuthRepository;
+import te.trueEcho.infra.kakao.dto.KakaoResponse;
+import te.trueEcho.infra.kakao.service.KakaoService;
 
 @Slf4j
 @Service
@@ -20,6 +23,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final UserAuthRepository userAuthRepository;
     private final EmailMemoryRepository emailMemoryRepository;
     private final SignUpDtoToUser signUpDtoToUser;
+    private final KakaoService kakaoService;
 
     public boolean isTypeDuplicated(UserCheckRequest emailRequestDto, ValidationType target) {
         if(target == ValidationType.EMAIL) {
@@ -43,7 +47,14 @@ public class UserAuthServiceImpl implements UserAuthService {
         final boolean status =emailMemoryRepository.checkStatusByEmail(registerRequest.getEmail());
         log.info("email status = {}",status);
         if(status){
-            final User newUser = signUpDtoToUser.converter(registerRequest);
+
+            KakaoResponse kakaoResponse = kakaoService.getRegionByCoordinates(
+                            registerRequest.getX(),registerRequest.getY());
+
+            String location = kakaoResponse.getDocuments().get(0).getAddressName();
+            Coordinate coordinate = new Coordinate(kakaoResponse.getDocuments().get(0).getX(),
+                    kakaoResponse.getDocuments().get(0).getY());
+            final User newUser = signUpDtoToUser.converter(registerRequest,location,coordinate);
             log.info("user's nickname = {}",        newUser.getNickname());
 
             userAuthRepository.save(newUser);

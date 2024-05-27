@@ -70,6 +70,10 @@ public class User extends CreatedDateAudit {
     @Column(name = "user_location", nullable = true)
     private String location;
 
+    @Column(name = "user_coordinate", nullable = true)
+    @Embedded
+    private Coordinate coordinate;
+
     @Lob
     @Column(name = "user_profile_url", nullable = true, columnDefinition = "TEXT")
     private String profileURL;
@@ -126,6 +130,7 @@ public class User extends CreatedDateAudit {
                  LocalDate birthday,
                  NotiTimeStatus notificationTimeStatus,
                  String location,
+                 Coordinate coordinate,
                  String password,
                  Role role,
                  NotificationEntity notificationEntity) {
@@ -134,6 +139,7 @@ public class User extends CreatedDateAudit {
         this.gender = gender;
         this.birthday = birthday;
         this.location = location;
+        this.coordinate= coordinate;
         this.password = password;
         this.role = role;
         this.name = name;
@@ -190,8 +196,8 @@ public class User extends CreatedDateAudit {
         this.profileURL = profileURL;
     }
 
-    public void updateLocation(String location) {
-        // 위치 갱신하는 로직을 새로 작성
+    public void updateLocation(double x, double y, String location) {
+        this.coordinate = new Coordinate(x, y);
         this.location = location;
     }
 

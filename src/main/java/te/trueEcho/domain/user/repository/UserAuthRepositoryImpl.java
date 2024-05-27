@@ -90,7 +90,6 @@ public class UserAuthRepositoryImpl implements UserAuthRepository {
         existUser.setEncryptedPassword(user.getPassword());
         existUser.updateGender(user.getGender());
         existUser.updateBirthDay(user.getBirthday());
-        existUser.updateLocation(user.getLocation());
 
         em.merge(existUser);
     }
