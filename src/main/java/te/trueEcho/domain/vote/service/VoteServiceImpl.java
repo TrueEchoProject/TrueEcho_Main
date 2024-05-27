@@ -18,8 +18,9 @@ import te.trueEcho.domain.vote.entity.Vote;
 import te.trueEcho.domain.vote.repository.VoteType;
 import te.trueEcho.global.util.AuthUtil;
 
-import java.time.LocalDate;
 import java.util.*;
+
+import static te.trueEcho.global.util.WeekUtil.getThisWeekAsNum;
 
 @Slf4j
 @Service
@@ -45,13 +46,12 @@ public class VoteServiceImpl implements VoteService {
     public VoteContentsResponse getVoteContents() {
         // 오늘자 투표내용 캐시되어 있으면 가져오기.
         VoteType votetype = pickVoteTypeByRandom();
-        List<Vote> todayVoteList = voteRepository.getTodayVoteContentsByType(votetype, LocalDate.now());
+        List<Vote> todayVoteList = voteRepository.getThisWeekVoteByType(votetype, getThisWeekAsNum());
 
-        // 캐시 안되어 있으면 타입에 따라 오늘자꺼 만들기.
+        // 캐시 안되어 있으면 타입에 따라 이번주꺼 만들기.
         if (todayVoteList==null) {
-
             voteRepository.createSelectedVoteContents();
-            todayVoteList=   voteRepository.getTodayVoteContentsByType(votetype, LocalDate.now());
+            todayVoteList=   voteRepository.getThisWeekVoteByType(votetype, getThisWeekAsNum());
         }
 
         // 여전히 비어있으면 실패..
@@ -62,18 +62,8 @@ public class VoteServiceImpl implements VoteService {
         return  voteToDto.converter(todayVoteList);
     }
 
-    private RandomContentsResponse getRandomVoteContent(int size){
-        List<Vote> randomVoteList =  voteRepository.getRandomVoteWithSize(size);
-
-        return RandomContentsResponse.builder()
-                .thisWeekCategory("this")
-                .voteContentsResponse(voteToDto.converter(randomVoteList))
-                .build();
-    }
-
-
     @Override
-    public VoteUsersResponse getVoteRandomUsersWithPost(int voteUserCount) {
+    public VoteUsersResponse getRandomUsersWithPostForVote(int voteUserCount) {
 
         List<Post> randomPosts =  postRepository.getRandomPost();
 

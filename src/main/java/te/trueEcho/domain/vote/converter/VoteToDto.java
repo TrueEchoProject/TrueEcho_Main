@@ -17,6 +17,7 @@ public class VoteToDto {
                 content -> VoteResponse.builder()
                             .id(content.getId())
                             .title(content.getTitle())
+                            .category(content.getCategory().name())
                             .build()
         ).toList();
         return VoteContentsResponse.builder().contentsSize(titleList.size()).contentList(titleList).build();

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import te.trueEcho.domain.vote.entity.Vote;
+import te.trueEcho.domain.vote.entity.VoteCategory;
 import te.trueEcho.domain.vote.entity.VoteResult;
 
 import java.time.LocalDate;
@@ -21,94 +22,93 @@ import static te.trueEcho.global.util.WeekUtil.getThisWeekAsNum;
 public class VoteRepositoryImpl implements VoteRepository {
 
     private final EntityManager em;
-   private final static ConcurrentHashMap<LocalDate, Map<Enum<VoteType>, List<Vote>>> todayVoteContent
-           = new ConcurrentHashMap<>();
+    private final static ConcurrentHashMap<Integer, Map<Enum<VoteType>, List<Vote>>> todayVoteContent
+            = new ConcurrentHashMap<>();
 
-    private static final int sizeOfEachCategory = 10; // 카테고리 별 투표지 수
-    private static final int sizeOfCategory = 8; // 카테고리 수
-
+    private static final int voteSize = 10; // 투표지 수
 
     private void resetVoteContentMap() {
         todayVoteContent.clear();
-        todayVoteContent.put(LocalDate.now(), new HashMap<>());
+        todayVoteContent.put(getThisWeekAsNum(), new HashMap<>());
     }
 
-    private void putTodayVoteContentMap(List<Vote> resultByRule, List<Vote> resultByRandom) {
-        todayVoteContent.get(LocalDate.now()).put(VoteType.RULE,resultByRule);
-        todayVoteContent.get(LocalDate.now()).put(VoteType.RANDOM,resultByRandom);
+    private void putThisWeekVoteContentMap(List<Vote> resultByRule, List<Vote> resultByRandom) {
+        todayVoteContent.get(getThisWeekAsNum()).put(VoteType.RULE, resultByRule);
+        todayVoteContent.get(getThisWeekAsNum()).put(VoteType.RANDOM, resultByRandom);
     }
 
 
-    private List<Vote> getSelectedVoteTitle(List<Long> selectedId){
-        try{
-            return  em.createQuery(
+    private List<Vote> getSelectedVoteTitle(List<Long> selectedId) {
+        try {
+            return em.createQuery(
                     "SELECT v FROM Vote v WHERE v.id in (:selectedId)",
                     Vote.class).setParameter("selectedId", selectedId).getResultList();
-        }catch (Exception e){
-            log.warn("this is error {}",e);
+        } catch (Exception e) {
+            log.warn("this is error {}", e);
             return null;
         }
     }
 
     @Override
-    public List<Vote> getTodayVoteContentsByType(VoteType type, LocalDate key) {
+    public List<Vote> getThisWeekVoteByType(VoteType type, int key) {
         if (todayVoteContent.containsKey(key)) {
             return todayVoteContent.get(key).get(type);
-        }else{
+        } else {
             return null;
         }
-   }
+    }
 
-   public List<Vote> getRandomVoteWithSize(int size){
-        try{
+    public List<Vote> getRandomVoteWithSize(int size) {
+        try {
             return em.createQuery("select v from Vote v " +
-                    "order by rand()", Vote.class)
+                            "order by rand()", Vote.class)
                     .setMaxResults(size)
                     .getResultList();
-        }catch(Exception e){
+        } catch (Exception e) {
             log.warn("");
             return null;
         }
-   }
+    }
 
 
     @Override
-   public void createSelectedVoteContents() {
-       resetVoteContentMap();
+    public void createSelectedVoteContents() {
+        resetVoteContentMap();
 
-       List<Vote> resultByRule = getSelectedVoteTitle(selectVoteIdByRule());
-       List<Vote> resultByRandom = getSelectedVoteTitle(selectRandomVoteId());
+        List<Vote> resultByRule = getCategorizedVoteWithSize(voteSize);
+        List<Vote> resultByRandom = getRandomVoteWithSize(voteSize);
 
-       putTodayVoteContentMap(resultByRule, resultByRandom);
-   }
+        putThisWeekVoteContentMap(resultByRule, resultByRandom);
+    }
 
 
     @Transactional
-   @Override
-    public boolean saveVoteResult(VoteResult result){
-       if (result.getId() == null) {
-           em.persist(result);
-           return true;
-       } else {
-           em.merge(result);
-           return false;
-       }
-   }
+    @Override
+    public boolean saveVoteResult(VoteResult result) {
+        if (result.getId() == null) {
+            em.persist(result);
+            return true;
+        } else {
+            em.merge(result);
+            return false;
+        }
+    }
 
-   public Vote findVoteById(Long voteId){
-        try{
+    public Vote findVoteById(Long voteId) {
+        try {
             return em.createQuery("SELECT v FROM Vote v WHERE v.id = :id", Vote.class)
                     .setParameter("id", voteId)
                     .getSingleResult();
-        }catch (Exception e){
-            log.warn("this is error {}",e);
+        } catch (Exception e) {
+            log.warn("this is error {}", e);
             return null;
         }
-   }
+    }
 
     public VoteResult findVoteResultById(Long voteId) {
         try {
-            return em.createQuery("SELECT vr FROM VoteResult vr WHERE vr.vote.id = :voteId", VoteResult.class)
+            return em.createQuery("SELECT vr FROM VoteResult vr " +
+                            "WHERE vr.vote.id = :voteId", VoteResult.class)
                     .setParameter("voteId", voteId)
                     .getSingleResult();
         } catch (Exception e) {
@@ -117,55 +117,43 @@ public class VoteRepositoryImpl implements VoteRepository {
         }
     }
 
-   // userId를 통해서 찾은 userTarget이  마지막에 받은 vote의 title을 찾는 로직
-    public String findLastVoteTitleByUserId(Long userId){
-          try{
-                return em.createQuery("SELECT v.title FROM Vote v " +
-                      "JOIN VoteResult vr ON v.id = vr.vote.id " +
-                      "WHERE vr.userTarget.id = :userId " +
-                      "ORDER BY vr.createdAt DESC", String.class)
-                      .setParameter("userId", userId)
-                      .setMaxResults(1)
-                      .getSingleResult();
-          }catch (Exception e){
-                log.warn("this is error {}",e);
-                return null;
-          }}
+    // userId를 통해서 찾은 userTarget이  마지막에 받은 vote의 title을 찾는 로직
+    public String findLastVoteTitleByUserId(Long userId) {
+        try {
+            return em.createQuery("SELECT v.title FROM Vote v " +
+                            "JOIN VoteResult vr ON v.id = vr.vote.id " +
+                            "WHERE vr.userTarget.id = :userId " +
+                            "ORDER BY vr.createdAt DESC", String.class)
+                    .setParameter("userId", userId)
+                    .setMaxResults(1)
+                    .getSingleResult();
+        } catch (Exception e) {
+            log.warn("this is error {}", e);
+            return null;
+        }
+    }
 
     //룰에 의한 16개
-    private List<Long> selectVoteIdByRule() {
-
-        int weeksAsNum = getThisWeekAsNum();
-        int firstNum = (weeksAsNum % (sizeOfEachCategory/2)); // (0~4)+1
-        int secondNum = firstNum+(sizeOfEachCategory/2);
-
-       List<Long> selectedId =new ArrayList<>();
-        for (int i = 1; i <= sizeOfCategory*sizeOfEachCategory; i++) {
-            if(i%sizeOfEachCategory == firstNum || i%sizeOfEachCategory==secondNum) {
-                selectedId.add((long) i);
-            }
+    private List<Vote> getCategorizedVoteWithSize(int size) {
+        try {
+            VoteCategory voteCategory =
+                    VoteCategory.values()[
+                            getThisWeekAsNum()%VoteCategory.values().length
+                            ];
+            return em.createQuery("SELECT v FROM Vote v " +
+                            "WHERE v.category = :type " +
+                            "ORDER BY rand()", Vote.class)
+                    .setParameter("type", voteCategory)
+                    .setMaxResults(size)
+                    .getResultList();
+        } catch (Exception e) {
+            log.warn("this is error {}", e);
+            return null;
         }
-
-        return selectedId;
     }
+
     
-    //랜덤한 16개
-    private List<Long> selectRandomVoteId(){
 
-        // 총 16개의 숫자를 랜덤하게 선택
-        List<Long> randomId = new ArrayList<>();
-        Random random = new Random();
-        for (int i = 0; i < sizeOfCategory; i++) {
-            // 각 범위에서 2개씩 랜덤하게 선택
-            int start = i * sizeOfEachCategory + 1;
-            int end = start + 9;
-            for (int j = 0; j < 2; j++) {
-                int randomNumber = random.nextInt(end - start + 1) + start;
-                randomId.add((long) randomNumber);
-            }
-        }
-        return randomId;
-    }
 
     public List<VoteResult> getThisWeekVoteResult() {
         try {

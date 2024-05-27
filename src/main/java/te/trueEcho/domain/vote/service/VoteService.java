@@ -10,7 +10,7 @@ public interface VoteService {
 
     VoteContentsResponse getVoteContents();
 
-    VoteUsersResponse getVoteRandomUsersWithPost(int voteUserCount);
+    VoteUsersResponse getRandomUsersWithPostForVote(int voteUserCount);
 
     boolean saveVoteResult(VoteResultRequest voteResultRequest);
 
