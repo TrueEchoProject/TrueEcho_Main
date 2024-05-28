@@ -84,19 +84,7 @@ public class SettingRepositoryImpl implements SettingRepository{
         }
     }
 
-    @Override
-    public NotificationSetting getNotificationSettingByUser(User user) {
-        try{
-            return em.createQuery("select ns from NotificationSetting ns" +
-                            " where ns.user =:user", NotificationSetting.class)
-                    .setParameter("user", user)
-                    .getSingleResult();
-        }catch (Exception e){
-            log.error("getNotificationSettingByUser error : {}", e.getMessage());
-            return null;
-        }
 
-    }
     @Transactional
     @Override
     public NotificationSetting editNotificationSetting(NotificationSetting notificationSetting) {

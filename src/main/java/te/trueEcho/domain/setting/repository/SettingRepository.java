@@ -18,8 +18,6 @@ public interface SettingRepository {
 
     String getMostVotedTitle(User user);
 
-    NotificationSetting getNotificationSettingByUser(User user);
-
     NotificationSetting editNotificationSetting(NotificationSetting notificationSetting);
 
 }
