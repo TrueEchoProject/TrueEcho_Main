@@ -63,7 +63,6 @@ public class User extends CreatedDateAudit {
     @Column(name = "connect_by_friend", nullable = true)
     private Boolean connectByFriend; //친구의 친구에게 내 계정 노출
 
-
     @Column(name = "user_birthday", nullable = true)
     private LocalDate birthday;
 
@@ -98,7 +97,7 @@ public class User extends CreatedDateAudit {
 
     @ManyToOne(fetch = FetchType.LAZY , cascade=CascadeType.ALL)
     @JoinColumn(name = "rank_id")
-    private Rank rank;
+    private Rank rank; // TODO: Rank 연관관계 확인 필요.
 
     @OneToMany(mappedBy = "userVoter", cascade=CascadeType.ALL, fetch = FetchType.LAZY)
     private List<VoteResult> voteResults;

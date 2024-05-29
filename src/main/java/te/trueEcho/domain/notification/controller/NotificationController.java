@@ -19,7 +19,7 @@ import te.trueEcho.global.response.ResponseForm;
 @RequestMapping("/noti")
 @RequiredArgsConstructor
 public class NotificationController {
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
     @PostMapping("/sendToFCM")
     public ResponseEntity<ResponseForm> sendNotification(@RequestBody NotificationDto request) {

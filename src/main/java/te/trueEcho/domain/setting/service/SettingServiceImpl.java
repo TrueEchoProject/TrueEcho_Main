@@ -130,15 +130,16 @@ public class SettingServiceImpl implements SettingService{
 
     @Transactional
     @Override
-    public PinListResponse editPins(PinsRequest editPinsRequest) {
+    public boolean editPins(PinsRequest editPinsRequest) {
         User loginUser = authUtil.getLoginUser();
 
         if (!settingRepository.deletePinsByUser(loginUser)){
-            return null;
+            return false;
         }
 
         if (editPinsRequest.getUpdatedPostIdList().isEmpty()){
-            return getPins();
+            log.warn("No updated post id list found");
+            return false;
         }
 
         List<Post> postList =  postRepository.getPostByIdList(editPinsRequest.getUpdatedPostIdList());
@@ -147,10 +148,10 @@ public class SettingServiceImpl implements SettingService{
                 postList.stream().map(
                         post -> new Pin(loginUser, post)
                 ).toList();
-
+        log.warn("New pins created = {}",newPins.get(0).getPost().getTitle());
         pinsRepository.saveAll(newPins);
 
-        return getPins();
+        return true;
     }
 
 

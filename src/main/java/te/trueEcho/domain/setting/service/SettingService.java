@@ -36,7 +36,7 @@ public interface SettingService {
 
     PinListResponse getPins();
 
-    PinListResponse editPins(PinsRequest editPinsRequest);
+    boolean editPins(PinsRequest editPinsRequest);
 
 
 
