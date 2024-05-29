@@ -84,10 +84,10 @@ public class SettingController {
     @PutMapping("/pins")
     public ResponseEntity<ResponseForm> editPins(@RequestBody PinsRequest PinsRequest) {
 
-        PinListResponse pinListResponse   = settingService.editPins(PinsRequest);
+        boolean isEdited   = settingService.editPins(PinsRequest);
 
-        return pinListResponse != null ?
-                ResponseEntity.ok(ResponseForm.of(ResponseCode.PUT_PINS_SUCCESS, pinListResponse)) :
+        return isEdited ?
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.PUT_PINS_SUCCESS)) :
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.PUT_PINS_FAIL));
     }
 

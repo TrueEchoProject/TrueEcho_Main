@@ -54,7 +54,9 @@ public class SettingRepositoryImpl implements SettingRepository{
     @Override
     public List<Pin> getPinsByUser(User user) {
         try {
-            return em.createQuery("select p from Pin p join fetch p.user" +
+            return em.createQuery("select p from Pin p " +
+                            " join fetch p.user "
+                            + "join fetch p.post" +
                             " where p.user =:user", Pin.class)
                     .setParameter("user", user)
                     .getResultList();
