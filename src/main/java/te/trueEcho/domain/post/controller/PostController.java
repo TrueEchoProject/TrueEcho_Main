@@ -56,7 +56,7 @@ public class PostController {
     @GetMapping("/read/{type}")
     public ResponseEntity<ResponseForm> readPost(
             @PathVariable int type,
-            @RequestParam String location,
+            @RequestParam(required = false) String location,
             @RequestParam int index,
             @RequestParam int pageCount){
 
