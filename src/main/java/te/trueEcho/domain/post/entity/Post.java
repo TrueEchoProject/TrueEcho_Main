@@ -41,8 +41,8 @@ public class Post extends CreatedDateAudit {
     @Enumerated(EnumType.STRING)
     private PostStatus status;
 
-    @OneToOne( cascade = CascadeType.ALL)
-    @JoinColumn(name = "pin_id", nullable = true)
+
+    @OneToOne(mappedBy = "post", fetch = FetchType.LAZY)
     private Pin pin;
 
     @ManyToOne(fetch = FetchType.LAZY)
