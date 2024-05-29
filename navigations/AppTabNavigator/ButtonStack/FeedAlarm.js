@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet } from 'react-native';
 import AlarmCardComponent from "../../../components/AlarmCardComponent";
 import axios from "axios";
 
@@ -8,8 +8,8 @@ const FeedAlarm = ({ navigation, route }) => {
 	const [post, setPost] = useState({})
 	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
 	
-	const handleActionComplete = () => {
-		navigation.goBack();
+	const handleActionComplete = (deletedPostId) => {
+		navigation.navigate('MyFeed', { deletedPostId });
 	};
 	useEffect(() => {
 		if (route.params?.post_id) {
@@ -27,16 +27,13 @@ const FeedAlarm = ({ navigation, route }) => {
 			fetchData(postId);
 		}
 	}, [postId]);
-	const fetchData = async ( postId ) => {
+	const fetchData = async (postId) => {
 		try {
-			const response = await axios.get(
-        `${base_url}/post/read?postId=${postId}`,
-        {
-          headers: {
-            Authorization: `${token}`,
-          },
-        },
-      );
+			const response = await axios.get(`${base_url}/post/read?postId=${postId}`, {
+				headers: {
+					Authorization: `${token}`
+				}
+			});
 			setPost(response.data.data);
 		} catch (error) {
 			console.error('Error fetching data', error);

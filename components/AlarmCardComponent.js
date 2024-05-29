@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Share, Dimensions, } from 'react-native';
 import axios from 'axios';
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
-import { MaterialIcons, Ionicons, Feather, SimpleLineIcons } from "@expo/vector-icons";
+import { Ionicons, Feather, SimpleLineIcons } from "@expo/vector-icons";
 import { ImageButton } from "./ImageButton";
 import { CommentModal } from './CommentModal'; // 댓글 창 컴포넌트 임포트
 
@@ -33,13 +33,15 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 		}
 	};
 	const toggleBlock = async () => {
-		console.log(post.username);
+		console.log(post.userId);
 		try {
-			const response = await axios.get(`${base_url}/blocks/add`,{
-				blockUserId: post.userId
-			}, {
+			const formData = new FormData();
+			formData.append('blockUserId', post.userId);
+			
+			const response = await axios.post(`${base_url}/blocks/add`, formData, {
 				headers: {
-					Authorization: {token}
+					Authorization: token,
+					'Content-Type': 'multipart/form-data'
 				}
 			});
 			if (response.data) {
@@ -49,33 +51,36 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 			}
 		} catch (error) {
 			console.error('Error while blocking the user:', error.response ? error.response.data : error.message);
-			// HTTP 상태 코드가 409인 경우 여기서 처리
-			if (error.response && error.response.status === 409) {
-				alert('This user is already blocked.');
-				hideOptions();
-			}
 		}
 	};
 	const toggleDelete = async () => {
 		console.log(post.postId);
-		try {
+	try {
+		const response = await axios.delete(`${base_url}/post/delete/${post.postId}`, {
+			headers: {
+				Authorization: token,
+			}
+		});
+		if (response.data) {
 			alert('정상적으로 게시물을 삭제했어요');
 			hideOptions();
 			onActionComplete && onActionComplete(post.postId);
-		} catch (error) {
-			console.error('Error while blocking the user:', error.response ? error.response.data : error.message);
-			// HTTP 상태 코드가 409인 경우 여기서 처리
-			if (error.response && error.response.status === 409) {
-				alert('This user is already blocked.');
-				hideOptions();
-			}
+		}
+	} catch (error) {
+		console.error('Error while blocking the user:', error.response ? error.response.data : error.message);
 		}
 	};
 	const toggleFriendSend = async () => {
-		console.log(post.username);  // 이것은 여전히 정상적으로 작동합니다.
+		console.log(post.userId);
 		try {
-			await axios.post(`http://192.168.0.27:3000/friendSend`, {
-				friendSendUser: post.username
+			const formData = new FormData();
+			formData.append('targetUserId', post.userId);
+			
+			const response = await axios.post(`${base_url}/friends/add`, formData, {
+				headers: {
+					Authorization: token,
+					'Content-Type': 'multipart/form-data'
+				}
 			});
 			console.log('Send updated successfully');
 			setFriendLook(false);
@@ -122,7 +127,7 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 						flexDirection: "column",
 						marginLeft: "auto",
 					}}>
-						{post.friend === 1 && ( friendLook === true ? (
+						{post.friend === false && ( friendLook === true ? (
 								<View style={[
 									styles.right,
 									{

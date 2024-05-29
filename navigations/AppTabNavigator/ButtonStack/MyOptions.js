@@ -472,7 +472,6 @@ const MyOptions = ({ navigation, route }) => {
 			const match = message.match(pattern);
 			return match ? match[0].replace('시 예정', '') : null;
 		};
-		
 		const extractTimeChangeMessage = (message) => {
 			if (!message) return '시간 변경 정보를 찾을 수 없습니다.';
 			const pattern = /알림시간이 (.+?)에서 (.+?)으로 변경 예약되었습니다/;
@@ -503,19 +502,21 @@ const MyOptions = ({ navigation, route }) => {
 						Authorization: `${token}`
 					}
 				});
-				setSeverTime_type(severResponse.data.data);
 				const serverData = severResponse.data.data;
+				setSeverTime_type(serverData);
 				const msg = serverData.msg;
-				const scheduledTime = extractScheduledTime(msg);
-				if (scheduledTime) {
-					const timeOption = timeOptions.find(option => option.label.includes(scheduledTime));
-					if (timeOption) {
-						alert(`예약된 변경시간: ${timeOption.label}`);
+				if (msg) {
+					const scheduledTime = extractScheduledTime(msg);
+					if (scheduledTime) {
+						const timeOption = timeOptions.find(option => option.label.includes(scheduledTime));
+						if (timeOption) {
+							alert(`예약된 변경시간: ${timeOption.label}`);
+						} else {
+							alert('시간대 정보를 찾을 수 없습니다.');
+						}
 					} else {
-						alert('시간대 정보를 찾을 수 없습니다.');
+						alert('메시지에서 시간을 추출할 수 없습니다.');
 					}
-				} else {
-					alert('메시지에서 시간을 추출할 수 없습니다.');
 				}
 			} catch (error) {
 				console.error('Error fetching calendar data', error);
@@ -734,7 +735,7 @@ const MyOptions = ({ navigation, route }) => {
 		try {
 			const response = await axios.delete(`${base_url}/accounts/logout`, {
 				headers: {
-					Authorization: `${token}`
+					Authorization: token
 				}
 			});
 			console.log(response.data.message); // Correctly update the state here

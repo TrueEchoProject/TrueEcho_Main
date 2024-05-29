@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {View, Text, FlatList, Image, StyleSheet, ActivityIndicator, TouchableOpacity} from 'react-native';
 import axios from 'axios';
 
-const MyFeed = ({ navigation }) => {
+const MyFeed = ({ navigation, route }) => {
 	const [serverPosts, setServerPosts] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [page, setPage] = useState(1); // 페이지 번호 상태 추가
@@ -10,6 +10,12 @@ const MyFeed = ({ navigation }) => {
 	const [isEndReached, setIsEndReached] = useState(false); // onEndReached 호출 상태
 	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
 	
+	useEffect(() => {
+		if (route.params?.deletedPostId) {
+			const { deletedPostId } = route.params;
+			setServerPosts(prevPosts => prevPosts.filter(post => post.postId !== deletedPostId));
+		}
+	}, [route.params?.deletedPostId]);
 	useEffect(() => {
 		if (serverPosts) {
 			console.log('server updated:', serverPosts);

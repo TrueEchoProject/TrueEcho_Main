@@ -27,7 +27,6 @@ const Calendar = ({ navigation }) => {
 	const [currentImageUrls, setCurrentImageUrls] = useState({ front: null, back: null });
 	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
 	
-	
 	useEffect(() => {
 		fetchCalendarAndPins();
 	}, []);
