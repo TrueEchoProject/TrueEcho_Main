@@ -6,6 +6,7 @@ import axios from "axios";
 const FeedAlarm = ({ navigation, route }) => {
 	const [postId, setPostId] = useState("")
 	const [post, setPost] = useState({})
+	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
 	
 	const handleActionComplete = () => {
 		navigation.goBack();
@@ -28,8 +29,15 @@ const FeedAlarm = ({ navigation, route }) => {
 	}, [postId]);
 	const fetchData = async ( postId ) => {
 		try {
-			const response = await axios.get(`http://192.168.0.3:3000/posts?post_id=${postId}`);
-			setPost(response.data[0]);
+			const response = await axios.get(
+        `${base_url}/post/read?postId=${postId}`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+        },
+      );
+			setPost(response.data.data);
 		} catch (error) {
 			console.error('Error fetching data', error);
 		}

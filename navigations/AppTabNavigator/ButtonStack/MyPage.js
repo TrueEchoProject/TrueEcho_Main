@@ -74,12 +74,8 @@ const MyPage = ({ navigation, route }) => {
 				}
 			});
 			setServerData(response.data.data); // Correctly update the state here
-			const pinResponse = await axios.get(`${base_url}/setting/pins`, {
-				headers: {
-					Authorization: `${token}`
-				}
-			});
-			setPinData(pinResponse.data.data.pinList); // Correctly update the state here
+			const pinResponse = await axios.get(`http://192.168.0.3:3000/user_pin`);
+			setPinData(pinResponse.data);
 			setIsLoading(false);
 		} catch (error) {
 			console.error('Error fetching data', error);

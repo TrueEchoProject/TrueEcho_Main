@@ -6,7 +6,7 @@ import { MaterialIcons, Ionicons, Feather, SimpleLineIcons } from "@expo/vector-
 import { ImageButton } from "./ImageButton";
 import { CommentModal } from './CommentModal'; // 댓글 창 컴포넌트 임포트
 
-const AlarmCardComponent = ({ post, navigation, onActionComplete }) => {
+const AlarmCardComponent = ({ post, onActionComplete }) => {
 	const [isOptionsVisible, setIsOptionsVisible] = useState(false);
 	const [buttonLayout, setButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
 	const [imageButtonHeight, setImageButtonHeight] = useState(0);
@@ -35,14 +35,18 @@ const AlarmCardComponent = ({ post, navigation, onActionComplete }) => {
 	const toggleBlock = async () => {
 		console.log(post.username);
 		try {
-			const response = await axios.post(`http://192.168.0.27:3000/blocked_users`, {
-				username: post.username,
-				profile_url: post.profile_url
+			const response = await axios.get(`${base_url}/blocks/add`,{
+				blockUserId: post.userId
+			}, {
+				headers: {
+					Authorization: {token}
+				}
 			});
-			console.log('User blocked successfully');
-			alert('유저를 정상적으로 차단했습니다');
-			hideOptions();
-			onActionComplete && onActionComplete();
+			if (response.data) {
+				alert('유저를 정상적으로 차단했습니다');
+				hideOptions();
+				onActionComplete && onActionComplete();
+			}
 		} catch (error) {
 			console.error('Error while blocking the user:', error.response ? error.response.data : error.message);
 			// HTTP 상태 코드가 409인 경우 여기서 처리
@@ -53,11 +57,11 @@ const AlarmCardComponent = ({ post, navigation, onActionComplete }) => {
 		}
 	};
 	const toggleDelete = async () => {
-		console.log(post.post_id);
+		console.log(post.postId);
 		try {
 			alert('정상적으로 게시물을 삭제했어요');
 			hideOptions();
-			onActionComplete && onActionComplete(post.post_id);
+			onActionComplete && onActionComplete(post.postId);
 		} catch (error) {
 			console.error('Error while blocking the user:', error.response ? error.response.data : error.message);
 			// HTTP 상태 코드가 409인 경우 여기서 처리
@@ -107,12 +111,11 @@ const AlarmCardComponent = ({ post, navigation, onActionComplete }) => {
 					<View style={styles.left}>
 						<ExpoImage
 							style={styles.thumbnail}
-							source={{ uri: post.profile_url }}
+							source={{ uri: post.profileUrl }}
 						/>
 						<View style={styles.body}>
 							<Text style={{fontSize: 15, fontWeight: "500"}}>{post.username}</Text>
-							<Text style={{fontSize: 12, fontWeight: "300"}}note>{new Date(post.created_at).toDateString()}</Text>
-							<Text style={{fontSize: 12, fontWeight: "300"}}>{post.location}</Text>
+							<Text style={{fontSize: 12, fontWeight: "300"}}note>{new Date(post.createdAt).toDateString()}</Text>
 						</View>
 					</View>
 					<View style={{
@@ -172,7 +175,7 @@ const AlarmCardComponent = ({ post, navigation, onActionComplete }) => {
 							{ top: buttonLayout.y + buttonLayout.height, right: 0 } :
 							{ top: buttonLayout.y + buttonLayout.height + 30, right: 0 }
 					]}>
-						{post.IsMine ? (
+						{post.mine ? (
 							<TouchableOpacity onPress={toggleDelete} style={{ flexDirection:'row', alignItems: 'center', }}>
 								<Feather name='alert-triangle' style={{ marginLeft: 10, color: 'red' }}/>
 								<Text style={[styles.optionItem, {color: 'red'}]}>삭제하기</Text>
@@ -187,8 +190,8 @@ const AlarmCardComponent = ({ post, navigation, onActionComplete }) => {
 				)}
 				<View style={styles.imageButtonContainer} onLayout={onImageButtonLayout}>
 					<ImageButton
-						front_image={post.post_front_url}
-						back_image={post.post_back_url}
+						front_image={post.postFrontUrl}
+						back_image={post.postBackUrl}
 						containerHeight={imageButtonHeight}
 						windowWidth={windowWidth}
 					/>
@@ -201,13 +204,10 @@ const AlarmCardComponent = ({ post, navigation, onActionComplete }) => {
 						<View style={styles.left}>
 							<TouchableOpacity style={styles.iconButton} onPress={toggleLike}>
 								<Ionicons name={isLiked ? 'heart' : 'heart-outline'} style={styles.icon} size={24} color={isLiked ? 'red' : 'black'}/>
-								<Text>{likesCount}</Text>
+								<Text>{post.likesCount}</Text>
 							</TouchableOpacity>
 							<TouchableOpacity style={styles.iconButton}>
 								<Ionicons name='chatbubbles' style={styles.icon} onPress={toggleCommentVisibility} size={24}/>
-							</TouchableOpacity>
-							<TouchableOpacity onPress={() => Share.share({ message: `${post.title}: http://192.168.0.27:3000/posts?post_id=${post.post_id}/` })}>
-								<MaterialIcons name='send' style={styles.icon} size={24} />
 							</TouchableOpacity>
 						</View>
 						<CommentModal
@@ -215,7 +215,7 @@ const AlarmCardComponent = ({ post, navigation, onActionComplete }) => {
 							postId={post.post_id}
 							onClose={() => setIsCommentVisible(false)}
 						/>
-						{post.post_status === 1 || post.post_status === 2 ? (
+						{post.status === "FREE" || post.status === "LATE" ? (
 							<View style={[
 								styles.right,
 								{
@@ -226,10 +226,10 @@ const AlarmCardComponent = ({ post, navigation, onActionComplete }) => {
 									backgroundColor: "#3B4664",
 									borderRadius: 10,}
 							]}>
-								{post.post_status === 1 && (
+								{post.status === "FREE" && (
 									<Text style={{ color: "white", fontSize: 25}}>free</Text>
 								)}
-								{post.post_status === 2 && (
+								{post.status === "LATE" && (
 									<Text style={{ color: "white", fontSize: 25}}>late</Text>
 								)}
 							</View>

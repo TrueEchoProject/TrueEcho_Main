@@ -63,7 +63,7 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
 				</View>
 			)}
 			<TouchableOpacity onPress={changeImage} style={styles.smallImageContainer}>
-				<View>
+				<View style={{backgroundColor: "red"}}>
 					<Image
 						source={{ uri: isFrontShowing ? (front_image || defaultImage) : (back_image || defaultImage) }}
 						style={[styles.smallImage, { height: SmallHeight, width: SmallWidth }]}
@@ -84,7 +84,7 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
 				</View>
 			</TouchableOpacity>
 			<TouchableOpacity onPress={changeImage} style={{ zIndex: 1 }}>
-				<View>
+				<View style={{backgroundColor: "blue"}}>
 					<Image
 						source={{ uri: isFrontShowing ? (back_image || defaultImage) : (front_image || defaultImage) }}
 						style={[styles.largeImage, { height: ImageHeight, width: windowWidth }]}

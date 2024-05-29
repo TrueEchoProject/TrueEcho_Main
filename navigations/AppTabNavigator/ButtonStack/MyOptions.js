@@ -459,6 +459,34 @@ const MyOptions = ({ navigation, route }) => {
 	};
 	const TimeModal = ({ isVisible, onClose }) => {
 		const [severTime_type, setSeverTime_type] = useState({});
+		const timeOptions = [
+			{ label: '00 ~ 07', value: 'DAWN', number: 0 },
+			{ label: '07 ~ 12', value: 'MORNING', number: 1 },
+			{ label: '12 ~ 15', value: 'EARLY_AFTERNOON', number: 2 },
+			{ label: '15 ~ 18', value: 'LATE_AFTERNOON', number: 3 },
+			{ label: '18 ~ 21', value: 'EARLY_NIGHT', number: 4 },
+			{ label: '21 ~ 24', value: 'LATE_NIGHT', number: 5 }
+		];
+		const extractScheduledTime = (message) => {
+			const pattern = /\d{2}시 예정/;
+			const match = message.match(pattern);
+			return match ? match[0].replace('시 예정', '') : null;
+		};
+		
+		const extractTimeChangeMessage = (message) => {
+			if (!message) return '시간 변경 정보를 찾을 수 없습니다.';
+			const pattern = /알림시간이 (.+?)에서 (.+?)으로 변경 예약되었습니다/;
+			const match = message.match(pattern);
+			if (match) {
+				const [_, fromTime, toTime] = match;
+				const fromTimeOption = timeOptions.find(option => option.value === fromTime);
+				const toTimeOption = timeOptions.find(option => option.value === toTime);
+				if (fromTimeOption && toTimeOption) {
+					return `알림 시간이 ${fromTimeOption.label}시 에서 ${toTimeOption.label}시 로 변경되었습니다.`;
+				}
+			}
+			return '시간 변경 정보를 찾을 수 없습니다.';
+		};
 		
 		useEffect(() => {
 			fetchTime_type();
@@ -476,7 +504,19 @@ const MyOptions = ({ navigation, route }) => {
 					}
 				});
 				setSeverTime_type(severResponse.data.data);
-				console.log(severResponse.data.data);
+				const serverData = severResponse.data.data;
+				const msg = serverData.msg;
+				const scheduledTime = extractScheduledTime(msg);
+				if (scheduledTime) {
+					const timeOption = timeOptions.find(option => option.label.includes(scheduledTime));
+					if (timeOption) {
+						alert(`예약된 변경시간: ${timeOption.label}`);
+					} else {
+						alert('시간대 정보를 찾을 수 없습니다.');
+					}
+				} else {
+					alert('메시지에서 시간을 추출할 수 없습니다.');
+				}
 			} catch (error) {
 				console.error('Error fetching calendar data', error);
 			}
@@ -484,16 +524,22 @@ const MyOptions = ({ navigation, route }) => {
 		const saveChanges = async () => {
 			const selectedOption = timeOptions.find(option => option.value === severTime_type.randomNotifyTime);
 			const editTime = selectedOption ? selectedOption.number : null;
-			console.log('서버 응답:', token, editTime);
+			console.log('서버 응답:', editTime);
 			if (editTime !== null) {
 				try {
-					const severResponse = await axios.patch(`${base_url}/setting/notifyTime?editTime=${editTime}`,{}, {
+					const severResponse = await axios.patch(`${base_url}/setting/notifyTime?editTime=${editTime}`, {}, {
 						headers: {
 							Authorization: `${token}`
 						}
 					});
-					alert(severResponse.data.message);
-					console.log('서버 응답:', severResponse.data.message);
+					const msg = severResponse.data.data;
+					if (msg) {
+						const alertMessage = extractTimeChangeMessage(msg);
+						alert(alertMessage);
+					} else {
+						alert('시간 변경 정보를 찾을 수 없습니다.');
+					}
+					console.log('서버 응답:', severResponse.data.data);
 				} catch (error) {
 					console.error('Error posting data:', error);
 					alert('데이터를 제출하는 중 오류가 발생했습니다.');
@@ -511,14 +557,6 @@ const MyOptions = ({ navigation, route }) => {
 				randomNotifyTime: randomNotifyTime
 			}));
 		};
-		const timeOptions = [
-			{ label: '00 ~ 07', value: 'DAWN', number: 0 },
-			{ label: '07 ~ 12', value: 'MORNING', number: 1 },
-			{ label: '12 ~ 15', value: 'EARLY_AFTERNOON', number: 2 },
-			{ label: '15 ~ 18', value: 'LATE_AFTERNOON', number: 3 },
-			{ label: '18 ~ 21', value: 'EARLY_NIGHT', number: 4 },
-			{ label: '21 ~ 24', value: 'LATE_NIGHT', number: 5 }
-		];
 		
 		return (
 			<Modal

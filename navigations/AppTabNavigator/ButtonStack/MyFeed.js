@@ -111,6 +111,7 @@ const styles = StyleSheet.create({
 		height: 100,
 		margin: 10,
 		borderRadius: 10,
+		backgroundColor: "grey"
 	},
 	footer: {
 		paddingVertical: 20,
