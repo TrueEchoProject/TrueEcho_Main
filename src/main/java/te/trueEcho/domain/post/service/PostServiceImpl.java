@@ -76,12 +76,13 @@ public class PostServiceImpl implements PostService {
 
         // 게시물 조회
         List<User> filteredUser = new ArrayList<>();
-
+        boolean isFriend = true;
         switch (readPostRequest.getType()){
             case FRIEND:
                 filteredUser =  friendRepository.findMyFriendsByUser(foundUser);
                 break;
             case PUBLIC:
+                isFriend = friendRepository.findMyFriendsByUser(foundUser).contains(foundUser); // 친구인지 확인
                 filteredUser =  userRepository.findUsersByLocation(filterLocation, foundUser);
                 break;
             case MINE:
@@ -93,7 +94,8 @@ public class PostServiceImpl implements PostService {
 
         List<Post> postList = postRepository.getAllPost(readPostRequest.getPageCount(), readPostRequest.getIndex(), filteredUser);
         // post -> Dto 컨버터
-        return postToDto.converter(postList, yourLocation,foundUser.getId());
+
+        return postToDto.converter(postList, yourLocation,foundUser.getId(), isFriend);
     }
 
 

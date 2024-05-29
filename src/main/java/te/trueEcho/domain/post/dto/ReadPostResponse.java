@@ -22,5 +22,6 @@ public class ReadPostResponse {
         private final String postBackUrl;
         private final LocalDateTime createdAt;
         private final int commentCount;
+        private final boolean isFriend;
     }
 
