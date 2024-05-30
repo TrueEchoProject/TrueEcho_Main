@@ -76,7 +76,6 @@ public class PostRepositoryImpl implements PostRepository {
             LocalDateTime twoDaysAgo = LocalDateTime.now().minusDays(50); // 나중에는 이틀로 제한
             return em.createQuery("select p from Post p " +
                             "join fetch p.user " +
-                            "left join fetch p.pin " +
                             "where p.createdAt >= :twoDaysAgo " +
                             "order by p.createdAt desc", Post.class)
                     .setParameter("twoDaysAgo", twoDaysAgo)
