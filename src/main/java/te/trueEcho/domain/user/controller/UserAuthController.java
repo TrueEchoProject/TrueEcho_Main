@@ -132,7 +132,7 @@ public class UserAuthController {
 
     @GetMapping(value = "/email")
     public ResponseEntity<ResponseForm> sendEmail(
-            @RequestParam String nickname,
+            @RequestParam(required = false) String nickname,
             @RequestParam String email) {
 
         UserCheckRequest emailRequestDto =  UserCheckRequest.builder()
