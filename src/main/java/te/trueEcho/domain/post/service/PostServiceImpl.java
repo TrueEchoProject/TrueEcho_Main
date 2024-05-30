@@ -170,11 +170,13 @@ public class PostServiceImpl implements PostService {
         return postRepository.writeComment(newComment);
     }
 
+    @Transactional
     @Override
     public boolean deleteComment(Long commentId) {
         return postRepository.deleteComment(commentId);
     }
 
+    @Transactional
     @Override
     public boolean deletePost(Long postId) {
         return postRepository.deletePost(postId);

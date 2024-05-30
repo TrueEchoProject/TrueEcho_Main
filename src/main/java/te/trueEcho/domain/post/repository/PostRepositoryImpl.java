@@ -113,7 +113,7 @@ public class PostRepositoryImpl implements PostRepository {
         }
     }
 
-    @Transactional
+
     @Override
     public void save(Post post) {
         if (post.getId() == null) {
@@ -123,7 +123,7 @@ public class PostRepositoryImpl implements PostRepository {
         }
     }
 
-    @Transactional
+
     public boolean deletePost(Long postId) {
         try{
             Post post = em.find(Post.class, postId);
@@ -137,6 +137,8 @@ public class PostRepositoryImpl implements PostRepository {
             return false;
         }
     }
+
+
 
     @Override
     public boolean deleteComment(Long commentId) {
@@ -167,6 +169,8 @@ public class PostRepositoryImpl implements PostRepository {
         }
 
     }
+
+
 
     @Override
     public boolean deleteLike(Like like) {
