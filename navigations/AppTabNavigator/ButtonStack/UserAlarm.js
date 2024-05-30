@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, Dimensions, ActivityIndicator } from 'react-native';
 import {AntDesign, FontAwesome5,} from '@expo/vector-icons';
 import PagerView from "react-native-pager-view";
-import axios from "axios";
+import Api from "../../../Api";
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 
 const windowWidth = Dimensions.get('window').width;
@@ -47,11 +47,7 @@ const UserAlarm = ({ route }) => {
 	
 	const fetchData = async () => {
 		try {
-			const serverResponse = await axios.get(`${base_url}/setting/myPage?userId=${userId}`, {
-				headers: {
-					Authorization: `${token}`
-				}
-			});
+			const serverResponse = await Api.get(`/setting/myPage?userId=${userId}`);
 			if (serverResponse.data) {
 				setServerUserData(serverResponse.data.data.pageInfo);
 				setServerPinData(serverResponse.data.data.pinList.pinList);
@@ -69,10 +65,9 @@ const UserAlarm = ({ route }) => {
 			const formData = new FormData();
 			formData.append('targetUserId', userId);
 			
-			const response = await axios.post(`${base_url}/friends/add`, formData, {
+			const response = await Api.post(`/friends/add`, formData, {
 				headers: {
-					Authorization: `${token}`,
-					'Content-Type': 'multipart/form-data',
+					'Content-Type': 'multipart/form-data'
 				}
 			});
 			console.log('Send updated successfully', response.data, userId);

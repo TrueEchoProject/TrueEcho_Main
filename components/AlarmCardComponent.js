@@ -9,12 +9,12 @@ import {
 	Dimensions,
 	ActivityIndicator,
 } from 'react-native';
-import axios from 'axios';
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import { Ionicons, Feather, SimpleLineIcons } from "@expo/vector-icons";
 import { ImageButton } from "./ImageButton";
 import { CommentModal } from './CommentModal'; // 댓글 창 컴포넌트 임포트
 import { useNavigation } from '@react-navigation/native'; // useNavigation import
+import Api from '../Api';
 
 const AlarmCardComponent = ({ post, onActionComplete }) => {
 	const navigation = useNavigation(); // useNavigation 훅 사용
@@ -39,14 +39,10 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 		console.log('Is Liked:', newIsLiked);
 		
 		try {
-			const response = await axios.patch(
-				`${base_url}/post/update/likes`, {
+			const response = await Api.patch(
+				`/post/update/likes`, {
 					postId: post.postId,
 					isLike: newIsLiked,
-				}, {
-					headers: {
-						Authorization: token
-					}
 				});
 			if (response.data) {
 				console.log('Likes count updated successfully');
@@ -61,9 +57,8 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 			const formData = new FormData();
 			formData.append('blockUserId', post.userId);
 			
-			const response = await axios.post(`${base_url}/blocks/add`, formData, {
+			const response = await Api.post(`/blocks/add`, formData, {
 				headers: {
-					Authorization: token,
 					'Content-Type': 'multipart/form-data'
 				}
 			});
@@ -79,11 +74,7 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 	const toggleDelete = async () => {
 		console.log(post.postId);
 	try {
-		const response = await axios.delete(`${base_url}/post/delete/${post.postId}`, {
-			headers: {
-				Authorization: token,
-			}
-		});
+		const response = await Api.delete(`/post/delete/${post.postId}`);
 		if (response.data) {
 			alert('정상적으로 게시물을 삭제했어요');
 			hideOptions();
@@ -99,9 +90,8 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 			const formData = new FormData();
 			formData.append('targetUserId', post.userId);
 			
-			const response = await axios.post(`${base_url}/friends/add`, formData, {
+			const response = await Api.post(`/friends/add`, formData, {
 				headers: {
-					Authorization: token,
 					'Content-Type': 'multipart/form-data'
 				}
 			});

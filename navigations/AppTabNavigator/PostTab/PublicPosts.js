@@ -10,10 +10,10 @@ import {
 	ActivityIndicator
 } from 'react-native';
 import PagerView from 'react-native-pager-view';
-import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
 import CardComponent from '../../../components/CardComponent';
 import { MaterialIcons } from "@expo/vector-icons";
+import Api from '../../../Api';
 
 const MemoizedCardComponent = React.memo(CardComponent, (prevProps, nextProps) => {
 	return prevProps.post.id === nextProps.post.id && prevProps.location === nextProps.location && prevProps.isOptionsVisibleExternal === nextProps.isOptionsVisibleExternal;
@@ -51,11 +51,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 	
 	const firstFetch = async () => {
 		setRefreshing(true);
-		const serverResponse = await axios.get(`${base_url}/post/read/1?index=0&pageCount=5&location`, {
-			headers: {
-				Authorization: token
-			}
-		});
+		const serverResponse = await Api.get(`/post/read/1?index=0&pageCount=5&location`);
 		setPosts(serverResponse.data.data.readPostResponse);
 		setLocation(serverResponse.data.data.yourLocation)
 		if (serverResponse.data) {
@@ -68,7 +64,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 	};
 	const getPosts = async (selectedRange = null, index = 0) => {
 		setRefreshing(true);
-		let url = `${base_url}/post/read/1?index=${index}&pageCount=5`;
+		let url = `/post/read/1?index=${index}&pageCount=5`;
 		if (selectedRange) {
 			try {
 				setCopiedLocation(location)
@@ -100,11 +96,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		
 		try {
 			console.log(`url is`, url);
-			const serverResponse = await axios.get(url, {
-				headers: {
-					Authorization: token,
-				},
-			});
+			const serverResponse = await Api.get(url);
 			const newPosts = serverResponse.data.data.readPostResponse;
 			if (serverResponse.data.message === "게시물을 조회를 실패했습니다.") {
 				console.log("No more posts to load.");

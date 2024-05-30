@@ -13,6 +13,8 @@ import {
 import { FontAwesome5, AntDesign, FontAwesome6, MaterialIcons, Entypo, Ionicons } from '@expo/vector-icons';
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import axios from "axios";
+import Api from '../../../Api';
+import * as SecureStore from 'expo-secure-store';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -43,11 +45,7 @@ const MyOptions = ({ navigation, route }) => {
 	
 	const fetchDataFromServer = async () => {
 		try {
-			const response = await axios.get(`${base_url}/setting/myInfo`, {
-				headers: {
-					Authorization: `${token}`
-				}
-			});
+			const response = await Api.get(`/setting/myInfo`);
 			setUser(response.data.data); // Correctly update the state here
 			setIsLoading(false);
 		} catch (error) {
@@ -85,11 +83,7 @@ const MyOptions = ({ navigation, route }) => {
 		const [serverNotification, setServerNotification] = useState({});
 		const fetchNotification = async () => {
 			try {
-				const severResponse = await axios.get(`${base_url}/setting/notificationSetting`, {
-					headers: {
-						Authorization: `${token}`
-					}
-				});
+				const severResponse = await Api.get(`/setting/notificationSetting`);
 				console.log(severResponse.data.data);
 				setServerNotification(severResponse.data.data);
 			} catch (error) {
@@ -132,11 +126,7 @@ const MyOptions = ({ navigation, route }) => {
 		const saveChanges = async () => {
 			console.log("Saved notificationSettings:", serverNotification);
 			try {
-				const response = await axios.patch(`${base_url}/setting/notificationSetting`, serverNotification, {
-					headers: {
-						Authorization: `${token}`
-					}
-				});
+				const response = await Api.patch(`/setting/notificationSetting`, serverNotification);
 				alert("알림 설정이 성공적으로\n제출되었습니다.");
 			} catch (error) {
 				console.error('Error posting notification', error);
@@ -305,11 +295,7 @@ const MyOptions = ({ navigation, route }) => {
 		
 		const fetchBlockedUsers = async () => {
 			try {
-				const serverResponse = await axios.get(`${base_url}/blocks/read`, {
-					headers: {
-						Authorization: `${token}`
-					}
-				});
+				const serverResponse = await Api.get(`/blocks/read`);
 				setBlockedUsers(serverResponse.data.data);
 			} catch (error) {
 				console.error('Error fetching calendar data', error);
@@ -361,10 +347,7 @@ const MyOptions = ({ navigation, route }) => {
 				console.log('서버 보내기:', blockUserIds);
 				try {
 					// DELETE 요청 시 쿼리 파라미터로 blockUserIds를 포함하여 전송합니다.
-					const response = await axios.delete(`${base_url}/blocks/delete`, {
-						headers: {
-							Authorization: `${token}`
-						},
+					const response = await Api.delete(`/blocks/delete`, {
 						params: {
 							blockUserIds: blockUserIds.join(',')
 						}
@@ -497,11 +480,7 @@ const MyOptions = ({ navigation, route }) => {
 		}, [severTime_type]);
 		const fetchTime_type = async () => {
 			try {
-				const severResponse = await axios.get(`${base_url}/setting/notifyTime`, {
-					headers: {
-						Authorization: `${token}`
-					}
-				});
+				const severResponse = await Api.get(`/setting/notifyTime`);
 				const serverData = severResponse.data.data;
 				setSeverTime_type(serverData);
 				const msg = serverData.msg;
@@ -528,11 +507,7 @@ const MyOptions = ({ navigation, route }) => {
 			console.log('서버 응답:', editTime);
 			if (editTime !== null) {
 				try {
-					const severResponse = await axios.patch(`${base_url}/setting/notifyTime?editTime=${editTime}`, {}, {
-						headers: {
-							Authorization: `${token}`
-						}
-					});
+					const severResponse = await Api.patch(`/setting/notifyTime?editTime=${editTime}`, {}, );
 					const msg = severResponse.data.data;
 					if (msg) {
 						const alertMessage = extractTimeChangeMessage(msg);
@@ -733,22 +708,22 @@ const MyOptions = ({ navigation, route }) => {
 	};
 	const logOut = async () => {
 		try {
-			const response = await axios.delete(`${base_url}/accounts/logout`, {
-				headers: {
-					Authorization: token
-				}
-			});
-			console.log(response.data.message); // Correctly update the state here
+			const response = await Api.delete(`/accounts/logout`);
+			console.log(response.data.message);
+			await Promise.all([
+				SecureStore.deleteItemAsync('accessToken'),
+				SecureStore.deleteItemAsync('refreshToken'),
+				SecureStore.deleteItemAsync('userEmail'),
+				SecureStore.deleteItemAsync('userPassword')
+			]);
+			navigation.navigate('Login');
 		} catch (error) {
 			console.error('Error logOut', error);
 		}
 	};
 	const deleteAccount = async () => {
 		try {
-			const response = await axios.delete(`${base_url}/accounts/deleteUser`, {
-				headers: {
-					Authorization: `${token}`,},
-			});
+			const response = await Api.delete(`/accounts/deleteUser`);
 			alert(response.data.message)
 			console.log(response.data.message); // Correctly update the state here
 		} catch (error) {

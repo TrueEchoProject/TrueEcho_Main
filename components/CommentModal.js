@@ -16,9 +16,9 @@ import {
 	ActivityIndicator,
 } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-import axios from 'axios';
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import { AntDesign } from "@expo/vector-icons";
+import Api from '../Api';
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
@@ -64,11 +64,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 		setLoading(true);
 		const currentPosition = scrollPositionRef.current; // 로딩 전 스크롤 위치 저장
 		try {
-			const serverResponse = await axios.get(`${base_url}/post/read/comment/${postId}?index=${index}&pageCount=10`, {
-				headers: {
-					Authorization: token
-				}
-			});
+			const serverResponse = await Api.get(`/post/read/comment/${postId}?index=${index}&pageCount=10`);
 			console.log(serverResponse.data);
 			if (serverResponse.data.status === "500" || (serverResponse.data.data.comments && serverResponse.data.data.comments.length === 0)) {
 				console.log("No more comments to load.");
@@ -102,11 +98,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 				{ text: "삭제",
 					onPress: async () => {
 						try {
-							const response = await axios.delete(`${base_url}/post/delete/comment/${commentId}`, {
-								headers: {
-									Authorization: token
-								}
-							});
+							const response = await Api.delete(`/post/delete/comment/${commentId}`);
 							console.log(response.data.message)
 							setTextInputValue(''); // 입력 필드 초기화
 							setComments([]);
@@ -132,14 +124,11 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 			console.log(replyingTo)
 			// 답글 제출 로직
 			try {
-				const response = await axios.post(`${base_url}/post/write/comment`, {
+				const response = await Api.post(`/post/write/comment`, {
 					postId : postId,
 					parentCommentId: replyingTo,
 					content: textInputValue
-				}, {
-					headers: {
-						Authorization: token
-					}});
+				});
 				console.log(response.data);
 				setTextInputValue(''); // 입력 필드 초기화
 				setComments([]);
@@ -156,22 +145,19 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 		} else {
 			// 새 댓글 추가 로직
 			try {
-				const response = await axios.post(`${base_url}/post/write/comment`, {
+				const response = await Api.post(`/post/write/comment`, {
 					postId : postId,
 					parentCommentId: null,
 					content: textInputValue
-				}, {
-					headers: {
-						Authorization: token
-					}});
+				});
 				console.log(response.data);
-				fetchComments(); // 초기 페이지 로드
 				setTextInputValue(''); // 입력 필드 초기화
 				setComments([]);
 				setShowUnderComments({});
 				setReplyingTo(null);
 				setTextInputValue("");
 				setHasMore(true); // 댓글 추가 후 다시 댓글을 가져올 수 있도록 설정
+				fetchComments(); // 초기 페이지 로드
 				scrollViewRef.current?.scrollTo({ y: 0, animated: false }); // 스크롤을 최상단으로 이동
 			} catch (error) {
 				console.error('댓글 추가 실패:', error);

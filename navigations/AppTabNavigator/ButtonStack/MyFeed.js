@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
-import axios from 'axios';
+import Api from '../../../Api';
 
 const MyFeed = ({ navigation, route }) => {
 	const [serverPosts, setServerPosts] = useState([]);
@@ -28,11 +28,7 @@ const MyFeed = ({ navigation, route }) => {
 	
 	const fetchData = async (page) => {
 		try {
-			const serverResponse = await axios.get(`${base_url}/post/read/2?index=${page}&pageCount=5`, {
-				headers: {
-					Authorization: `${token}`
-				}
-			});
+			const serverResponse = await Api.get(`/post/read/2?index=${page}&pageCount=5`);
 			if (serverResponse.data.message === "게시물을 조회를 실패했습니다.") {
 				return;
 			} else {

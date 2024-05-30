@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, RefreshControl, Dimensions } from 'react-native';
 import PagerView from 'react-native-pager-view';
-import axios from 'axios';
+import Api from '../../../Api';
 import { useFocusEffect } from '@react-navigation/native';
 import CardComponent from '../../../components/CardComponent';
 
@@ -35,14 +35,10 @@ const FriendPosts = React.forwardRef((props, ref) => {
 	
 	const getPosts = async (index, isRefresh = false) => {
 		setIsLoading(true);
-		let url = `${base_url}/post/read/0?index=${index}&pageCount=5`;
+		let url = `/post/read/0?index=${index}&pageCount=5`;
 		try {
 			console.log(`url is`, url);
-			const serverResponse = await axios.get(url, {
-				headers: {
-					Authorization: token,
-				},
-			});
+			const serverResponse = await Api.get(url);
 			const newPosts = serverResponse.data.data.readPostResponse;
 			if (serverResponse.data.message === "게시물을 조회를 실패했습니다.") {
 				console.log("No more posts to load.");

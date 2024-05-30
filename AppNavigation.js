@@ -2,6 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginForm from './SignUp/LoginForm';
 import SignUpForm from './SignUp/SignUpForm';
+import ForgotPassword from './SignUp/ForgotPassword';
 import TabNavigation from './navigations/Tab';
 
 const Stack = createStackNavigator();
@@ -17,7 +18,12 @@ const AppNavigation = () => {
 			<Stack.Screen
 				name="SignUp" // 회원가입 페이지 추가
 				component={SignUpForm}
-				options={{ headerShown: false }}
+				options={{ headerShown: false}}
+			/>
+			<Stack.Screen
+				name="ForgotPassword" 
+				component={ForgotPassword}
+				options={{ headerShown: true}}
 			/>
 			<Stack.Screen
 				name="MainPostStackScreen"

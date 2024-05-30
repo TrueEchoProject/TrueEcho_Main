@@ -12,7 +12,7 @@ import {
 	ActivityIndicator, Button,
 } from 'react-native';
 import { Image as ExpoImage } from 'expo-image';
-import axios from "axios";
+import Api from "../../../Api";
 import * as ImagePicker from 'expo-image-picker';
 import MapView, { Marker } from "react-native-maps";
 import GetLocation from "../../../SignUp/GetLocation";
@@ -57,11 +57,7 @@ const MyInfo = ({ navigation, route }) => {
 	
 	const fetchServerData = async () => {
 		try {
-			const response = await axios.get(`${base_url}/setting/myInfo`, {
-				headers: {
-					Authorization: `${token}`
-				}
-			});
+			const response = await Api.get(`/setting/myInfo`);
 			const data = response.data.data;
 			setUsername(data.username);
 			setInitialUserId(data.nickname);
@@ -120,11 +116,7 @@ const MyInfo = ({ navigation, route }) => {
 			return;
 		}
 		console.log('Checking user ID:', editableUserId);
-		await axios.get(`${base_url}/accounts/nickname/duplication?nickname=${editableUserId}`, {
-			headers: {
-				Authorization: `${token}`
-			}
-		})
+		await Api.get(`/accounts/nickname/duplication?nickname=${editableUserId}`)
 			.then(response => {
 				console.log('Response data:', response.data);
 				if (response.data.message === "중복된 계정입니다.") {
@@ -162,11 +154,7 @@ const MyInfo = ({ navigation, route }) => {
 		};
 		
 		try {
-			const response = await axios.post(`${base_url}/setting/myInfo`, updatedUser, {
-				headers: {
-					Authorization: `${token}`
-				}
-			});
+			const response = await Api.post(`/setting/myInfo`, updatedUser);
 			console.log('User updated:', response.data);
 			navigation.navigate("MyP", { Update: updatedUser });
 		} catch (error) {

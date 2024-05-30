@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {View, StyleSheet, ActivityIndicator} from 'react-native';
 import AlarmCardComponent from "../../../components/AlarmCardComponent";
-import axios from "axios";
+import Api from "../../../Api";
 
 const FeedAlarm = ({ navigation, route }) => {
 	const [postId, setPostId] = useState("")
@@ -30,11 +30,7 @@ const FeedAlarm = ({ navigation, route }) => {
 	}, [postId]);
 	const fetchData = async (postId) => {
 		try {
-			const response = await axios.get(`${base_url}/post/read?postId=${postId}`, {
-				headers: {
-					Authorization: `${token}`
-				}
-			});
+			const response = await Api.get(`/post/read?postId=${postId}`);
 			setPost(response.data.data);
 			setIsLoading(false);
 		} catch (error) {

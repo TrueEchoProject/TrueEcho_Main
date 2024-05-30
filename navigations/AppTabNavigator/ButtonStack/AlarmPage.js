@@ -3,7 +3,7 @@ import {View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator}
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import moment from 'moment';
 import 'moment/locale/ko';
-import axios from "axios";
+import Api from '../../../Api';
 
 const Alarm = ({ navigation }) => {
 	const [isLoading, setIsLoading] = useState(true);
@@ -19,11 +19,7 @@ const Alarm = ({ navigation }) => {
 	
 	const fetchPost = async () => {
 		try {
-			const severResponse = await axios.get(`${base_url}/noti/readPost`, {
-				headers: {
-					Authorization: `${token}`
-				}
-			});
+			const severResponse = await Api.get(`/noti/readPost`);
 			console.log("server Post", severResponse.data.data.allNotis);
 			const processedData = processLikeAlarms(severResponse.data.data.allNotis.filter(alarm => alarm.type === 6));
 			setAlarmPost([...severResponse.data.data.allNotis.filter(alarm => alarm.type !== 6), ...processedData]);
@@ -34,11 +30,7 @@ const Alarm = ({ navigation }) => {
 	};
 	const fetchCommunity = async () => {
 		try {
-			const severResponse = await axios.get(`${base_url}/noti/readCommunity`, {
-				headers: {
-					Authorization: `${token}`
-				}
-			});
+			const severResponse = await Api.get(`/noti/readCommunity`);
 			console.log("server Community", severResponse.data.data.allNotis);
 			setAlarmCommunity(severResponse.data.data.allNotis);
 			setIsLoading(false);

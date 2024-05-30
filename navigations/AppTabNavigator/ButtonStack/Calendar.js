@@ -10,7 +10,7 @@ import {
 	Dimensions,
 	ScrollView, ActivityIndicator,
 } from 'react-native';
-import axios from "axios";
+import Api from '../../../Api';
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 
 const days = ["일", "월", "화", "수", "목", "금", "토"];
@@ -45,11 +45,7 @@ const Calendar = ({ navigation }) => {
 	const fetchCalendarAndPins = async () => {
 		try {
 			// Fetch monthly posts
-			const calendarResponse = await axios.get(`${base_url}/setting/monthlyPosts`, {
-				headers: {
-					Authorization: token
-				}
-			});
+			const calendarResponse = await Api.get(`/setting/monthlyPosts`);
 			const calendarData = calendarResponse.data.data.monthlyPostList;
 			// Process calendar data to keep the latest post for each date
 			const latestPostsByDate = {};
@@ -66,11 +62,7 @@ const Calendar = ({ navigation }) => {
 			});
 			setSpecificDates(newSpecificDates);
 			// Fetch selected pins
-			const pinsResponse = await axios.get(`${base_url}/setting/pins`, {
-				headers: {
-					Authorization: token
-				}
-			});
+			const pinsResponse = await Api.get(`/setting/pins`);
 			const selectedPinsData = pinsResponse.data.data.pinList;
 			const newSelectedPins = selectedPinsData.map(pin => ({
 				pinId: pin.pinId,
@@ -104,11 +96,7 @@ const Calendar = ({ navigation }) => {
 			}))
 		};
 		try {
-			const response = await axios.put(`${base_url}/setting/pins`, postData, {
-				headers: {
-					Authorization: token
-				}
-			});
+			const response = await Api.put(`/setting/pins`, postData);
 			alert("핀 업데이트가 성공적으로 제출되었습니다.");
 			if (response) {
 				console.log(pinData);
