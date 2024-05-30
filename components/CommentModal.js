@@ -206,14 +206,14 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 			</View>
 		);
 	});
-	const UnderCommentItem = ({ underComment, commentId }) => {
+	const UnderCommentItem = ({ underComment }) => {
 		return (
 			<View style={styles.underCommentItem}>
 				<ExpoImage style={styles.profileImage} source={{ uri: underComment.profileURL }} />
 				<Text>Date: {underComment.createdAt}</Text>
 				<Text style={styles.underCommentText}>{underComment.username}: {underComment.content}</Text>
 				{underComment.mine ?
-					<TouchableOpacity onPress={() => handleDeleteComment(commentId, underComment.commentId)}>
+					<TouchableOpacity onPress={() => handleDeleteComment(underComment.commentId)}>
 						<Text>삭제</Text>
 					</TouchableOpacity> : null
 				}

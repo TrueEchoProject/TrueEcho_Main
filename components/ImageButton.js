@@ -2,31 +2,41 @@ import React, { useState, useEffect } from 'react';
 import { Platform, TouchableOpacity, View, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import { Image } from 'expo-image';
 import { BlurView } from 'expo-blur';
+import storage from '../AsyncStorage'; // storage.js 파일 위치에 따라 경로 수정함. 현재 임시 주소임.
 
 const ImageButton = React.memo(({ front_image, back_image, containerHeight, windowWidth }) => {
 	const [isFrontShowing, setIsFrontShowing] = useState(true);
-	const [myPicture, setMyPicture] = useState("front");
+	const [myPicture, setMyPicture] = useState("");
 	const [loading, setLoading] = useState(true);
+	const defaultImage = "https://ppss.kr/wp-content/uploads/2020/07/01-4-540x304.png";
+	const ImageHeight = Math.floor(containerHeight);
+	const SmallHeight = Math.floor(ImageHeight / 3);
+	const SmallWidth = Math.floor(windowWidth / 3);
 	
 	useEffect(() => {
 		const loadImage = async () => {
-			// 여기서 이미지 로드를 시뮬레이션하거나 필요한 데이터를 로드합니다.
-			await new Promise(resolve => setTimeout(resolve, 1000)); // 예: 1초 대기
+			const Front = await storage.get('postFront');
+			const Back = await storage.get('postBack');
+			console.log('Retrieved data:', Front);
+			console.log('Retrieved data:', Back);
+			if (Front && Back) {
+				setMyPicture(""); // Both images exist
+			} else if (Front) {
+				setMyPicture("front"); // Only front image exists
+			} else if (Back) {
+				setMyPicture("back"); // Only back image exists
+			} else {
+				setMyPicture("none"); // Neither image exists
+			}
+			await new Promise(resolve => setTimeout(resolve, 20)); // 예: 1초 대기
 			setLoading(false);
 		};
-		
 		loadImage();
 	}, []);
 	
 	const changeImage = () => {
 		setIsFrontShowing(!isFrontShowing);
 	};
-	
-	const ImageHeight = Math.floor(containerHeight);
-	const SmallHeight = Math.floor(ImageHeight / 3);
-	const SmallWidth = Math.floor(windowWidth / 3);
-	
-	const defaultImage = "https://ppss.kr/wp-content/uploads/2020/07/01-4-540x304.png";
 	
 	const getBlurIntensity = (isFront) => {
 		if (myPicture === "none") return 50;
@@ -35,7 +45,6 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
 		}
 		return 0;
 	};
-	
 	const renderOverlayText = (isFront) => {
 		if (myPicture === "back" && isFront) {
 			return "당신의 얼굴을\n보고싶어요!";
@@ -47,7 +56,7 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
 	
 	if (loading) {
 		return (
-			<View style={styles.loaderContainer}>
+			<View style={styles.overlayTextContainer}>
 				<ActivityIndicator size="large" color="#0000ff" />
 			</View>
 		);

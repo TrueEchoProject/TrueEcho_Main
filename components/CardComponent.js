@@ -5,8 +5,10 @@ import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import { MaterialIcons, Ionicons, Feather, SimpleLineIcons } from "@expo/vector-icons";
 import { ImageButton } from "./ImageButton";
 import { CommentModal } from './CommentModal'; // 댓글 창 컴포넌트 임포트
+import { useNavigation } from '@react-navigation/native'; // useNavigation import
 
 const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExternal, onBlock }) => {
+	const navigation = useNavigation(); // useNavigation 훅 사용
 	const [isOptionsVisible, setIsOptionsVisible] = useState(isOptionsVisibleExternal || false);
 	const [buttonLayout, setButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
 	const [imageButtonHeight, setImageButtonHeight] = useState(0);
@@ -16,6 +18,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 	const [layoutSet, setLayoutSet] = useState(false); // 레이아웃 설정 여부 상태 추가
 	const windowWidth = Dimensions.get('window').width;
 	const [friendLook, setFriendLook] = useState(true); // 좋아요 수 관리
+	const defaultImage = "https://ppss.kr/wp-content/uploads/2020/07/01-4-540x304.png";
 
 	useEffect(() => {
 		setIsOptionsVisible(isOptionsVisibleExternal);
@@ -133,10 +136,12 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 			<View style={styles.cardContainer}>
 				<View style={styles.cardItem}>
 					<View style={styles.left}>
-						<ExpoImage
-							style={styles.thumbnail}
-							source={{ uri: post.profileUrl }}
-						/>
+						<TouchableOpacity onPress={() => {navigation.navigate("유저 알람", {userId : post.userId})}}>
+							<ExpoImage
+								style={styles.thumbnail}
+								source={{ uri: post.profileUrl ? post.profileUrl : defaultImage}}
+							/>
+						</TouchableOpacity>
 						<View style={styles.body}>
 							<Text style={{fontSize: 15, fontWeight: "500"}}>{post.username}</Text>
 							<Text style={{fontSize: 12, fontWeight: "300"}}note>{new Date(post.createdAt).toDateString()}</Text>

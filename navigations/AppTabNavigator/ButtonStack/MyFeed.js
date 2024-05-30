@@ -5,7 +5,7 @@ import axios from 'axios';
 const MyFeed = ({ navigation, route }) => {
 	const [serverPosts, setServerPosts] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
-	const [page, setPage] = useState(1); // 페이지 번호 상태 추가
+	const [page, setPage] = useState(0); // 페이지 번호 상태 추가
 	const [isFetchingMore, setIsFetchingMore] = useState(false); // 추가 데이터 로드 상태 추가
 	const [isEndReached, setIsEndReached] = useState(false); // onEndReached 호출 상태
 	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
@@ -22,22 +22,26 @@ const MyFeed = ({ navigation, route }) => {
 		}
 	}, [serverPosts]);
 	useEffect(() => {
-		fetchData();
+		fetchData(page);
 	}, []);
 	
 	const fetchData = async (page) => {
 		try {
-			const serverResponse = await axios.get(`${base_url}/post/read/2?index=0&pageCount=10&location=&page=${page}`, {
+			const serverResponse = await axios.get(`${base_url}/post/read/2?index=${page}&pageCount=5`, {
 				headers: {
 					Authorization: `${token}`
 				}
 			});
-			const newPosts = serverResponse.data.data.readPostResponse;
-			setServerPosts(prevPosts => {
-				const postIds = new Set(prevPosts.map(post => post.postId));
-				const filteredNewPosts = newPosts.filter(post => !postIds.has(post.postId));
-				return [...prevPosts, ...filteredNewPosts];
-			});
+			if (serverResponse.data.message === "게시물을 조회를 실패했습니다.") {
+				return;
+			} else {
+				const newPosts = serverResponse.data.data.readPostResponse;
+				setServerPosts(prevPosts => {
+					const postIds = new Set(prevPosts.map(post => post.postId));
+					const filteredNewPosts = newPosts.filter(post => !postIds.has(post.postId));
+					return [...prevPosts, ...filteredNewPosts];
+				});
+			}
 			setIsLoading(false);
 		} catch (error) {
 			console.error('Error fetching data', error);

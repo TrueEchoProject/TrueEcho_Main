@@ -1,5 +1,14 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl, Text, TouchableOpacity, Modal } from 'react-native';
+import {
+	View,
+	StyleSheet,
+	ScrollView,
+	RefreshControl,
+	Text,
+	TouchableOpacity,
+	Modal,
+	ActivityIndicator
+} from 'react-native';
 import PagerView from 'react-native-pager-view';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
@@ -13,27 +22,57 @@ const MemoizedCardComponent = React.memo(CardComponent, (prevProps, nextProps) =
 const PublicPosts = React.forwardRef((props, ref) => {
 	const [range, setRange] = useState(null);
 	const [currentPage, setCurrentPage] = useState(0);
+	const [location, setLocation] = useState("");
+	const [copiedLocation, setCopiedLocation] = useState("");
 	const [optionsVisibleStates, setOptionsVisibleStates] = useState({});
 	const [posts, setPosts] = useState([]);
-	const [location, setLocation] = useState("");
 	const [refreshing, setRefreshing] = useState(false);
 	const [isRefreshing, setIsRefreshing] = useState(false);
 	const pagerViewRef = useRef(null);
 	const [optionsVisible, setOptionsVisible] = useState(false);
-	
-	const toggleOptions = () => {
-		setOptionsVisible(!optionsVisible);
+
+	useEffect(() => {
+		console.log("post is", posts);
+	}, [posts]);
+	useEffect(() => {
+		console.log("location is", location);
+	}, [location]);
+	React.useImperativeHandle(ref, () => ({
+		getPosts: firstFetch,
+	}));
+	useFocusEffect(useCallback(() => {
+		firstFetch();
+	}, []));
+	const refreshPosts = () => {
+		setIsRefreshing(true);
+		getPosts(null, 0);
 	};
 	
-	const getPosts = async (selectedRange, selectedLocation, start = 0) => {
+	const firstFetch = async () => {
 		setRefreshing(true);
-		const limit = 10; // 한 번에 불러올 게시물 수
-		let url = `http://192.168.0.27:3000/posts?scope=PUBLIC&_start=${start}&_limit=${limit}`;
-		
+		const serverResponse = await axios.get(`${base_url}/post/read/1?index=0&pageCount=5&location`, {
+			headers: {
+				Authorization: token
+			}
+		});
+		setPosts(serverResponse.data.data.readPostResponse);
+		setLocation(serverResponse.data.data.yourLocation)
+		if (serverResponse.data) {
+			setRefreshing(false);
+			setOptionsVisible(false);
+			setTimeout(() => {
+				pagerViewRef.current?.setPageWithoutAnimation(0);
+				setIsRefreshing(false);
+			}, 50); // 소폭의 지연을 추가하여 컴포넌트의 상태가 안정화되도록 합니다.
+		}
+	};
+	const getPosts = async (selectedRange, index = 0) => {
+		setRefreshing(true);
+		let url = `${base_url}/post/read/1?index=${index}&pageCount=5&location`;
 		if (selectedRange) {
 			try {
-				const locationResponse = await axios.get('http://192.168.0.3:3000/user_location');
-				const words = locationResponse.data[0].your_location.split(' ');
+				setCopiedLocation(location)
+				const words = copiedLocation.split(' ');
 				let newLocation = '';
 				switch (selectedRange) {
 					case 'small':
@@ -50,33 +89,39 @@ const PublicPosts = React.forwardRef((props, ref) => {
 						setRefreshing(false);
 						return;
 				}
-				setLocation(newLocation);
-				url += `&location_contains=${encodeURIComponent(newLocation)}`;
+				console.log('Got location:', newLocation)
+				url += `=${encodeURIComponent(newLocation)}`;
 			} catch (error) {
 				console.error('Fetching user location failed:', error);
 				setRefreshing(false);
 				return;
 			}
-		} else if (selectedLocation) {
-			url += `&location_contains=${encodeURIComponent(selectedLocation)}`;
 		}
 		
 		try {
-			const postsResponse = await axios.get(url);
-			const newPosts = postsResponse.data;
-			setPosts(prevPosts => start === 0 ? newPosts : [...prevPosts, ...newPosts]);
-			if (start === 0) {
+			console.log(`url is`, url);
+			const serverResponse = await axios.get(url,
+				{
+					headers: {
+						Authorization: token,
+					},
+				},
+			);
+			const newPosts = serverResponse.data.data.readPostResponse;
+			if (index === 0) {
 				setIsRefreshing(true); // 새로고침이 발생하면 이 플래그를 설정
 			}
 			if (newPosts.length === 0) {
+				return;
 				console.log("No more posts to load.");
 			}
+			setPosts(prevPosts => index === 0 ? newPosts : [...prevPosts, ...newPosts]);
 		} catch (error) {
 			console.error('Fetching posts failed:', error);
 		} finally {
 			setRefreshing(false);
 			setOptionsVisible(false);
-			if (start === 0) {
+			if (index === 0) {
 				setTimeout(() => {
 					pagerViewRef.current?.setPageWithoutAnimation(0);
 					setIsRefreshing(false);
@@ -85,27 +130,10 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		}
 	};
 	
-	const refreshPosts = () => {
-		setIsRefreshing(true);
-		getPosts(null, '', 0); // range와 location을 명시적으로 null 혹은 ''로 설정하여 호출
+	const toggleOptions = () => {
+		setOptionsVisible(!optionsVisible);
 	};
 	
-	React.useImperativeHandle(ref, () => ({
-		getPosts: refreshPosts,
-	}));
-	
-	useFocusEffect(useCallback(() => {
-		refreshPosts();
-	}, []));
-	
-	useEffect(() => {
-		console.log(posts);
-		console.log(location);
-	}, [posts], [location]);
-	
-	if (posts.length === 0) {
-		return <View style={style.container}><Text>Loading...</Text></View>;
-	}
 	const handleBlock = async (postId) => {
 		setPosts(prev => prev.filter(item => item.post_id !== postId));
 		await new Promise(resolve => setTimeout(resolve, 0)); // 비동기 업데이트를 위한 Promise
@@ -113,10 +141,6 @@ const PublicPosts = React.forwardRef((props, ref) => {
 	const handlePageChange = (e) => {
 		const newIndex = e.nativeEvent.position;
 		setCurrentPage(newIndex);
-		
-		// 상태 초기화 로그 확인
-		console.log("Resetting option visibility states due to page change.");
-		
 		// 모든 옵션을 숨깁니다.
 		setOptionsVisibleStates(prevStates => {
 			const newStates = {};
@@ -124,14 +148,16 @@ const PublicPosts = React.forwardRef((props, ref) => {
 				newStates[post.post_id] = false;
 			});
 			return newStates;
-		});
-		
+		})
 		// 추가 데이터 로딩
-		if (newIndex === posts.length - 4) {
-			getPosts(range,location, posts.length);
+		if (newIndex === posts.length - 1) {
+			getPosts(range, posts.length);
 		}
 	};
 	
+	if (posts.length === 0) {
+		return <View style={style.container}><Text>Loading...</Text></View>;
+	}
 	return (
 		<>
 			<View style={{ alignItems:"flex-end", backgroundColor: "white", position: "relative", }}>
@@ -213,12 +239,12 @@ const PublicPosts = React.forwardRef((props, ref) => {
 					onPageSelected={handlePageChange}
 				>
 					{posts.map((post) => (
-						<View key={post.post_id} style={style.container}>
+						<View key={post.postId} style={style.container}>
 							<MemoizedCardComponent
 								post={post}
 								onBlock={handleBlock}
-								isOptionsVisibleExternal={optionsVisibleStates[post.post_id]}
-								setIsOptionsVisibleExternal={(visible) => setOptionsVisibleStates(prev => ({ ...prev, [post.post_id]: visible }))}
+								isOptionsVisibleExternal={optionsVisibleStates[post.postId]}
+								setIsOptionsVisibleExternal={(visible) => setOptionsVisibleStates(prev => ({ ...prev, [post.postId]: visible }))}
 							/>
 						</View>
 					))}
