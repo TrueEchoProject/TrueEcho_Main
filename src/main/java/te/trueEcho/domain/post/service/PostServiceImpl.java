@@ -112,10 +112,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public CommentListResponse getComment(Long postId) {
-        List<Comment> comments = postRepository.readCommentWithUnderComments(postId);
+    public CommentListResponse getComment(ReadCommentRequest readCommentRequest) {
+        List<Comment> comments = postRepository.readCommentWithUnderComments(
+                readCommentRequest.getPostId());
+
         User user = authUtil.getLoginUser();
-        return commentToDto.converter(comments, postId, user.getId());
+        return commentToDto.converter(comments,
+                readCommentRequest,
+                user.getId());
     }
     @Transactional
     @Override

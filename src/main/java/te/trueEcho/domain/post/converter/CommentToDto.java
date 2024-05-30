@@ -2,6 +2,7 @@ package te.trueEcho.domain.post.converter;
 import lombok.NoArgsConstructor;
 import te.trueEcho.domain.post.dto.CommentListResponse;
 import te.trueEcho.domain.post.dto.CommentResponse;
+import te.trueEcho.domain.post.dto.ReadCommentRequest;
 import te.trueEcho.domain.post.entity.Comment;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,11 +12,13 @@ import java.util.Map;
 
 @NoArgsConstructor
 public class CommentToDto {
-    public CommentListResponse converter(List<Comment> commentList, Long postId ,long requestUserId) {
+    public CommentListResponse converter(List<Comment> commentList,
+                                         ReadCommentRequest request,
+                                         long requestUserId) {
 
         Map<Long, CommentResponse> mainCommentsMap = new HashMap<>();
         List<CommentResponse> commentResponseList = new ArrayList<>();
-
+    
         commentList.forEach(comment -> {
             List<CommentResponse> underComments = new ArrayList<>();
 
@@ -40,9 +43,16 @@ public class CommentToDto {
             }
             else commentResponseList.add(dto);
         });
-
-        return  CommentListResponse.builder().postId(postId).comments(commentResponseList).build();
+  
+        // 페이징
+        int fromIndex = request.getIndex() * request.getPageCount();
+        int toIndex = Math.min(fromIndex + request.getPageCount(), 
+                                commentResponseList.size());
+        
+        return  CommentListResponse.builder().
+                postId(request.getPostId())
+                .comments(commentResponseList.subList(fromIndex, toIndex))
+                .commentCount(commentList.size())
+                .build();
     }
-
-
 }

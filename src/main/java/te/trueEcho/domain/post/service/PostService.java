@@ -14,7 +14,7 @@ public interface PostService {
 
     PostListResponse getAllPostByType(ReadPostRequest readPostRequest);
 
-    CommentListResponse getComment(Long postId);
+    CommentListResponse getComment(ReadCommentRequest readCommentRequest);
 
     LikeUpdateResponse updateLikes(UpdateLikesRequest updateLikesRequest);
 

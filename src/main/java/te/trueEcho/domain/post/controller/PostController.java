@@ -100,9 +100,20 @@ public class PostController {
 
     @GetMapping("/read/comment/{postId}")
     public ResponseEntity<ResponseForm> readComment(
-            @PathVariable Long postId){
+            @PathVariable Long postId,
+            @RequestParam int index,
+            @RequestParam int pageCount
+            ){
 
-        CommentListResponse commentListResponse = postService.getComment(postId);
+
+
+        CommentListResponse commentListResponse = postService.getComment(
+                ReadCommentRequest.builder()
+                        .postId(postId)
+                        .index(index)
+                        .pageCount(pageCount)
+                        .build()
+        );
 
         return !commentListResponse.getComments().isEmpty() ?
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_COMMENT_SUCCESS, commentListResponse)) :

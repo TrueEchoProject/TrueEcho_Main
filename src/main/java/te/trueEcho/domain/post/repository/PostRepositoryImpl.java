@@ -61,10 +61,12 @@ public class PostRepositoryImpl implements PostRepository {
      * 메인 댓글에서 시작해서 조회하기.
      */
     public List<Comment> readCommentWithUnderComments(Long postId) {
+
         return em.createQuery("SELECT c FROM Comment c " +
                         "JOIN FETCH c.user " +
                         "WHERE c.post.id = :postId " +
                         "ORDER BY c.mainComment.id, c.createdAt", Comment.class)
+
                 .setParameter("postId", postId)
                 .getResultList();
     }
