@@ -12,7 +12,7 @@ const Alarm = ({ navigation }) => {
 	const [alarmCommunity, setAlarmCommunity] = useState([])
 	const GraphImage = "https://i.ibb.co/NybJtMb/DALL-E-2024-05-06-18-33-20-A-simple-and-clear-bar-chart-representing-a-generic-voting-result-suitabl.webp"
 	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
-	
+
 	useEffect( () => {
 		fetchPost()
 	}, []);
@@ -329,6 +329,11 @@ const Alarm = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
+	loader: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
 	container: {
 		flex: 1,
 		backgroundColor: 'white',

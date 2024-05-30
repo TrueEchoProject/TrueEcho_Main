@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Share, Dimensions, } from 'react-native';
+import {
+	View,
+	Text,
+	StyleSheet,
+	TouchableOpacity,
+	TouchableWithoutFeedback,
+	Share,
+	Dimensions,
+	ActivityIndicator,
+} from 'react-native';
 import axios from 'axios';
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import { Ionicons, Feather, SimpleLineIcons } from "@expo/vector-icons";
@@ -10,24 +19,36 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 	const [isOptionsVisible, setIsOptionsVisible] = useState(false);
 	const [buttonLayout, setButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
 	const [imageButtonHeight, setImageButtonHeight] = useState(0);
-	const [isLiked, setIsLiked] = useState(false); // 좋아요 상태 관리
-	const [likesCount, setLikesCount] = useState(post.likes_count); // 좋아요 수 관리
+	const [isLiked, setIsLiked] = useState(post.myLike); // 좋아요 상태 관리
+	const [likesCount, setLikesCount] = useState(post.likesCount); // 좋아요 수 관리
 	const [isCommentVisible, setIsCommentVisible] = useState(false); // 댓글 창 표시 상태
 	const [layoutSet, setLayoutSet] = useState(false); // 레이아웃 설정 여부 상태 추가
 	const windowWidth = Dimensions.get('window').width;
 	const [friendLook, setFriendLook] = useState(true); // 좋아요 수 관리
-	
+
 	const toggleLike = async () => {
 		const newLikesCount = isLiked ? likesCount - 1 : likesCount + 1;
-		setIsLiked(!isLiked);
+		const newIsLiked = !isLiked;
+		setIsLiked(newIsLiked);
 		setLikesCount(newLikesCount);
-		console.log(newLikesCount)
-		console.log(post.post_id)
+		
+		console.log('New Likes Count:', newLikesCount);
+		console.log('Post ID:', post.postId);
+		console.log('Is Liked:', newIsLiked);
+		
 		try {
-			await axios.patch(`http://192.168.0.27:3000/posts/${post.post_id}`, {
-				likes_count: newLikesCount
-			});
-			console.log('Likes count updated successfully');
+			const response = await axios.patch(
+				`${base_url}/post/update/likes`, {
+					postId: post.postId,
+					isLike: newIsLiked,
+				}, {
+					headers: {
+						Authorization: token
+					}
+				});
+			if (response.data) {
+				console.log('Likes count updated successfully');
+			}
 		} catch (error) {
 			console.error('Error updating likes count:', error);
 		}
@@ -47,7 +68,7 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 			if (response.data) {
 				alert('유저를 정상적으로 차단했습니다');
 				hideOptions();
-				onActionComplete && onActionComplete();
+				onActionComplete && onActionComplete(post.postId);
 			}
 		} catch (error) {
 			console.error('Error while blocking the user:', error.response ? error.response.data : error.message);
@@ -176,7 +197,7 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 				{isOptionsVisible && (
 					<View style={[
 						styles.optionsContainer,
-						post.friend === 1 ?
+						post.friend === false ?
 							{ top: buttonLayout.y + buttonLayout.height, right: 0 } :
 							{ top: buttonLayout.y + buttonLayout.height + 30, right: 0 }
 					]}>
@@ -209,7 +230,7 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 						<View style={styles.left}>
 							<TouchableOpacity style={styles.iconButton} onPress={toggleLike}>
 								<Ionicons name={isLiked ? 'heart' : 'heart-outline'} style={styles.icon} size={24} color={isLiked ? 'red' : 'black'}/>
-								<Text>{post.likesCount}</Text>
+								<Text>{likesCount}</Text>
 							</TouchableOpacity>
 							<TouchableOpacity style={styles.iconButton}>
 								<Ionicons name='chatbubbles' style={styles.icon} onPress={toggleCommentVisibility} size={24}/>
@@ -217,7 +238,7 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 						</View>
 						<CommentModal
 							isVisible={isCommentVisible}
-							postId={post.post_id}
+							postId={post.postId}
 							onClose={() => setIsCommentVisible(false)}
 						/>
 						{post.status === "FREE" || post.status === "LATE" ? (
@@ -244,9 +265,14 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 			</View>
 		</TouchableWithoutFeedback>
 	);
-}
+};
 
 const styles = StyleSheet.create({
+	loader: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
 	imageButtonContainer: {
 		flex: 1,
 	},

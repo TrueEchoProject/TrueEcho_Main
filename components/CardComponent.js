@@ -10,72 +10,93 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 	const [isOptionsVisible, setIsOptionsVisible] = useState(isOptionsVisibleExternal || false);
 	const [buttonLayout, setButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
 	const [imageButtonHeight, setImageButtonHeight] = useState(0);
-	const [isLiked, setIsLiked] = useState(false); // 좋아요 상태 관리
-	const [likesCount, setLikesCount] = useState(post.likes_count); // 좋아요 수 관리
+	const [isLiked, setIsLiked] = useState(post.myLike); // 좋아요 상태 관리
+	const [likesCount, setLikesCount] = useState(post.likesCount); // 좋아요 수 관리
 	const [isCommentVisible, setIsCommentVisible] = useState(false); // 댓글 창 표시 상태
 	const [layoutSet, setLayoutSet] = useState(false); // 레이아웃 설정 여부 상태 추가
 	const windowWidth = Dimensions.get('window').width;
 	const [friendLook, setFriendLook] = useState(true); // 좋아요 수 관리
-	
+
 	useEffect(() => {
 		setIsOptionsVisible(isOptionsVisibleExternal);
 		console.log(`Options Visible for ${post.post_id}: ${isOptionsVisibleExternal}`);
 	}, [isOptionsVisibleExternal]); // 이제 외부에서 받은 props가 변경될 때마다 로그를 찍고 상태를 업데이트합니다.
 	const toggleLike = async () => {
 		const newLikesCount = isLiked ? likesCount - 1 : likesCount + 1;
-		setIsLiked(!isLiked);
+		const newIsLiked = !isLiked;
+		setIsLiked(newIsLiked);
 		setLikesCount(newLikesCount);
-		console.log(newLikesCount)
-		console.log(post.post_id)
+		
+		console.log('New Likes Count:', newLikesCount);
+		console.log('Post ID:', post.postId);
+		console.log('Is Liked:', newIsLiked);
+		
 		try {
-			await axios.patch(`http://192.168.0.27:3000/posts/${post.post_id}`, {
-				likes_count: newLikesCount
-			});
-			console.log('Likes count updated successfully');
+			const response = await axios.patch(
+				`${base_url}/post/update/likes`, {
+					postId: post.postId,
+					isLike: newIsLiked,
+				}, {
+					headers: {
+						Authorization: token
+					}
+				});
+			if (response.data) {
+				console.log('Likes count updated successfully');
+			}
 		} catch (error) {
 			console.error('Error updating likes count:', error);
 		}
 	};
 	const toggleBlock = async () => {
-		console.log(post.username);
+		console.log(post.userId);
 		try {
-			const response = await axios.post(`http://192.168.0.27:3000/blocked_users`, {
-				username: post.username,
-				profile_url: post.profile_url
+			const formData = new FormData();
+			formData.append('blockUserId', post.userId);
+			
+			const response = await axios.post(`${base_url}/blocks/add`, formData, {
+				headers: {
+					Authorization: token,
+					'Content-Type': 'multipart/form-data'
+				}
 			});
-			console.log('User blocked successfully');
-			alert('유저를 정상적으로 차단했습니다');
-			hideOptions();
+			if (response.data) {
+				alert('유저를 정상적으로 차단했습니다');
+				hideOptions();
 			onBlock(post.post_id); // 차단 이벤트를 상위 컴포넌트에 알림
+			}
 		} catch (error) {
 			console.error('Error while blocking the user:', error.response ? error.response.data : error.message);
-			// HTTP 상태 코드가 409인 경우 여기서 처리
-			if (error.response && error.response.status === 409) {
-				alert('This user is already blocked.');
-				hideOptions();
-			}
 		}
 	};
 	const toggleDelete = async () => {
 		console.log(post.post_id);
 		try {
-			alert('정상적으로 게시물을 삭제했어요');
-			hideOptions();
+			const response = await axios.delete(`${base_url}/post/delete/${post.postId}`, {
+				headers: {
+					Authorization: token,
+				}
+			});
+			if (response.data) {
+				alert('정상적으로 게시물을 삭제했어요');
+				hideOptions();
 			onBlock(post.post_id); // 차단 이벤트를 상위 컴포넌트에 알림
+			}
 		} catch (error) {
 			console.error('Error while blocking the user:', error.response ? error.response.data : error.message);
-			// HTTP 상태 코드가 409인 경우 여기서 처리
-			if (error.response && error.response.status === 409) {
-				alert('This user is already blocked.');
-				hideOptions();
-			}
 		}
 	};
 	const toggleFriendSend = async () => {
-		console.log(post.username);  // 이것은 여전히 정상적으로 작동합니다.
+		console.log(post.userId);
 		try {
-			await axios.post(`http://192.168.0.27:3000/friendSend`, {
-				friendSendUser: post.username
+			const formData = new FormData();
+			formData.append('targetUserId', post.userId);
+			
+			const response = await axios.post(`${base_url}/friends/add`, formData, {
+				headers: {
+					Authorization: token,
+					'Content-Type': 'multipart/form-data'
+				}
 			});
 			console.log('Send updated successfully');
 			setFriendLook(false);
@@ -114,12 +135,11 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 					<View style={styles.left}>
 						<ExpoImage
 							style={styles.thumbnail}
-							source={{ uri: post.profile_url }}
+							source={{ uri: post.profileUrl }}
 						/>
 						<View style={styles.body}>
 							<Text style={{fontSize: 15, fontWeight: "500"}}>{post.username}</Text>
-							<Text style={{fontSize: 12, fontWeight: "300"}}note>{new Date(post.created_at).toDateString()}</Text>
-							<Text style={{fontSize: 12, fontWeight: "300"}}>{post.location}</Text>
+							<Text style={{fontSize: 12, fontWeight: "300"}}note>{new Date(post.createdAt).toDateString()}</Text>
 						</View>
 					</View>
 					<View style={{
@@ -175,11 +195,11 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 				{isOptionsVisible && (
 					<View style={[
 						styles.optionsContainer,
-						post.friend === 1 ?
+						post.friend === false ?
 							{ top: buttonLayout.y + buttonLayout.height, right: 0 } :
 							{ top: buttonLayout.y + buttonLayout.height + 30, right: 0 }
 					]}>
-						{post.IsMine ? (
+						{post.mine ? (
 							<TouchableOpacity onPress={toggleDelete} style={{ flexDirection:'row', alignItems: 'center', }}>
 								<Feather name='alert-triangle' style={{ marginLeft: 10, color: 'red' }}/>
 								<Text style={[styles.optionItem, {color: 'red'}]}>삭제하기</Text>
@@ -194,8 +214,8 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 				)}
 				<View style={styles.imageButtonContainer} onLayout={onImageButtonLayout}>
 					<ImageButton
-						front_image={post.post_front_url}
-						back_image={post.post_back_url}
+						front_image={post.postFrontUrl}
+						back_image={post.postBackUrl}
 						containerHeight={imageButtonHeight}
 						windowWidth={windowWidth}
 					/>
@@ -213,16 +233,13 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 							<TouchableOpacity style={styles.iconButton}>
 								<Ionicons name='chatbubbles' style={styles.icon} onPress={toggleCommentVisibility} size={24}/>
 							</TouchableOpacity>
-							<TouchableOpacity onPress={() => Share.share({ message: `${post.title}: http://192.168.0.27:3000/posts?post_id=${post.post_id}/` })}>
-								<MaterialIcons name='send' style={styles.icon} size={24} />
-							</TouchableOpacity>
 						</View>
 						<CommentModal
 							isVisible={isCommentVisible}
-							postId={post.post_id}
+							postId={post.postId}
 							onClose={() => setIsCommentVisible(false)}
 						/>
-						{post.post_status === 1 || post.post_status === 2 ? (
+						{post.status === "FREE" || post.status === "LATE" ? (
 							<View style={[
 								styles.right,
 								{
@@ -233,10 +250,10 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 									backgroundColor: "#3B4664",
 									borderRadius: 10,}
 							]}>
-								{post.post_status === 1 && (
+								{post.status === "FREE" && (
 									<Text style={{ color: "white", fontSize: 25}}>free</Text>
 								)}
-								{post.post_status === 2 && (
+								{post.status === "LATE" && (
 									<Text style={{ color: "white", fontSize: 25}}>late</Text>
 								)}
 							</View>
@@ -246,9 +263,14 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 			</View>
 		</TouchableWithoutFeedback>
 	);
-}
+};
 
 const styles = StyleSheet.create({
+	loader: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
 	imageButtonContainer: {
 		flex: 1,
 	},

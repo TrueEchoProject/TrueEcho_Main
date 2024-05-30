@@ -343,6 +343,11 @@ const MyInfo = ({ navigation, route }) => {
 }
 
 const styles = StyleSheet.create({
+	loader: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
 	LocModalContainer: {
 		flex: 1,
 		justifyContent: 'center',

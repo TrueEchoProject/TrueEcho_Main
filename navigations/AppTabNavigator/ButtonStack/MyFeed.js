@@ -38,10 +38,10 @@ const MyFeed = ({ navigation, route }) => {
 				const filteredNewPosts = newPosts.filter(post => !postIds.has(post.postId));
 				return [...prevPosts, ...filteredNewPosts];
 			});
+			setIsLoading(false);
 		} catch (error) {
 			console.error('Error fetching data', error);
 		} finally {
-			setIsLoading(false);
 			setIsFetchingMore(false);
 		}
 	};
@@ -65,7 +65,6 @@ const MyFeed = ({ navigation, route }) => {
 			<Image source={{ uri: item.postBackUrl || defaultImage }} style={styles.postImage} />
 		</TouchableOpacity>
 	);
-	
 	const renderFooter = () => {
 		if (!isFetchingMore) return null;
 		return (
@@ -75,6 +74,9 @@ const MyFeed = ({ navigation, route }) => {
 		);
 	};
 	
+	if (isLoading) {
+		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff" /></View>;
+	}
 	return (
 		<View style={styles.container}>
 			{isLoading ? (

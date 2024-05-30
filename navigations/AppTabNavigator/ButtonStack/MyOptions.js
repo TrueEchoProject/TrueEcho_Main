@@ -860,6 +860,11 @@ const MyOptions = ({ navigation, route }) => {
 };
 
 const styles = StyleSheet.create({
+	loader: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
 	container: {
 		flex: 1,
 		backgroundColor: '#fff',

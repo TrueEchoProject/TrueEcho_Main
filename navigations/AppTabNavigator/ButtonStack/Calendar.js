@@ -330,6 +330,11 @@ const Calendar = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+	loader: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
 	bg: {
 		backgroundColor: 'rgba(0,0,0,0.3)',
 		flex: 1,
