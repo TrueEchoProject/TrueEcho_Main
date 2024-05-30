@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, RefreshControl, Dimensions, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, Dimensions } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
@@ -16,7 +16,6 @@ const FriendPosts = React.forwardRef((props, ref) => {
 	const [page, setPage] = useState(0);
 	const pagerViewRef = useRef(null);
 	const [isLoading, setIsLoading] = useState(false);
-	const [noMorePosts, setNoMorePosts] = useState(false); // 추가: 더 이상 불러올 게시물이 없는지 상태 관리
 	
 	useEffect(() => {
 		console.log("post is", posts);
@@ -27,16 +26,14 @@ const FriendPosts = React.forwardRef((props, ref) => {
 	useFocusEffect(useCallback(() => {
 		refreshPosts();
 	}, []));
-	
+
 	const refreshPosts = async () => {
 		setPage(0);
-		setNoMorePosts(false); // 초기화
 		await getPosts(0, true);
 		setRefreshing(false);
 	};
 	
 	const getPosts = async (index, isRefresh = false) => {
-		if (isLoading || noMorePosts) return; // 로딩 중이거나 더 이상 불러올 게시물이 없을 경우 리턴
 		setIsLoading(true);
 		let url = `${base_url}/post/read/0?index=${index}&pageCount=5`;
 		try {
@@ -47,10 +44,9 @@ const FriendPosts = React.forwardRef((props, ref) => {
 				},
 			});
 			const newPosts = serverResponse.data.data.readPostResponse;
-			if (newPosts.length === 0) {
-				setNoMorePosts(true);
+			if (serverResponse.data.message === "게시물을 조회를 실패했습니다.") {
 				console.log("No more posts to load.");
-				Alert.alert("No more posts to load.");
+				alert("No more posts to load.")
 				setIsLoading(false);
 				return;
 			}
@@ -86,7 +82,7 @@ const FriendPosts = React.forwardRef((props, ref) => {
 			});
 			return newStates;
 		});
-		if (newIndex === posts.length - 1 && !noMorePosts) {
+		if (newIndex === posts.length - 1) {
 			const nextPage = page + 1;
 			setPage(nextPage);
 			getPosts(nextPage);
@@ -118,11 +114,6 @@ const FriendPosts = React.forwardRef((props, ref) => {
 					</View>
 				))}
 			</PagerView>
-			{noMorePosts && (
-				<View style={styles.footer}>
-					<Text>더 이상 불러올 게시물이 없습니다.</Text>
-				</View>
-			)}
 		</ScrollView>
 	);
 });
@@ -186,10 +177,6 @@ const styles = StyleSheet.create({
 	buttonText: {
 		fontSize: 15,
 		color: "white",
-	},
-	footer: {
-		padding: 20,
-		alignItems: 'center',
 	},
 });
 
