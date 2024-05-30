@@ -22,7 +22,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 
 	useEffect(() => {
 		setIsOptionsVisible(isOptionsVisibleExternal);
-		console.log(`Options Visible for ${post.post_id}: ${isOptionsVisibleExternal}`);
+		console.log(`Options Visible for ${post.postId}: ${isOptionsVisibleExternal}`);
 	}, [isOptionsVisibleExternal]); // 이제 외부에서 받은 props가 변경될 때마다 로그를 찍고 상태를 업데이트합니다.
 	const toggleLike = async () => {
 		const newLikesCount = isLiked ? likesCount - 1 : likesCount + 1;
@@ -66,14 +66,14 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 			if (response.data) {
 				alert('유저를 정상적으로 차단했습니다');
 				hideOptions();
-			onBlock(post.post_id); // 차단 이벤트를 상위 컴포넌트에 알림
+			onBlock(post.postId); // 차단 이벤트를 상위 컴포넌트에 알림
 			}
 		} catch (error) {
 			console.error('Error while blocking the user:', error.response ? error.response.data : error.message);
 		}
 	};
 	const toggleDelete = async () => {
-		console.log(post.post_id);
+		console.log(post.postId);
 		try {
 			const response = await axios.delete(`${base_url}/post/delete/${post.postId}`, {
 				headers: {
@@ -83,7 +83,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 			if (response.data) {
 				alert('정상적으로 게시물을 삭제했어요');
 				hideOptions();
-			onBlock(post.post_id); // 차단 이벤트를 상위 컴포넌트에 알림
+			onBlock(post.postId); // 차단 이벤트를 상위 컴포넌트에 알림
 			}
 		} catch (error) {
 			console.error('Error while blocking the user:', error.response ? error.response.data : error.message);

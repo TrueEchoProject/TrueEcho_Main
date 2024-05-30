@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, RefreshControl, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, Dimensions, Alert } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
@@ -11,132 +11,95 @@ const windowHeight = Dimensions.get('window').height;
 const FriendPosts = React.forwardRef((props, ref) => {
 	const [currentPage, setCurrentPage] = useState(0);
 	const [optionsVisibleStates, setOptionsVisibleStates] = useState({});
-	const [contentList, setContentList] = useState([]);
+	const [posts, setPosts] = useState([]);
 	const [refreshing, setRefreshing] = useState(false);
-	const [friendStatus, setFriendStatus] = useState([]);
+	const [page, setPage] = useState(0);
 	const pagerViewRef = useRef(null);
-	const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
-	const [lastFetchedIndex, setLastFetchedIndex] = useState(0);
+	const [isLoading, setIsLoading] = useState(false);
+	const [noMorePosts, setNoMorePosts] = useState(false); // 추가: 더 이상 불러올 게시물이 없는지 상태 관리
 	
-	// 디버깅 로그 추가
 	useEffect(() => {
-		console.log('FriendPosts component mounted');
-		return () => {
-			console.log('FriendPosts component unmounted');
-		};
-	}, []);
+		console.log("post is", posts);
+	}, [posts]);
+	React.useImperativeHandle(ref, () => ({
+		getPosts: refreshPosts,
+	}));
+	useFocusEffect(useCallback(() => {
+		refreshPosts();
+	}, []));
 	
-	const fetchPostsAndRecommendations = async (start) => {
-		if (start <= lastFetchedIndex && contentList.length > 0) return;  // 이미 불러온 데이터 범위 내라면 요청 중지
-		setIsLoading(true); // 로딩 시작
-		const postLimit = 8;
-		const recommendationLimit = 4;
+	const refreshPosts = async () => {
+		setPage(0);
+		setNoMorePosts(false); // 초기화
+		await getPosts(0, true);
+		setRefreshing(false);
+	};
+	
+	const getPosts = async (index, isRefresh = false) => {
+		if (isLoading || noMorePosts) return; // 로딩 중이거나 더 이상 불러올 게시물이 없을 경우 리턴
+		setIsLoading(true);
+		let url = `${base_url}/post/read/0?index=${index}&pageCount=5`;
 		try {
-			console.log(`Fetching posts and recommendations starting from index ${start}`);
-			const postResponse = await axios.get(`http://192.168.0.3:3000/posts?scope=FRIEND&_start=${start}&_limit=${postLimit}`);
-			const newPosts = postResponse.data;
-			
-			const updatedContentList = [...contentList, ...newPosts.map(post => ({ type: 'post', data: post }))];
-			setOptionsVisibleStates(newOptionsVisibleStates => {
-				const newOptions = { ...newOptionsVisibleStates };
-				newPosts.forEach(post => {
-					newOptions[post.post_id] = false;
-				});
-				return newOptions;
+			console.log(`url is`, url);
+			const serverResponse = await axios.get(url, {
+				headers: {
+					Authorization: token,
+				},
 			});
-			
-			if (newPosts.length === postLimit) {
-				const recsResponse = await axios.get(`http://192.168.0.3:3000/recommendations?_start=${contentList.filter(item => item.type === 'recommendation').length}&_limit=${recommendationLimit}`);
-				const newRecs = recsResponse.data;
-				if (newRecs && newRecs.length > 0) {
-					updatedContentList.push({ type: 'recommendation', data: newRecs });
-					setFriendStatus(friendStatus => [...friendStatus, ...new Array(newRecs.length).fill(false)]);
-				}
+			const newPosts = serverResponse.data.data.readPostResponse;
+			if (newPosts.length === 0) {
+				setNoMorePosts(true);
+				console.log("No more posts to load.");
+				Alert.alert("No more posts to load.");
+				setIsLoading(false);
+				return;
 			}
-			setContentList(updatedContentList);
-			console.log('Updated content list:', updatedContentList);
+			if (isRefresh) {
+				setPosts(newPosts);
+			} else {
+				setPosts(prevPosts => [...prevPosts, ...newPosts]);
+			}
 		} catch (error) {
 			console.error('Error fetching posts and recommendations:', error);
 		} finally {
-			setLastFetchedIndex(start + postLimit); // 가져온 마지막 게시물 인덱스 업데이트
 			setIsLoading(false);
+			if (isRefresh) {
+				setTimeout(() => {
+					pagerViewRef.current?.setPageWithoutAnimation(0);
+				}, 50);
+			}
 		}
 	};
-	
-	const getPosts = async (start = 0) => {
-		if (start === 0) {
-			setRefreshing(true);
-			setContentList([]);
-			setOptionsVisibleStates({});
-			setFriendStatus([]);
-		}
-		await fetchPostsAndRecommendations(start);
-		setRefreshing(false);
-		if (start === 0) {
-			pagerViewRef.current?.setPageWithoutAnimation(0);
-		}
-	};
-	
-	const toggleFriendSend = async (index, item) => {
-		try {
-			await axios.post(`http://192.168.0.3:3000/friendSend`, {
-				friendSendUser: item.username
-			});
-			const newFriendStatus = [...friendStatus];
-			newFriendStatus[index] = true;
-			setFriendStatus(newFriendStatus);
-		} catch (error) {
-			console.error('Error sending friend request:', error);
-		}
-	};
-	
-	useFocusEffect(
-		useCallback(() => {
-			console.log('useFocusEffect triggered');
-			getPosts();
-		}, [])
-	);
 	
 	const handleBlock = async (postId) => {
-		setContentList(prev => prev.filter(item => item.data.post_id !== postId));
-		await new Promise(resolve => setTimeout(resolve, 0)); // 비동기 업데이트를 위한 Promise
+		setPosts(prev => prev.filter(item => item.postId !== postId));
+		await new Promise(resolve => setTimeout(resolve, 0));
 	};
 	
-	const handlePageChange = useCallback((e) => {
+	const handlePageChange = (e) => {
 		const newIndex = e.nativeEvent.position;
-		if (newIndex === currentPage) return; // 페이지가 실제로 변경되지 않았다면 종료
-		
 		setCurrentPage(newIndex);
-		// 페이지 변경 시 이전 페이지 옵션 비활성화
-		setOptionsVisibleStates(prev => ({
-			...prev,
-			[contentList[currentPage]?.data?.post_id]: false
-		}));
-	}, [currentPage]);
-	
-	useEffect(() => {
-		const thresholdIndex = contentList.length - 5; // 데이터를 더 불러오기 시작할 임계점
-		if (currentPage >= thresholdIndex && !isLoading) {
-			fetchPostsAndRecommendations(contentList.length);
+		setOptionsVisibleStates(prevStates => {
+			const newStates = {};
+			posts.forEach(post => {
+				newStates[post.postId] = false;
+			});
+			return newStates;
+		});
+		if (newIndex === posts.length - 1 && !noMorePosts) {
+			const nextPage = page + 1;
+			setPage(nextPage);
+			getPosts(nextPage);
 		}
-	}, [currentPage, isLoading, contentList]);
+	};
 	
-	React.useImperativeHandle(ref, () => ({
-		getPosts: getPosts,
-	}));
-	
-	useEffect(() => {
-		console.log('Content list updated:', contentList);
-	}, [contentList]);
-	
-	if (contentList.length === 0) {
+	if (posts.length === 0 && isLoading) {
 		return <View style={styles.container}><Text>Loading...</Text></View>;
 	}
-	
 	return (
 		<ScrollView
 			contentContainerStyle={styles.scrollViewContent}
-			refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => getPosts(0)} />}
+			refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshPosts} />}
 		>
 			<PagerView
 				style={styles.pagerView}
@@ -144,35 +107,22 @@ const FriendPosts = React.forwardRef((props, ref) => {
 				ref={pagerViewRef}
 				onPageSelected={handlePageChange}
 			>
-				{contentList.map((item, index) => (
-					<View key={index} style={styles.postContainer}>
-						{item.type === 'post' ? (
-							<CardComponent
-								post={item.data}
-								onBlock={handleBlock}
-								isOptionsVisibleExternal={optionsVisibleStates[item.data.post_id]}
-								setIsOptionsVisibleExternal={(visible) => setOptionsVisibleStates(prev => ({ ...prev, [item.data.post_id]: visible }))}
-							/>
-						) : (
-							Array.isArray(item.data) && item.data.map((rec, recIndex) => (  // Check if item.data is an array
-								<View key={rec.Recommendation_id} style={styles.recommendationContainer}>
-									<Image source={{ uri: rec.profile_url }} style={styles.profileImage} />
-									<Text style={styles.username}>{rec.username}</Text>
-									{!friendStatus[recIndex] ? (
-										<TouchableOpacity onPress={() => toggleFriendSend(recIndex, rec)} style={styles.button}>
-											<Text style={styles.buttonText}>친구 추가</Text>
-										</TouchableOpacity>
-									) : (
-										<View style={styles.button}>
-											<Text style={styles.buttonText}>추가 완료</Text>
-										</View>
-									)}
-								</View>
-							))
-						)}
+				{posts.map((post) => (
+					<View key={post.postId} style={styles.postContainer}>
+						<CardComponent
+							post={post}
+							onBlock={handleBlock}
+							isOptionsVisibleExternal={optionsVisibleStates[post.postId]}
+							setIsOptionsVisibleExternal={(visible) => setOptionsVisibleStates(prev => ({ ...prev, [post.postId]: visible }))}
+						/>
 					</View>
 				))}
 			</PagerView>
+			{noMorePosts && (
+				<View style={styles.footer}>
+					<Text>더 이상 불러올 게시물이 없습니다.</Text>
+				</View>
+			)}
 		</ScrollView>
 	);
 });
@@ -236,6 +186,10 @@ const styles = StyleSheet.create({
 	buttonText: {
 		fontSize: 15,
 		color: "white",
+	},
+	footer: {
+		padding: 20,
+		alignItems: 'center',
 	},
 });
 

@@ -14,8 +14,10 @@ import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import { Ionicons, Feather, SimpleLineIcons } from "@expo/vector-icons";
 import { ImageButton } from "./ImageButton";
 import { CommentModal } from './CommentModal'; // 댓글 창 컴포넌트 임포트
+import { useNavigation } from '@react-navigation/native'; // useNavigation import
 
 const AlarmCardComponent = ({ post, onActionComplete }) => {
+	const navigation = useNavigation(); // useNavigation 훅 사용
 	const [isOptionsVisible, setIsOptionsVisible] = useState(false);
 	const [buttonLayout, setButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
 	const [imageButtonHeight, setImageButtonHeight] = useState(0);
@@ -135,10 +137,12 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 			<View style={styles.cardContainer}>
 				<View style={styles.cardItem}>
 					<View style={styles.left}>
-						<ExpoImage
-							style={styles.thumbnail}
-							source={{ uri: post.profileUrl }}
-						/>
+						<TouchableOpacity onPress={() => {navigation.navigate("유저 알람", {userId : post.userId})}}>
+							<ExpoImage
+								style={styles.thumbnail}
+								source={{ uri: post.profileUrl ? post.profileUrl : defaultImage}}
+							/>
+						</TouchableOpacity>
 						<View style={styles.body}>
 							<Text style={{fontSize: 15, fontWeight: "500"}}>{post.username}</Text>
 							<Text style={{fontSize: 12, fontWeight: "300"}}note>{new Date(post.createdAt).toDateString()}</Text>

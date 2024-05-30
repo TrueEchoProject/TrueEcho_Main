@@ -13,6 +13,7 @@ import {
 	Platform,
 	KeyboardAvoidingView,
 	Alert,
+	ActivityIndicator,
 } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import axios from 'axios';
@@ -25,6 +26,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	const insets = useSafeAreaInsets(); // Safe Area 여백 얻기
 	const initialMarginTop = Platform.OS === 'ios' ? windowHeight * 0.3 + insets.top : windowHeight * 0.3;
 	const marginTopLimit = Platform.OS === 'ios' ? insets.top : 0;
+	const [page, setPage] = useState(0); // 페이지 번호
 	const [comments, setComments] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [commentNone, setCommentNone] = useState(false);
@@ -53,20 +55,27 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 		} else {
 			setComments([]);
 			setHasMore(true);
+			setPage(0); // 페이지 번호 초기화
 		}
 	}, [isVisible, postId]);
 	
-	const fetchComments = async () => {
+	const fetchComments = async (index = 0) => {
+		if (loading || !hasMore) return; // 로딩 중이거나 더 이상 로드할 댓글이 없으면 중복 요청 방지
 		setLoading(true);
 		const currentPosition = scrollPositionRef.current; // 로딩 전 스크롤 위치 저장
 		try {
-			const serverResponse = await axios.get(`${base_url}/post/read/comment/${postId}`, {
+			const serverResponse = await axios.get(`${base_url}/post/read/comment/${postId}?index=${index}&pageCount=10`, {
 				headers: {
 					Authorization: token
 				}
 			});
 			console.log(serverResponse.data);
-			
+			if (serverResponse.data.status === "500" || (serverResponse.data.data.comments && serverResponse.data.data.comments.length === 0)) {
+				console.log("No more comments to load.");
+				setHasMore(false);
+				setLoading(false);
+				return;
+			}
 			if (serverResponse.data.data.comments && serverResponse.data.data.comments.length > 0) {
 				setComments(prevComments => [...prevComments, ...serverResponse.data.data.comments]);
 				setCommentNone(false);
@@ -105,6 +114,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 							setReplyingTo(null);
 							setTextInputValue("");
 							setCommentNone(false);
+							setHasMore(true); // 삭제 후 다시 댓글을 가져올 수 있도록 설정
 							fetchComments(); // 초기 페이지 로드
 						} catch (error) {
 							console.error('댓글 삭제 실패:', error);
@@ -126,7 +136,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 					postId : postId,
 					parentCommentId: replyingTo,
 					content: textInputValue
-			}, {
+				}, {
 					headers: {
 						Authorization: token
 					}});
@@ -137,6 +147,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 				setReplyingTo(null);
 				setTextInputValue("");
 				setCommentNone(false);
+				setHasMore(true); // 댓글 추가 후 다시 댓글을 가져올 수 있도록 설정
 				fetchComments(); // 초기 페이지 로드
 				return;  // 함수 실행 종료
 			} catch (error) {
@@ -153,13 +164,14 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 					headers: {
 						Authorization: token
 					}});
-    	  console.log(response.data);
+				console.log(response.data);
 				fetchComments(); // 초기 페이지 로드
 				setTextInputValue(''); // 입력 필드 초기화
 				setComments([]);
 				setShowUnderComments({});
 				setReplyingTo(null);
 				setTextInputValue("");
+				setHasMore(true); // 댓글 추가 후 다시 댓글을 가져올 수 있도록 설정
 				scrollViewRef.current?.scrollTo({ y: 0, animated: false }); // 스크롤을 최상단으로 이동
 			} catch (error) {
 				console.error('댓글 추가 실패:', error);
@@ -200,6 +212,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 				{comment.underCommentCount > 0 && (
 					<TouchableOpacity onPress={() => toggleUnderComments(index)}>
 						<Text>답글 {comment.underCommentCount}개 더보기</Text>
+						{showUnderComments[index] ? <Text>▲</Text> : <Text>▼</Text>}
 					</TouchableOpacity>
 				)}
 				<UnderComments commentId={comment.commentId} underComments={comment.underComments} isVisible={showUnderComments[index]} />
@@ -275,7 +288,12 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 		const { contentOffset } = nativeEvent;
 		scrollPositionRef.current = contentOffset.y;
 		if (nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
-			nativeEvent.contentSize.height - 20) {
+			nativeEvent.contentSize.height - 20 && hasMore && !loading) {
+			setPage(prevPage => {
+				const nextPage = prevPage + 1;
+				fetchComments(nextPage);
+				return nextPage;
+			});
 		}
 	};
 	
@@ -313,7 +331,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 										<Text> 댓글이 없습니다. </Text>
 										<Text> 댓글을 추가해보세요!. </Text>
 									</>
-								) : loading ? (
+								) : loading && comments.length === 0 ? (
 									<Text>Loading comments...</Text> // 로딩 인디케이터 표시
 								) : (
 									<>
@@ -326,6 +344,9 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 												index={index}
 											/>
 										))}
+										{loading && hasMore && (
+											<ActivityIndicator size="large" color="#0000ff" />
+										)}
 									</>
 								)}
 							</ScrollView>
@@ -355,7 +376,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 			</Modal>
 		</SafeAreaProvider>
 	);
-})
+});
 
 const styles = StyleSheet.create({
 	cancelButton: {

@@ -7,7 +7,8 @@ import {
 	Text,
 	TouchableOpacity,
 	Modal,
-	ActivityIndicator
+	ActivityIndicator,
+	Alert,
 } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import axios from 'axios';
@@ -21,15 +22,17 @@ const MemoizedCardComponent = React.memo(CardComponent, (prevProps, nextProps) =
 
 const PublicPosts = React.forwardRef((props, ref) => {
 	const [range, setRange] = useState(null);
-	const [currentPage, setCurrentPage] = useState(0);
-	const [location, setLocation] = useState("");
-	const [copiedLocation, setCopiedLocation] = useState("");
 	const [optionsVisibleStates, setOptionsVisibleStates] = useState({});
 	const [posts, setPosts] = useState([]);
 	const [refreshing, setRefreshing] = useState(false);
-	const [isRefreshing, setIsRefreshing] = useState(false);
+	const [page, setPage] = useState(0);
 	const pagerViewRef = useRef(null);
+	const [currentPage, setCurrentPage] = useState(0);
+	const [location, setLocation] = useState("");
+	const [copiedLocation, setCopiedLocation] = useState("");
 	const [optionsVisible, setOptionsVisible] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
+	const [noMorePosts, setNoMorePosts] = useState(false); // 추가: 더 이상 불러올 게시물이 없는지 상태 관리
 
 	useEffect(() => {
 		console.log("post is", posts);
@@ -38,15 +41,17 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		console.log("location is", location);
 	}, [location]);
 	React.useImperativeHandle(ref, () => ({
-		getPosts: firstFetch,
+		getPosts: refreshPosts,
 	}));
 	useFocusEffect(useCallback(() => {
-		firstFetch();
+		refreshPosts();
 	}, []));
-	const refreshPosts = () => {
-		setIsRefreshing(true);
-		getPosts(null, 0);
-	};
+	
+	const refreshPosts = async () => {
+		setPage(0);
+		setNoMorePosts(false); // 초기화
+		firstFetch();
+	}
 	
 	const firstFetch = async () => {
 		setRefreshing(true);
@@ -62,16 +67,16 @@ const PublicPosts = React.forwardRef((props, ref) => {
 			setOptionsVisible(false);
 			setTimeout(() => {
 				pagerViewRef.current?.setPageWithoutAnimation(0);
-				setIsRefreshing(false);
 			}, 50); // 소폭의 지연을 추가하여 컴포넌트의 상태가 안정화되도록 합니다.
 		}
 	};
-	const getPosts = async (selectedRange, index = 0) => {
-		setRefreshing(true);
-		let url = `${base_url}/post/read/1?index=${index}&pageCount=5&location`;
+	const getPosts = async (selectedRange = null, index = 0) => {
+		if (isLoading || noMorePosts) return; // 로딩 중이거나 더 이상 불러올 게시물이 없을 경우 리턴
+		setIsLoading(true);
+		let url = `${base_url}/post/read/1?index=${index}&pageCount=5`;
 		if (selectedRange) {
 			try {
-				setCopiedLocation(location)
+				setCopiedLocation(location);
 				const words = copiedLocation.split(' ');
 				let newLocation = '';
 				switch (selectedRange) {
@@ -86,46 +91,44 @@ const PublicPosts = React.forwardRef((props, ref) => {
 						break;
 					default:
 						console.log('Invalid range');
-						setRefreshing(false);
+						setIsLoading(false);
 						return;
 				}
-				console.log('Got location:', newLocation)
-				url += `=${encodeURIComponent(newLocation)}`;
+				console.log('Got location:', newLocation);
+				url += `&location=${encodeURIComponent(newLocation)}`;
 			} catch (error) {
 				console.error('Fetching user location failed:', error);
-				setRefreshing(false);
+				setIsLoading(false);
 				return;
 			}
 		}
 		
 		try {
 			console.log(`url is`, url);
-			const serverResponse = await axios.get(url,
-				{
-					headers: {
-						Authorization: token,
-					},
+			const serverResponse = await axios.get(url, {
+				headers: {
+					Authorization: token,
 				},
-			);
+			});
 			const newPosts = serverResponse.data.data.readPostResponse;
-			if (index === 0) {
-				setIsRefreshing(true); // 새로고침이 발생하면 이 플래그를 설정
-			}
-			if (newPosts.length === 0) {
-				return;
+			if (serverResponse.data.message === "게시물을 조회를 실패했습니다.") {
 				console.log("No more posts to load.");
+				Alert.alert("No more posts to load.");
+				setNoMorePosts(true);
+				setIsLoading(false);
+				return;
 			}
 			setPosts(prevPosts => index === 0 ? newPosts : [...prevPosts, ...newPosts]);
 		} catch (error) {
 			console.error('Fetching posts failed:', error);
 		} finally {
+			setIsLoading(false);
 			setRefreshing(false);
 			setOptionsVisible(false);
 			if (index === 0) {
 				setTimeout(() => {
 					pagerViewRef.current?.setPageWithoutAnimation(0);
-					setIsRefreshing(false);
-				}, 50); // 소폭의 지연을 추가하여 컴포넌트의 상태가 안정화되도록 합니다.
+				}, 50);
 			}
 		}
 	};
@@ -135,32 +138,35 @@ const PublicPosts = React.forwardRef((props, ref) => {
 	};
 	
 	const handleBlock = async (postId) => {
-		setPosts(prev => prev.filter(item => item.post_id !== postId));
+		setPosts(prev => prev.filter(item => item.postId !== postId));
 		await new Promise(resolve => setTimeout(resolve, 0)); // 비동기 업데이트를 위한 Promise
 	};
 	const handlePageChange = (e) => {
 		const newIndex = e.nativeEvent.position;
 		setCurrentPage(newIndex);
-		// 모든 옵션을 숨깁니다.
 		setOptionsVisibleStates(prevStates => {
 			const newStates = {};
 			posts.forEach(post => {
-				newStates[post.post_id] = false;
+				newStates[post.postId] = false;
 			});
 			return newStates;
-		})
+		});
 		// 추가 데이터 로딩
-		if (newIndex === posts.length - 1) {
-			getPosts(range, posts.length);
+		if (newIndex === posts.length - 1 && !noMorePosts) {
+			setPage(prevPage => {
+				const nextPage = prevPage + 1;
+				getPosts(range, nextPage);
+				return nextPage;
+			});
 		}
 	};
 	
-	if (posts.length === 0) {
+	if (posts.length === 0 && isLoading) {
 		return <View style={style.container}><Text>Loading...</Text></View>;
 	}
 	return (
 		<>
-			<View style={{ alignItems:"flex-end", backgroundColor: "white", position: "relative", }}>
+			<View style={{ alignItems: "flex-end", backgroundColor: "white", position: "relative", }}>
 				<TouchableOpacity
 					onPress={toggleOptions}
 				>
@@ -168,9 +174,9 @@ const PublicPosts = React.forwardRef((props, ref) => {
 						name='settings'
 						size={28}
 						style={{
-							backgroundColor:"white",
+							backgroundColor: "white",
 							marginRight: 10,
-						}}/>
+						}} />
 				</TouchableOpacity>
 			</View>
 			{optionsVisible && (
@@ -188,7 +194,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 							>
 								<MaterialIcons name="backspace"></MaterialIcons>
 							</TouchableOpacity>
-							<View style={{marginTop: 10}}>
+							<View style={{ marginTop: 10 }}>
 								<TouchableOpacity
 									style={{
 										backgroundColor: "grey",
@@ -225,7 +231,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 							</View>
 						</View>
 					</View>
-				</Modal> )}
+				</Modal>)}
 			<ScrollView
 				contentContainerStyle={style.scrollViewContent}
 				refreshControl={
@@ -249,6 +255,11 @@ const PublicPosts = React.forwardRef((props, ref) => {
 						</View>
 					))}
 				</PagerView>
+				{noMorePosts && (
+					<View style={style.footer}>
+						<Text>더 이상 불러올 게시물이 없습니다.</Text>
+					</View>
+				)}
 			</ScrollView>
 		</>
 	);
@@ -304,7 +315,11 @@ const style = StyleSheet.create({
 	modalText: {
 		marginBottom: 15,
 		textAlign: "center"
-	}
+	},
+	footer: {
+		padding: 20,
+		alignItems: 'center',
+	},
 });
 
 export default PublicPosts;

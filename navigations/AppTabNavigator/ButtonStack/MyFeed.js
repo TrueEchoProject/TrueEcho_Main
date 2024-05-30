@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {View, Text, FlatList, Image, StyleSheet, ActivityIndicator, TouchableOpacity} from 'react-native';
+import { View, Text, FlatList, Image, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 
 const MyFeed = ({ navigation, route }) => {
@@ -8,6 +8,7 @@ const MyFeed = ({ navigation, route }) => {
 	const [page, setPage] = useState(0); // 페이지 번호 상태 추가
 	const [isFetchingMore, setIsFetchingMore] = useState(false); // 추가 데이터 로드 상태 추가
 	const [isEndReached, setIsEndReached] = useState(false); // onEndReached 호출 상태
+	const [noMoreData, setNoMoreData] = useState(false); // 더 이상 불러올 데이터가 없는지 확인하는 상태
 	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
 	
 	useEffect(() => {
@@ -36,11 +37,15 @@ const MyFeed = ({ navigation, route }) => {
 				return;
 			} else {
 				const newPosts = serverResponse.data.data.readPostResponse;
-				setServerPosts(prevPosts => {
-					const postIds = new Set(prevPosts.map(post => post.postId));
-					const filteredNewPosts = newPosts.filter(post => !postIds.has(post.postId));
-					return [...prevPosts, ...filteredNewPosts];
-				});
+				if (newPosts.length === 0) {
+					setNoMoreData(true);
+				} else {
+					setServerPosts(prevPosts => {
+						const postIds = new Set(prevPosts.map(post => post.postId));
+						const filteredNewPosts = newPosts.filter(post => !postIds.has(post.postId));
+						return [...prevPosts, ...filteredNewPosts];
+					});
+				}
 			}
 			setIsLoading(false);
 		} catch (error) {
@@ -51,7 +56,7 @@ const MyFeed = ({ navigation, route }) => {
 	};
 	
 	const handleLoadMore = () => {
-		if (!isFetchingMore && !isEndReached) {
+		if (!isFetchingMore && !isEndReached && !noMoreData) {
 			setIsFetchingMore(true);
 			setIsEndReached(true);
 			setPage(prevPage => {
@@ -70,6 +75,13 @@ const MyFeed = ({ navigation, route }) => {
 		</TouchableOpacity>
 	);
 	const renderFooter = () => {
+		if (noMoreData) {
+			return (
+				<View style={styles.footer}>
+					<Text>더 이상 불러올 게시물이 없습니다.</Text>
+				</View>
+			);
+		}
 		if (!isFetchingMore) return null;
 		return (
 			<View style={styles.footer}>
@@ -127,12 +139,19 @@ const styles = StyleSheet.create({
 	},
 	footer: {
 		paddingVertical: 20,
+		alignItems: 'center',
 	},
 	emptyContainer: {
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
+	loader: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+	}
 });
 
 export default MyFeed;
+
