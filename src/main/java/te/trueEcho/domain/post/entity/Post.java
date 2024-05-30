@@ -41,18 +41,14 @@ public class Post extends CreatedDateAudit {
     @Enumerated(EnumType.STRING)
     private PostStatus status;
 
-
-    @OneToOne(mappedBy = "post", fetch = FetchType.LAZY)
-    private Pin pin;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "post",  cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Like> likes;
 
-    @OneToMany(mappedBy = "post",  cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Comment> comments;
 
     @Builder

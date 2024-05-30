@@ -3,6 +3,7 @@ package te.trueEcho.domain.post.repository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.BatchSize;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import te.trueEcho.domain.post.entity.Comment;
@@ -25,11 +26,10 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Transactional(readOnly = true)
     @Override
+    @BatchSize(size = 100)
     public List<Post> getAllPost(int pageCount, int index, List<User> filteredUser) {
         int currentIndex = index * pageCount;
-
-        return em.createQuery("select p from Post p " +
-                        "left join fetch p.likes " +
+        return em.createQuery("select distinct p from Post p " +
                         "where  (p.user in : filteredUser)" +
                         "order by p.createdAt desc", Post.class)
                 .setParameter("filteredUser", filteredUser)
