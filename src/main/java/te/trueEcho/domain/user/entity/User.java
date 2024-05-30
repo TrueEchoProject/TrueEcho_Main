@@ -178,7 +178,7 @@ public class User extends CreatedDateAudit {
     }
 
 
-    public void updatePassword(String updatepassword) {
+    public void updatePassword(String password) {
         this.password = password;
     }
 

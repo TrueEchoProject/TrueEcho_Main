@@ -3,6 +3,7 @@ package te.trueEcho.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import te.trueEcho.domain.user.converter.SignUpDtoToUser;
@@ -24,6 +25,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final EmailMemoryRepository emailMemoryRepository;
     private final SignUpDtoToUser signUpDtoToUser;
     private final KakaoService kakaoService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public boolean isTypeDuplicated(UserCheckRequest emailRequestDto, ValidationType target) {
         if(target == ValidationType.EMAIL) {
@@ -80,6 +82,22 @@ public class UserAuthServiceImpl implements UserAuthService {
        }
 
        return false;
+    }
+
+    @Transactional
+    @Override
+    public boolean updatePassword(UpdatePasswordRequest updatePasswordRequest) {
+
+        try {
+            User user = userAuthRepository.findUserByEmail(updatePasswordRequest.getEmail());
+            if (user == null) return false;
+            user.updatePassword(passwordEncoder.encode(updatePasswordRequest.getNewPassword()));
+            return true;
+
+        }catch (Exception e){
+            log.error("updatePassword error : {}",e.getMessage());
+            return false;
+        }
     }
 
     @Override

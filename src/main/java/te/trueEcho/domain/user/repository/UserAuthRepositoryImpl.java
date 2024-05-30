@@ -20,11 +20,16 @@ public class UserAuthRepositoryImpl implements UserAuthRepository {
     private final EntityManager em;
 
     public void save(User user) {
-        if (user.getId() == null) {
-            em.persist(user);
-        } else {
-            em.merge(user);
+        try {
+            if (user.getId() == null) {
+                em.persist(user);
+            } else {
+                em.merge(user);
+            }
+        }catch (Exception e) {
+            log.error("User save error: " + e.getMessage());
         }
+
     }
     @Override
     public User findUserById(Long id) {

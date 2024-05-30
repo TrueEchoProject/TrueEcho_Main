@@ -39,7 +39,8 @@ public enum ResponseCode {
     DELETE_USER_FAIL(200, "U0014", "회원 탈퇴 및 로그아웃에 실패하였습니다."),
     CANCEL_DELETE_USER_SUCCESS(200, "U0014", "회원 탈퇴 취소 및 로그인에 성공했습니다."),
     CANCEL_DELETE_USER_FAIL(200, "U0014", "회원 탈퇴 취소 및 로그인에 실패했습니다."),
-
+    UPDATE_PASSWORD_SUCCESS(200, "U0015", "비밀번호 변경에 성공했습니다."),
+    UPDATE_PASSWORD_FAIL(200, "U0015", "비밀번호 변경에 실패했습니다."),
     // 로그인
     AUTHENTICATION_FAIL(401, "T001", "사용자 인증에 실패했습니다."),
     AUTHORIZATION_FAIL(403, "T002", "사용자 인가에 실패했습니다."),

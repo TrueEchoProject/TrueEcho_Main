@@ -60,6 +60,7 @@ public class SecurityConfig {
 //                                .requestMatchers(PathRequest.toH2Console()).permitAll()
                                 .requestMatchers(HttpMethod.GET, "/accounts/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/accounts/**").permitAll()
+                                .requestMatchers(HttpMethod.PATCH, "/accounts/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/swagger-ui/**").permitAll()
                                 .requestMatchers(HttpMethod.PUT, "/swagger-ui/**").permitAll()

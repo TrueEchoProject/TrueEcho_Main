@@ -10,14 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import te.trueEcho.domain.user.dto.CheckCodeRequest;
-import te.trueEcho.domain.user.dto.RegisterRequest;
-import te.trueEcho.domain.user.dto.UserCheckRequest;
-import te.trueEcho.domain.user.dto.ValidationType;
+import te.trueEcho.domain.user.dto.*;
 import te.trueEcho.domain.user.service.UserAuthService;
 import te.trueEcho.global.response.ResponseForm;
-
-import java.util.Locale;
 
 import static te.trueEcho.global.response.ResponseCode.*;
 
@@ -50,6 +45,8 @@ public class UserAuthController {
                     G003 - 유효하지 않은 입력입니다.
                     G004 - 입력 타입이 유효하지 않습니다.""")
     })
+
+
 
     @GetMapping(value = "/{type}/duplication")
     public ResponseEntity<ResponseForm> checkEmailDuplication(
@@ -147,6 +144,16 @@ public class UserAuthController {
         return sent ?
                 ResponseEntity.ok(ResponseForm.of(SEND_EMAIL_SUCCESS)) :
                 ResponseEntity.ok(ResponseForm.of(SEND_EMAIL_FAIL));
+    }
+
+    @PatchMapping("/password")
+    public ResponseEntity<ResponseForm> updatePassword(
+            @RequestBody UpdatePasswordRequest registerRequest) {
+        final boolean isUpdated = userAuthService.updatePassword(registerRequest);
+
+        return isUpdated ?
+                ResponseEntity.ok(ResponseForm.of(UPDATE_PASSWORD_SUCCESS)) :
+                ResponseEntity.ok(ResponseForm.of(UPDATE_PASSWORD_FAIL));
     }
 }
     
