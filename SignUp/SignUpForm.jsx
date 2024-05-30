@@ -31,8 +31,8 @@ const SignUpForm = () => {
     dob: "",
     gender: "",
     notificationTime: "",
-    latitude: "",
-    longitude: "",
+    y: "",
+    x: "",
     name: "",
   });
   const [authCode, setAuthCode] = useState("");
@@ -49,8 +49,14 @@ const SignUpForm = () => {
   const [selectedNotificationTime, setSelectedNotificationTime] = useState(null);
   // const [isNicknameValid, setIsNicknameValid] = useState(false); // 닉네임 중복검사 통과 여부.
   const [isAuthValid, setIsAuthValid] = useState(false); // 인증 여부 상태 변수 추가
-  
-  
+  const [isSendingEmail, setIsSendingEmail] = useState(false); // 이메인 인증 로딩 인디케이터.
+
+  const BackButton = () => (
+    <Pressable style={styles.loginBtn} onPress={() => navigation.goBack()}>
+      <Text style={styles.loginBtnText}>로그인</Text>
+    </Pressable>
+  );
+
   const handleChange = (key, value) => {
     setUserData({ ...userData, [key]: value });
     if (key === "email" || key === "nickname") {
@@ -63,7 +69,7 @@ const SignUpForm = () => {
       setIsAuthValid(false);
     }
   };
-  
+
   const validateStep = () => {
     switch (step) {
       case 1:
@@ -90,20 +96,20 @@ const SignUpForm = () => {
         if (userData.gender === "") return "성별 미입력"
         return "";
       case 7:
-        if (userData.latitude === "" || userData.longitude === "") return "위치 정보 미수집";
+        if (userData.y === "" || userData.x === "") return "위치 정보 미수집";
         return "";
       default:
         return "";
     }
   };
-  
+
   const continueClick = async () => {
     const validationWarning = validateStep();
     if (validationWarning) {
       setWarning(validationWarning);
       return;
     }
-    
+
     setWarning("");
     if (step < 9) {
       setStep(step + 1);
@@ -111,26 +117,26 @@ const SignUpForm = () => {
       sendDataToServer(userData);
     }
   };
-  
+
   const goBack = () => {
     if (step > 1) setStep(step - 1);
   };
-  
+
   const isValidEmail = (email) => /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(email);
-  
+
   const showDatePicker = () => setDatePickerVisibility(true);
   const hideDatePicker = () => setDatePickerVisibility(false);
-  
+
   const handleConfirm = (date) => {
     const koreanDate = new Date(date.getTime() + (9 * 60 * 60 * 1000));
     const koreanDateString = koreanDate.toISOString().split('T')[0];
     setUserData({ ...userData, dob: koreanDateString });
-    
+
     const age = calculateAge(koreanDate);
     setDisplayAge(age);
     hideDatePicker();
   };
-  
+
   useEffect(() => { // 인증 관련 상태 초기화
     if (step === 1) {
       setIsCodeSent(false);
@@ -141,13 +147,13 @@ const SignUpForm = () => {
       setCheckAuth(false);
     }
   }, [step]);
-  
+
   // const handleNickNameButtonPress = async () => {
   //   try {
   //     const nickname = encodeURIComponent(userData.nickname); // 닉네임 인코딩(닉네임이 한글이면 오류가 생길 수 있음?)
   //     const response = await Api.get(`/accounts/nickname/duplication?nickname=${nickname}`); // 확인 해야 함.
   //     console.log("닉네임 중복 검사 성공:", response.data);
-  
+
   //     if (response.data.isDuplicate) {
   //       setIsNicknameValid(false); // 닉네임 중복 검사 실패
   //       setWarning("닉네임이 이미 사용 중입니다.");
@@ -161,7 +167,7 @@ const SignUpForm = () => {
   //     setWarning("닉네임 중복 검사 중 오류가 발생했습니다.");
   //   }
   // };
-  
+
   const calculateAge = (birthdate) => {
     const today = new Date();
     let age = today.getFullYear() - birthdate.getFullYear();
@@ -171,54 +177,56 @@ const SignUpForm = () => {
     }
     return age;
   };
-  
+
   const updateNotificationTime = (newNotificationTime) => {
     setUserData({ ...userData, notificationTime: newNotificationTime });
     setSelectedNotificationTime(newNotificationTime);
   };
-  
-  
+
+
   const handleConfirmPasswordChange = (value) => setConfirmPassword(value);
-  
+
   const sendDataToServer = async (userData) => {
     try {
       const response = await Api.post('/accounts/register', userData);
       console.log("백엔드로 전송", response.data);
-      
+
       // 응답 헤더에서 토큰 추출
       // const accessToken = response.headers['authorization'];
       // const refreshToken = response.headers['refresh-token']; // [수정필요] 어떻게 담겨서 올지 모름. 바꿔야 함.
-      
-      if (response.data.status === 200) {
+
+      if (response.data.code === "U001") {
         // 성공적으로 서버에 데이터 전송 후, 로컬 스토리지에 저장
         await SecureStore.setItemAsync('userEmail', userData.email);
         await SecureStore.setItemAsync('userPassword', userData.password);
-        await SecureStore.setItemAsync('latitude', userData.latitude); // 유저 위치를 캐싱.
-        await SecureStore.setItemAsync('longitude', userData.longitude); // 유저 위치를 캐싱.
-        await SecureStore.setItemAsync('accessToken', accessToken);
-        await SecureStore.setItemAsync('refreshToken', refreshToken);
+        await SecureStore.setItemAsync('y', String(userData.y)); // 유저 위치를 캐싱.
+        await SecureStore.setItemAsync('x', String(userData.x)); // 유저 위치를 캐싱.
+        // await SecureStore.setItemAsync('accessToken', accessToken);
+        // await SecureStore.setItemAsync('refreshToken', refreshToken);
         console.log("로컬 스토리지에 저장 완료");
-        
+
         // 로컬에 저장된 값 확인
         const storedEmail = await SecureStore.getItemAsync('userEmail');
         const storedPassword = await SecureStore.getItemAsync('userPassword');
-        const storedLatitude = await SecureStore.getItemAsync('latitude');
-        const storedLongitude = await SecureStore.getItemAsync('longitude');
-        const storedAccessToken = await SecureStore.getItemAsync('accessToken');
-        const storedRefreshToken = await SecureStore.getItemAsync('refreshToken');
-        
+        const storedy = await SecureStore.getItemAsync('y');
+        const storedx = await SecureStore.getItemAsync('x');
+        // const storedAccessToken = await SecureStore.getItemAsync('accessToken');
+        // const storedRefreshToken = await SecureStore.getItemAsync('refreshToken');
+
         console.log("Stored Email:", storedEmail);
         console.log("Stored Password:", storedPassword);
-        console.log("Stored Latitude:", storedLatitude);
-        console.log("Stored Longitude:", storedLongitude);
-        console.log("Stored AccessToken:", storedAccessToken);
-        console.log("Stored RefreshToken:", storedRefreshToken);
-        
+        console.log("Stored y:", storedy);
+        console.log("Stored x:", storedx);
+        // console.log("Stored AccessToken:", storedAccessToken);
+        // console.log("Stored RefreshToken:", storedRefreshToken);
+
+        console.log("서버로 보낸 데이터:", userData); // 보낸 데이터 확인.
+
         navigation.reset({
           index: 0,
           routes: [{ name: 'Login' }],
         });
-        
+
       } else {
         console.error('회원가입 실패.');
       }
@@ -226,28 +234,34 @@ const SignUpForm = () => {
       console.error('Error sending data:', error);
     }
   };
-  
-  
-  
+
+
+
   const sendEmailToServer = async (email) => {
     if (!isValidEmail(email)) {
       setWarning("이메일 정규식 오류");
       return;
     }
+    setIsSendingEmail(true);  // 로딩 시작
     try {
-      const response = await Api.get(`/accounts/email/duplication?nickname=${userData.nickname}&email=${email}`, {
-      
-      });
-      console.log("이메일 전송 성공:", response.data);
-      setIsCodeSent(true);
-      setWarning("");
-      sendEmailAuth();
+      const response = await Api.get(`/accounts/email/duplication?nickname=${userData.nickname}&email=${email}`, {});
+
+      if (response.data.code === "U001") {
+        setWarning("이메일 중복"); // "중복된 계정입니다." 메시지 설정
+      } else {
+        console.log("이메일 전송 성공:", response.data);
+        setIsCodeSent(true);
+        setWarning("");
+        sendEmailAuth();
+      }
     } catch (error) {
       console.error('이메일 전송 실패:', error.response ? error.response.data : error.message);
+    } finally {
+      setIsSendingEmail(false);  // 로딩 종료
     }
   };
-  
-  
+
+
   const handleEmailButtonPress = () => {
     if (!isCodeSent) {
       sendEmailToServer(userData.email);
@@ -256,7 +270,7 @@ const SignUpForm = () => {
       resendAuthCode();
     }
   };
-  
+
   const verifyCode = async () => {
     console.log("인증 코드 확인 시도"); // 디버깅용 로그 추가
     try {
@@ -280,25 +294,25 @@ const SignUpForm = () => {
       setIsAuthValid(false); // 인증 실패 시 설정
     }
   };
-  
+
   const sendEmailAuth = () => {
     setIsCodeSent(true);
     setTimer(300);
   };
-  
+
   const resendAuthCode = () => {
     if (!canResend) return;
     sendEmailAuth();
     setCanResend(false);
     setResendTimer(60);
   };
-  
+
   const startCountdowns = () => {
     setTimer(300);
     setResendTimer(60);
     setCanResend(false);
   };
-  
+
   useEffect(() => {
     let interval = null;
     if (isCodeSent && timer > 0) {
@@ -309,7 +323,7 @@ const SignUpForm = () => {
     }
     return () => clearInterval(interval);
   }, [isCodeSent, timer]);
-  
+
   useEffect(() => {
     let interval = null;
     if (!canResend && resendTimer > 0) {
@@ -320,18 +334,18 @@ const SignUpForm = () => {
     }
     return () => clearInterval(interval);
   }, [canResend, resendTimer]);
-  
+
   const handleLocationReceived = (latitude, longitude) => {
-    setUserData({ ...userData, latitude, longitude });
+    setUserData({ ...userData, y: latitude, x: longitude });
     setLoadingLocation(false);
   };
-  
   const handleGetLocation = () => {
     setLoadingLocation(true);
   };
-  
+
   return (
     <View style={styles.container}>
+      <BackButton />
       <Image style={styles.logo} source={require('../assets/logo.png')} />
       <View style={styles.inputBox}>
         {step === 1 && (
@@ -358,12 +372,17 @@ const SignUpForm = () => {
             {warning === "이메일 공란" && <Text style={styles.warningText}>이메일을 입력해주세요.</Text>}
             {warning === "이메일 정규식 오류" && <Text style={styles.warningText}>올바른 이메일을 입력해주세요.</Text>}
             {warning === "인증번호 미전송" && <Text style={styles.warningText}>이메일 인증 버튼을 눌러주세요.</Text>}
-            <Button
-              title={!isCodeSent ? "이메일 인증" : (canResend ? "인증번호 재전송" : `재전송 가능까지 ${resendTimer}초`)}
-              onPress={handleEmailButtonPress}
-              color="#f194ff"
-              disabled={isCodeSent && !canResend || userData.nickname === ""}
-            />
+            {warning === "이메일 중복" && <Text style={styles.warningText}>이미 생성된 계정이 있습니다.</Text>}
+            {isSendingEmail ? (
+              <ActivityIndicator size="large" color="#0000ff" />
+            ) : (
+              <Button
+                title={!isCodeSent ? "이메일 인증" : (canResend ? "인증번호 재전송" : `재전송 가능까지 ${resendTimer}초`)}
+                onPress={handleEmailButtonPress}
+                color="#f194ff"
+                disabled={isCodeSent && !canResend || userData.nickname === ""}
+              />
+            )}
             {isCodeSent && (
               <>
                 <TextInput
@@ -492,26 +511,26 @@ const SignUpForm = () => {
               <ActivityIndicator size="large" color="#0000ff" />
             ) : (
               <Button
-                title={userData.latitude && userData.longitude ? "Refresh Location" : "Get Location"}
+                title={userData.y && userData.x ? "Refresh Location" : "Get Location"}
                 onPress={handleGetLocation}
               />
             )}
             <GetLocation onLocationReceived={handleLocationReceived} refresh={loadingLocation} />
-            {userData.latitude && userData.longitude && (
+            {userData.y && userData.x && (
               <>
                 <MapView
                   style={styles.map}
                   initialRegion={{
-                    latitude: parseFloat(userData.latitude),
-                    longitude: parseFloat(userData.longitude),
+                    latitude: parseFloat(userData.y),
+                    longitude: parseFloat(userData.x),
                     latitudeDelta: 0.0922,
                     longitudeDelta: 0.0421,
                   }}
                 >
                   <Marker
                     coordinate={{
-                      latitude: parseFloat(userData.latitude),
-                      longitude: parseFloat(userData.longitude),
+                      latitude: parseFloat(userData.y),
+                      longitude: parseFloat(userData.x),
                     }}
                   />
                 </MapView>
@@ -520,8 +539,6 @@ const SignUpForm = () => {
             {warning === "위치 정보 미수집" && <Text style={styles.warningText}>위치 정보를 활성화해주세요.</Text>}
           </>
         )}
-        
-        
         {step === 8 && (
           <>
             <Text style={styles.text}>알림을 받고 게시물을 공유할 시간을 알려주세요!</Text>
@@ -569,6 +586,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: wp(10),
     paddingBottom: wp(0),
+    backgroundColor:"#fff"
   },
   logo: {
     width: wp(50),
@@ -666,7 +684,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     height: 250,
   },
-  
+
   timeButton: {
     backgroundColor: '#3B4664',
     paddingVertical: wp(3),
@@ -678,12 +696,22 @@ const styles = StyleSheet.create({
   selectedButton: {
     backgroundColor: '#f194ff',
   },
-  
+
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize: hp(2),
   },
+
+  loginBtn: {
+    alignSelf: "start"
+  },
+  loginBtnText: {
+    color: '#3B4664',
+    fontSize: hp(3),
+    fontWeight: 'bold',
+  },
+
 });
 
 export default SignUpForm;

@@ -1,47 +1,58 @@
 import React, { useEffect, useState } from 'react';
-import {View, Text, FlatList, Image, StyleSheet, ActivityIndicator, TouchableOpacity} from 'react-native';
-import axios from 'axios';
+import { View, Text, FlatList, Image, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import Api from '../../../Api';
 
-const MyFeed = ({ navigation }) => {
+const MyFeed = ({ navigation, route }) => {
 	const [serverPosts, setServerPosts] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
-	const [page, setPage] = useState(1); // 페이지 번호 상태 추가
+	const [page, setPage] = useState(0); // 페이지 번호 상태 추가
 	const [isFetchingMore, setIsFetchingMore] = useState(false); // 추가 데이터 로드 상태 추가
 	const [isEndReached, setIsEndReached] = useState(false); // onEndReached 호출 상태
+	const [noMoreData, setNoMoreData] = useState(false); // 더 이상 불러올 데이터가 없는지 확인하는 상태
 	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
 	
+	useEffect(() => {
+		if (route.params?.deletedPostId) {
+			const { deletedPostId } = route.params;
+			setServerPosts(prevPosts => prevPosts.filter(post => post.postId !== deletedPostId));
+		}
+	}, [route.params?.deletedPostId]);
 	useEffect(() => {
 		if (serverPosts) {
 			console.log('server updated:', serverPosts);
 		}
 	}, [serverPosts]);
 	useEffect(() => {
-		fetchData();
+		fetchData(page);
 	}, []);
 	
 	const fetchData = async (page) => {
 		try {
-			const serverResponse = await axios.get(`${base_url}/post/read/2?index=0&pageCount=10&location=&page=${page}`, {
-				headers: {
-					Authorization: `${token}`
+			const serverResponse = await Api.get(`/post/read/2?index=${page}&pageCount=5`);
+			if (serverResponse.data.message === "게시물을 조회를 실패했습니다.") {
+				return;
+			} else {
+				const newPosts = serverResponse.data.data.readPostResponse;
+				if (newPosts.length === 0) {
+					setNoMoreData(true);
+				} else {
+					setServerPosts(prevPosts => {
+						const postIds = new Set(prevPosts.map(post => post.postId));
+						const filteredNewPosts = newPosts.filter(post => !postIds.has(post.postId));
+						return [...prevPosts, ...filteredNewPosts];
+					});
 				}
-			});
-			const newPosts = serverResponse.data.data.readPostResponse;
-			setServerPosts(prevPosts => {
-				const postIds = new Set(prevPosts.map(post => post.postId));
-				const filteredNewPosts = newPosts.filter(post => !postIds.has(post.postId));
-				return [...prevPosts, ...filteredNewPosts];
-			});
+			}
+			setIsLoading(false);
 		} catch (error) {
 			console.error('Error fetching data', error);
 		} finally {
-			setIsLoading(false);
 			setIsFetchingMore(false);
 		}
 	};
 	
 	const handleLoadMore = () => {
-		if (!isFetchingMore && !isEndReached) {
+		if (!isFetchingMore && !isEndReached && !noMoreData) {
 			setIsFetchingMore(true);
 			setIsEndReached(true);
 			setPage(prevPage => {
@@ -59,8 +70,14 @@ const MyFeed = ({ navigation }) => {
 			<Image source={{ uri: item.postBackUrl || defaultImage }} style={styles.postImage} />
 		</TouchableOpacity>
 	);
-	
 	const renderFooter = () => {
+		if (noMoreData) {
+			return (
+				<View style={styles.footer}>
+					<Text>더 이상 불러올 게시물이 없습니다.</Text>
+				</View>
+			);
+		}
 		if (!isFetchingMore) return null;
 		return (
 			<View style={styles.footer}>
@@ -69,6 +86,9 @@ const MyFeed = ({ navigation }) => {
 		);
 	};
 	
+	if (isLoading) {
+		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff" /></View>;
+	}
 	return (
 		<View style={styles.container}>
 			{isLoading ? (
@@ -111,15 +131,23 @@ const styles = StyleSheet.create({
 		height: 100,
 		margin: 10,
 		borderRadius: 10,
+		backgroundColor: "grey"
 	},
 	footer: {
 		paddingVertical: 20,
+		alignItems: 'center',
 	},
 	emptyContainer: {
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
+	loader: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+	}
 });
 
 export default MyFeed;
+

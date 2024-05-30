@@ -12,106 +12,60 @@ import {
 	ActivityIndicator, Button,
 } from 'react-native';
 import { Image as ExpoImage } from 'expo-image';
-import axios from "axios";
+import Api from "../../../Api";
 import * as ImagePicker from 'expo-image-picker';
-import MapView, {Marker} from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 import GetLocation from "../../../SignUp/GetLocation";
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+
 const MyInfo = ({ navigation, route }) => {
 	const [isLoading, setIsLoading] = useState(true);
-	const [serverUserLocation, setServerUserLocation] = useState({}); // 서버 유저 데이터
+	const [serverUserLocation, setServerUserLocation] = useState("");
 	const [username, setUsername] = useState("");
-	const [editableUserId, setEditableUserId] = useState(""); // 사용자가 수정할 수 있는 user_Id 상태
-	const [initialUserId, setInitialUserId] = useState(""); // 초기 user_Id 상태
+	const [editableUserId, setEditableUserId] = useState("");
+	const [initialUserId, setInitialUserId] = useState("");
 	const [imageUri, setImageUri] = useState("");
 	const [warning, setWarning] = useState("");
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [isLocVisible, setIsLocVisible] = useState(false);
-	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
-	
+	const [showDuplicateButton, setShowDuplicateButton] = useState(false);
+	const [isDuplicateChecked, setIsDuplicateChecked] = useState(false);
 	const [latitude, setLatitude] = useState(null);
 	const [longitude, setLongitude] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [refresh, setRefresh] = useState(false);
+	
+	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
+	
 	const handleLocationReceived = (lat, lon) => {
 		console.log('Received new location:', { lat, lon });
 		setLatitude(lat);
 		setLongitude(lon);
-		setLoading(false); // 위치를 받았을 때 로딩 종료
+		setLoading(false);
 	};
-	const handleConfirm = () => {
-		const data = {
-			location: [
-				{
-					id: 1,
-					loc: latitude.toString(),
-					lon: longitude.toString()
-				}
-			]
-		};
-		
-		axios.post('http://192.168.0.27:3000/location', data) // 컴펌 클릭시, 다시 현재 위치를 서버에 전송.
-			.then(response => {
-				console.log('Location sent to server:', response.data);
-			})
-			.catch(error => {
-				console.error('Error sending location:', error);
-			});
-		setIsLocVisible(false);
-	};
+	
 	const handleRefresh = () => {
-		setLoading(true); // 새로고침 시 로딩 시작
+		setLoading(true);
 		setRefresh(prev => !prev);
 	};
-	useEffect(() => {
-		if (isLocVisible) {
-			setLoading(true); // 모달이 열릴 때 로딩 시작
-			axios.get('http://192.168.0.27:3000/location') // 서버에 저장되었던 위치를 보여줌. (이전에 저장되었던 위치.)
-				.then(response => {
-					console.log('Fetched data from server:', response.data);
-					if (response.data && response.data.length > 0) {
-						const { lat, lon } = response.data[0];
-						console.log('Fetched initial location:', { lat, lon });
-						setLatitude(parseFloat(lat));
-						setLongitude(parseFloat(lon));
-					} else {
-						console.error('No location data available');
-					}
-					setLoading(false); // 위치를 가져왔을 때 로딩 종료
-				})
-				.catch(error => {
-					console.error('Error fetching initial location:', error);
-					setLoading(false); // 오류가 발생했을 때도 로딩 종료
-				});
-		}
-	}, [isLocVisible]);
-	useEffect(() => {
-		if (refresh) {
-			setLoading(true); // refresh가 변경되면 로딩 시작
-			// refresh가 변경될 때 GetLocation에서 새로운 위치를 받으면 handleLocationReceived에서 로딩 종료
-		}
-	}, [refresh]);
-	const LocVisible = () => {
-		setIsLocVisible(!isLocVisible)
-	}
 	
 	useEffect(() => {
 		fetchServerData();
 	}, []);
+	
 	const fetchServerData = async () => {
 		try {
-			const response = await axios.get(`${base_url}/setting/myInfo`, {
-				headers: {
-					Authorization: `${token}`
-				}
-			});
-			setUsername(response.data.data.username);
-			setInitialUserId(response.data.data.nickname); // 초기 user_Id 값 설정
-			setEditableUserId(response.data.data.nickname); // editableUserId 초기값 설정
-			setImageUri(response.data.data.profileUrl ? response.data.data.profileUrl : defaultImage); // 이미지 URL 설정
-			setServerUserLocation(response.data.data.yourLocation);
+			const response = await Api.get(`/setting/myInfo`);
+			const data = response.data.data;
+			setUsername(data.username);
+			setInitialUserId(data.nickname);
+			setEditableUserId(data.nickname);
+			setImageUri(data.profileUrl ? data.profileUrl : defaultImage);
+			setServerUserLocation(data.yourLocation);
+			setLatitude(data.y);
+			setLongitude(data.x);
 			setIsLoading(false);
 		} catch (error) {
 			console.error('Error fetching data', error);
@@ -120,8 +74,9 @@ const MyInfo = ({ navigation, route }) => {
 	
 	const PofileInitialization = () => {
 		setImageUri(defaultImage);
-		setIsModalVisible(false)
-	}
+		setIsModalVisible(false);
+	};
+	
 	const pickImage = async () => {
 		if (Platform.OS !== 'web') {
 			const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -138,8 +93,6 @@ const MyInfo = ({ navigation, route }) => {
 				quality: 1,
 			});
 			if (!result.cancelled) {
-				console.log(result); // 확인 로그
-				console.log(result.assets[0].uri); // 확인 로그
 				setImageUri(result.assets[0].uri);
 			}
 		} catch (error) {
@@ -150,33 +103,32 @@ const MyInfo = ({ navigation, route }) => {
 	const handleUserIdChange = (text) => {
 		setEditableUserId(text);
 	};
+	
+	useEffect(() => {
+		setShowDuplicateButton(editableUserId !== initialUserId);
+		setIsDuplicateChecked(editableUserId === initialUserId);
+	}, [editableUserId, initialUserId]);
+	
 	const duplicateCheck = async () => {
 		if (editableUserId === "") {
 			Alert.alert("알림", "이름을 입력해주세요!");
 			setEditableUserId(initialUserId);
 			return;
 		}
-		if (editableUserId === initialUserId) {
-			Alert.alert("알림", "아이디를 변경해주세요!");
-			return;
-		}
 		console.log('Checking user ID:', editableUserId);
-		await axios.get(`${base_url}/accounts/nickname/duplication?nickname=dd11`, {
-			headers: {
-				Authorization: `${token}`
-			}
-		})
+		await Api.get(`/accounts/nickname/duplication?nickname=${editableUserId}`)
 			.then(response => {
-				console.log('Response data:', response.data); // 응답 데이터 로깅
-				if (response.data.length > 0) { //get을 통해 무언가 반환이 되면, 중복이므로 중복 알림 표시.
+				console.log('Response data:', response.data);
+				if (response.data.message === "중복된 계정입니다.") {
 					alert('이미 사용 중인 아이디입니다.');
 					setWarning('이미 사용 중인 아이디입니다.');
-				} else { // 빈배열이 반환되면 중복이 아니므로 사용가능 알림 표시.
+				} else {
 					alert('사용 가능한 아이디입니다.');
 					setWarning('사용 가능한 아이디입니다.');
 				}
+				setIsDuplicateChecked(true);
 			})
-			.catch(error => { // 에러처리.
+			.catch(error => {
 				console.error('Error:', error);
 			});
 	};
@@ -187,43 +139,34 @@ const MyInfo = ({ navigation, route }) => {
 			return;
 		}
 		
-		if (editableUserId === initialUserId) {
-			Alert.alert(
-				"알림", `변경된 값이 없어요.\n편집을 계속하시겠습니까?`,
-				[
-					{text: "예",
-						onPress: () => console.log("편집 계속") // 편집을 계속하는 로직을 여기에 추가합니다.
-					},
-					{text: "아니오",
-						onPress: () => navigation.navigate("MyP", { Update: user }), // 변경 없이 이전 화면으로 돌아갑니다.
-						style: "cancel"}]);
+		if (editableUserId !== initialUserId && !isDuplicateChecked) {
+			Alert.alert("알림", "이름 중복 확인을 해주세요!");
 			return;
 		}
+		
 		const updatedUser = {
-			id: 1,
-			username: user.username,
-			user_Id: editableUserId, // 변경된 user_Id
-			user_vote: user.user_vote,
-			profile_url: imageUri,
-			your_location: user.your_location,
+			profileImage : imageUri,
+			username: username,
+			location: serverUserLocation,
+			nickname: editableUserId,
+			x: longitude,
+			y: latitude,
 		};
 		
 		try {
-			const DeleteUser = await axios.delete('http://192.168.0.27:3000/user_me')
-			const response = await axios.post('http://192.168.0.27:3000/user_me', updatedUser);
+			const response = await Api.post(`/setting/myInfo`, updatedUser);
 			console.log('User updated:', response.data);
-			// 성공 시 필요한 로직 추가, 예를 들어 화면 이동 등
-			navigation.navigate("MyP", { Update: updatedUser })
+			navigation.navigate("MyP", { Update: updatedUser });
 		} catch (error) {
 			console.error('Failed to update user:', error);
-			// 에러 처리 로직 추가
 		}
 	};
 	
 	const profileModalVisible = () => {
 		setIsModalVisible(!isModalVisible);
 	};
-	const ProfileModal = ({ isVisible, onClose }) => { // 수정: 프로퍼티 이름 Image -> imageUrl 변경
+	
+	const ProfileModal = ({ isVisible, onClose }) => {
 		return (
 			<Modal
 				animationType="fade"
@@ -251,7 +194,7 @@ const MyInfo = ({ navigation, route }) => {
 						</TouchableOpacity>
 						<TouchableOpacity
 							onPress={onClose}
-							style={[styles.modalButton,{ backgroundColor: "grey", }]}
+							style={[styles.modalButton, { backgroundColor: "grey", }]}
 						>
 							<Text style={styles.buttonText}>
 								닫기
@@ -264,11 +207,12 @@ const MyInfo = ({ navigation, route }) => {
 	};
 	
 	if (isLoading) {
-		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff"/></View>;
+		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff" /></View>;
 	}
+	
 	return (
 		<View style={styles.container}>
-			<View style={{ padding: 20, alignItems:"center",}}>
+			<View style={{ padding: 20, alignItems: "center", }}>
 				<TouchableOpacity onPress={profileModalVisible}>
 					<ExpoImage
 						source={{ uri: imageUri }}
@@ -289,7 +233,7 @@ const MyInfo = ({ navigation, route }) => {
 					<Text style={styles.text}>{username}</Text>
 				</View>
 			</View>
-			<View style={{ width: "90%",}}>
+			<View style={{ width: "90%", }}>
 				<View style={{
 					flexDirection: "column",
 					padding: 12,
@@ -298,20 +242,22 @@ const MyInfo = ({ navigation, route }) => {
 					backgroundColor: "#99A1B6",
 				}}>
 					<Text style={styles.smallText}>사용자 이름</Text>
-					<View style={{flexDirection: "row"}}>
+					<View style={{ flexDirection: "row" }}>
 						<TextInput
 							style={[styles.text, { minWidth: "80%", padding: 5 }]}
 							onChangeText={handleUserIdChange}
 							value={editableUserId}
-							editable={true} // 편집 가능하게 설정
+							editable={true}
 							returnKeyType="done"
 						/>
-						<TouchableOpacity
-							onPress={duplicateCheck}
-							style={styles.duplicateConfirm}
-						>
-							<Text style={styles.duplicateText}>중복{'\n'}확인</Text>
-						</TouchableOpacity>
+						{showDuplicateButton && (
+							<TouchableOpacity
+								onPress={duplicateCheck}
+								style={styles.duplicateConfirm}
+							>
+								<Text style={styles.duplicateText}>중복{'\n'}확인</Text>
+							</TouchableOpacity>
+						)}
 					</View>
 				</View>
 				<View style={{
@@ -319,13 +265,21 @@ const MyInfo = ({ navigation, route }) => {
 					paddingLeft: 10,
 					marginBottom: 30,
 				}}>
-					<Text style={warning === '이미 사용 중인 아이디입니다.' ? { color: 'red' } : { color: 'green' }}>
-						{warning}
-					</Text>
+					{showDuplicateButton &&
+						(!isDuplicateChecked ?
+								<Text style={{ color: "grey" }}>
+									중복 조회를 부탁해요!
+								</Text>
+								:
+								<Text style={warning === '이미 사용 중인 아이디입니다.' ? { color: 'red' } : { color: 'green' }}>
+									{warning}
+								</Text>
+						)
+					}
 				</View>
 			</View>
-			<View style={{ width: "90%",}}>
-				<TouchableOpacity onPress={LocVisible} style={styles.View}>
+			<View style={{ width: "90%", }}>
+				<TouchableOpacity onPress={() => setIsLocVisible(!isLocVisible)} style={styles.View}>
 					<Text style={styles.smallText}>위치</Text>
 					<Text style={styles.text}>{serverUserLocation}</Text>
 				</TouchableOpacity>
@@ -358,16 +312,16 @@ const MyInfo = ({ navigation, route }) => {
 						<GetLocation onLocationReceived={handleLocationReceived} refresh={refresh} />
 						<View style={styles.buttonContainer}>
 							<Button title="현재 위치로 변경" onPress={handleRefresh} />
-							<Button title="Confirm" onPress={handleConfirm} />
 							<Button title="취소" onPress={() => setIsLocVisible(false)} />
 						</View>
 					</View>
 				</Modal>
 			)}
-			<View style={{ width: "90%",}}>
+			<View style={{ width: "90%", }}>
 				<TouchableOpacity
-					style={styles.saveButton}
+					style={[styles.saveButton, { backgroundColor: (editableUserId !== initialUserId && !isDuplicateChecked) ? 'lightgrey' : 'grey' }]}
 					onPress={handleSave}
+					disabled={editableUserId !== initialUserId && !isDuplicateChecked}
 				>
 					<Text style={styles.saveText}>저장</Text>
 				</TouchableOpacity>
@@ -377,6 +331,11 @@ const MyInfo = ({ navigation, route }) => {
 }
 
 const styles = StyleSheet.create({
+	loader: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
 	LocModalContainer: {
 		flex: 1,
 		justifyContent: 'center',
@@ -423,26 +382,25 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		fontSize: 14,
 		fontWeight: "400",
-		color: 'black', // 입력 텍스트 색상
-		padding: 7, // 패딩 추가
-		marginTop: 5, // 상단 마진 추가
-		minWidth: "100%", // 최소 너비 설정
-		backgroundColor: "white", // 배경 색상 변경
+		color: 'black',
+		padding: 7,
+		marginTop: 5,
+		minWidth: "100%",
+		backgroundColor: "white",
 	},
 	saveButton: {
 		flexDirection: "column",
 		padding: 18,
 		width: "100%",
 		borderRadius: 15,
-		backgroundColor: "grey",
 		marginBottom: 30,
 	},
 	saveText: {
 		borderRadius: 10,
 		fontSize: 16,
 		fontWeight: "600",
-		color: 'white', // 입력 텍스트 색상
-		minWidth: "100%", // 최소 너비 설정
+		color: 'white',
+		minWidth: "100%",
 	},
 	modalContainer: {
 		flex: 1,

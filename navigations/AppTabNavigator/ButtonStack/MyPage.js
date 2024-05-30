@@ -11,10 +11,9 @@ import {
 } from 'react-native';
 import {AntDesign, FontAwesome5, MaterialIcons} from '@expo/vector-icons';
 import PagerView from "react-native-pager-view";
-import axios from "axios";
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import { Button3 } from "../../../components/Button";
-import Api from "../../../Api.js";
+import Api from "../../../Api";
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -68,17 +67,14 @@ const MyPage = ({ navigation, route }) => {
 	
 	const fetchDataFromServer = async () => {
 		try {
-			const response = await axios.get(`${base_url}/setting/myPage`, {
-				headers: {
-					Authorization: `${token}`
-				}
-			});
+			const response = await Api.get(`/setting/myPage`);
 			setServerData(response.data.data); // Correctly update the state here
-			const pinResponse = await axios.get(`${base_url}/setting/pins`, {
-				headers: {
-					Authorization: `${token}`
-				}
-			});
+			const pinResponse = await Api.get(`/setting/pins`);
+			if (pinResponse.data.message === "핀 조회를 실패했습니다.") {
+				setPinData([]); // 핀 데이터가 없을 경우 빈 배열로 초기화
+				setIsLoading(false);
+				return;
+			}
 			setPinData(pinResponse.data.data.pinList); // Correctly update the state here
 			setIsLoading(false);
 		} catch (error) {
