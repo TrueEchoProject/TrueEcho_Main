@@ -12,6 +12,7 @@ import te.trueEcho.domain.post.converter.DtoToComment;
 import te.trueEcho.domain.post.converter.PostToDto;
 import te.trueEcho.domain.post.dto.*;
 import te.trueEcho.domain.post.entity.Comment;
+import te.trueEcho.domain.post.entity.Like;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.post.repository.PostRepository;
 import te.trueEcho.domain.user.entity.User;
@@ -61,6 +62,11 @@ public class PostServiceImpl implements PostService {
                    .userId(targetPost.getUser().getId())
                    .username(targetPost.getUser().getName())
                    .profileUrl(targetPost.getUser().getProfileURL())
+                   .isMyLike(
+                           targetPost.getLikes().stream().anyMatch(
+                                   like -> like.getUser().getId().equals(requestUser.getId())
+                           )
+                   )
                    .build();
     }
 
@@ -110,6 +116,35 @@ public class PostServiceImpl implements PostService {
         List<Comment> comments = postRepository.readCommentWithUnderComments(postId);
         User user = authUtil.getLoginUser();
         return commentToDto.converter(comments, postId, user.getId());
+    }
+    @Transactional
+    @Override
+    public LikeUpdateResponse updateLikes(UpdateLikesRequest updateLikesRequest) {
+        final User loginUser = authUtil.getLoginUser();
+        if (loginUser == null) {
+            log.error("Authentication failed - No login user found");
+            return null;
+        }
+
+        final Post targetPost = postRepository.getPostById(updateLikesRequest.getPostId());
+
+        boolean isLiked = updateLikesRequest.isLike();
+
+        if (isLiked) {
+            Like newLike = Like.builder()
+                    .post(targetPost)
+                    .user(loginUser)
+                    .build();
+            postRepository.saveLike(newLike);
+            return LikeUpdateResponse.builder().msg("좋아요 추가에 성공했습니다.").build();
+        } else {
+            Like targetLike = postRepository.findLikeByUserAndPost(loginUser, targetPost);
+            boolean deleted = postRepository.deleteLike(targetLike);
+            if (deleted) {
+                return LikeUpdateResponse.builder().msg("좋아요 삭제에 성공했습니다.").build();
+            }
+            return null;
+        }
     }
 
     @Override

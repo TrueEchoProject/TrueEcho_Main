@@ -13,7 +13,13 @@ import te.trueEcho.domain.user.entity.User;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "likes")
+@Table(name = "likes", uniqueConstraints = {
+        @UniqueConstraint(
+                name = "likes_uk",
+                columnNames = {"post_id", "user_id"}
+        )
+    }
+)
 public class Like {
 
     @Id
@@ -24,7 +30,6 @@ public class Like {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

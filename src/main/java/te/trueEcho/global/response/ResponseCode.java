@@ -76,6 +76,10 @@ public enum ResponseCode {
     DELETE_POST_SUCCESS(202, "T002", "게시물을 삭제를 성공했습니다."),
     DELETE_POST_FAIL(202, "T002", "게시물을 삭제를 실패했습니다."),
 
+    // 좋아요
+    UPDATE_LIKES_SUCCESS(202, "T002", "좋아요 업데이트를 성공했습니다."),
+    UPDATE_LIKES_FAIL(202, "T002", "좋아요 업데이트를 실패했습니다."),
+
     // 댓글
     GET_COMMENT_SUCCESS(202, "T002", "해당 게시물의 댓글 조회를 성공했습니다."),
     GET_COMMENT_FAIL(202, "T002", "해당 게시물의 댓글 조회를 실패했습니다."),

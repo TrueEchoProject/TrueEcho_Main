@@ -1,6 +1,7 @@
 package te.trueEcho.domain.post.service;
 
 
+import org.hibernate.sql.Update;
 import te.trueEcho.domain.post.dto.*;
 import te.trueEcho.domain.post.entity.Post;
 
@@ -14,6 +15,8 @@ public interface PostService {
     PostListResponse getAllPostByType(ReadPostRequest readPostRequest);
 
     CommentListResponse getComment(Long postId);
+
+    LikeUpdateResponse updateLikes(UpdateLikesRequest updateLikesRequest);
 
     boolean writeComment(WriteCommentRequest writeCommentRequest);
 

@@ -86,6 +86,18 @@ public class PostController {
     }
 
 
+    @PatchMapping("/update/likes")
+    public ResponseEntity<ResponseForm> updateLikes(
+            @RequestBody UpdateLikesRequest updateLikesRequest){
+
+        LikeUpdateResponse likeUpdateResponse = postService.updateLikes(updateLikesRequest);
+
+        return likeUpdateResponse != null ?
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.UPDATE_LIKES_SUCCESS, likeUpdateResponse)) :
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.UPDATE_LIKES_FAIL));
+    }
+
+
     @GetMapping("/read/comment/{postId}")
     public ResponseEntity<ResponseForm> readComment(
             @PathVariable Long postId){

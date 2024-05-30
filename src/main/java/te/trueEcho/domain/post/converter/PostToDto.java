@@ -31,6 +31,11 @@ public class PostToDto {
                             .username(post.getUser().getName())
                             .profileUrl(post.getUser().getProfileURL())
                             .createdAt(post.getCreatedAt())
+                            .isMyLike(
+                                    post.getLikes().stream().anyMatch(
+                                            like -> like.getUser().getId().equals(userId)
+                                    )
+                            )
                             .build();
                 })
                 .collect(Collectors.toList());

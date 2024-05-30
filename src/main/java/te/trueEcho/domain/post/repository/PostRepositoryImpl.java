@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import te.trueEcho.domain.post.entity.Comment;
+import te.trueEcho.domain.post.entity.Like;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.user.entity.User;
 
@@ -28,6 +29,7 @@ public class PostRepositoryImpl implements PostRepository {
         int currentIndex = index * pageCount;
 
         return em.createQuery("select p from Post p " +
+                        "left join fetch p.likes " +
                         "where  (p.user in : filteredUser)" +
                         "order by p.createdAt desc", Post.class)
                 .setParameter("filteredUser", filteredUser)
@@ -154,7 +156,9 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public List<Post> getPostByIdList(List<Long> postIdList) {
         try {
-            return em.createQuery("select p from Post p where p.id in :postIdList", Post.class)
+            return em.createQuery("select p from Post p " +
+                            "left join fetch p.likes " +
+                            "where p.id in :postIdList", Post.class)
                     .setParameter("postIdList", postIdList)
                     .getResultList();
         } catch (Exception e) {
@@ -162,6 +166,43 @@ public class PostRepositoryImpl implements PostRepository {
             return null;
         }
 
+    }
+
+    @Override
+    public boolean deleteLike(Like like) {
+        try {
+            if (like != null) {
+                em.remove(like);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            log.error("deleteLike error : {}", e.getMessage());
+            return false;
+        }
+    }
+    @Transactional
+    public void saveLike(Like like) {
+        try {
+            em.persist(like);
+        } catch (Exception e) {
+            log.error("saveLike error : {}", e.getMessage());
+        }
+    }
+
+    @Override
+    public Like findLikeByUserAndPost(User user, Post post) {
+        try {
+            return em.createQuery("select l from Like l " +
+                            "where l.user = :user and " +
+                            "l.post = :post", Like.class)
+                    .setParameter("user", user)
+                    .setParameter("post", post)
+                    .getSingleResult();
+        } catch (Exception e) {
+            log.error("findLikeByUserAndPost error : {}", e.getMessage());
+            return null;
+        }
     }
 
     @Override
