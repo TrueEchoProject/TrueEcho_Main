@@ -48,11 +48,12 @@ public class CommentToDto {
         int fromIndex = request.getIndex() * request.getPageCount();
         int toIndex = Math.min(fromIndex + request.getPageCount(), 
                                 commentResponseList.size());
-        
+        List<CommentResponse> pagedCommentList = commentResponseList.subList(fromIndex, toIndex);
+
         return  CommentListResponse.builder().
                 postId(request.getPostId())
-                .comments(commentResponseList.subList(fromIndex, toIndex))
-                .commentCount(commentList.size())
+                .comments(pagedCommentList)
+                .commentCount(pagedCommentList.size())
                 .build();
     }
 }
