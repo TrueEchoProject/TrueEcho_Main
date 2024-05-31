@@ -11,7 +11,7 @@ import java.util.Map;
 
 @NoArgsConstructor
 public class CommentToDto {
-    public CommentListResponse converter(List<Comment> commentList, Long postId) {
+    public CommentListResponse converter(List<Comment> commentList, Long postId ,long requestUserId) {
 
         Map<Long, CommentResponse> mainCommentsMap = new HashMap<>();
         List<CommentResponse> commentResponseList = new ArrayList<>();
@@ -22,6 +22,7 @@ public class CommentToDto {
             CommentResponse dto = CommentResponse.builder()
                     .commentId(comment.getId())
                     .content(comment.getContent())
+                    .isMine(comment.getUser().getId()==requestUserId)
                     .userId(comment.getUser().getId())
                     .username(comment.getUser().getName())
                     .profileURL(comment.getUser().getProfileURL())
