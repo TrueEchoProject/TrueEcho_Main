@@ -1,5 +1,6 @@
 package te.trueEcho.domain.vote.repository;
 
+import te.trueEcho.domain.vote.dto.VoteUsersResponse;
 import te.trueEcho.domain.vote.entity.Vote;
 import te.trueEcho.domain.vote.entity.VoteResult;
 
@@ -13,6 +14,8 @@ public interface VoteRepository {
 
      boolean saveVoteResult(VoteResult result);
      List<Vote> getRandomVoteWithSize(int size);
+     void putTargetUsers(VoteUsersResponse voteUsersResponse) ;
+     VoteUsersResponse getTargetUsers(boolean flag);
 
      Vote findVoteById(Long voteId);
 

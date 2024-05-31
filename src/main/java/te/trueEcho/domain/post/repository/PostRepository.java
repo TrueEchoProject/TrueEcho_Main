@@ -1,9 +1,11 @@
 package te.trueEcho.domain.post.repository;
 
+import jakarta.transaction.Transactional;
 import te.trueEcho.domain.post.entity.Comment;
 import te.trueEcho.domain.post.entity.Like;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.user.entity.User;
+import te.trueEcho.domain.vote.dto.VoteUsersResponse;
 
 import java.util.List;
 

@@ -6,7 +6,9 @@ import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
+import te.trueEcho.domain.vote.dto.VoteUsersResponse;
 import te.trueEcho.domain.vote.entity.Vote;
 import te.trueEcho.domain.vote.entity.VoteCategory;
 import te.trueEcho.domain.vote.entity.VoteResult;
@@ -15,6 +17,8 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoField;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 import static te.trueEcho.global.util.WeekUtil.getThisWeekAsNum;
 @Slf4j
 @Repository
@@ -24,6 +28,7 @@ public class VoteRepositoryImpl implements VoteRepository {
     private final EntityManager em;
     private final static ConcurrentHashMap<Integer, Map<Enum<VoteType>, List<Vote>>> todayVoteContent
             = new ConcurrentHashMap<>();
+    private final static ConcurrentLinkedQueue<VoteUsersResponse> voteTargetUsers = new ConcurrentLinkedQueue<>();
 
     private static final int voteSize = 10; // 투표지 수
 
@@ -35,6 +40,38 @@ public class VoteRepositoryImpl implements VoteRepository {
     private void putThisWeekVoteContentMap(List<Vote> resultByRule, List<Vote> resultByRandom) {
         todayVoteContent.get(getThisWeekAsNum()).put(VoteType.RULE, resultByRule);
         todayVoteContent.get(getThisWeekAsNum()).put(VoteType.RANDOM, resultByRandom);
+    }
+
+    @Transactional
+    public void putTargetUsers(VoteUsersResponse voteUsersResponse) {
+        voteTargetUsers.add(voteUsersResponse);
+    }
+
+    @Transactional
+    public VoteUsersResponse getTargetUsers(boolean flag) {
+        VoteUsersResponse voteUsersResponse =  voteTargetUsers.poll();
+        
+        if (flag){
+            return voteUsersResponse;
+        }
+
+        if(voteUsersResponse == null) {
+            return null;
+        }else if (voteUsersResponse.getUserNum() == -1){ //사이클 1번째
+            putTargetUsers(VoteUsersResponse.builder().userNum(-2).build());
+            return getTargetUsers(false); // 재귀
+        }else if (voteUsersResponse.getUserNum() == -2){ //사이클 2번째 끝
+            return voteUsersResponse;
+        }
+        else{
+            putTargetUsers(voteUsersResponse);
+            return voteUsersResponse;
+        }
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    protected void clearTargetUsers(){
+        voteTargetUsers.clear();
     }
 
 
