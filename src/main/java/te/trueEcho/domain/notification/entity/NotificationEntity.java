@@ -38,7 +38,10 @@ public class NotificationEntity extends CreatedDateAudit {
     public static class Data {
 
         private Long senderId; //알림 전송자
+
+        @Column(name = "content_id", unique = false)
         private Long contentId;
+
         private int notiType;
     }
 

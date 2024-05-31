@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import te.trueEcho.domain.notification.controller.PostFeedNotiResponse;
+import te.trueEcho.domain.notification.dto.PostFeedNotiResponse;
 import te.trueEcho.domain.notification.dto.*;
 import te.trueEcho.domain.notification.entity.NotificationEntity;
 import te.trueEcho.domain.notification.repository.NotificationRepository;
@@ -239,7 +239,6 @@ public class NotificationServiceImpl implements NotificationService {
             }
         }
 
-        // 통합 방법 1
         // 세 리스트를 하나로 병합
         List<Object> allNotis = Stream.of(InRankNotis, newRankNotis, voteResultNotis)
                 .flatMap(List::stream)
@@ -258,35 +257,6 @@ public class NotificationServiceImpl implements NotificationService {
         return CommunityFeedNotiResponse.builder()
                 .allNotis(allNotis)
                 .build();
-
-
-//        // 통합 방법 2
-//        // 각 리스트를 created_at 필드를 기준으로 정렬
-//        InRankNotis.sort(Comparator.comparing(ReadCommunityFeedInRankNoti::getCreated_at).reversed());
-//        newRankNotis.sort(Comparator.comparing(noti -> LocalDateTime.parse(((ReadCommunityFeedNewRankNoti) noti).getCreated_at())).reversed());
-//        voteResultNotis.sort(Comparator.comparing(noti -> LocalDateTime.parse(((ReadCommunityFeedVoteResultNoti) noti).getCreated_at())).reversed());
-//
-//        // 정렬된 리스트들을 allNotis에 병합
-//        List<Object> allNotis = new ArrayList<>();
-//        int i = 0, j = 0, k = 0;
-//        while (i < InRankNotis.size() || j < newRankNotis.size() || k < voteResultNotis.size()) {
-//            LocalDateTime timeI = i < InRankNotis.size() ? InRankNotis.get(i).getCreated_at() : LocalDateTime.MIN;
-//            LocalDateTime timeJ = j < newRankNotis.size() ? LocalDateTime.parse(newRankNotis.get(j).getCreated_at()) : LocalDateTime.MIN;
-//            LocalDateTime timeK = k < voteResultNotis.size() ? LocalDateTime.parse(voteResultNotis.get(k).getCreated_at()) : LocalDateTime.MIN;
-//
-//            // 가장 최근의 알림을 allNotis에 추가
-//            if (!timeI.isBefore(timeJ) && !timeI.isBefore(timeK)) {
-//                allNotis.add(InRankNotis.get(i++));
-//            } else if (!timeJ.isBefore(timeI) && !timeJ.isBefore(timeK)) {
-//                allNotis.add(newRankNotis.get(j++));
-//            } else {
-//                allNotis.add(voteResultNotis.get(k++));
-//            }
-//        }
-//
-//        return CommunityFeedNotiResponse.builder()
-//                .allNotis(allNotis)
-//                .build();
     }
 
     @Override
@@ -306,7 +276,6 @@ public class NotificationServiceImpl implements NotificationService {
             switch (NotiType.values()[notification.getData().getNotiType()]) {
                 case COMMENT:
                     User commentSender = userAuthRepository.findUserById(notification.getData().getSenderId());
-
                     commentNotis.add(ReadPostFeedCommentNoti.builder()
                             .id(notification.getId())
                             .type(notification.getData().getNotiType())
@@ -398,6 +367,7 @@ public class NotificationServiceImpl implements NotificationService {
     // NotiTimeStatus에 따라서 알람을 보낼 유저를 선별하여 알람을 보내는 메소드
     public void sendNotiByNotiTimeStatus(NotiTimeStatus notiTimeStatus) {
         List<User> users = userAuthRepository.findAllByNotiTimeStatus(notiTimeStatus);
+        // 난수 로직 추가
         for (User receiver : users) {
             if (Boolean.TRUE.equals(receiver.getNotificationSetting().getPhotoTimeNotification())) {
                 String token = String.valueOf(fcmService.getToken(receiver));

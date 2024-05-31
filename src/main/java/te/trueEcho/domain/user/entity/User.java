@@ -118,6 +118,7 @@ public class User extends CreatedDateAudit {
     @JoinColumn(name = "notification_setting_id", nullable = false)
     private NotificationSetting notificationSetting;
 
+
     @OneToMany(mappedBy = "receiver", fetch = FetchType.LAZY , orphanRemoval = true)
     private List<NotificationEntity> notificationEntity = new ArrayList<>();
 
@@ -145,9 +146,7 @@ public class User extends CreatedDateAudit {
 
         // 자동 초기화 : 디폴트
         this.connectByFriend = true;
-
-
-
+      
         // NotificationSetting 엔티티 생성 및 설정
         this.notificationSetting =
                 NotificationSetting.builder()

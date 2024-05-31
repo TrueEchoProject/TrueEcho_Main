@@ -1,4 +1,4 @@
-package te.trueEcho.domain.notification.controller;
+package te.trueEcho.domain.notification.dto;
 
 import lombok.Builder;
 import lombok.Getter;
