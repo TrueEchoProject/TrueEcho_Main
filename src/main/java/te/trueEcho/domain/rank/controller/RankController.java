@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import te.trueEcho.domain.rank.dto.RankListResponse;
 import te.trueEcho.domain.rank.service.RankService;
+import te.trueEcho.domain.rank.service.ScheduledRankService;
 import te.trueEcho.global.response.ResponseCode;
 import te.trueEcho.global.response.ResponseForm;
 
@@ -16,6 +17,7 @@ import te.trueEcho.global.response.ResponseForm;
 @RequestMapping("/rank")
 public class RankController {
     private final RankService rankService;
+
 
     @GetMapping("/read")
     public ResponseEntity<ResponseForm> readContent() {
