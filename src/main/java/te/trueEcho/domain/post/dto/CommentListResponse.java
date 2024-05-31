@@ -10,5 +10,6 @@ import java.util.List;
 @Builder
 public class CommentListResponse {
     private Long postId;
-    List<CommentResponse> comments;
+    private int commentCount;
+    private List<CommentResponse> comments;
 }

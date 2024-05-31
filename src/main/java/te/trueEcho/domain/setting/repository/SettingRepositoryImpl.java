@@ -54,7 +54,9 @@ public class SettingRepositoryImpl implements SettingRepository{
     @Override
     public List<Pin> getPinsByUser(User user) {
         try {
-            return em.createQuery("select p from Pin p join fetch p.user" +
+            return em.createQuery("select p from Pin p " +
+                            " join fetch p.user "
+                            + "join fetch p.post" +
                             " where p.user =:user", Pin.class)
                     .setParameter("user", user)
                     .getResultList();
@@ -84,19 +86,7 @@ public class SettingRepositoryImpl implements SettingRepository{
         }
     }
 
-    @Override
-    public NotificationSetting getNotificationSettingByUser(User user) {
-        try{
-            return em.createQuery("select ns from NotificationSetting ns" +
-                            " where ns.user =:user", NotificationSetting.class)
-                    .setParameter("user", user)
-                    .getSingleResult();
-        }catch (Exception e){
-            log.error("getNotificationSettingByUser error : {}", e.getMessage());
-            return null;
-        }
 
-    }
     @Transactional
     @Override
     public NotificationSetting editNotificationSetting(NotificationSetting notificationSetting) {

@@ -36,7 +36,7 @@ public interface SettingService {
 
     PinListResponse getPins();
 
-    PinListResponse editPins(PinsRequest editPinsRequest);
+    boolean editPins(PinsRequest editPinsRequest);
 
 
 
@@ -58,7 +58,7 @@ public interface SettingService {
      */
 
     RandomNotifyTResponse getRandomNotifyTime();
-    boolean editRandomNotifyTime(int notifyTime);
+    RandomNotifyTResponse editRandomNotifyTime(int notifyTime);
 
 
     NotificationSettingDto getNotificationSetting();

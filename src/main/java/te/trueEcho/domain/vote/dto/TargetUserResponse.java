@@ -6,7 +6,10 @@ import lombok.Getter;
 @Builder
 @Getter
 public class TargetUserResponse {
-    Long id;
-    String username;
-    String profileUrl;
+    private Long id;
+    private Long postId;
+    private String username;
+    private String profileUrl;
+    private String photoFrontUrl;
+    private String photoBackUrl;
 }

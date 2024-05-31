@@ -41,17 +41,14 @@ public class Post extends CreatedDateAudit {
     @Enumerated(EnumType.STRING)
     private PostStatus status;
 
-    @OneToOne(mappedBy = "post")
-    private Pin pin;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Like> likes;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Comment> comments;
 
     @Builder
@@ -61,5 +58,9 @@ public class Post extends CreatedDateAudit {
         this.urlBack = urlBack;
         this.status = status;
         this.user = user;
+    }
+
+    public int getLikesCount() {
+        return likes.size();
     }
 }

@@ -19,10 +19,6 @@ public class NotificationSetting {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
     @Column(name = "setting_noti_time_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private NotiTimeStatus notificationTimeStatus;
@@ -55,8 +51,7 @@ public class NotificationSetting {
     private Boolean serviceNotification;
 
     @Builder
-    public NotificationSetting(User user, NotiTimeStatus notificationTimeStatus) {
-        this.user = user;
+    public NotificationSetting(NotiTimeStatus notificationTimeStatus) {
         this.notificationTimeStatus = notificationTimeStatus;
         this.serviceNotification = true;
         this.commentNotification = true;

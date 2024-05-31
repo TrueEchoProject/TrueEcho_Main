@@ -46,12 +46,13 @@ public class UserService {
         return user != null;
     }
     @Transactional
-    public boolean deleteUser(String email) {
+    public boolean deleteUser() {
         try {
             final User user = authUtil.getLoginUser();
-            if (!user.getEmail().equals(email)) {
-                throw new ServiceException("Invalid user");
-            }
+//            String email
+//            if (!user.getEmail().equals(email)) {
+//                throw new ServiceException("Invalid user");
+//            }
             SuspendedUser suspendedUser = userToSuspendedUser(user);
             suspendedUserRepository.save(suspendedUser);
             suspendedUserRepository.deleteSuspendedUsers();
@@ -92,6 +93,5 @@ public class UserService {
         user.updatePassword(editUserRequest.getPassword());
         user.updateGender(editUserRequest.getGender());
         user.updateBirthDay(editUserRequest.getBirthday());
-        user.updateLocation(editUserRequest.getLocation());
     }
 }

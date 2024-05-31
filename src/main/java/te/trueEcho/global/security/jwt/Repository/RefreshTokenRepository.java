@@ -9,12 +9,30 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import te.trueEcho.domain.user.entity.User;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 @Repository
 @Slf4j
 @RequiredArgsConstructor
 public class RefreshTokenRepository {
 
+    private static final ConcurrentHashMap<String, String> invalidTokenMap = new ConcurrentHashMap<>();
+
     private final EntityManager em;
+
+
+    public boolean isInvalidToken(String key){
+        return invalidTokenMap.containsKey(key);
+    }
+
+    public void addInvalidToken(String accessToken, String key){
+        invalidTokenMap.put(key, accessToken);
+    }
+
+    public void removeInvalidToken(String key){
+        invalidTokenMap.remove(key);
+    }
 
     public String findTokenByUser(User user){
        log.info("getRefreshToken = {}",user.getRefreshToken());
