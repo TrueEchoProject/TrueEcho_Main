@@ -24,7 +24,7 @@ public class NotificationSettingToDto {
                                 .subComment(notificationSetting.getSubCommentNotification())
                                 .build())
                 .friendRequest(notificationSetting.getFriendRequestNotification())
-                .PhotoTime(notificationSetting.getPhotoTimeNotification())
+                .photoTime(notificationSetting.getPhotoTimeNotification())
                 .service(notificationSetting.getServiceNotification())
                 .build();
     }

@@ -49,8 +49,9 @@ public class UserController {
     @DeleteMapping("/deleteUser")
     public ResponseEntity<ResponseForm> deleteUser(@RequestHeader("Authorization") String token) {
 
+
+        boolean isDeleted = jwtService.deleteRefreshToken(token);
         boolean isDeletedUser = userService.deleteUser();
-        boolean isDeleted = jwtService.deleteRefreshToken();
 
         log.info("token: {} ", token);
 

@@ -11,7 +11,7 @@ import te.trueEcho.domain.notification.repository.NotificationRepository;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.rank.entity.Rank;
 import te.trueEcho.domain.setting.entity.NotiTimeStatus;
-import te.trueEcho.domain.setting.service.NotificationEditService;
+import te.trueEcho.domain.setting.service.NotificationEditServiceImplV1;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.UserAuthRepository;
 import te.trueEcho.domain.vote.entity.VoteResult;
@@ -35,7 +35,7 @@ public class NotificationServiceImpl implements NotificationService {
     private final AuthUtil authUtil;
 
     private final FCMService fcmService;
-    private final NotificationEditService notificationEditService;
+//    private final NotificationEditServiceImplV1 notificationEditService;
 
     private final NotificationRepository notificationRepository;
     private final UserAuthRepository userAuthRepository;
@@ -62,7 +62,7 @@ public class NotificationServiceImpl implements NotificationService {
                     fcmService.sendNotification(token, request);
 
                     // 알림을 받은 유저를 대기 큐에 넣음
-                    notificationEditService.checkIfUserIsWaitingAfterNotification(receiver);
+//                    notificationEditService.checkIfUserIsWaiting(receiver);
 
                     // db에 알림 저장
                     saveNotiInDB(request.getTitle(), request.getBody(), request, receiver, null);

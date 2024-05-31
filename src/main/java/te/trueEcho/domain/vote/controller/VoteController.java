@@ -25,14 +25,14 @@ public class VoteController {
         final VoteContentsResponse contentsResponse = voteService.getVoteContents();
 
         return contentsResponse != null ?
-                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_COMMENT_SUCCESS,contentsResponse)) :
-                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_COMMENT_FAIL));
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_VOTE_CONTENT_SUCCESS,contentsResponse)) :
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_VOTE_CONTENT_FAIL));
     }
 
     @GetMapping("/read/users")
     public ResponseEntity<ResponseForm> readUsers(@RequestParam int userCount) {
 
-        final VoteUsersResponse voteUsersResponse = voteService.getVoteRandomUsers(userCount);
+        final VoteUsersResponse voteUsersResponse = voteService.getRandomUsersWithPostForVote(userCount);
 
         return voteUsersResponse !=null?
              ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_VOTE_TARGET_SUCCESS, voteUsersResponse)) :

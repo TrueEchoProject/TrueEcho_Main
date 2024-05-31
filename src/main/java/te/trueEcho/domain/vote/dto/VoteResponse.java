@@ -9,4 +9,5 @@ import lombok.Getter;
 public class VoteResponse {
     Long id;
     String title;
+    String category;
 }

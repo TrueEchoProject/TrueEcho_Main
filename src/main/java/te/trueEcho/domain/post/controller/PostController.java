@@ -42,10 +42,21 @@ public class PostController {
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.WRITE_POST_FAIL));
     }
 
+    @GetMapping("/read")
+    public ResponseEntity<ResponseForm> readSinglePost(@RequestParam Long postId){
+
+        ReadPostResponse postGetDtoList =  postService.getSinglePost(postId);
+
+        return  postGetDtoList != null ?
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_POST_SUCCESS, postGetDtoList)) :
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_POST_FAIL));
+    }
+
+
     @GetMapping("/read/{type}")
     public ResponseEntity<ResponseForm> readPost(
             @PathVariable int type,
-            @RequestParam String location,
+            @RequestParam(required = false) String location,
             @RequestParam int index,
             @RequestParam int pageCount){
 
@@ -75,11 +86,34 @@ public class PostController {
     }
 
 
+    @PatchMapping("/update/likes")
+    public ResponseEntity<ResponseForm> updateLikes(
+            @RequestBody UpdateLikesRequest updateLikesRequest){
+
+        LikeUpdateResponse likeUpdateResponse = postService.updateLikes(updateLikesRequest);
+
+        return likeUpdateResponse != null ?
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.UPDATE_LIKES_SUCCESS, likeUpdateResponse)) :
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.UPDATE_LIKES_FAIL));
+    }
+
+
     @GetMapping("/read/comment/{postId}")
     public ResponseEntity<ResponseForm> readComment(
-            @PathVariable Long postId){
+            @PathVariable Long postId,
+            @RequestParam int index,
+            @RequestParam int pageCount
+            ){
 
-        CommentListResponse commentListResponse = postService.getComment(postId);
+
+
+        CommentListResponse commentListResponse = postService.getComment(
+                ReadCommentRequest.builder()
+                        .postId(postId)
+                        .index(index)
+                        .pageCount(pageCount)
+                        .build()
+        );
 
         return !commentListResponse.getComments().isEmpty() ?
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_COMMENT_SUCCESS, commentListResponse)) :

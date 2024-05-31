@@ -34,7 +34,7 @@ public class Pin extends CreatedDateAudit {
     private Post post;
 
     @Builder
-    public Pin(int scope, User user, Post post) {
+    public Pin(User user, Post post) {
         this.user = user;
         this.post = post;
     }

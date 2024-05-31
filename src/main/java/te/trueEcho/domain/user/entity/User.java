@@ -63,12 +63,15 @@ public class User extends CreatedDateAudit {
     @Column(name = "connect_by_friend", nullable = true)
     private Boolean connectByFriend; //친구의 친구에게 내 계정 노출
 
-
     @Column(name = "user_birthday", nullable = true)
     private LocalDate birthday;
 
     @Column(name = "user_location", nullable = true)
     private String location;
+
+    @Column(name = "user_coordinate", nullable = true)
+    @Embedded
+    private Coordinate coordinate;
 
     @Lob
     @Column(name = "user_profile_url", nullable = true, columnDefinition = "TEXT")
@@ -89,12 +92,12 @@ public class User extends CreatedDateAudit {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Block> block;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user",  cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private SuspendedUser suspendedUser;
 
     @ManyToOne(fetch = FetchType.LAZY , cascade=CascadeType.ALL)
     @JoinColumn(name = "rank_id")
-    private Rank rank;
+    private Rank rank; // TODO: Rank 연관관계 확인 필요.
 
     @OneToMany(mappedBy = "userVoter", cascade=CascadeType.ALL, fetch = FetchType.LAZY)
     private List<VoteResult> voteResults;
@@ -111,10 +114,12 @@ public class User extends CreatedDateAudit {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY , cascade=CascadeType.ALL)
     private List<Comment> comments;
 
-    @OneToOne(mappedBy = "user", cascade=CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY,  cascade=CascadeType.ALL)
+    @JoinColumn(name = "notification_setting_id", nullable = false)
     private NotificationSetting notificationSetting;
 
-    @OneToMany(mappedBy = "receiver", fetch = FetchType.LAZY , cascade=CascadeType.ALL)
+
+    @OneToMany(mappedBy = "receiver", fetch = FetchType.LAZY , orphanRemoval = true)
     private List<NotificationEntity> notificationEntity = new ArrayList<>();
 
     @Builder
@@ -125,6 +130,7 @@ public class User extends CreatedDateAudit {
                  LocalDate birthday,
                  NotiTimeStatus notificationTimeStatus,
                  String location,
+                 Coordinate coordinate,
                  String password,
                  Role role,
                  NotificationEntity notificationEntity) {
@@ -133,18 +139,17 @@ public class User extends CreatedDateAudit {
         this.gender = gender;
         this.birthday = birthday;
         this.location = location;
+        this.coordinate= coordinate;
         this.password = password;
         this.role = role;
         this.name = name;
 
         // 자동 초기화 : 디폴트
         this.connectByFriend = true;
-
-
+      
         // NotificationSetting 엔티티 생성 및 설정
         this.notificationSetting =
                 NotificationSetting.builder()
-                        .user(this)
                         .notificationTimeStatus(notificationTimeStatus)
                         .build();
     }
@@ -172,7 +177,7 @@ public class User extends CreatedDateAudit {
     }
 
 
-    public void updatePassword(String updatepassword) {
+    public void updatePassword(String password) {
         this.password = password;
     }
 
@@ -189,8 +194,8 @@ public class User extends CreatedDateAudit {
         this.profileURL = profileURL;
     }
 
-    public void updateLocation(String location) {
-        // 위치 갱신하는 로직을 새로 작성
+    public void updateLocation(double x, double y, String location) {
+        this.coordinate = new Coordinate(x, y);
         this.location = location;
     }
 

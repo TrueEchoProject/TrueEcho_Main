@@ -48,19 +48,21 @@ public class JwtService {
     }
 
 
-    public boolean deleteRefreshToken(){
+    public boolean deleteRefreshToken(String token){
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
         log.info("authentication.name ={}", authentication.getName());
+        refreshTokenRepository.addInvalidToken(authentication.getName(), token);  // 만료기간이 남더라도, 무효화.
         return refreshTokenRepository.deleteTokenByEmail(authentication.getName());
     }
 
 
     public TokenDto createToken(){
+
         log.trace("createToken");
         // authentication 객체를 createToken 메소드를 통해서 JWT Token을 생성
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+        refreshTokenRepository.removeInvalidToken(authentication.getName()); // 기존에 발급된 토큰이 있다면 삭제
 
-        //deleteRefreshToken();
         String accessToken = tokenProvider.createToken(authentication, TokenType.ACCESS);
         String refreshToken = tokenProvider.createToken(authentication, TokenType.REFRESH);
         refreshTokenRepository.updateTokenByEmail(refreshToken,authentication.getName());

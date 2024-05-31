@@ -20,11 +20,16 @@ public class UserAuthRepositoryImpl implements UserAuthRepository {
     private final EntityManager em;
 
     public void save(User user) {
-        if (user.getId() == null) {
-            em.persist(user);
-        } else {
-            em.merge(user);
+        try {
+            if (user.getId() == null) {
+                em.persist(user);
+            } else {
+                em.merge(user);
+            }
+        }catch (Exception e) {
+            log.error("User save error: " + e.getMessage());
         }
+
     }
     @Override
     public User findUserById(Long id) {
@@ -55,14 +60,14 @@ public class UserAuthRepositoryImpl implements UserAuthRepository {
     @Override
     public User findUserByNickName(String nickName) {
         try {
-            return
-                    em.createQuery("select u from User u " +
-                                    "join fetch u.suspendedUser " +
+            return  em.createQuery("select u from User u " +
+                                    "left join fetch u.suspendedUser " +
                                     "join fetch u.notificationSetting " +
-                                    " where u.nickname=: nickName", User.class)
+                                    " where u.nickname=:nickName", User.class)
                             .setParameter("nickName", nickName)
                             .getSingleResult();
         }catch (NoResultException e){
+           log.warn("User not found with nickname: " + nickName);
             return null;
         }
     }
@@ -90,7 +95,6 @@ public class UserAuthRepositoryImpl implements UserAuthRepository {
         existUser.setEncryptedPassword(user.getPassword());
         existUser.updateGender(user.getGender());
         existUser.updateBirthDay(user.getBirthday());
-        existUser.updateLocation(user.getLocation());
 
         em.merge(existUser);
     }

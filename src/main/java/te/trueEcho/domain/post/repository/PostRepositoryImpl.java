@@ -3,13 +3,19 @@ package te.trueEcho.domain.post.repository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.BatchSize;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import te.trueEcho.domain.post.entity.Comment;
+import te.trueEcho.domain.post.entity.Like;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.user.entity.User;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -18,13 +24,12 @@ import java.util.List;
 public class PostRepositoryImpl implements PostRepository {
     private final EntityManager em;
 
-
     @Transactional(readOnly = true)
     @Override
+    @BatchSize(size = 100)
     public List<Post> getAllPost(int pageCount, int index, List<User> filteredUser) {
         int currentIndex = index * pageCount;
-
-        return em.createQuery("select p from Post p " +
+        return em.createQuery("select distinct p from Post p " +
                         "where  (p.user in : filteredUser)" +
                         "order by p.createdAt desc", Post.class)
                 .setParameter("filteredUser", filteredUser)
@@ -56,13 +61,32 @@ public class PostRepositoryImpl implements PostRepository {
      * 메인 댓글에서 시작해서 조회하기.
      */
     public List<Comment> readCommentWithUnderComments(Long postId) {
+
         return em.createQuery("SELECT c FROM Comment c " +
                         "JOIN FETCH c.user " +
                         "WHERE c.post.id = :postId " +
                         "ORDER BY c.mainComment.id, c.createdAt", Comment.class)
+
                 .setParameter("postId", postId)
                 .getResultList();
     }
+
+    public List<Post> getRandomPost() {
+        try {
+            LocalDateTime twoDaysAgo = LocalDateTime.now().minusDays(50); // 나중에는 이틀로 제한
+            return em.createQuery("select p from Post p " +
+                            "join fetch p.user " +
+                            "where p.createdAt >= :twoDaysAgo " +
+                            "order by p.createdAt desc", Post.class)
+                    .setParameter("twoDaysAgo", twoDaysAgo)
+                    .getResultList();
+
+        } catch (Exception e) {
+            log.error("getRandomPost error : {}", e.getMessage());
+            return null;
+        }
+    }
+
 
     @Override
     public Comment getParentComment(Long commentId) {
@@ -90,7 +114,7 @@ public class PostRepositoryImpl implements PostRepository {
         }
     }
 
-    @Transactional
+
     @Override
     public void save(Post post) {
         if (post.getId() == null) {
@@ -100,7 +124,7 @@ public class PostRepositoryImpl implements PostRepository {
         }
     }
 
-    @Transactional
+
     public boolean deletePost(Long postId) {
         try{
             Post post = em.find(Post.class, postId);
@@ -114,6 +138,8 @@ public class PostRepositoryImpl implements PostRepository {
             return false;
         }
     }
+
+
 
     @Override
     public boolean deleteComment(Long commentId) {
@@ -133,7 +159,9 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public List<Post> getPostByIdList(List<Long> postIdList) {
         try {
-            return em.createQuery("select p from Post p where p.id in :postIdList", Post.class)
+            return em.createQuery("select p from Post p " +
+                            "left join fetch p.likes " +
+                            "where p.id in :postIdList", Post.class)
                     .setParameter("postIdList", postIdList)
                     .getResultList();
         } catch (Exception e) {
@@ -141,6 +169,45 @@ public class PostRepositoryImpl implements PostRepository {
             return null;
         }
 
+    }
+
+
+
+    @Override
+    public boolean deleteLike(Like like) {
+        try {
+            if (like != null) {
+                em.remove(like);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            log.error("deleteLike error : {}", e.getMessage());
+            return false;
+        }
+    }
+    @Transactional
+    public void saveLike(Like like) {
+        try {
+            em.persist(like);
+        } catch (Exception e) {
+            log.error("saveLike error : {}", e.getMessage());
+        }
+    }
+
+    @Override
+    public Like findLikeByUserAndPost(User user, Post post) {
+        try {
+            return em.createQuery("select l from Like l " +
+                            "where l.user = :user and " +
+                            "l.post = :post", Like.class)
+                    .setParameter("user", user)
+                    .setParameter("post", post)
+                    .getSingleResult();
+        } catch (Exception e) {
+            log.error("findLikeByUserAndPost error : {}", e.getMessage());
+            return null;
+        }
     }
 
     @Override

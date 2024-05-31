@@ -7,17 +7,22 @@ import te.trueEcho.domain.post.dto.PostListResponse;
 import te.trueEcho.domain.post.entity.Post;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public class PostToDto {
-    public  PostListResponse converter(List<Post> postList, String yourLocation, long userId) {
+    public  PostListResponse converter(List<Post> postList,
+                                       String yourLocation,
+                                       Long userId,
+                                       boolean isFriend) {
         List<ReadPostResponse> readPostResponseList = postList.stream()
                 .map(post -> {
                     return ReadPostResponse.builder()
                             .postId(post.getId())
                             .userId(post.getUser().getId())
-                            .isMine(post.getUser().getId()==userId)
+                            .isMine(Objects.equals(post.getUser().getId(), userId))
+                            .isFriend(isFriend)
                             .title(post.getTitle())
                             .postFrontUrl(post.getUrlFront())
                             .postBackUrl(post.getUrlBack())
@@ -26,6 +31,11 @@ public class PostToDto {
                             .username(post.getUser().getName())
                             .profileUrl(post.getUser().getProfileURL())
                             .createdAt(post.getCreatedAt())
+                            .isMyLike(
+                                    post.getLikes().stream().anyMatch(
+                                            like -> like.getUser().getId().equals(userId)
+                                    )
+                            )
                             .build();
                 })
                 .collect(Collectors.toList());

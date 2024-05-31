@@ -16,7 +16,7 @@ public class NotificationSettingDto {
 
     private boolean friendRequest;
 
-    private boolean PhotoTime;
+    private boolean photoTime;
 
     private boolean service;
 }

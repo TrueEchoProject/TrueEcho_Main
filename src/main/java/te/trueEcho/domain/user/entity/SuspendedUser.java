@@ -19,7 +19,7 @@ public class SuspendedUser {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", unique = true)
+    @JoinColumn(name = "user_id", unique = true, nullable = true)
     private User user;
 
     @Column(name = "suspended_date")
