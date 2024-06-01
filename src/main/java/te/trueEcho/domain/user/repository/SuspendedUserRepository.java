@@ -31,10 +31,10 @@ public class SuspendedUserRepository {
     public SuspendedUser findSuspendedUserByEmail(String email) {
         try {
             return em.createQuery(
-                            "select su.user from SuspendedUser su " +
-                                    "where su.user.email = :email", User.class)
+                            "select su from SuspendedUser su " +
+                                    "where su.user.email = :email", SuspendedUser.class)
                     .setParameter("email", email)
-                    .getSingleResult().getSuspendedUser();
+                    .getSingleResult();
         } catch (Exception e) {
             return null;
         }
@@ -44,8 +44,6 @@ public class SuspendedUserRepository {
     public void cancelSuspend(SuspendedUser suspendedUser) {
         SuspendedUser managedSuspendedUser = em.find(SuspendedUser.class, suspendedUser.getId());
         if (managedSuspendedUser != null) {
-            User user = em.find(User.class, managedSuspendedUser.getUser().getId());
-            user.removeSuspendedUser();
             em.remove(managedSuspendedUser);
             em.flush();
         } else {
@@ -62,8 +60,6 @@ public class SuspendedUserRepository {
                 .getResultList();
 
         for (SuspendedUser oldSuspendedUser : oldSuspendedUsers) {
-            User userToDelete = oldSuspendedUser.getUser();
-            em.remove(userToDelete);
             em.remove(oldSuspendedUser);
         }
     }

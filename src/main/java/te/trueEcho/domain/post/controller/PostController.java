@@ -5,12 +5,13 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import te.trueEcho.domain.notification.controller.NotificationController;
 import te.trueEcho.domain.post.dto.*;
+import te.trueEcho.domain.post.entity.PostStatus;
 import te.trueEcho.domain.post.service.PostService;
 import te.trueEcho.global.response.ResponseCode;
 import te.trueEcho.global.response.ResponseForm;
@@ -23,7 +24,6 @@ import te.trueEcho.global.response.ResponseForm;
 @RequestMapping("/post")
 public class PostController {
     private final  PostService  postService;
-    private final NotificationController notificationController;
 
     @Operation(summary = "게시물 작성", description = "새로운 게시물을 작성합니다.")
     @Parameters({
@@ -40,11 +40,13 @@ public class PostController {
     @PostMapping("/write")
     public ResponseEntity<ResponseForm> writePost(
             @RequestParam FeedType type,
-            @RequestParam MultipartFile postFront,
-            @RequestParam MultipartFile postBack,
+            @RequestParam(required = false) MultipartFile postFront,
+            @RequestParam(required = false) MultipartFile postBack,
             @RequestParam String title,
-            @RequestParam int postStatus
-            ){
+            @RequestParam String todayShot
+    ){
+        int postStatus = postService.getPostStatus(todayShot).toValue();
+
         boolean isWritten = postService.writePost(
                 AddPostRequest.builder()
                 .feedType(type)

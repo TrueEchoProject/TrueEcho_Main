@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import te.trueEcho.domain.notification.dto.CommunityFeedNotiResponse;
 import te.trueEcho.domain.notification.dto.NotificationDto;
 import te.trueEcho.domain.notification.dto.PostFeedNotiResponse;
@@ -43,9 +44,10 @@ public class NotificationController {
             @ApiResponse(responseCode = "400", description = "GET_COMMUNITIFEED_NOTIFICATION_FAIL - 커뮤니티 알림 조회 실패")
     })
     @GetMapping("/readCommunity")
-    public ResponseEntity<ResponseForm> readCommunityNotification() {
+    public ResponseEntity<ResponseForm> readCommunityNotification(@RequestParam int index,
+                                                                  @RequestParam int pageCount) {
 
-        CommunityFeedNotiResponse communityNotiList = notificationService.getCommunityNotification();
+        CommunityFeedNotiResponse communityNotiList = notificationService.getCommunityNotification(index, pageCount);
 
         return !communityNotiList.getAllNotis().isEmpty() ?
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_COMMUNITIFEED_NOTIFICATION_SUCCESS, communityNotiList)) :
@@ -57,9 +59,10 @@ public class NotificationController {
             @ApiResponse(responseCode = "400", description = "GET_POST_NOTIFICATION_FAIL - 게시물 알림 조회 실패")
     })
     @GetMapping("/readPost")
-    public ResponseEntity<ResponseForm> readPostNotification() {
+    public ResponseEntity<ResponseForm> readPostNotification(@RequestParam int index,
+                                                             @RequestParam int pageCount) {
 
-        PostFeedNotiResponse postNotiList  = notificationService.getPostNotification();
+        PostFeedNotiResponse postNotiList  = notificationService.getPostNotification(index, pageCount);
 
         return !postNotiList.getAllNotis().isEmpty() ?
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_POST_NOTIFICATION_SUCCESS, postNotiList)) :

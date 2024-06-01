@@ -2,6 +2,10 @@ package te.trueEcho.domain.notification.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import te.trueEcho.domain.notification.dto.PostFeedNotiResponse;
@@ -11,7 +15,6 @@ import te.trueEcho.domain.notification.repository.NotificationRepository;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.rank.entity.Rank;
 import te.trueEcho.domain.setting.entity.NotiTimeStatus;
-import te.trueEcho.domain.setting.service.NotificationEditServiceImplV1;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.UserAuthRepository;
 import te.trueEcho.domain.vote.entity.VoteResult;
@@ -19,6 +22,12 @@ import te.trueEcho.domain.vote.repository.VoteRepositoryImpl;
 import te.trueEcho.global.util.AuthUtil;
 import te.trueEcho.infra.firebase.service.FCMService;
 
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.Date;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +61,7 @@ public class NotificationServiceImpl implements NotificationService {
         // FCM을 통해 알림 전송
         if (token != null) {
 
-            // notiType에 따라 알림을 보낼지 말지 결정
+            // notiType에 따라 알림을 분기
             switch (NotiType.values()[request.getData().getNotiType()]) {
 
                 // 서버에서 클라이언트로 알림을 보내는 경우
@@ -188,41 +197,35 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public CommunityFeedNotiResponse getCommunityNotification() {
+    public CommunityFeedNotiResponse getCommunityNotification(int page, int size) {
         User receiver = authUtil.getLoginUser();
 
         // receiver가 받은 알람중 NotiType이 IN_RANK, NEW_RANK, VOTE_RESULT인 것들만 모두 가져옴
-        List<NotificationEntity> notifications = notificationRepository.findByReceiverAndNotiTypeIn(receiver, Arrays.asList(NotiType.IN_RANK.getCode(), NotiType.NEW_RANK.getCode(), NotiType.VOTE_RESULT.getCode()));
-
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<NotificationEntity> notifications = notificationRepository.findByReceiverAndData_NotiTypeIn(receiver, Arrays.asList(NotiType.IN_RANK.getCode(), NotiType.NEW_RANK.getCode(), NotiType.VOTE_RESULT.getCode()), pageable);
         // 이후 가져온 알람들을 각각의 DTO로 변환
-        List<ReadCommunityFeedInRankNoti> InRankNotis = new ArrayList<>();
-        List<ReadCommunityFeedNewRankNoti> newRankNotis = new ArrayList<>();
-        List<ReadCommunityFeedVoteResultNoti> voteResultNotis = new ArrayList<>();
-
-        for (NotificationEntity notification : notifications) {
+        List<Object> allNotis = notifications.stream().map(notification -> {
             switch (NotiType.values()[notification.getData().getNotiType()]) {
                 case IN_RANK:
                     Rank rank = notification.getRank();
                     String voteTitle = rank.getVote().getTitle();
-                    InRankNotis.add(ReadCommunityFeedInRankNoti.builder()
+                    return ReadCommunityFeedInRankNoti.builder()
                             .id(notification.getId())
                             .type(notification.getData().getNotiType())
                             .rank(rank.getRankLevel())
                             .rank_vote(voteTitle)
                             .created_at(notification.getCreatedAt())
-                            .build());
-                    break;
+                            .build();
                 case NEW_RANK:
-                    newRankNotis.add(ReadCommunityFeedNewRankNoti.builder()
+                    return ReadCommunityFeedNewRankNoti.builder()
                             .id(notification.getId())
                             .type(notification.getData().getNotiType())
                             .created_at(String.valueOf(notification.getCreatedAt()))
-                            .build());
-                    break;
+                            .build();
                 case VOTE_RESULT:
                     VoteResult voteResult = notification.getVoteResult();
                     User sender = userAuthRepository.findUserById(notification.getData().getSenderId());
-                    voteResultNotis.add(ReadCommunityFeedVoteResultNoti.builder()
+                    return ReadCommunityFeedVoteResultNoti.builder()
                             .id(notification.getId())
                             .type(notification.getData().getNotiType())
                             .profile_url(sender.getProfileURL())
@@ -231,28 +234,12 @@ public class NotificationServiceImpl implements NotificationService {
                             .gender(sender.getGender())
                             .age(sender.getAge())
                             .sender_id(sender.getId())
-                            .created_at(notification.getCreatedAt().toString())
-                            .build());
-                    break;
+                            .created_at(String.valueOf(notification.getCreatedAt()))
+                            .build();
                 default:
                     throw new IllegalStateException("Unexpected value: " + NotiType.values()[notification.getData().getNotiType()]);
             }
-        }
-
-        // 세 리스트를 하나로 병합
-        List<Object> allNotis = Stream.of(InRankNotis, newRankNotis, voteResultNotis)
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-
-        allNotis.sort(Comparator.comparing(o -> {
-            if (o instanceof ReadCommunityFeedInRankNoti) {
-                return ((ReadCommunityFeedInRankNoti) o).getCreated_at();
-            } else if (o instanceof ReadCommunityFeedNewRankNoti) {
-                return LocalDateTime.parse(((ReadCommunityFeedNewRankNoti) o).getCreated_at());
-            } else {
-                return LocalDateTime.parse(((ReadCommunityFeedVoteResultNoti) o).getCreated_at());
-            }
-        }, Comparator.reverseOrder()));
+        }).collect(Collectors.toList());
 
         return CommunityFeedNotiResponse.builder()
                 .allNotis(allNotis)
@@ -260,23 +247,19 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public PostFeedNotiResponse getPostNotification() {
+    public PostFeedNotiResponse getPostNotification(int page, int size) {
         User receiver = authUtil.getLoginUser();
 
-        // receiver가 받은 알람중 NotiType이 IN_RANK, NEW_RANK, VOTE_RESULT인 것들만 모두 가져옴
-        List<NotificationEntity> notifications = notificationRepository.findByReceiverAndNotiTypeIn(receiver, Arrays.asList(NotiType.COMMENT.getCode(), NotiType.SUB_COMMENT.getCode(), NotiType.POST_LIKE.getCode(), NotiType.FRIEND_REQUEST.getCode()));
+        // receiver가 받은 알람중 NotiType이 COMMENT, SUB_COMMENT, POST_LIKE, FRIEND_REQUEST인 것들만 모두 가져옴
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<NotificationEntity> notifications = notificationRepository.findByReceiverAndData_NotiTypeIn(receiver, Arrays.asList(NotiType.COMMENT.getCode(), NotiType.SUB_COMMENT.getCode(), NotiType.POST_LIKE.getCode(), NotiType.FRIEND_REQUEST.getCode()), pageable);
 
         // 이후 가져온 알람들을 각각의 DTO로 변환
-        List<ReadPostFeedCommentNoti> commentNotis = new ArrayList<>();
-        List<ReadPostFeedSubCommentNoti> subCommentNotis = new ArrayList<>();
-        List<ReadPostFeedPostLikeNoti> postLikeNotis = new ArrayList<>();
-        List<ReadPostFeedFriendRequestNoti> friendRequestNotis = new ArrayList<>();
-
-        for (NotificationEntity notification : notifications) {
+        List<Object> allNotis = notifications.stream().map(notification -> {
             switch (NotiType.values()[notification.getData().getNotiType()]) {
                 case COMMENT:
                     User commentSender = userAuthRepository.findUserById(notification.getData().getSenderId());
-                    commentNotis.add(ReadPostFeedCommentNoti.builder()
+                    return ReadPostFeedCommentNoti.builder()
                             .id(notification.getId())
                             .type(notification.getData().getNotiType())
                             .profile_url(commentSender.getProfileURL())
@@ -284,11 +267,10 @@ public class NotificationServiceImpl implements NotificationService {
                             .comment(notification.getComment().getContent())
                             .post_id(notification.getComment().getPost().getId())
                             .created_at(String.valueOf(notification.getCreatedAt()))
-                            .build());
-                    break;
+                            .build();
                 case SUB_COMMENT:
                     User subCommentSender = userAuthRepository.findUserById(notification.getData().getSenderId());
-                    subCommentNotis.add(ReadPostFeedSubCommentNoti.builder()
+                    return ReadPostFeedSubCommentNoti.builder()
                             .id(notification.getId())
                             .type(notification.getData().getNotiType())
                             .profile_url(subCommentSender.getProfileURL())
@@ -296,12 +278,11 @@ public class NotificationServiceImpl implements NotificationService {
                             .comment(notification.getComment().getContent())
                             .post_id(notification.getComment().getPost().getId())
                             .created_at(String.valueOf(notification.getCreatedAt()))
-                            .build());
-                    break;
+                            .build();
                 case POST_LIKE:
                     User likeSender = userAuthRepository.findUserById(notification.getData().getSenderId());
                     Post post = notification.getLike().getPost();
-                    postLikeNotis.add(ReadPostFeedPostLikeNoti.builder()
+                    return ReadPostFeedPostLikeNoti.builder()
                             .id(notification.getId())
                             .type(notification.getData().getNotiType())
                             .profile_url(likeSender.getProfileURL())
@@ -309,44 +290,25 @@ public class NotificationServiceImpl implements NotificationService {
                             .like_username(likeSender.getName())
                             .post_id(post.getId())
                             .created_at(String.valueOf(notification.getCreatedAt()))
-                            .build());
-                    break;
+                            .build();
                 case FRIEND_REQUEST:
                     User friendRequestSender = userAuthRepository.findUserById(notification.getData().getSenderId());
-                    friendRequestNotis.add(ReadPostFeedFriendRequestNoti.builder()
+                    return ReadPostFeedFriendRequestNoti.builder()
                             .id(notification.getId())
                             .type(notification.getData().getNotiType())
                             .profile_url(friendRequestSender.getProfileURL())
                             .friend_username(friendRequestSender.getName())
                             .created_at(String.valueOf(notification.getCreatedAt()))
-                            .build());
-                    break;
+                            .build();
                 default:
                     throw new IllegalStateException("Unexpected value: " + NotiType.values()[notification.getData().getNotiType()]);
             }
-        }
-
-        List<Object> allNotis = Stream.of(commentNotis, subCommentNotis, postLikeNotis, friendRequestNotis)
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-
-        allNotis.sort(Comparator.comparing(o -> {
-            if (o instanceof ReadPostFeedCommentNoti) {
-                return LocalDateTime.parse(((ReadPostFeedCommentNoti) o).getCreated_at());
-            } else if (o instanceof ReadPostFeedSubCommentNoti) {
-                return LocalDateTime.parse(((ReadPostFeedSubCommentNoti) o).getCreated_at());
-            } else if (o instanceof ReadPostFeedPostLikeNoti) {
-                return LocalDateTime.parse(((ReadPostFeedPostLikeNoti) o).getCreated_at());
-            } else {
-                return LocalDateTime.parse(((ReadPostFeedFriendRequestNoti) o).getCreated_at());
-            }
-        }, Comparator.reverseOrder()));
+        }).collect(Collectors.toList());
 
         return PostFeedNotiResponse.builder()
                 .allNotis(allNotis)
                 .build();
     }
-
 
 
     public void sendServiceNoti(String title, String body) {
@@ -366,19 +328,52 @@ public class NotificationServiceImpl implements NotificationService {
 
     // NotiTimeStatus에 따라서 알람을 보낼 유저를 선별하여 알람을 보내는 메소드
     public void sendNotiByNotiTimeStatus(NotiTimeStatus notiTimeStatus) {
+        // 무작위 시간을 생성
+        Random random = new Random();
+        int randomHour = random.nextInt(notiTimeStatus.getEndHours() - notiTimeStatus.getStartHours()) + notiTimeStatus.getStartHours(); // 해당 시간대에 무작위 시간을 생성
+        int randomMinute = random.nextInt(60); // 무작위 분을 생성
+
+        // 해당 시간대에 알림을 받기로 설정한 모든 사용자를 찾음
         List<User> users = userAuthRepository.findAllByNotiTimeStatus(notiTimeStatus);
-        // 난수 로직 추가
+
         for (User receiver : users) {
             if (Boolean.TRUE.equals(receiver.getNotificationSetting().getPhotoTimeNotification())) {
                 String token = String.valueOf(fcmService.getToken(receiver));
 
                 if (token != null) {
-                    NotificationDto request = NotificationDto.builder().title("사진 찍을 시간").body("사진을 찍어요!").data(NotificationDto.Data.builder().userId(receiver.getId()).notiType(NotiType.PHOTO_TIME.getCode()).build()).build();
+                    // 알림을 보낼 시간을 설정
+                    LocalDateTime notiTime = LocalDateTime.now()
+                            .withHour(randomHour)
+                            .withMinute(randomMinute)
+                            .withSecond(0);
 
-                    this.sendNotificationCtoStoC(request);
+                    // 알림을 보낼 시간을 setting_noti_time에 저장
+                    receiver.getNotificationSetting().setNotificationTime(notiTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm")));
+
+                    // 알림을 보낼 시간이 되면 알림을 보냄
+                    scheduleNotification(receiver, notiTime);
                 }
             }
         }
+    }
+    // 알림을 보낼 시간이 되면 알림을 보내는 메소드
+    public void scheduleNotification(User receiver, LocalDateTime notiTime) {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                NotificationDto request = NotificationDto.builder()
+                        .title("사진 찍을 시간")
+                        .body("사진을 찍어요!")
+                        .data(NotificationDto.Data.builder()
+                                .userId(receiver.getId())
+                                .notiType(NotiType.PHOTO_TIME.getCode())
+                                .build())
+                        .build();
+
+                sendNotificationCtoStoC(request);
+            }
+        }, Date.from(notiTime.atZone(ZoneId.systemDefault()).toInstant()));
     }
 
     // 00시에 실행
