@@ -20,6 +20,6 @@ public class SwaggerConfig {
                         .title("API Documentation")
                         .version("1.0")
                         .description("API Documentation for the application"))
-                .addServersItem(new Server().url("http://localhost:8080"));
+                .addServersItem(new Server().url("https://port-0-true-echo-85phb42blucciuvv.sel5.cloudtype.app"));
     }
 }
