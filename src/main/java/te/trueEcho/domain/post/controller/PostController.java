@@ -24,7 +24,7 @@ public class PostController {
             @RequestParam String title,
             @RequestParam String todayShot
     ){
-        int postStatus = postService.getPostStatus(todayShot).toValue();
+        String postStatus = postService.getPostStatus(todayShot).toString();
 
         boolean isWritten = postService.writePost(
                 AddPostRequest.builder()

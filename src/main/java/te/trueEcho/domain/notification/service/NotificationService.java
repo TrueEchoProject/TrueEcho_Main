@@ -9,8 +9,8 @@ public interface NotificationService  {
 
     boolean sendNotificationCtoStoC(NotificationDto request);
 
-    CommunityFeedNotiResponse getCommunityNotification();
+    CommunityFeedNotiResponse getCommunityNotification(int page, int size);
 
-    PostFeedNotiResponse getPostNotification();
+    PostFeedNotiResponse getPostNotification(int page, int size);
 }
 

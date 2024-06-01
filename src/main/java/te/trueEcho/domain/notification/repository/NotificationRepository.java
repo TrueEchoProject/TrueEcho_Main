@@ -1,6 +1,8 @@
 package te.trueEcho.domain.notification.repository;
 
-import org.springframework.data.domain.Sort;
+import org.hibernate.annotations.BatchSize;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,9 +21,10 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
             "n.data.notiType = :notiType AND " +
             " DATE(n.createdAt) = :today")
     boolean existsNotificationWithNotiTypeZero(@Param("user") User user, @Param("notiType") int notiType, @Param("today") LocalDate today);
+//    @Query("SELECT n FROM NotificationEntity n WHERE n.receiver = :receiver AND n.data.notiType IN :list")
+//    List<NotificationEntity> findByReceiverAndNotiTypeIn(@Param("receiver") User receiver, @Param("list") List<Integer> list);
 
-    @Query("SELECT n FROM NotificationEntity n WHERE n.receiver = :receiver AND n.data.notiType IN :list")
-    List<NotificationEntity> findByReceiverAndNotiTypeIn(@Param("receiver") User receiver, @Param("list") List<Integer> list);
+    Page<NotificationEntity> findByReceiverAndNotiTypeIn(User receiver, List<Integer> notiTypes, Pageable pageable);
 
-    List<NotificationEntity> findByReceiverAndNotiTypeIn(User receiver, List<Integer> notiTypes, Sort sort);
+
 }

@@ -2,6 +2,9 @@ package te.trueEcho.domain.notification.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -194,11 +197,12 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public CommunityFeedNotiResponse getCommunityNotification() {
+    public CommunityFeedNotiResponse getCommunityNotification(int page, int size) {
         User receiver = authUtil.getLoginUser();
 
         // receiver가 받은 알람중 NotiType이 IN_RANK, NEW_RANK, VOTE_RESULT인 것들만 모두 가져옴
-        List<NotificationEntity> notifications = notificationRepository.findByReceiverAndNotiTypeIn(receiver, Arrays.asList(NotiType.IN_RANK.getCode(), NotiType.NEW_RANK.getCode(), NotiType.VOTE_RESULT.getCode()), Sort.by(Sort.Direction.DESC, "createdAt"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<NotificationEntity> notifications = notificationRepository.findByReceiverAndNotiTypeIn(receiver, Arrays.asList(NotiType.IN_RANK.getCode(), NotiType.NEW_RANK.getCode(), NotiType.VOTE_RESULT.getCode()), pageable);
 
         // 이후 가져온 알람들을 각각의 DTO로 변환
         List<Object> allNotis = notifications.stream().map(notification -> {
@@ -244,11 +248,12 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public PostFeedNotiResponse getPostNotification() {
+    public PostFeedNotiResponse getPostNotification(int page, int size) {
         User receiver = authUtil.getLoginUser();
 
         // receiver가 받은 알람중 NotiType이 COMMENT, SUB_COMMENT, POST_LIKE, FRIEND_REQUEST인 것들만 모두 가져옴
-        List<NotificationEntity> notifications = notificationRepository.findByReceiverAndNotiTypeIn(receiver, Arrays.asList(NotiType.COMMENT.getCode(), NotiType.SUB_COMMENT.getCode(), NotiType.POST_LIKE.getCode(), NotiType.FRIEND_REQUEST.getCode()), Sort.by(Sort.Direction.DESC, "createdAt"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<NotificationEntity> notifications = notificationRepository.findByReceiverAndNotiTypeIn(receiver, Arrays.asList(NotiType.COMMENT.getCode(), NotiType.SUB_COMMENT.getCode(), NotiType.POST_LIKE.getCode(), NotiType.FRIEND_REQUEST.getCode()), pageable);
 
         // 이후 가져온 알람들을 각각의 DTO로 변환
         List<Object> allNotis = notifications.stream().map(notification -> {
