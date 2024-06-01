@@ -66,7 +66,6 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     public VoteUsersResponse getRandomUsersWithPostForVote(int voteUserCount) {
-
         VoteUsersResponse voteUsersResponse = voteRepository.getTargetUsers(false);
 
         if(voteUsersResponse != null) {
@@ -76,8 +75,7 @@ public class VoteServiceImpl implements VoteService {
             }
             return voteUsersResponse;
         }else{ // 새로 만들기
-            List<Post> randomPosts =  postRepository.getRandomPost();
-
+            List<Post> randomPosts =  postRepository.getRandomPost(); // 이틀이 아니라, 최근 게시물 50개.
             if(randomPosts == null || randomPosts.isEmpty()) {
                 return null;
             }
@@ -95,7 +93,9 @@ public class VoteServiceImpl implements VoteService {
                     }
                 }
             }
+
             cacheShuffledList(voteUserCount, Arrays.asList(randomPosts.toArray()), false);
+
             return getRandomUsersWithPostForVote(voteUserCount);
         }
     }
@@ -103,6 +103,7 @@ public class VoteServiceImpl implements VoteService {
     private void reShuffleAndCache(int voteUserCount) {
         List<TargetUserResponse> collectedPosts = new ArrayList<>();
         VoteUsersResponse temp = voteRepository.getTargetUsers(true);
+
         while (temp!=null) {
             log.trace("temp : {}", temp);
             collectedPosts.addAll(temp.getUserList());
@@ -142,6 +143,7 @@ public class VoteServiceImpl implements VoteService {
         Collections.shuffle(shuffleTarget);
 
         List<List<Object>> groupedPosts = new ArrayList<>();
+
         IntStream.range(0, shuffleTarget.size())
                 .forEach(i -> {
                     if (i % voteUserCount == 0) {
@@ -150,6 +152,7 @@ public class VoteServiceImpl implements VoteService {
                     groupedPosts.get(i / voteUserCount).add(shuffleTarget.get(i));
                 });
         // 나머지 없애기
+
         if (groupedPosts.get(groupedPosts.size() - 1).size() < voteUserCount) {
             groupedPosts.remove(groupedPosts.size() - 1);
         }
