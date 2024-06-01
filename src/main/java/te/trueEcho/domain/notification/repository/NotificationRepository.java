@@ -1,5 +1,6 @@
 package te.trueEcho.domain.notification.repository;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,4 +22,6 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
 
     @Query("SELECT n FROM NotificationEntity n WHERE n.receiver = :receiver AND n.data.notiType IN :list")
     List<NotificationEntity> findByReceiverAndNotiTypeIn(@Param("receiver") User receiver, @Param("list") List<Integer> list);
+
+    List<NotificationEntity> findByReceiverAndNotiTypeIn(User receiver, List<Integer> notiTypes, Sort sort);
 }
