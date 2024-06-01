@@ -31,10 +31,10 @@ public class SuspendedUserRepository {
     public SuspendedUser findSuspendedUserByEmail(String email) {
         try {
             return em.createQuery(
-                            "select su.user from SuspendedUser su " +
-                                    "where su.user.email = :email", User.class)
+                            "select su from SuspendedUser su " +
+                                    "where su.user.email = :email", SuspendedUser.class)
                     .setParameter("email", email)
-                    .getSingleResult().getSuspendedUser();
+                    .getSingleResult();
         } catch (Exception e) {
             return null;
         }
