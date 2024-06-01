@@ -11,7 +11,6 @@ import te.trueEcho.domain.notification.repository.NotificationRepository;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.rank.entity.Rank;
 import te.trueEcho.domain.setting.entity.NotiTimeStatus;
-import te.trueEcho.domain.setting.service.NotificationEditServiceImplV1;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.UserAuthRepository;
 import te.trueEcho.domain.vote.entity.VoteResult;
@@ -19,6 +18,12 @@ import te.trueEcho.domain.vote.repository.VoteRepositoryImpl;
 import te.trueEcho.global.util.AuthUtil;
 import te.trueEcho.infra.firebase.service.FCMService;
 
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.Date;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +57,7 @@ public class NotificationServiceImpl implements NotificationService {
         // FCM을 통해 알림 전송
         if (token != null) {
 
-            // notiType에 따라 알림을 보낼지 말지 결정
+            // notiType에 따라 알림을 분기
             switch (NotiType.values()[request.getData().getNotiType()]) {
 
                 // 서버에서 클라이언트로 알림을 보내는 경우
@@ -348,7 +353,6 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
 
-
     public void sendServiceNoti(String title, String body) {
         List<User> users = userAuthRepository.findAll();
         for (User receiver : users) {
@@ -366,19 +370,52 @@ public class NotificationServiceImpl implements NotificationService {
 
     // NotiTimeStatus에 따라서 알람을 보낼 유저를 선별하여 알람을 보내는 메소드
     public void sendNotiByNotiTimeStatus(NotiTimeStatus notiTimeStatus) {
+        // 무작위 시간을 생성
+        Random random = new Random();
+        int randomHour = random.nextInt(notiTimeStatus.getEndHours() - notiTimeStatus.getStartHours()) + notiTimeStatus.getStartHours(); // 해당 시간대에 무작위 시간을 생성
+        int randomMinute = random.nextInt(60); // 무작위 분을 생성
+
+        // 해당 시간대에 알림을 받기로 설정한 모든 사용자를 찾음
         List<User> users = userAuthRepository.findAllByNotiTimeStatus(notiTimeStatus);
-        // 난수 로직 추가
+
         for (User receiver : users) {
             if (Boolean.TRUE.equals(receiver.getNotificationSetting().getPhotoTimeNotification())) {
                 String token = String.valueOf(fcmService.getToken(receiver));
 
                 if (token != null) {
-                    NotificationDto request = NotificationDto.builder().title("사진 찍을 시간").body("사진을 찍어요!").data(NotificationDto.Data.builder().userId(receiver.getId()).notiType(NotiType.PHOTO_TIME.getCode()).build()).build();
+                    // 알림을 보낼 시간을 설정
+                    LocalDateTime notiTime = LocalDateTime.now()
+                            .withHour(randomHour)
+                            .withMinute(randomMinute)
+                            .withSecond(0);
 
-                    this.sendNotificationCtoStoC(request);
+                    // 알림을 보낼 시간을 setting_noti_time에 저장
+                    receiver.getNotificationSetting().setNotificationTime(notiTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm")));
+
+                    // 알림을 보낼 시간이 되면 알림을 보냄
+                    scheduleNotification(receiver, notiTime);
                 }
             }
         }
+    }
+    // 알림을 보낼 시간이 되면 알림을 보내는 메소드
+    public void scheduleNotification(User receiver, LocalDateTime notiTime) {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                NotificationDto request = NotificationDto.builder()
+                        .title("사진 찍을 시간")
+                        .body("사진을 찍어요!")
+                        .data(NotificationDto.Data.builder()
+                                .userId(receiver.getId())
+                                .notiType(NotiType.PHOTO_TIME.getCode())
+                                .build())
+                        .build();
+
+                sendNotificationCtoStoC(request);
+            }
+        }, Date.from(notiTime.atZone(ZoneId.systemDefault()).toInstant()));
     }
 
     // 00시에 실행

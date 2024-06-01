@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import te.trueEcho.domain.setting.dto.notiset.NotificationSettingDto;
 import te.trueEcho.domain.user.entity.User;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,6 +25,14 @@ public class NotificationSetting {
     @Column(name = "setting_noti_time_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private NotiTimeStatus notificationTimeStatus;
+
+    @Column(name = "setting_noti_time")
+    private LocalDateTime notificationTime;
+
+    public void setNotificationTime(String notificationTimeStr) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm");
+        this.notificationTime = LocalDateTime.parse(notificationTimeStr, formatter);
+    }
 
     @Column(name = "setting_noti_comment", nullable = false)
     private Boolean commentNotification;
