@@ -1,5 +1,6 @@
 package te.trueEcho.domain.user.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,18 +9,22 @@ import te.trueEcho.domain.user.entity.User;
 
 import java.time.LocalDate;
 
+@Schema(description = "사용자 정보 수정 응답 DTO")
 @Getter
 @Setter
 @AllArgsConstructor
 public class EditUserResponse {
 
+    @Schema(description = "이름", example = "John Doe")
     private String name;
 
+    @Schema(description = "성별", example = "MALE")
     private Gender gender;
 
-    //    @Pattern(regexp = "^\\d{3}-\\d{3,4}-\\d{4}$", message = "휴대폰 번호 양식이 맞지 않습니다") 차후 패턴 추가
+    @Schema(description = "생년월일", example = "1990-01-01")
     private LocalDate birthday;
 
+    @Schema(description = "위치", example = "Seoul")
     private String location;
 
     public EditUserResponse(User user) {

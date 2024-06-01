@@ -66,7 +66,6 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     public VoteUsersResponse getRandomUsersWithPostForVote(int voteUserCount) {
-
         VoteUsersResponse voteUsersResponse = voteRepository.getTargetUsers(false);
 
         if(voteUsersResponse != null) {
@@ -76,8 +75,7 @@ public class VoteServiceImpl implements VoteService {
             }
             return voteUsersResponse;
         }else{ // 새로 만들기
-            List<Post> randomPosts =  postRepository.getRandomPost();
-
+            List<Post> randomPosts =  postRepository.getRandomPost(); // 이틀이 아니라, 최근 게시물 50개.
             if(randomPosts == null || randomPosts.isEmpty()) {
                 return null;
             }

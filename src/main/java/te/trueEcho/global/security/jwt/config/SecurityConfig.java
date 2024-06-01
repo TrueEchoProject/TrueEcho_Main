@@ -58,13 +58,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeRequests) ->
                         authorizeRequests
 //                                .requestMatchers(PathRequest.toH2Console()).permitAll()
+                                .requestMatchers("/swagger-ui/**").permitAll()
+                                .requestMatchers("/v3/api-docs/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/accounts/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/accounts/**").permitAll()
                                 .requestMatchers(HttpMethod.PATCH, "/accounts/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/swagger-ui/**").permitAll()
-                                .requestMatchers(HttpMethod.PUT, "/swagger-ui/**").permitAll()
-                                .requestMatchers(HttpMethod.PATCH, "/swagger-ui/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/email/**").hasRole(Role.ADMIN.name()) // 인가 확인
                                 .anyRequest().authenticated() // 나머지는 인증 필요.
                 ).

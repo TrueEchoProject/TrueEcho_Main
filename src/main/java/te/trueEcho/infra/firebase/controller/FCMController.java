@@ -1,5 +1,9 @@
 package te.trueEcho.infra.firebase.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +16,7 @@ import te.trueEcho.infra.firebase.service.FCMService;
 import static te.trueEcho.global.response.ResponseCode.*;
 
 
-@Tag(name = "USER API")
+@Tag(name = "FCM API", description = "Firebase Cloud Messaging API")
 @Slf4j
 @Validated
 @RestController
@@ -21,7 +25,12 @@ import static te.trueEcho.global.response.ResponseCode.*;
 public class FCMController {
 
     private final FCMService fcmService;
-
+    @Operation(summary = "FCM 토큰 저장", description = "FCM 토큰을 저장합니다.")
+    @Parameter(name = "token", description = "FCM 토큰", required = true, example = "fcm_token_example")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "FCM_TOKEN_SAVED_SUCCESS - 토큰 저장 성공"),
+            @ApiResponse(responseCode = "400", description = "FCM_TOKEN_SAVED_FAIL - 토큰 저장 실패")
+    })
     @PostMapping(value = "/save") // 토큰 저장
     public ResponseEntity<ResponseForm> saveToken(@RequestParam String token) {
 
