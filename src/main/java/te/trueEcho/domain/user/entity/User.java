@@ -93,8 +93,8 @@ public class User extends CreatedDateAudit {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Block> block;
 
-    @OneToOne(mappedBy = "user",  cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private SuspendedUser suspendedUser;
+//    @OneToOne(mappedBy = "user",  cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private SuspendedUser suspendedUser;
 
     @ManyToOne(fetch = FetchType.LAZY , cascade=CascadeType.ALL)
     @JoinColumn(name = "rank_id")
@@ -200,10 +200,7 @@ public class User extends CreatedDateAudit {
         this.location = location;
     }
 
-    public void removeSuspendedUser() {
-        this.suspendedUser = null;
-    }
-
+    // public void removeSuspendedUser() {this.suspendedUser = null;}
 
     public LocalDateTime getNotiTime() {
         return this.notificationSetting.getNotificationTime();
