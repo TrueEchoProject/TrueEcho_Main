@@ -8,16 +8,19 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import te.trueEcho.domain.user.entity.SuspendedUser;
+import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.SuspendedUserRepository;
 import te.trueEcho.domain.user.service.UserService;
 import te.trueEcho.domain.user.dto.LoginRequest;
 import te.trueEcho.global.response.ResponseForm;
 import te.trueEcho.global.security.jwt.dto.TokenDto;
 import te.trueEcho.global.security.jwt.service.JwtService;
+import te.trueEcho.global.util.AuthUtil;
+import te.trueEcho.infra.firebase.service.FCMService;
 
 import static te.trueEcho.global.response.ResponseCode.*;
 
@@ -28,6 +31,8 @@ public class JwtController {
     private final JwtService jwtService;
     private final SuspendedUserRepository suspendedUserRepository;
     private final UserService userService;
+    private final FCMService fcmService;
+    private final AuthUtil authUtil;
 
     @Operation(summary = "로그인", description ="회원가입시 입력했던 유저이름과 패스워드 입력")
     @Parameters({@Parameter(name = "username", required = true, example = "heejune"),
@@ -69,13 +74,26 @@ public class JwtController {
 
     @DeleteMapping("accounts/logout")
     public ResponseEntity<ResponseForm> logout(@RequestHeader("Authorization") String token) {
-        boolean isDeleted = jwtService.deleteRefreshToken(token);
+        try {
+            final User user = authUtil.getLoginUser();
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseForm.of(LOGOUT_FAIL, "User is not authenticated"));
+            }
 
-        log.info("token: {} ", token);
+            fcmService.removeToken(user);
+            boolean isDeleted = jwtService.deleteRefreshToken(token);
 
-        return isDeleted ?
-                ResponseEntity.ok(ResponseForm.of(LOGOUT_SUCCESS)) :
-                ResponseEntity.ok(ResponseForm.of(LOGOUT_FAIL));
+            if (!isDeleted) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseForm.of(LOGOUT_FAIL, "Failed to delete refresh token"));
+            }
+
+            log.info("token: {} ", token);
+            return ResponseEntity.ok(ResponseForm.of(LOGOUT_SUCCESS));
+
+        } catch (Exception e) {
+            log.error("Error occurred during logout: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseForm.of(LOGOUT_FAIL, "An error occurred during logout"));
+        }
     }
 
     @GetMapping("/refresh")
