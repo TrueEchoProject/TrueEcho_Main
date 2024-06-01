@@ -31,37 +31,40 @@ const FriendPosts = React.forwardRef((props, ref) => {
 		setPage(0);
 		await getPosts(0, true);
 		setRefreshing(false);
-	};
-	
-	const getPosts = async (index, isRefresh = false) => {
+		console.log('Posts refreshed'); // 상태 업데이트 로그 추가
+	  };
+	  
+	  const getPosts = async (index, isRefresh = false) => {
 		setIsLoading(true);
-		let url = `/post/read/0?index=${index}&pageCount=5`;
+		let url = `/post/read/0?index=${index}&pageCount=5`; // 친구 범위 필터링
 		try {
-			console.log(`url is`, url);
-			const serverResponse = await Api.get(url);
-			const newPosts = serverResponse.data.data.readPostResponse;
-			if (serverResponse.data.message === "게시물을 조회를 실패했습니다.") {
-				console.log("No more posts to load.");
-				alert("No more posts to load.")
-				setIsLoading(false);
-				return;
-			}
-			if (isRefresh) {
-				setPosts(newPosts);
-			} else {
-				setPosts(prevPosts => [...prevPosts, ...newPosts]);
-			}
-		} catch (error) {
-			console.error('Error fetching posts and recommendations:', error);
-		} finally {
+		  console.log(`url is`, url);
+		  const serverResponse = await Api.get(url);
+		  const newPosts = serverResponse.data.data.readPostResponse;
+		  if (serverResponse.data.message === "게시물을 조회를 실패했습니다.") {
+			console.log("No more posts to load.");
+			alert("No more posts to load.")
 			setIsLoading(false);
-			if (isRefresh) {
-				setTimeout(() => {
-					pagerViewRef.current?.setPageWithoutAnimation(0);
-				}, 50);
-			}
+			return;
+		  }
+		  if (isRefresh) {
+			setPosts(newPosts);
+		  } else {
+			setPosts(prevPosts => [...prevPosts, ...newPosts]);
+		  }
+		  console.log('Fetched posts:', newPosts); // 데이터 확인 로그 추가
+		} catch (error) {
+		  console.error('Error fetching posts:', error);
+		} finally {
+		  setIsLoading(false);
+		  if (isRefresh) {
+			setTimeout(() => {
+			  pagerViewRef.current?.setPageWithoutAnimation(0);
+			}, 50);
+		  }
 		}
-	};
+	  };
+	  
 	
 	const handleBlock = async (postId) => {
 		setPosts(prev => prev.filter(item => item.postId !== postId));

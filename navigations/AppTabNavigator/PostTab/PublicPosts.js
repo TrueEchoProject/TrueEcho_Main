@@ -46,8 +46,9 @@ const PublicPosts = React.forwardRef((props, ref) => {
 	
 	const refreshPosts = async () => {
 		setPage(0);
-		firstFetch();
-	}
+		await firstFetch();
+
+	  };
 	
 	const firstFetch = async () => {
 		setRefreshing(true);
@@ -66,56 +67,65 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		setRefreshing(true);
 		let url = `/post/read/1?index=${index}&pageCount=5`;
 		if (selectedRange) {
-			try {
-				setCopiedLocation(location)
-				const words = copiedLocation.split(' ');
-				let newLocation = '';
-				switch (selectedRange) {
-					case 'small':
-						newLocation = words.join(' ');
-						break;
-					case 'middle':
-						newLocation = words.slice(0, 2).join(' ');
-						break;
-					case 'big':
-						newLocation = words[0];
-						break;
-					default:
-						console.log('Invalid range');
-						setRefreshing(false);
-						return;
-				}
-				console.log('Got location:', newLocation)
-				url += `&location=${encodeURIComponent(newLocation)}`;
-			} catch (error) {
-				console.error('Fetching user location failed:', error);
+		  try {
+			setCopiedLocation(location)
+			const words = copiedLocation.split(' ');
+			let newLocation = '';
+			switch (selectedRange) {
+			  case 'small':
+				newLocation = words.join(' ');
+				break;
+			  case 'middle':
+				newLocation = words.slice(0, 2).join(' ');
+				break;
+			  case 'big':
+				newLocation = words[0];
+				break;
+			  default:
+				console.log('Invalid range');
 				setRefreshing(false);
 				return;
 			}
-		}
-		
-		try {
-			console.log(`url is`, url);
-			const serverResponse = await Api.get(url);
-			const newPosts = serverResponse.data.data.readPostResponse;
-			if (serverResponse.data.message === "게시물을 조회를 실패했습니다.") {
-				console.log("No more posts to load.");
-				alert("No more posts to load.")
-				setRefreshing(false);
-				return;
-			}
-			setPosts(prevPosts => index === 0 ? newPosts : [...prevPosts, ...newPosts]);
-		} catch (error) {
-			console.error('Fetching posts failed:', error);
-		} finally {
+			console.log('Got location:', newLocation)
+			url += `&location=${encodeURIComponent(newLocation)}`;
+		  } catch (error) {
+			console.error('Fetching user location failed:', error);
 			setRefreshing(false);
-			setOptionsVisible(false);
-			if (index === 0) {
-				setTimeout(() => {
-					pagerViewRef.current?.setPageWithoutAnimation(0);
-				}, 50);
-		}}
-	};
+			return;
+		  }
+		}
+	  
+		try {
+		  console.log(`url is`, url);
+		  const serverResponse = await Api.get(url);
+		  const newPosts = serverResponse.data.data.readPostResponse;
+		  if (serverResponse.data.message === "게시물을 조회를 실패했습니다.") {
+			console.log("No more posts to load.");
+			alert("No more posts to load.")
+			setRefreshing(false);
+			return;
+		  }
+	  
+		  // If index is 0, it means we are refreshing the whole list, otherwise we are appending
+		  const allPosts = index === 0 ? newPosts : [...posts, ...newPosts];
+	  
+		  // Sort posts by creation time, assuming posts have a `createdAt` property
+		  allPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+	  
+		  setPosts(allPosts);
+		} catch (error) {
+		  console.error('Fetching posts failed:', error);
+		} finally {
+		  setRefreshing(false);
+		  setOptionsVisible(false);
+		  if (index === 0) {
+			setTimeout(() => {
+			  pagerViewRef.current?.setPageWithoutAnimation(0);
+			}, 50);
+		  }
+		}
+	  };
+	  
 	
 	const toggleOptions = () => {
 		setOptionsVisible(!optionsVisible);

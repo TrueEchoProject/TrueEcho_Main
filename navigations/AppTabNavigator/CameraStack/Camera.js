@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, TouchableOpacity, Text, Platform } from 'react-native';
 import { Camera as ExpoCamera } from 'expo-camera/legacy';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
-import axios from 'axios';
 
 const CameraScreen = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null); // 카메라 권한 상태
@@ -20,22 +19,6 @@ const CameraScreen = ({ navigation }) => {
       const { status } = await ExpoCamera.requestCameraPermissionsAsync();
       setHasPermission(status === 'granted');
     })();
-  }, []);
-  
-  // 카메라 ontime 검증
-  useEffect(() => {
-    const checkCameraOnTime = async () => {
-      try {
-        const response = await axios.get('https://port-0-true-echo-85phb42blucciuvv.sel5.cloudtype.app/post/check');
-        if (response.status === 200) {
-          setPostStatus(response.data.isChecked);
-        }
-      } catch (error) {
-        console.error('카메라 ontime 검증 오류:', error);
-      }
-    };
-    
-    checkCameraOnTime();
   }, []);
   
   // 화면 포커스 상태 업데이트
@@ -63,9 +46,7 @@ const CameraScreen = ({ navigation }) => {
           return prevTimer - 1;
         } else {
           clearInterval(intervalId);
-          if (postStatus === 0) {
-            setPostStatus(1); // late 상태로 변경
-          }
+          
           return 0;
         }
       });
