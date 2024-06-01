@@ -3,15 +3,16 @@ package te.trueEcho.domain.user.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+@Schema(description = "사용자 확인 요청 DTO")
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class UserCheckRequest {
-    @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "이메일", example = "trueEcho@gmail.com",requiredMode = Schema.RequiredMode.REQUIRED)
+
+    @Schema(description = "닉네임", example = "trueEchoUser", required = true)
     private String nickname;
-    @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "이메일", example = "trueEcho@gmail.com",requiredMode = Schema.RequiredMode.REQUIRED)
+
+    @Schema(description = "이메일", example = "trueEcho@gmail.com", required = true)
     private String email;
 }
-
-

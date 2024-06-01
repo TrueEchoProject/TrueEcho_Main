@@ -31,12 +31,8 @@ public class UserAuthController {
             3. 이메일이 중복된 경우 이메일 중복을 클라이언트에 알림.
             """)
     @Parameters({@Parameter(name = "email", required = true, example = "trueEcho@gmail.com"),
-
             @Parameter(name = "username", required = true, example = "heejoon")
-
     })
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            required = true, description = "hihihihi", useParameterTypeSchema = true)
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = """
                     U011 - 사용가능한 EMAIL 입니다.
@@ -45,8 +41,6 @@ public class UserAuthController {
                     G003 - 유효하지 않은 입력입니다.
                     G004 - 입력 타입이 유효하지 않습니다.""")
     })
-
-
 
     @GetMapping(value = "/{type}/duplication")
     public ResponseEntity<ResponseForm> checkEmailDuplication(
@@ -73,6 +67,15 @@ public class UserAuthController {
       return ResponseEntity.ok(ResponseForm.of(NOT_DUPLICATED_SUCCESS, type));
     }
 
+    @Operation(summary = "코드 확인", description = "이메일 인증 코드를 확인합니다.")
+    @Parameters({
+            @Parameter(name = "email", required = true, example = "trueEcho@gmail.com"),
+            @Parameter(name = "checkCode", required = true, example = "123456")
+    })
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "VERIFY_EMAIL_SUCCESS - 이메일 인증 성공"),
+            @ApiResponse(responseCode = "400", description = "VERIFY_EMAIL_FAIL - 이메일 인증 실패")
+    })
     @GetMapping(value = "/checkcode")
     public ResponseEntity<ResponseForm> checkCode(
             @RequestParam String email,
@@ -94,8 +97,6 @@ public class UserAuthController {
     @Parameters({@Parameter(name = "email", required = true, example = "trueEcho@gmail.com"),
             @Parameter(name = "username", required = true, example = "heejune")
     })
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            required = true, description = "hihihihi", useParameterTypeSchema = true)
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = """
                     U001 - 회원가입에 성공하였습니다.
@@ -106,7 +107,6 @@ public class UserAuthController {
                     U002 - 이미 존재하는 사용자 이름입니다.
                     U007 - 인증 이메일 전송을 먼저 해야합니다.""")
     })
-
     @PostMapping(value = "/register")
     public ResponseEntity<ResponseForm> register(@RequestBody RegisterRequest registerRequest) {
         final boolean isRegistered = userAuthService.registerUser(registerRequest);
@@ -120,8 +120,6 @@ public class UserAuthController {
     @Parameters({@Parameter(name = "email", required = true, example = "trueEcho@gmail.com"),
             @Parameter(name = "nickname", required = true, example = "heejune")
     })
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            required = true, description = "hihihihi", useParameterTypeSchema = true)
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "M014 - 인증이메일을 전송하였습니다."),
             @ApiResponse(responseCode = "400", description = """
@@ -146,6 +144,11 @@ public class UserAuthController {
                 ResponseEntity.ok(ResponseForm.of(SEND_EMAIL_FAIL));
     }
 
+    @Operation(summary = "비밀번호 수정", description = "사용자의 비밀번호를 수정합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "UPDATE_PASSWORD_SUCCESS - 비밀번호 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "UPDATE_PASSWORD_FAIL - 비밀번호 수정 실패")
+    })
     @PatchMapping("/password")
     public ResponseEntity<ResponseForm> updatePassword(
             @RequestBody UpdatePasswordRequest registerRequest) {
