@@ -1,14 +1,11 @@
 package te.trueEcho.domain.post.controller;
 
-import com.azure.core.annotation.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import te.trueEcho.domain.notification.controller.NotificationController;
-import te.trueEcho.domain.notification.dto.NotiType;
-import te.trueEcho.domain.notification.dto.NotificationDto;
 import te.trueEcho.domain.post.dto.*;
+import te.trueEcho.domain.post.entity.PostStatus;
 import te.trueEcho.domain.post.service.PostService;
 import te.trueEcho.global.response.ResponseCode;
 import te.trueEcho.global.response.ResponseForm;
@@ -25,9 +22,10 @@ public class PostController {
             @RequestParam(required = false) MultipartFile postFront,
             @RequestParam(required = false) MultipartFile postBack,
             @RequestParam String title,
-            @RequestParam int postStatus,
-            @RequestParam String todaySHot
+            @RequestParam String todayShot
     ){
+        int postStatus = postService.getPostStatus(todayShot).toValue();
+
         boolean isWritten = postService.writePost(
                 AddPostRequest.builder()
                 .feedType(type)

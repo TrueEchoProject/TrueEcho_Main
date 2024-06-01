@@ -14,14 +14,26 @@ import te.trueEcho.domain.post.dto.*;
 import te.trueEcho.domain.post.entity.Comment;
 import te.trueEcho.domain.post.entity.Like;
 import te.trueEcho.domain.post.entity.Post;
+import te.trueEcho.domain.post.entity.PostStatus;
 import te.trueEcho.domain.post.repository.PostRepository;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.UserRepository;
 import te.trueEcho.global.util.AuthUtil;
 import te.trueEcho.infra.azure.AzureUploader;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.Date;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import static te.trueEcho.domain.post.entity.PostStatus.fromValue;
 
@@ -36,38 +48,45 @@ public class PostServiceImpl implements PostService {
     private final AuthUtil authUtil;
     private final AzureUploader azureUploader;
     private final PostToDto postToDto;
-    private  final CommentToDto commentToDto;
+    private final CommentToDto commentToDto;
     private final DtoToComment dtoToComment;
+    public Comment comment;
+
+    private static String getFilterLocation(ReadPostRequest readPostRequest) {
+        String filterLocation = "";
+        if (readPostRequest.getLocation() != null) filterLocation = readPostRequest.getLocation();
+        return filterLocation + "%";
+    }
 
     @Override
     public ReadPostResponse getSinglePost(Long postId) {
         User requestUser = authUtil.getLoginUser();
         Post targetPost = postRepository.getPostById(postId);
 
-        if (targetPost== null) {
+        if (targetPost == null) {
             log.error("Post not found - postId: {}", postId);
             return null;
         }
 
         return ReadPostResponse.builder()
-                   .isMine(targetPost.getUser()!=requestUser)
-                   .postFrontUrl(targetPost.getUrlFront())
-                   .postBackUrl(targetPost.getUrlBack())
-                   .createdAt(targetPost.getCreatedAt())
-                   .commentCount(targetPost.getComments().size())
-                   .likesCount(targetPost.getLikes().size())
-                   .title(targetPost.getTitle())
-                   .postId(targetPost.getId())
-                   .status(targetPost.getStatus())
-                   .userId(targetPost.getUser().getId())
-                   .username(targetPost.getUser().getName())
-                   .profileUrl(targetPost.getUser().getProfileURL())
-                   .isMyLike(
-                           targetPost.getLikes().stream().anyMatch(
-                                   like -> like.getUser().getId().equals(requestUser.getId())
-                           )
-                   )
-                   .build();
+                .isMine(targetPost.getUser() != requestUser)
+                .postFrontUrl(targetPost.getUrlFront())
+                .postBackUrl(targetPost.getUrlBack())
+                .createdAt(targetPost.getCreatedAt())
+                .commentCount(targetPost.getComments().size())
+                .likesCount(targetPost.getLikes().size())
+                .title(targetPost.getTitle())
+                .postId(targetPost.getId())
+                .status(targetPost.getStatus())
+                .userId(targetPost.getUser().getId())
+                .username(targetPost.getUser().getName())
+                .profileUrl(targetPost.getUser().getProfileURL())
+                .isMyLike(
+                        targetPost.getLikes().stream().anyMatch(
+                                like -> like.getUser().getId().equals(requestUser.getId())
+                        )
+                )
+                .build();
     }
 
     @Override
@@ -83,13 +102,13 @@ public class PostServiceImpl implements PostService {
         // 게시물 조회
         List<User> filteredUser = new ArrayList<>();
         boolean isFriend = true;
-        switch (readPostRequest.getType()){
+        switch (readPostRequest.getType()) {
             case FRIEND:
-                filteredUser =  friendRepository.findMyFriendsByUser(foundUser);
+                filteredUser = friendRepository.findMyFriendsByUser(foundUser);
                 break;
             case PUBLIC:
                 isFriend = friendRepository.findMyFriendsByUser(foundUser).contains(foundUser); // 친구인지 확인
-                filteredUser =  userRepository.findUsersByLocation(filterLocation, foundUser);
+                filteredUser = userRepository.findUsersByLocation(filterLocation, foundUser);
                 break;
             case MINE:
                 filteredUser.add(foundUser);
@@ -101,14 +120,7 @@ public class PostServiceImpl implements PostService {
         List<Post> postList = postRepository.getAllPost(readPostRequest.getPageCount(), readPostRequest.getIndex(), filteredUser);
         // post -> Dto 컨버터
 
-        return postToDto.converter(postList, yourLocation,foundUser.getId(), isFriend);
-    }
-
-
-    private static String getFilterLocation(ReadPostRequest readPostRequest) {
-        String filterLocation = "";
-        if (readPostRequest.getLocation() != null) filterLocation = readPostRequest.getLocation();
-        return filterLocation + "%";
+        return postToDto.converter(postList, yourLocation, foundUser.getId(), isFriend);
     }
 
     @Override
@@ -121,6 +133,7 @@ public class PostServiceImpl implements PostService {
                 readCommentRequest,
                 user.getId());
     }
+
     @Transactional
     @Override
     public LikeUpdateResponse updateLikes(UpdateLikesRequest updateLikesRequest) {
@@ -152,6 +165,33 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public PostStatus getPostStatus(String todayShot) {
+        User loginUser = authUtil.getLoginUser();
+        if (loginUser == null) {
+            log.error("Authentication failed - No login user found");
+            return null;
+        }
+        LocalDateTime notiTime = loginUser.getNotiTime();
+        LocalDateTime todayShotTime = LocalDateTime.parse(todayShot, DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm"));
+        long minutesBetween = ChronoUnit.MINUTES.between(notiTime, todayShotTime);
+
+        if (minutesBetween <= 3) {
+            return PostStatus.ONTIME;
+        } else if (minutesBetween <= 30) {
+            // Check if the user has already posted with ONTIME status today
+            LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+            boolean hasPostedOnTimeToday = postRepository.existsByUserAndCreatedAtIsAfterAndStatus(loginUser, startOfDay, PostStatus.ONTIME);
+            if (hasPostedOnTimeToday) {
+                return PostStatus.FREETIME;
+            } else {
+                return PostStatus.LATE;
+            }
+        } else {
+            return PostStatus.FREETIME;
+        }
+    }
+
+    @Override
     @Transactional
     public boolean writeComment(WriteCommentRequest writeCommentRequest) {
         User loginUser = authUtil.getLoginUser();
@@ -166,7 +206,7 @@ public class PostServiceImpl implements PostService {
         if (writeCommentRequest.getParentCommentId() != null) {
             mainComment = postRepository.getParentComment(writeCommentRequest.getParentCommentId());
             commentedPost = mainComment.getPost();
-        }else{
+        } else {
             commentedPost = postRepository.getPostById(writeCommentRequest.getPostId());
         }
 
@@ -186,8 +226,6 @@ public class PostServiceImpl implements PostService {
         return postRepository.deletePost(postId);
 
     }
-
-    public Comment comment;
 
     public Comment getCommentById(Long commentId) {
         return postRepository.findCommentById(commentId);

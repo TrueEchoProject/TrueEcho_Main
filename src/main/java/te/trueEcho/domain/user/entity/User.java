@@ -18,6 +18,7 @@ import te.trueEcho.domain.setting.entity.NotificationSetting;
 import te.trueEcho.domain.vote.entity.VoteResult;
 import te.trueEcho.global.entity.CreatedDateAudit;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -204,5 +205,7 @@ public class User extends CreatedDateAudit {
     }
 
 
-
+    public LocalDateTime getNotiTime() {
+        return this.notificationSetting.getNotificationTime();
+    }
 }
