@@ -12,7 +12,7 @@ public class AddPostRequest {
     private MultipartFile postFront;
     private MultipartFile postBack;
     private String title;
-    private String postStatus;
+    private int postStatus;
 }
 
 

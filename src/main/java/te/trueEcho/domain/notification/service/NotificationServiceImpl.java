@@ -202,8 +202,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         // receiver가 받은 알람중 NotiType이 IN_RANK, NEW_RANK, VOTE_RESULT인 것들만 모두 가져옴
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<NotificationEntity> notifications = notificationRepository.findByReceiverAndNotiTypeIn(receiver, Arrays.asList(NotiType.IN_RANK.getCode(), NotiType.NEW_RANK.getCode(), NotiType.VOTE_RESULT.getCode()), pageable);
-
+        Page<NotificationEntity> notifications = notificationRepository.findByReceiverAndData_NotiTypeIn(receiver, Arrays.asList(NotiType.IN_RANK.getCode(), NotiType.NEW_RANK.getCode(), NotiType.VOTE_RESULT.getCode()), pageable);
         // 이후 가져온 알람들을 각각의 DTO로 변환
         List<Object> allNotis = notifications.stream().map(notification -> {
             switch (NotiType.values()[notification.getData().getNotiType()]) {
@@ -253,7 +252,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         // receiver가 받은 알람중 NotiType이 COMMENT, SUB_COMMENT, POST_LIKE, FRIEND_REQUEST인 것들만 모두 가져옴
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<NotificationEntity> notifications = notificationRepository.findByReceiverAndNotiTypeIn(receiver, Arrays.asList(NotiType.COMMENT.getCode(), NotiType.SUB_COMMENT.getCode(), NotiType.POST_LIKE.getCode(), NotiType.FRIEND_REQUEST.getCode()), pageable);
+        Page<NotificationEntity> notifications = notificationRepository.findByReceiverAndData_NotiTypeIn(receiver, Arrays.asList(NotiType.COMMENT.getCode(), NotiType.SUB_COMMENT.getCode(), NotiType.POST_LIKE.getCode(), NotiType.FRIEND_REQUEST.getCode()), pageable);
 
         // 이후 가져온 알람들을 각각의 DTO로 변환
         List<Object> allNotis = notifications.stream().map(notification -> {

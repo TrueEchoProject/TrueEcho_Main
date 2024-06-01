@@ -172,6 +172,9 @@ public class PostServiceImpl implements PostService {
             return null;
         }
         LocalDateTime notiTime = loginUser.getNotiTime();
+        if (notiTime == null) {
+            return PostStatus.FREETIME;
+        }
         LocalDateTime todayShotTime = LocalDateTime.parse(todayShot, DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm"));
         long minutesBetween = ChronoUnit.MINUTES.between(notiTime, todayShotTime);
 
@@ -264,7 +267,7 @@ public class PostServiceImpl implements PostService {
                 .title(addPostRequest.getTitle())
                 .urlFront(postFrontUrl)
                 .urlBack(postBackUrl)
-                .status(fromValue(addPostRequest.getPostStatus()))
+                .status(PostStatus.fromValue(addPostRequest.getPostStatus()))
                 .build();
 
         try {

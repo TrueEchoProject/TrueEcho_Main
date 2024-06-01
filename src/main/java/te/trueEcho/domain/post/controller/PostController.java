@@ -18,13 +18,13 @@ public class PostController {
 
     @PostMapping("/write")
     public ResponseEntity<ResponseForm> writePost(
-            @RequestParam("type") FeedType type,
+            @RequestParam FeedType type,
             @RequestParam(required = false) MultipartFile postFront,
             @RequestParam(required = false) MultipartFile postBack,
             @RequestParam String title,
             @RequestParam String todayShot
     ){
-        String postStatus = postService.getPostStatus(todayShot).toString();
+        int postStatus = postService.getPostStatus(todayShot).toValue();
 
         boolean isWritten = postService.writePost(
                 AddPostRequest.builder()
