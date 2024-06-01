@@ -18,16 +18,16 @@ import te.trueEcho.global.response.ResponseForm;
 @RequestMapping("/post")
 public class PostController {
     private final  PostService  postService;
-    private final NotificationController notificationController;
 
     @PostMapping("/write")
     public ResponseEntity<ResponseForm> writePost(
-            @RequestParam FeedType type,
-            @RequestParam MultipartFile postFront,
-            @RequestParam MultipartFile postBack,
+            @RequestParam("type") FeedType type,
+            @RequestParam(required = false) MultipartFile postFront,
+            @RequestParam(required = false) MultipartFile postBack,
             @RequestParam String title,
-            @RequestParam int postStatus
-            ){
+            @RequestParam int postStatus,
+            @RequestParam String todaySHot
+    ){
         boolean isWritten = postService.writePost(
                 AddPostRequest.builder()
                 .feedType(type)

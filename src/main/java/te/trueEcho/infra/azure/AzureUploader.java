@@ -45,7 +45,7 @@ public class AzureUploader {
         // 파일 이름 생성
         String originalFilename = file.getOriginalFilename();
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        String filename = originalFilename + "_" + timestamp;
+        String filename = timestamp + "-" + originalFilename;
 
         BlobClient blobClient = containerClient.getBlobClient(filename);
 

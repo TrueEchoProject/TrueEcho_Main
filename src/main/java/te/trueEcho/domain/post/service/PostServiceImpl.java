@@ -206,24 +206,18 @@ public class PostServiceImpl implements PostService {
         MultipartFile postFrontFile = addPostRequest.getPostFront();
         MultipartFile postBackFile = addPostRequest.getPostBack();
 
-        if (postFrontFile == null || postBackFile == null) {
-            log.error("Invalid file upload attempt - One or both files are null");
-            return false;
-        }
-
         String postFrontUrl = null;
         String postBackUrl = null;
 
         try {
-            postFrontUrl = azureUploader.uploadImage(postFrontFile);
-            postBackUrl = azureUploader.uploadImage(postBackFile);
+            if (postFrontFile != null) {
+                postFrontUrl = azureUploader.uploadImage(postFrontFile);
+            }
+            if (postBackFile != null) {
+                postBackUrl = azureUploader.uploadImage(postBackFile);
+            }
         } catch (Exception e) {
             log.error("File upload failed", e);
-            return false;
-        }
-
-        if (postFrontUrl == null || postBackUrl == null) {
-            log.error("Failed to upload one or both images to Azure Storage");
             return false;
         }
 
