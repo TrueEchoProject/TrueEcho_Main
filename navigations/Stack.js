@@ -20,7 +20,8 @@ export const MainPostStackScreen = () => { // 메인 피드 속 Stack 구성
 							<Button1 onPress={() => navigation.navigate('Fri')} />
 							<Button2 onPress={() => navigation.navigate('MyP')} />
 						</View>
-					)
+					),
+					headerLeft: null
 				})}
 			/>
 			<MainPostStack.Screen
@@ -81,9 +82,10 @@ export const CommunityStackScreen = () => { // 커뮤니티 속 Stack 구성
 							<Button1 onPress={() => navigation.navigate('Fri')} />
 							<Button2 onPress={() => navigation.navigate('MyP')} />
 						</View>
-					)
+					),
+					headerLeft: null
 				})}
 			/>
-		</ CommunityStack.Navigator>
+		</CommunityStack.Navigator>
 	);
 }

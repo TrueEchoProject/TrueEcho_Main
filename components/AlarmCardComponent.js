@@ -131,7 +131,7 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 						<TouchableOpacity onPress={() => {navigation.navigate("UserAlarm", {userId : post.userId})}}>
 							<Image
 								style={styles.thumbnail}
-								source={{ uri: post.profileUrl ? post.profileUrl : defaultImage}}
+								source={{ uri: post.profileUrl }}
 							/>
 						</TouchableOpacity>
 						<View style={styles.body}>

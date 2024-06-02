@@ -28,7 +28,10 @@ const AppNavigation = () => {
 			<Stack.Screen
 				name="TabNavigation"
 				component={TabNavigation}
-				options={{ headerShown: false }}
+				options={{
+					headerShown: false,
+					headerLeft: null
+				}}
 			/>
 		</Stack.Navigator>
 	);

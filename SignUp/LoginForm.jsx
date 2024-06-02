@@ -166,15 +166,8 @@ const LoginForm = () => {
         } else {
           console.error('Token was not obtained');
         }
-        
-        setTimeout(() => {
           setLoading(false);
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'TabNavigation' }],
-          });
-        }, 1000);
-        
+          navigation.navigate('TabNavigation');
       } else if (response.data.status === 401 && response.data.code === 'T001') {
         console.log("로그인 실패: 사용자 인증에 실패했습니다.");
         setLoading(false);
