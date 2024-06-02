@@ -10,7 +10,6 @@ const CameraScreen = ({ navigation }) => {
   const [zoom, setZoom] = useState(0); // 줌 상태
   const [isFocused, setIsFocused] = useState(false); // 화면 포커스 상태
   const [timer, setTimer] = useState(180); // 타이머 상태 (180초)
-  const [postStatus, setPostStatus] = useState(2); // 기본값은 freetime (2)
   const cameraRef = useRef(null); // 카메라 참조
   
   // 카메라 권한 요청
@@ -46,14 +45,14 @@ const CameraScreen = ({ navigation }) => {
           return prevTimer - 1;
         } else {
           clearInterval(intervalId);
-          
+
           return 0;
         }
       });
     }, 1000);
     
     return () => clearInterval(intervalId); // 컴포넌트 언마운트 시 타이머 정리
-  }, [postStatus]);
+  });
   
   // 사진 촬영 함수
   const takePicture = async () => {
@@ -92,7 +91,7 @@ const CameraScreen = ({ navigation }) => {
         }
       }
       
-      navigation.navigate("SendPosts", { frontCameraUris, backCameraUris, remainingTime: timer, postStatus }); // postStatus 전달
+      navigation.navigate("SendPosts", { frontCameraUris, backCameraUris, remainingTime: timer}); 
     }, 1000);
   };
   
