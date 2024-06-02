@@ -611,6 +611,7 @@ const MyOptions = ({ navigation, route }) => {
 					<View style={styles.imageContainer}>
 						<Text style={styles.modalText}>QnA</Text>
 						<Text style={styles.modalSmallText}>자주 받는 질문들에 대해 답변해드려요</Text>
+						<Text style={{fontSize:20,fontWeight:"bold", textAlign:"center"}}>추후에 업데이트할 예정.</Text>
 						<ScrollView
 							style={{ width: windowWidth * 0.8, }}
 							contentContainerStyle={styles.scrollContent}

@@ -22,10 +22,27 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.hanseo.TrueEcho",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "config": {
+        "googleMapsApiKey": "AIzaSyCRk_PvJvc1YDjdUffsVF-gYDtmmOjw4cE"
+      },
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "We need your location to show nearby places",
+        "NSLocationAlwaysUsageDescription": "We need your location to show nearby places",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "We need your location to show nearby places"
+      }
     },
     "android": {
       "package": "com.hanseo.TrueEcho",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCRk_PvJvc1YDjdUffsVF-gYDtmmOjw4cE"
+        }
+      },
       "googleServicesFile": "./google-services.json",
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {

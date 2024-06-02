@@ -2,31 +2,31 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import PagerView from 'react-native-pager-view';
-import axios from 'axios';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import Api from '../../../Api'; // Api가 같은 디렉토리에 있다고 가정합니다.
+import ResultPage from './ResultPage'; // ResultPage 컴포넌트를 불러옵니다.
 
 const fetchData = async () => {
 	try {
-		const response = await axios.get('http://192.168.123.121:3000/rank');
-		return response.data || [];
+		const response = await Api.get('/rank/read'); // axios 대신 Api 사용
+		return response.data.data || [];
 	} catch (error) {
-		console.error('Error fetching data:', error);
+		console.error('데이터를 가져오는 중 오류 발생:', error);
 		return [];
 	}
 };
 
 const Result = React.memo(({ navigation }) => {
 	const [questions, setQuestions] = useState([]);
+	const [thisWeek, setThisWeek] = useState('');
 	const [loading, setLoading] = useState(true);
 	const pagerRef = useRef(null);
 	
 	useEffect(() => {
 		const initFetch = async () => {
 			const data = await fetchData();
-			if (Array.isArray(data)) {
-				setQuestions(data);
-			} else {
-				console.error('Data is not in expected format:', data);
-			}
+			setQuestions(data.rankList);
+			setThisWeek(data.thisWeek); // thisWeek 데이터를 별도로 저장
 			setLoading(false);
 		};
 		initFetch();
@@ -45,9 +45,9 @@ const Result = React.memo(({ navigation }) => {
 					onPress={() => navigation.navigate('Vote')}
 					style={{padding: 20, backgroundColor: "grey"}}
 				>
-					<Text>Back</Text>
+					<Text>뒤로가기</Text>
 				</TouchableOpacity>
-				<Text style={styles.emptyText}>Loading...</Text>
+				<Text style={styles.emptyText}>로딩 중...</Text>
 			</View>
 		);
 	}
@@ -56,22 +56,17 @@ const Result = React.memo(({ navigation }) => {
 		<View style={styles.container}>
 			<PagerView ref={pagerRef} style={styles.pagerView} initialPage={0} scrollEnabled={false}>
 				{questions.map((question, index) => (
-					<View key={question.id.toString()} style={styles.page}>
+					<View key={question.voteId.toString()} style={styles.page}>
 						<View style={styles.navigationContainer}>
 							<TouchableOpacity onPress={() => goToPage(index - 1)} disabled={index === 0}>
 								<AntDesign name="left" size={40} color={index === 0 ? "grey" : "black"} />
 							</TouchableOpacity>
-							<Text style={styles.questionText}>{question.question}</Text>
+							<Text style={styles.questionText}>{question.title}</Text>
 							<TouchableOpacity onPress={() => goToPage(index + 1)} disabled={index === questions.length - 1}>
 								<AntDesign name="right" size={40} color={index === questions.length - 1 ? "grey" : "black"} />
 							</TouchableOpacity>
 						</View>
-						<Text style={styles.weekText}>Week: {question.week[0]}월 {question.week[1]}주차</Text>
-						<View style={styles.rankDetails}>
-							<Text style={styles.rankText}>1st: {question.rank['1st'].userName} ({question.rank['1st'].poll} 표)</Text>
-							<Text style={styles.rankText}>2nd: {question.rank['2nd'].userName} ({question.rank['2nd'].poll} 표)</Text>
-							<Text style={styles.rankText}>3rd: {question.rank['3nd'].userName} ({question.rank['3nd'].poll} 표)</Text>
-						</View>
+						<ResultPage question={question.title} topRankList={question.topRankList} thisWeek={thisWeek} />
 					</View>
 				))}
 			</PagerView>
@@ -113,27 +108,14 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		width: '100%',  // Ensure the navigation buttons are on the far ends
+		width: '100%',
 	},
 	questionText: {
 		fontSize: 18,
 		fontWeight: 'bold',
 		textAlign: 'center',
 		marginBottom: 10,
-		flex: 1  // Allows text to take up the maximum space between buttons
-	},
-	weekText: {
-		fontSize: 16,
-		color: 'grey',
-		marginBottom: 20
-	},
-	rankDetails: {
-		alignItems: 'center',
-		marginBottom: 10
-	},
-	rankText: {
-		fontSize: 16,
-		color: 'black'
+		flex: 1
 	},
 	emptyPage: {
 		flex: 1,
