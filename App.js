@@ -186,7 +186,7 @@ export default function App() {
   };
   
   const saveState = (state) => {
-    AsyncStorage.setItem('navState', JSON.stringify(state));
+    AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state));
   };
   
   return (

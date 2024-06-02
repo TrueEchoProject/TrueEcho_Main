@@ -2,19 +2,17 @@ import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, TouchableOpacity, Text, Platform } from 'react-native';
 import { Camera as ExpoCamera } from 'expo-camera/legacy';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
-import axios from 'axios';
+import { useFocusEffect } from '@react-navigation/native';
 
 const CameraScreen = ({ navigation }) => {
-  const [hasPermission, setHasPermission] = useState(null); // 카메라 권한 상태
-  const [cameraType, setCameraType] = useState(ExpoCamera.Constants.Type.back); // 카메라 종류 (전면/후면)
-  const [flashMode, setFlashMode] = useState(ExpoCamera.Constants.FlashMode.off); // 플래시 모드 상태
-  const [zoom, setZoom] = useState(0); // 줌 상태
-  const [isFocused, setIsFocused] = useState(false); // 화면 포커스 상태
-  const [timer, setTimer] = useState(180); // 타이머 상태 (180초)
-  const [postStatus, setPostStatus] = useState(2); // 기본값은 freetime (2)
-  const cameraRef = useRef(null); // 카메라 참조
+  const [hasPermission, setHasPermission] = useState(null);
+  const [cameraType, setCameraType] = useState(ExpoCamera.Constants.Type.back);
+  const [flashMode, setFlashMode] = useState(ExpoCamera.Constants.FlashMode.off);
+  const [zoom, setZoom] = useState(0);
+  const [isFocused, setIsFocused] = useState(false);
+  const [timer, setTimer] = useState(180); // 타이머 초기화
+  const cameraRef = useRef(null);
   
-  // 카메라 권한 요청
   useEffect(() => {
     (async () => {
       const { status } = await ExpoCamera.requestCameraPermissionsAsync();
@@ -22,40 +20,16 @@ const CameraScreen = ({ navigation }) => {
     })();
   }, []);
   
-  // 카메라 ontime 검증
-  useEffect(() => {
-    const checkCameraOnTime = async () => {
-      try {
-        const response = await axios.get('https://port-0-true-echo-85phb42blucciuvv.sel5.cloudtype.app/post/check');
-        if (response.status === 200) {
-          setPostStatus(response.data.isChecked);
-        }
-      } catch (error) {
-        console.error('카메라 ontime 검증 오류:', error);
-      }
-    };
-    
-    checkCameraOnTime();
-  }, []);
-  
-  // 화면 포커스 상태 업데이트
-  useEffect(() => {
-    const unsubscribeFocus = navigation.addListener('focus', () => {
+  useFocusEffect(
+    React.useCallback(() => {
       setIsFocused(true);
       setCameraType(ExpoCamera.Constants.Type.back);
-    });
-    
-    const unsubscribeBlur = navigation.addListener('blur', () => {
-      setIsFocused(false);
-    });
-    
-    return () => {
-      unsubscribeFocus();
-      unsubscribeBlur();
-    };
-  }, [navigation]);
+      setTimer(180);
+      
+      return () => setIsFocused(false);
+    }, [])
+  );
   
-  // 타이머 설정
   useEffect(() => {
     const intervalId = setInterval(() => {
       setTimer(prevTimer => {
@@ -63,18 +37,14 @@ const CameraScreen = ({ navigation }) => {
           return prevTimer - 1;
         } else {
           clearInterval(intervalId);
-          if (postStatus === 0) {
-            setPostStatus(1); // late 상태로 변경
-          }
           return 0;
         }
       });
     }, 1000);
     
-    return () => clearInterval(intervalId); // 컴포넌트 언마운트 시 타이머 정리
-  }, [postStatus]);
+    return () => clearInterval(intervalId);
+  }, []);
   
-  // 사진 촬영 함수
   const takePicture = async () => {
     if (cameraRef.current) {
       const options = { quality: 0.5, base64: true, skipProcessing: true };
@@ -84,7 +54,6 @@ const CameraScreen = ({ navigation }) => {
     return null;
   };
   
-  // 사진 캡처 및 화면 전환 처리 함수
   const handleCapture = async () => {
     const firstPictureData = await takePicture();
     let frontCameraUris = [];
@@ -111,11 +80,10 @@ const CameraScreen = ({ navigation }) => {
         }
       }
       
-      navigation.navigate("SendPosts", { frontCameraUris, backCameraUris, remainingTime: timer, postStatus }); // postStatus 전달
+      navigation.navigate("SendPosts", { frontCameraUris, backCameraUris, remainingTime: timer });
     }, 1000);
   };
   
-  // 플래시 모드 변경 함수
   const handleFlashMode = () => {
     setFlashMode((prevMode) => {
       switch (prevMode) {
@@ -130,7 +98,6 @@ const CameraScreen = ({ navigation }) => {
     });
   };
   
-  // 카메라 종류 변경 함수
   const handleCameraType = () => {
     setCameraType(
       cameraType === ExpoCamera.Constants.Type.back
@@ -139,7 +106,6 @@ const CameraScreen = ({ navigation }) => {
     );
   };
   
-  // 줌 아웃 함수
   const handleZoomOut = () => {
     if (Platform.OS === 'ios') {
       setZoom(zoom - 0.01 >= 0 ? zoom - 0.01 : 0);
@@ -148,7 +114,6 @@ const CameraScreen = ({ navigation }) => {
     }
   };
   
-  // 줌 인 함수
   const handleZoomIn = () => {
     if (Platform.OS === 'ios') {
       setZoom(zoom + 0.01 <= 1 ? zoom + 0.01 : 1);
@@ -159,9 +124,9 @@ const CameraScreen = ({ navigation }) => {
   
   return (
     <View style={styles.container}>
-      {hasPermission === null ? ( // 카메라 권한 확인
+      {hasPermission === null ? (
         <View />
-      ) : hasPermission === false ? ( // 카메라 권한 없음
+      ) : hasPermission === false ? (
         <Text>No access to camera</Text>
       ) : (
         <React.Fragment>
@@ -192,7 +157,6 @@ const CameraScreen = ({ navigation }) => {
               {flashMode === ExpoCamera.Constants.FlashMode.on && <MaterialIcons name="flash-on" size={24} color="white" />}
               {flashMode === ExpoCamera.Constants.FlashMode.auto && <MaterialIcons name="flash-auto" size={24} color="white" />}
             </TouchableOpacity>
-            
             <TouchableOpacity style={styles.captureButton} onPress={handleCapture}>
               <FontAwesome name="camera" size={24} color="white" />
             </TouchableOpacity>
@@ -254,7 +218,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
   },
-  timerContainer: { // 타이머 컨테이너 스타일 추가
+  timerContainer: {
     position: 'absolute',
     top: 20,
     left: 0,
@@ -262,7 +226,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
   },
-  timerText: { // 타이머 텍스트 스타일
+  timerText: {
     color: 'white',
     fontSize: 18,
   },
