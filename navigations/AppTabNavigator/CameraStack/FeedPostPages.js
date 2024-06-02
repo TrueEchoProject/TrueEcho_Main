@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Button, TextInput, Modal, Image, Alert, Touchab
 import * as ImageManipulator from 'expo-image-manipulator';
 import { useNavigation } from '@react-navigation/native';
 import { ImageDouble } from './SendPost';
+import storage from '../../../AsyncStorage';
 import Api from '../../../Api';
 
 const FeedPostPage = ({ route }) => {
@@ -23,12 +24,12 @@ const FeedPostPage = ({ route }) => {
   const [friendRange, setFriendRange] = useState('FRIEND');
   const [selectedCamera, setSelectedCamera] = useState('double');
   const [timer, setTimer] = useState(route.params.remainingTime || 180);
-  const [postStatus, setPostStatus] = useState(route.params.postStatus || 0);
   const [friendRangeButtonText, setFriendRangeButtonText] = useState('친구범위');
   const [cameraButtonText, setCameraButtonText] = useState('사진설정');
 
   const defaultImageUri = 'https://via.placeholder.com/1000'; // 기본 이미지 URI
 
+  // 타이머를 설정하고 매초마다 감소시키는 useEffect 훅
   useEffect(() => {
     const intervalId = setInterval(() => {
       setTimer((prevTimer) => {
@@ -44,6 +45,7 @@ const FeedPostPage = ({ route }) => {
     return () => clearInterval(intervalId);
   }, []);
 
+  // 이미지를 지정된 크기로 리사이즈하는 함수
   const resizeImage = async (uri) => {
     try {
       const manipResult = await ImageManipulator.manipulateAsync(
@@ -62,6 +64,7 @@ const FeedPostPage = ({ route }) => {
     }
   };
 
+  // 친구 범위를 선택하는 함수
   const handleFriendRangeSelection = (range) => {
     const newScope = range === 'friends' ? 'FRIEND' : 'PUBLIC';
     setFriendRange(newScope);
@@ -69,6 +72,7 @@ const FeedPostPage = ({ route }) => {
     setFriendRangeButtonText(range === 'friends' ? '친구' : '전체');
   };
 
+  // 카메라 유형을 선택하는 함수
   const handleCameraSelection = (cameraType) => {
     setModalVisible(false);
     setSelectedCamera(cameraType);
@@ -87,6 +91,7 @@ const FeedPostPage = ({ route }) => {
     }
   };
 
+  // 선택된 카메라 유형에 따라 이미지를 렌더링하는 함수
   const renderCameraImage = () => {
     const frontImage = cameraData.front.uris[cameraData.front.selectedIndex];
     const backImage = cameraData.back.uris[cameraData.back.selectedIndex];
@@ -102,118 +107,108 @@ const FeedPostPage = ({ route }) => {
     }
   };
 
-  const refreshPosts = async () => {
-    try {
-      const response = await Api.get('/post/read/0?index=0&pageCount=5');
-      console.log('url is /post/read/0?index=0&pageCount=5');
-      console.log('post is', response.data);
-    } catch (error) {
-      console.error('Error refreshing posts:', error.response ? error.response.data : error.message);
-    }
-  };
+  // 피드를 공유하고 데이터를 로컬 스토리지에 저장하는 함수
+const shareFeed = async () => {
+  const formData = new FormData();
 
-  const shareFeed = async () => {
-    const formData = new FormData();
-  
-    formData.append('type', friendRange);
-    console.log('type:', friendRange);
-  
-    formData.append('title', title);
-    console.log('title:', title);
-  
-    formData.append('postStatus', postStatus.toString());
-    console.log('postStatus:', postStatus.toString());
-  
-    let resizedFrontImage = null;
-    let resizedBackImage = null;
-  
-    if (selectedCamera === 'front' || selectedCamera === 'double') {
-      if (cameraData.front.uris[cameraData.front.selectedIndex]) {
-        resizedFrontImage = await resizeImage(cameraData.front.uris[cameraData.front.selectedIndex]);
-        if (resizedFrontImage) {
-          formData.append('postFront', {
-            uri: resizedFrontImage.uri,
-            type: 'image/jpeg',
-            name: 'resizedFront.jpg',
-          });
-          console.log('postFront added:', resizedFrontImage.uri);
-        }
+  formData.append('type', friendRange);
+  console.log('type:', friendRange);
+
+  formData.append('title', title);
+  console.log('title:', title);
+
+  let resizedFrontImage = null;
+  let resizedBackImage = null;
+
+  if (selectedCamera === 'front' || selectedCamera === 'double') {
+    if (cameraData.front.uris[cameraData.front.selectedIndex]) {
+      resizedFrontImage = await resizeImage(cameraData.front.uris[cameraData.front.selectedIndex]);
+      if (resizedFrontImage) {
+        formData.append('postFront', {
+          uri: resizedFrontImage.uri,
+          type: 'image/jpeg',
+          name: 'resizedFront.jpg',
+        });
+        console.log('postFront added:', resizedFrontImage.uri);
       }
     }
-  
-    if (selectedCamera === 'back' || selectedCamera === 'double') {
-      if (cameraData.back.uris[cameraData.back.selectedIndex]) {
-        resizedBackImage = await resizeImage(cameraData.back.uris[cameraData.back.selectedIndex]);
-        if (resizedBackImage) {
-          formData.append('postBack', {
-            uri: resizedBackImage.uri,
-            type: 'image/jpeg',
-            name: 'resizedBack.jpg',
-          });
-          console.log('postBack added:', resizedBackImage.uri);
-        }
+  }
+
+  if (selectedCamera === 'back' || selectedCamera === 'double') {
+    if (cameraData.back.uris[cameraData.back.selectedIndex]) {
+      resizedBackImage = await resizeImage(cameraData.back.uris[cameraData.back.selectedIndex]);
+      if (resizedBackImage) {
+        formData.append('postBack', {
+          uri: resizedBackImage.uri,
+          type: 'image/jpeg',
+          name: 'resizedBack.jpg',
+        });
+        console.log('postBack added:', resizedBackImage.uri);
       }
     }
-  
-    // postFront 또는 postBack이 선택되지 않은 경우 해당 필드를 추가하지 않음
-    if (selectedCamera === 'front' && !resizedFrontImage) {
-      console.log('postBack not added, no back image selected');
-    }
-  
-    if (selectedCamera === 'back' && !resizedBackImage) {
-      console.log('postFront not added, no front image selected');
-    }
-  
-    const currentTime = new Date();
-    const formattedTime = `${currentTime.getFullYear()}-${String(currentTime.getMonth() + 1).padStart(2, '0')}-${String(currentTime.getDate()).padStart(2, '0')}-${String(currentTime.getHours()).padStart(2, '0')}-${String(currentTime.getMinutes()).padStart(2, '0')}`;
-    formData.append('todayShot', formattedTime);
-    console.log('todayShot:', formattedTime);
-  
-    try {
-      const response = await Api.post('https://port-0-true-echo-85phb42blucciuvv.sel5.cloudtype.app/post/write', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-  
-      if (response.status === 202 || response.status === 200) {
-        const { data } = response;
-        console.log('Server Response: ', data);
-  
-        Alert.alert('사진이 성공적으로 저장되었습니다.', `저장 시간: ${formattedTime}`);
-  
-        setTimeout(async () => {
-          await refreshPosts();
-          console.log('Posts refreshed after delay');
-        }, 1000);
-  
-        if (friendRange === 'FRIEND') {
-          navigation.navigate('FriendFeed', { initialPage: 0 });
-        } else {
-          navigation.navigate('OtherFeed', { initialPage: 0 });
-        }
+  }
+
+  // postFront 또는 postBack이 선택되지 않은 경우 해당 필드를 추가하지 않음
+  if (selectedCamera === 'front' && !resizedFrontImage) {
+    console.log('postBack not added, no back image selected');
+  }
+
+  if (selectedCamera === 'back' && !resizedBackImage) {
+    console.log('postFront not added, no front image selected');
+  }
+
+  const currentTime = new Date();
+  const formattedTime = `${currentTime.getFullYear()}-${String(currentTime.getMonth() + 1).padStart(2, '0')}-${String(currentTime.getDate()).padStart(2, '0')}-${String(currentTime.getHours()).padStart(2, '0')}-${String(currentTime.getMinutes()).padStart(2, '0')}`;
+  formData.append('todayShot', formattedTime);
+  console.log('todayShot:', formattedTime);
+
+  try {
+    const response = await Api.post('https://port-0-true-echo-85phb42blucciuvv.sel5.cloudtype.app/post/write', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    if (response.status === 202 || response.status === 200) {
+      const { data } = response;
+      console.log('Server Response: ', data);
+
+      // 서버 전송 성공 시 로컬 스토리지에 데이터 저장
+      await storage.set('title', title);
+      console.log(`Title stored: ${title}`);
+      await storage.set('type', friendRange);
+      console.log(`Type stored: ${friendRange}`);
+      if (resizedFrontImage) {
+        await storage.set('postFront', resizedFrontImage.uri);
+        console.log(`PostFront stored: ${resizedFrontImage.uri}`);
+      }
+      if (resizedBackImage) {
+        await storage.set('postBack', resizedBackImage.uri);
+        console.log(`PostBack stored: ${resizedBackImage.uri}`);
+      }
+      await storage.set('todayShot', formattedTime);
+      console.log(`TodayShot stored: ${formattedTime}`);
+
+      Alert.alert('사진이 성공적으로 저장되었습니다.', `저장 시간: ${formattedTime}`);
+
+      if (friendRange === 'FRIEND') {
+        navigation.navigate('FriendFeed', { initialPage: 0 });
       } else {
-        console.error('Unexpected response status:', response.status);
-        Alert.alert('오류', '피드 업로드 중 예상치 못한 오류가 발생했습니다.');
+        navigation.navigate('OtherFeed', { initialPage: 0 });
       }
-    } catch (error) {
-      console.error('피드 업로드 오류:', error.response ? error.response.data : error.message);
-      Alert.alert('오류', '피드 업로드 중 오류가 발생했습니다.');
-      //navigation.navigate('CameraOption');
+    } else {
+      console.error('Unexpected response status:', response.status);
+      Alert.alert('오류', '피드 업로드 중 예상치 못한 오류가 발생했습니다.');
     }
-  };
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  } catch (error) {
+    console.error('피드 업로드 오류:', error.response ? error.response.data : error.message);
+    Alert.alert('오류', '피드 업로드 중 오류가 발생했습니다.');
+    navigation.navigate('CameraOption');
+  }
+};
+
+
+  // 제목 입력을 완료하고 키보드를 닫는 함수
   const handleTitleSave = () => {
     Keyboard.dismiss();
   };
