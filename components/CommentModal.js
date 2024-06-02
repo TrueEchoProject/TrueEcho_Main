@@ -139,7 +139,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 				setReplyingTo(null);
 				setTextInputValue("");
 				setCommentNone(false);
-				setHasMore(true); // 댓글 추가 후 다시 댓글을 가져올 수 있도록 설정
+				setHasMore(true); // 삭제 후 다시 댓글을 가져올 수 있도록 설정
 				fetchComments(); // 초기 페이지 로드
 				return;  // 함수 실행 종료
 			} catch (error) {
@@ -149,7 +149,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 			// 새 댓글 추가 로직
 			try {
 				const response = await Api.post(`/post/write/comment`, {
-					postId : postId,
+					postId: postId,
 					parentCommentId: null,
 					content: textInputValue
 				});
@@ -159,7 +159,8 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 				setShowUnderComments({});
 				setReplyingTo(null);
 				setTextInputValue("");
-				setHasMore(true); // 댓글 추가 후 다시 댓글을 가져올 수 있도록 설정
+				setCommentNone(false);
+				setHasMore(true); // 삭제 후 다시 댓글을 가져올 수 있도록 설정
 				fetchComments(); // 초기 페이지 로드
 				scrollViewRef.current?.scrollTo({ y: 0, animated: false }); // 스크롤을 최상단으로 이동
 			} catch (error) {
