@@ -14,12 +14,12 @@ export const CommunityTabScreen = () => {
 			initialRouteName="투표" // 최초 어플 실행 시 FriendFeed가 기본 화면으로 설정
 		>
 			<CommunityTab.Screen
-				name="투표"
+				name="Vote"
 				component={Vote}
 			>
 			</CommunityTab.Screen>
 			<CommunityTab.Screen
-				name="결과"
+				name="Result"
 				component={Result}
 			>
 			</CommunityTab.Screen>

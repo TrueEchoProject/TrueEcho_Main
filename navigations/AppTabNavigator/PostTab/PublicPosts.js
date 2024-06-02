@@ -63,8 +63,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		}
 	};
 	const getPosts = async (selectedRange = null, index = 0) => {
-		setRefreshing(true);
-		let url = `/post/read/1?index=${index}&pageCount=5`;
+		let url = `/post/read/1?index=${index}&pageCount=15`;
 		if (selectedRange) {
 			try {
 				setCopiedLocation(location)
@@ -136,7 +135,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 			return newStates;
 		});
 		// 추가 데이터 로딩
-		if (newIndex === posts.length - 1) {
+		if (newIndex === posts.length - 5) {
 			setPage(prevPage => {
 				const nextPage = prevPage + 1;
 				getPosts(range, nextPage);

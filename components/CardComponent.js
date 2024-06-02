@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Share, Dimensions, } from 'react-native';
+import {
+	View,
+	Text,
+	StyleSheet,
+	TouchableOpacity,
+	TouchableWithoutFeedback,
+	Share,
+	Dimensions,
+	Image,
+} from 'react-native';
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import { MaterialIcons, Ionicons, Feather, SimpleLineIcons } from "@expo/vector-icons";
 import Api from '../Api';
@@ -126,8 +135,8 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 			<View style={styles.cardContainer}>
 				<View style={styles.cardItem}>
 					<View style={styles.left}>
-						<TouchableOpacity onPress={() => {navigation.navigate("유저 알람", {userId : post.userId})}}>
-							<ExpoImage
+						<TouchableOpacity onPress={() => {navigation.navigate("UserAlarm", {userId : post.userId})}}>
+							<Image
 								style={styles.thumbnail}
 								source={{ uri: post.profileUrl ? post.profileUrl : defaultImage}}
 							/>
@@ -209,8 +218,8 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 				)}
 				<View style={styles.imageButtonContainer} onLayout={onImageButtonLayout}>
 					<ImageButton
-						front_image={post.postFrontUrl}
-						back_image={post.postBackUrl}
+						front_image={post.postFrontUrl ? post.postFrontUrl : defaultImage}
+						back_image={post.postBackUrl ? post.postBackUrl : defaultImage}
 						containerHeight={imageButtonHeight}
 						windowWidth={windowWidth}
 					/>
@@ -290,6 +299,7 @@ const styles = StyleSheet.create({
 	},
 	cardContainer: {
 		flex: 1,
+		width: '100%',
 	},
 	cardItem: {
 		padding: 5,

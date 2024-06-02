@@ -6,32 +6,93 @@ import {
   Pressable,
   StyleSheet,
   Image,
-  ActivityIndicator
+  ActivityIndicator,
+  Alert,
+  Platform
 } from "react-native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import * as SecureStore from 'expo-secure-store';
 import Api from '../Api';
-import { useNavigation } from '@react-navigation/native'; // useNavigation 훅을 임포트**
-import LoadingScreen from './LoadingScreen'; // 로딩 화면 컴포넌트 임포트
+import { useNavigation } from '@react-navigation/native';
+import LoadingScreen from './LoadingScreen';
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
 
 const LoginForm = () => {
-  const navigation = useNavigation(); // navigation 초기화**
+  const navigation = useNavigation();
+  const [expoPushToken, setExpoPushToken] = useState('');
   const [warning, setWarning] = useState("");
   const [loading, setLoading] = useState(false);
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
-
+  
+  async function registerForPushNotificationsAsync() {
+    if (Platform.OS === 'android') {
+      await Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+      console.log('Notification channel set for Android');
+    }
+    
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    console.log('Existing notification permission status:', existingStatus);
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+      console.log('Requested notification permission status:', status);
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      console.log('Notification permission not granted');
+      return null;
+    }
+    
+    try {
+      const projectId = Constants.expoConfig?.extra?.eas?.projectId;
+      console.log('Project ID:', projectId);
+      if (!projectId) {
+        throw new Error('No projectId configured');
+      }
+      const token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+      console.log('Push token:', token);
+      return token;
+    } catch (error) {
+      console.error('Error fetching Expo push token:', error);
+      return null;
+    }
+  }
+  
   const handleChange = (key, value) => {
     setLoginData({ ...loginData, [key]: value });
-    setWarning(""); // 입력이 변경될 때 경고 메시지 초기화
+    setWarning("");
   };
-
+  
   useEffect(() => {
-    checkLoginCredentials();
+    const getPushToken = async () => {
+      const token = await registerForPushNotificationsAsync();
+      if (token) {
+        setExpoPushToken(token);
+        console.log('Expo push token:', token);
+      } else {
+        console.log('Failed to get expo push token');
+      }
+    };
+    getPushToken();
   }, []);
-
+  
+  useEffect(() => {
+    if (expoPushToken) {
+      console.log('Expo push token state updated:', expoPushToken);
+    }
+  }, [expoPushToken]);
+  
   const checkLoginCredentials = async () => {
     try {
       const storedEmail = await SecureStore.getItemAsync('userEmail');
@@ -43,12 +104,12 @@ const LoginForm = () => {
       console.error("자격 증명을 불러오는 데 실패했습니다.", error);
     }
   };
-
+  
   const validateEmail = (email) => {
     const re = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
     return re.test(String(email).toLowerCase());
   };
-
+  
   const submitLoginData = async (email, password) => {
     if (email === "") {
       setWarning("emailEmpty");
@@ -57,53 +118,70 @@ const LoginForm = () => {
       setWarning("passwordEmpty");
       return;
     }
-
+    
     if (!validateEmail(email)) {
       setWarning("invalidEmail");
       return;
     }
-
+    
     if (password.length < 6) {
       setWarning("shortPassword");
       return;
     }
-
+    
     setLoading(true);
-
+    
     try {
       const response = await Api.post('/accounts/login', {
         email,
         password
       });
-
+      
       console.log("백엔드로 전송", response.data);
-
+      
       if (response.data && response.data.status === 200) {
         const { accessToken, refreshToken } = response.data.data;
-
+        
         await SecureStore.setItemAsync('userEmail', email);
         await SecureStore.setItemAsync('userPassword', password);
-        await SecureStore.setItemAsync('accessToken', accessToken); // 액세스 토큰 저장
-        await SecureStore.setItemAsync('refreshToken', refreshToken); // 리프레쉬 토큰 저장
-
+        await SecureStore.setItemAsync('accessToken', accessToken);
+        await SecureStore.setItemAsync('refreshToken', refreshToken);
+        
         console.log("로그인 정보와 토큰이 성공적으로 저장되었습니다.");
         setWarning("");
-
+        
+        if (expoPushToken) {
+          const formData = new FormData();
+          formData.append('token', expoPushToken);
+          
+          console.log('FCM token being sent:', expoPushToken);
+          
+          const fcmResponse = await Api.post(`/fcm/save`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          
+          console.log('서버 응답:', fcmResponse.data);
+        } else {
+          console.error('Token was not obtained');
+        }
+        
         setTimeout(() => {
           setLoading(false);
           navigation.reset({
             index: 0,
-            routes: [{ name: 'MainPostStackScreen' }],
+            routes: [{ name: 'TabNavigation' }],
           });
-        }, 3000); // 로딩 스크린을 3초 동안 유지
-
+        }, 1000);
+        
       } else if (response.data.status === 401 && response.data.code === 'T001') {
         console.log("로그인 실패: 사용자 인증에 실패했습니다.");
-        setLoading(false); // 로딩 상태를 false로 설정
+        setLoading(false);
         setWarning("authFailed");
       } else {
         console.log("로그인 실패: 서버로부터 성공 메시지를 받지 못했습니다.");
-        setLoading(false); // 로딩 상태를 false로 설정
+        setLoading(false);
         setWarning("loginFailed");
       }
     } catch (error) {
@@ -114,14 +192,28 @@ const LoginForm = () => {
         console.error('네트워크 오류:', error);
         setWarning("networkError");
       }
-      setLoading(false); // 로딩 상태를 false로 설정
+      setLoading(false);
     }
   };
-
+  
+  const handleLogin = () => {
+    if (expoPushToken) {
+      submitLoginData(loginData.email, loginData.password);
+    } else {
+      console.error('Expo push token is not available yet');
+    }
+  };
+  
+  useEffect(() => {
+    if (expoPushToken) {
+      checkLoginCredentials();
+    }
+  }, [expoPushToken]);
+  
   if (loading) {
     return <LoadingScreen />;
   }
-
+  
   return (
     <View style={styles.container}>
       <View>
@@ -137,7 +229,7 @@ const LoginForm = () => {
           />
           {warning === "emailEmpty" && <Text style={styles.warningText}>이메일을 입력해주세요.</Text>}
           {warning === "invalidEmail" && <Text style={styles.warningText}>유효한 이메일을 입력해주세요.</Text>}
-
+          
           <TextInput
             placeholder="비밀번호를 입력해주세요."
             value={loginData.password}
@@ -150,19 +242,19 @@ const LoginForm = () => {
           {warning === "authFailed" && <Text style={styles.warningText}>비밀번호가 일치하지 않습니다. 다시 시도해주세요.</Text>}
           {warning === "loginFailed" && <Text style={styles.warningText}>로그인 실패. 다시 시도해주세요.</Text>}
           {warning === "networkError" && <Text style={styles.warningText}>네트워크 오류가 발생했습니다. 다시 시도해주세요.</Text>}
-
+          
           <Pressable style={styles.forgotPasswordBtn} onPress={() => navigation.navigate('ForgotPassword')}>
             <Text style={styles.forgotPasswordText}>비밀번호 찾기</Text>
           </Pressable>
         </View>
       </View>
-
+      
       <View style={styles.buttonContainer}>
         <Pressable style={styles.continueBtn} onPress={() => navigation.navigate('SignUp')}>
           <Text style={styles.btnText}>Sign Up</Text>
         </Pressable>
-
-        <Pressable style={styles.continueBtn} onPress={() => submitLoginData(loginData.email, loginData.password)}>
+        
+        <Pressable style={styles.continueBtn} onPress={handleLogin}>
           {loading ? <ActivityIndicator size="small" color="#FFFFFF" /> : <Text style={styles.btnText}>Login</Text>}
         </Pressable>
       </View>

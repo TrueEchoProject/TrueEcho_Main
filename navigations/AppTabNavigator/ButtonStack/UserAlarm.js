@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, Dimensions, ActivityIndicator } from 'react-native';
-import {AntDesign, FontAwesome5,} from '@expo/vector-icons';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, Dimensions, ActivityIndicator, Image } from 'react-native';
+import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import PagerView from "react-native-pager-view";
 import Api from "../../../Api";
-import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
+import { Image as ExpoImage } from 'expo-image';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const UserAlarm = ({ route }) => {
-	const [userId, setUserId] = useState(251)
+	const [userId, setUserId] = useState(route.params?.userId);
 	const [serverUserData, setServerUserData] = useState({}); // 서버 유저 데이터
 	const [serverPinData, setServerPinData] = useState([]); // 서버 핀 데이터
 	const [isFriend, setIsFriend] = useState(false); // 친구 여부
@@ -25,7 +25,7 @@ const UserAlarm = ({ route }) => {
 			console.log('Received Update response:', route.params.userId);
 			setUserId(route.params.userId);
 		}
-	}, [route.params?.Update]);
+	}, [route.params?.userId]);
 	useEffect(() => {
 		if (serverUserData) {
 			console.log("server user",serverUserData);
@@ -50,7 +50,7 @@ const UserAlarm = ({ route }) => {
 			const serverResponse = await Api.get(`/setting/myPage?userId=${userId}`);
 			if (serverResponse.data) {
 				setServerUserData(serverResponse.data.data.pageInfo);
-				setServerPinData(serverResponse.data.data.pinList.pinList);
+				setServerPinData(serverResponse.data.data.pinList);
 				setIsFriend(serverResponse.data.data.friend);
 			} else {
 				console.log('No user data returned from API');
@@ -103,7 +103,7 @@ const UserAlarm = ({ route }) => {
 						<TouchableOpacity onPress={onClose}>
 							<Text style={styles.buttonText}>닫기</Text>
 						</TouchableOpacity>
-						<ExpoImage
+						<Image
 							source={{ uri: imageUrl }} // 수정: imageUrl을 사용
 							style={styles.smallImage}
 						/>
@@ -125,7 +125,7 @@ const UserAlarm = ({ route }) => {
 						<View style={{flexDirection: "row"}}>
 							<View style={{marginRight: "auto"}}>
 								<TouchableOpacity onPress={profileImageModalVisible}>
-									<ExpoImage source={{ uri: serverUserData.profileUrl ? serverUserData.profileUrl : defaultImage }} style={styles.avatar}/>
+									<Image source={{ uri: serverUserData.profileUrl ? serverUserData.profileUrl : defaultImage }} style={styles.avatar}/>
 								</TouchableOpacity>
 								{isModalVisible && (
 									<ProfileImageModal
@@ -194,7 +194,7 @@ const UserAlarm = ({ route }) => {
 									{serverPinData.map((item) => (
 										<View key={item.pinId} style={{ position: 'relative' }}>
 											<TouchableOpacity onPress={() => changeImage(item.pinId)}>
-												<ExpoImage
+												<Image
 													source={{ uri: isFrontShowing[item.pinId] ? item.postFrontUrl : item.postBackUrl }}
 													style={styles.pageStyle}
 												/>

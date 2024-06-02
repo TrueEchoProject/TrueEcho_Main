@@ -4,11 +4,7 @@
     "slug": "trueecho",
     "version": "1.0.0",
     "orientation": "portrait",
-    "extra": {
-      "eas": {
-        "projectId": "71a30e64-a2a8-4e53-888b-f53592590986"
-      }
-    },
+    "scheme": "trueecho",
     "platforms": [
       "ios",
       "android"
@@ -40,11 +36,11 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "owner": "trueecho",
     "extra": {
       "eas": {
         "projectId": "71a30e64-a2a8-4e53-888b-f53592590986"
       }
-    },
-    "owner": "sin10920"
+    }
   }
 }

@@ -35,7 +35,7 @@ const FriendPosts = React.forwardRef((props, ref) => {
 	
 	const getPosts = async (index, isRefresh = false) => {
 		setIsLoading(true);
-		let url = `/post/read/0?index=${index}&pageCount=5`;
+		let url = `/post/read/0?index=${index}&pageCount=15`;
 		try {
 			console.log(`url is`, url);
 			const serverResponse = await Api.get(url);
@@ -78,7 +78,7 @@ const FriendPosts = React.forwardRef((props, ref) => {
 			});
 			return newStates;
 		});
-		if (newIndex === posts.length - 1) {
+		if (newIndex === posts.length - 5) {
 			const nextPage = page + 1;
 			setPage(nextPage);
 			getPosts(nextPage);

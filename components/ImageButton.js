@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Platform, TouchableOpacity, View, StyleSheet, Text, ActivityIndicator } from 'react-native';
-import { Image } from 'expo-image';
+import { Platform, TouchableOpacity, View, StyleSheet, Text, ActivityIndicator, Image } from 'react-native';
+import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import { BlurView } from 'expo-blur';
 import storage from '../AsyncStorage'; // storage.js 파일 위치에 따라 경로 수정함. 현재 임시 주소임.
 

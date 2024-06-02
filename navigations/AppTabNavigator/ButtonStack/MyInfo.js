@@ -9,7 +9,7 @@ import {
 	Platform,
 	Modal,
 	Dimensions,
-	ActivityIndicator, Button,
+	ActivityIndicator, Button, Image
 } from 'react-native';
 import { Image as ExpoImage } from 'expo-image';
 import Api from "../../../Api";
@@ -214,7 +214,7 @@ const MyInfo = ({ navigation, route }) => {
 		<View style={styles.container}>
 			<View style={{ padding: 20, alignItems: "center", }}>
 				<TouchableOpacity onPress={profileModalVisible}>
-					<ExpoImage
+					<Image
 						source={{ uri: imageUri }}
 						style={styles.Image}
 					/>

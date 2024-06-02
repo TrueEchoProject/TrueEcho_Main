@@ -42,7 +42,7 @@ const Result = React.memo(({ navigation }) => {
 		return (
 			<View style={styles.emptyPage}>
 				<TouchableOpacity
-					onPress={() => navigation.navigate('투표')}
+					onPress={() => navigation.navigate('Vote')}
 					style={{padding: 20, backgroundColor: "grey"}}
 				>
 					<Text>Back</Text>

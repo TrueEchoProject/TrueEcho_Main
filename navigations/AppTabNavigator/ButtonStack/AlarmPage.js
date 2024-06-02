@@ -1,60 +1,98 @@
-import React, {useEffect, useState,} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Image } from 'react-native';
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import moment from 'moment';
 import 'moment/locale/ko';
 import Api from '../../../Api';
+import * as Linking from "expo-linking";
 
 const Alarm = ({ navigation }) => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [selected, setSelected] = useState("게시물");
-	const [alarmPost, setAlarmPost] = useState([])
-	const [alarmCommunity, setAlarmCommunity] = useState([])
-	const GraphImage = "https://i.ibb.co/NybJtMb/DALL-E-2024-05-06-18-33-20-A-simple-and-clear-bar-chart-representing-a-generic-voting-result-suitabl.webp"
+	const [alarmPost, setAlarmPost] = useState([]);
+	const [alarmCommunity, setAlarmCommunity] = useState([]);
+	const [page, setPage] = useState(0);
+	const [hasMore, setHasMore] = useState(true);
+	const [initialLoad, setInitialLoad] = useState(true); // 초기 로드 상태를 추가
+	const GraphImage = "https://i.ibb.co/NybJtMb/DALL-E-2024-05-06-18-33-20-A-simple-and-clear-bar-chart-representing-a-generic-voting-result-suitabl.webp";
 	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
-
-	useEffect( () => {
-		fetchPost()
+	
+	useEffect(() => {
+		fetchPost(0);
 	}, []);
 	
-	const fetchPost = async () => {
-		try {
-			const severResponse = await Api.get(`/noti/readPost`);
-			console.log("server Post", severResponse.data.data.allNotis);
-			const processedData = processLikeAlarms(severResponse.data.data.allNotis.filter(alarm => alarm.type === 6));
-			setAlarmPost([...severResponse.data.data.allNotis.filter(alarm => alarm.type !== 6), ...processedData]);
-			setIsLoading(false);
-		} catch (error) {
-			console.error('Error fetching data', error);
+	const goResult = async () => {
+		const url = Linking.createURL('main/community/community/result');
+		const supported = await Linking.canOpenURL(url);
+		if (supported) {
+			Linking.openURL(url);
+		} else {
+			console.log(`Can't handle url: ${url}`);
 		}
 	};
-	const fetchCommunity = async () => {
+	
+	const fetchPost = async (index) => {
 		try {
-			const severResponse = await Api.get(`/noti/readCommunity`);
-			console.log("server Community", severResponse.data.data.allNotis);
-			setAlarmCommunity(severResponse.data.data.allNotis);
-			setIsLoading(false);
+			setIsLoading(true);
+			const serverResponse = await Api.get(`/noti/readPost?index=${index}&pageCount=10`);
+			if (serverResponse.data.message === "게시물 알림 피드 조회에 실패했습니다.") {
+				alert("알림을 불러올 게 없습니다.");
+				setHasMore(false);
+				return;
+			}
+			const processedData = processLikeAlarms(serverResponse.data.data.allNotis.filter(alarm => alarm.type === 6));
+			const newAlarms = [...serverResponse.data.data.allNotis.filter(alarm => alarm.type !== 6), ...processedData];
+			
+			if (newAlarms.length > 0) {
+				setAlarmPost(prevAlarms => [...prevAlarms, ...newAlarms]);
+				setPage(prevPage => prevPage + 1);
+			} else {
+				setHasMore(false);
+			}
 		} catch (error) {
 			console.error('Error fetching data', error);
+		} finally {
+			setIsLoading(false);
+			setInitialLoad(false); // 초기 로드 상태 업데이트
 		}
 	};
+	
+	const fetchCommunity = async (index) => {
+		try {
+			setIsLoading(true);
+			const serverResponse = await Api.get(`/noti/readCommunity?index=${index}&pageCount=10`);
+			if (serverResponse.data.message === "커뮤니티 알림 피드 조회에 실패했습니다.") {
+				alert("알림을 불러올 게 없습니다.");
+				setHasMore(false);
+				return;
+			}
+			const newAlarms = serverResponse.data.data.allNotis;
+			
+			if (newAlarms.length > 0) {
+				setAlarmCommunity(prevAlarms => [...prevAlarms, ...newAlarms]);
+				setPage(prevPage => prevPage + 1);
+			} else {
+				setHasMore(false);
+			}
+		} catch (error) {
+			console.error('Error fetching data', error);
+		} finally {
+			setIsLoading(false);
+			setInitialLoad(false); // 초기 로드 상태 업데이트
+		}
+	};
+	
 	const toggleSetting = async (item) => {
-		setSelected(item); // 선택된 항목을 직접 설정
+		setSelected(item);
+		setPage(0);
+		setHasMore(true);
+		setAlarmPost([]);
+		setAlarmCommunity([]);
+		
 		if (item === "게시물") {
-			try {
-				fetchPost();
-				setAlarmCommunity([]);
-			} catch (error) {
-				console.error('Error fetching data', error);
-			}
-		}
-		if (item === "커뮤니티") {
-			try {
-				fetchCommunity();
-				setAlarmPost([]);
-			} catch (error) {
-				console.error('Error fetching data', error);
-			}
+			fetchPost(0);
+		} else if (item === "커뮤니티") {
+			fetchCommunity(0);
 		}
 	};
 	
@@ -64,7 +102,7 @@ const Alarm = ({ navigation }) => {
 				acc[alarm.post_id] = {
 					...alarm,
 					like_usernames: [alarm.like_username],
-					profile_urls: [alarm.profile_url ? alarm.profile_url : defaultImage], // 프로필 URL들을 배열로 저장
+					profile_urls: [alarm.profile_url ? alarm.profile_url : defaultImage],
 				};
 			} else {
 				acc[alarm.post_id].like_usernames.push(alarm.like_username);
@@ -76,60 +114,66 @@ const Alarm = ({ navigation }) => {
 		return Object.values(groupedByPostId).map(alarm => ({
 			...alarm,
 			like_username: formatUsernames(alarm.like_usernames),
-			profile_urls: alarm.profile_urls.slice(-2), // 최신 2개의 프로필 URL만 유지
+			profile_urls: alarm.profile_urls.slice(-2),
 		}));
 	};
+	
 	const formatUsernames = (usernames) => {
 		const count = usernames.length;
 		usernames.reverse();
 		if (count === 1) {
-			return <Text>{<Text style={styles.emphasizedText}>{usernames[0]}</Text>}
-				님이 회원님의 사진을 좋아합니다</Text>;
+			return <Text><Text style={styles.emphasizedText}>{usernames[0]}</Text>님이 회원님의 사진을 좋아합니다</Text>;
 		} else if (count === 2) {
-			return <Text>{<Text style={styles.emphasizedText}>{usernames[0]}</Text>}
-				님과 {<Text style={styles.emphasizedText}>{usernames[1]}</Text>}
-				님이 회원님의 사진을 좋아합니다</Text>;
+			return <Text><Text style={styles.emphasizedText}>{usernames[0]}</Text>님과 <Text style={styles.emphasizedText}>{usernames[1]}</Text>님이 회원님의 사진을 좋아합니다</Text>;
 		} else {
-			return <Text>{<Text style={styles.emphasizedText}>{usernames[0]}</Text>}
-				님과 {<Text style={styles.emphasizedText}>{usernames[1]}</Text>}님
-				외 {<Text style={styles.emphasizedText}>여러 명</Text>}이 회원님의 사진을 좋아합니다</Text>;
+			return <Text><Text style={styles.emphasizedText}>{usernames[0]}</Text>님과 <Text style={styles.emphasizedText}>{usernames[1]}</Text>님 외 <Text style={styles.emphasizedText}>여러 명</Text>이 회원님의 사진을 좋아합니다</Text>;
 		}
 	};
 	
-	
 	const handlePress = (alarm) => {
 		switch (alarm.type) {
-			case 4: // 타입 0에 대한 액션
-				navigation.navigate("피드 알람", { post_id : alarm.post_id })
-				console.log("댓글에 대한 상세 페이지로 이동");
+			case 4:
+				navigation.navigate("FeedAlarm", { post_id: alarm.post_id });
 				break;
-			case 5: // 타입 1에 대한 액션
-				navigation.navigate("피드 알람")
-				navigation.navigate("피드 알람", { post_id : alarm.post_id })
-				console.log("답장에 대한 상세 페이지로 이동");
+			case 5:
+				navigation.navigate("FeedAlarm", { post_id: alarm.post_id });
 				break;
-			case 6: // 타입 2에 대한 액션
-				navigation.navigate("피드 알람")
-				navigation.navigate("피드 알람", { post_id : alarm.post_id })
-				console.log("사진 좋아요에 대한 상세 정보 보기");
+			case 6:
+				navigation.navigate("FeedAlarm", { post_id: alarm.post_id });
 				break;
-			case 7: // 타입 3에 대한 액션
-				navigation.navigate("Fri")
-				console.log("친구요청에 대한 상세 정보 보기");
+			case 7:
+				navigation.navigate("Fri");
 				break;
 			default:
 				console.log("알 수 없는 액션");
 		}
-	}
+	};
+	
 	const getGenderText = (gender) => {
 		return gender === 0 ? "남성" : "여성";
 	};
+	
 	const getAgeText = (age) => {
 		const ageGroup = Math.floor(age / 10) * 10;
 		return `${ageGroup}대`;
 	};
 	
-	if (isLoading) {
+	const handleScroll = ({ nativeEvent }) => {
+		if (isCloseToBottom(nativeEvent) && hasMore && !isLoading) {
+			if (selected === "게시물") {
+				fetchPost(page);
+			} else if (selected === "커뮤니티") {
+				fetchCommunity(page);
+			}
+		}
+	};
+	
+	const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+		const paddingToBottom = 20;
+		return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+	};
+	
+	if (initialLoad && isLoading) {
 		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff"/></View>;
 	}
 	return (
@@ -152,9 +196,13 @@ const Alarm = ({ navigation }) => {
 					<Text style={selected === "커뮤니티" ? styles.activeText : styles.inactiveText}>커뮤니티</Text>
 				</TouchableOpacity>
 			</View>
-			<ScrollView style={styles.bodyContainer}>
-				{alarmPost.length > 0 &&
-					alarmPost.map((alarm, index) => (
+			<ScrollView style={styles.bodyContainer} onScroll={handleScroll} scrollEventThrottle={20}>
+				{alarmPost.length === 0 && !hasMore && (
+					<View style={styles.container}>
+						<Text>더 이상 불러올 게시물이 없습니다.</Text>
+					</View>
+				)}
+				{alarmPost.map((alarm, index) => (
 						<TouchableOpacity
 							key={index}
 							onPress={() => handlePress(alarm)}
@@ -163,7 +211,7 @@ const Alarm = ({ navigation }) => {
 							<View style={{ flex: 1 }}>
 								{alarm.type === 4 && (
 									<View style={{alignItems: "center", flexDirection: "row"}}>
-										<ExpoImage
+										<Image
 											source={{ uri: alarm.profile_url ? alarm.profile_url : defaultImage}}
 											style={styles.avatar}
 										/>
@@ -175,7 +223,7 @@ const Alarm = ({ navigation }) => {
 											</Text>
 											<Text>{moment(alarm.created_at).fromNow()}</Text>
 										</View>
-										<ExpoImage
+										<Image
 											source={{ uri: alarm.post_back_url ? alarm.post_back_url : defaultImage}}
 											style={styles.post}
 										/>
@@ -183,7 +231,7 @@ const Alarm = ({ navigation }) => {
 								)}
 								{alarm.type === 5 && (
 									<View style={{alignItems: "center", flexDirection: "row"}}>
-										<ExpoImage
+										<Image
 											source={{ uri: alarm.profile_url ? alarm.profile_url : defaultImage}}
 											style={styles.avatar}
 										/>
@@ -195,7 +243,7 @@ const Alarm = ({ navigation }) => {
 											</Text>
 											<Text>{moment(alarm.created_at).fromNow()}</Text>
 										</View>
-										<ExpoImage
+										<Image
 											source={{ uri: alarm.post_back_url ? alarm.post_back_url : defaultImage}}
 											style={styles.post}
 										/>
@@ -211,13 +259,13 @@ const Alarm = ({ navigation }) => {
 										}}>
 											{alarm.profile_urls.length > 1 ?
 												alarm.profile_urls.map((url, idx) => (
-													<ExpoImage
+													<Image
 														key={idx}
 														source={{ uri: url }}
 														style={idx === 0 ? styles.ImageAvatar : styles.overlayAvatar}
 													/>
 												)) : (
-													<ExpoImage
+													<Image
 														source={{ uri: alarm.profile_url ? alarm.profile_url : defaultImage}}
 														style={styles.avatar}
 													/>
@@ -230,7 +278,7 @@ const Alarm = ({ navigation }) => {
 											</Text>
 											<Text>{moment(alarm.created_at).fromNow()}</Text>
 										</View>
-										<ExpoImage
+										<Image
 											source={{ uri: alarm.post_back_url ? alarm.post_back_url : defaultImage}}
 											style={styles.post}
 										/>
@@ -238,7 +286,7 @@ const Alarm = ({ navigation }) => {
 								)}
 								{alarm.type === 7 && (
 									<View style={{alignItems: "center", flexDirection: "row"}}>
-										<ExpoImage
+										<Image
 											source={{ uri: alarm.profile_url ? alarm.profile_url : defaultImage}}
 											style={styles.avatar}
 										/>
@@ -255,13 +303,18 @@ const Alarm = ({ navigation }) => {
 						</TouchableOpacity>
 					))
 				}
+				{alarmCommunity.length === 0 && !hasMore && (
+					<View style={styles.container}>
+						<Text>더 이상 불러올 게시물이 없습니다.</Text>
+					</View>
+				)}
 				{alarmCommunity.length > 0 &&
 					alarmCommunity.map((alarm, index) => (
 						<View key={index} style={styles.alarmContainer}>
 							<View style={{ flex: 1, flexDirection: "row", }}>
 								{alarm.type === 1 && (
-									<TouchableOpacity onPress={() => {navigation.navigate("결과")}} style={{alignItems: "center", flexDirection: "row"}}>
-										<ExpoImage
+									<TouchableOpacity onPress={goResult} style={{alignItems: "center", flexDirection: "row"}}>
+										<Image
 											source={{ uri: GraphImage }}
 											style={styles.avatar}
 										/>
@@ -278,8 +331,8 @@ const Alarm = ({ navigation }) => {
 									</TouchableOpacity>
 								)}
 								{alarm.type === 2 && (
-									<TouchableOpacity onPress={() => {navigation.navigate("결과")}} style={{alignItems: "center", flexDirection: "row"}}>
-										<ExpoImage
+									<TouchableOpacity onPress={() => {navigation.navigate("Result")}} style={{alignItems: "center", flexDirection: "row"}}>
+										<Image
 											source={{ uri: GraphImage }}
 											style={styles.avatar}
 										/>
@@ -292,8 +345,8 @@ const Alarm = ({ navigation }) => {
 									</TouchableOpacity>
 								)}
 								{alarm.type === 3 && (
-									<TouchableOpacity onPress={() => {navigation.navigate("유저 알람", {userId : alarm.user_id})}} style={{alignItems: "center", flexDirection: "row"}}>
-										<ExpoImage
+									<TouchableOpacity onPress={() => {navigation.navigate("UserAlarm", {userId : alarm.user_id})}} style={{alignItems: "center", flexDirection: "row"}}>
+										<Image
 											source={{ uri: GraphImage }}
 											style={styles.avatar}
 										/>

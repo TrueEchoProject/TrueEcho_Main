@@ -7,7 +7,7 @@ import {
 	Modal,
 	Dimensions,
 	ActivityIndicator,
-	ScrollView,
+	ScrollView, Image
 } from 'react-native';
 import {AntDesign, FontAwesome5, MaterialIcons} from '@expo/vector-icons';
 import PagerView from "react-native-pager-view";
@@ -112,7 +112,7 @@ const MyPage = ({ navigation, route }) => {
 								닫기
 							</Text>
 						</TouchableOpacity>
-						<ExpoImage
+						<Image
 							source={{ uri: imageUrl }} // 수정: imageUrl을 사용
 							style={styles.smallImage}
 						/>
@@ -131,7 +131,7 @@ const MyPage = ({ navigation, route }) => {
 				<View style={{flexDirection: "row"}}>
 					<View style={{marginRight: "auto"}}>
 						<TouchableOpacity onPress={profileImageModalVisible}>
-							<ExpoImage source={{ uri: serverData.profileUrl ? serverData.profileUrl : defaultImage}} style={styles.avatar}/>
+							<Image source={{ uri: serverData.profileUrl ? serverData.profileUrl : defaultImage}} style={styles.avatar}/>
 						</TouchableOpacity>
 						{isModalVisible && (
 							<ProfileImageModal
@@ -151,7 +151,7 @@ const MyPage = ({ navigation, route }) => {
 						</View>
 					</View>
 					<Button3 onPress={() => navigation.navigate('MyOp')}/>
-					<TouchableOpacity onPress={() => navigation.navigate("알람")}>
+					<TouchableOpacity onPress={() => navigation.navigate("Alarm")}>
 						<MaterialIcons
 							name="alarm"
 							size={30}
@@ -180,7 +180,7 @@ const MyPage = ({ navigation, route }) => {
 			<View style={styles.pinsContainer}>
 				<View style={{ flexDirection: "row" }}>
 					<Text style={styles.pinsTitle}>Pins</Text>
-					<TouchableOpacity onPress={() => navigation.navigate('캘린더')}>
+					<TouchableOpacity onPress={() => navigation.navigate('Calendar')}>
 						<AntDesign
 							name="plussquare"
 							style={{ marginLeft: 10, marginTop: 6, }}
@@ -193,7 +193,7 @@ const MyPage = ({ navigation, route }) => {
 					<View style={styles.pinPlus}>
 						<TouchableOpacity
 							style={{alignItems: "center", padding: 30,}}
-							onPress={() => navigation.navigate('캘린더')}
+							onPress={() => navigation.navigate('Calendar')}
 						>
 							<AntDesign
 								name="plussquareo"
@@ -215,7 +215,7 @@ const MyPage = ({ navigation, route }) => {
 							{pinData.map((item) => (
 								<View key={item.pinId} style={{ position: 'relative' }}>
 									<TouchableOpacity onPress={() => changeImage(item.pinId)}>
-										<ExpoImage
+										<Image
 											source={{ uri: isFrontShowing[item.pinId] ? item.postFrontUrl : item.postBackUrl }}
 											style={styles.pageStyle}
 										/>

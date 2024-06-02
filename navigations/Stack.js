@@ -36,23 +36,23 @@ export const MainPostStackScreen = () => { // 메인 피드 속 Stack 구성
 				component={MyOptions}
 			/>
 			<MainPostStack.Screen
-				name="캘린더"
+				name="Calendar"
 				component={Calendar}
 			/>
 			<MainPostStack.Screen
-				name="내 설정 편집"
+				name="MyInfo"
 				component={MyInfo}
 			/>
 			<MainPostStack.Screen
-				name="알람"
+				name="Alarm"
 				component={Alarm}
 			/>
 			<MainPostStack.Screen
-				name="피드 알람"
+				name="FeedAlarm"
 				component={FeedAlarm}
 			/>
 			<MainPostStack.Screen
-				name="유저 알람"
+				name="UserAlarm"
 				component={UserAlarm}
 			/>
 			<MainPostStack.Screen
