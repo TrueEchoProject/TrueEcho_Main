@@ -14,7 +14,9 @@ import {
 	KeyboardAvoidingView,
 	Alert,
 	ActivityIndicator,
+	Image,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import { AntDesign } from "@expo/vector-icons";
@@ -38,6 +40,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	const [hasMore, setHasMore] = useState(true);
 	const scrollPositionRef = useRef(0); // 스크롤 위치 저장용
 	const [replyingTo, setReplyingTo] = useState(null); // 답글을 다는 댓글의 ID
+	const navigation = useNavigation();
 
 	useEffect(() => {
 		if (isVisible) {
@@ -184,7 +187,9 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 		
 		return (
 			<View style={commentItemStyle} ref={commentItemRef}>
-				<ExpoImage style={styles.profileImage} source={{ uri: comment.profileURL }} />
+				<TouchableOpacity onPress={() => navigation.navigate("UserAlarm", {userId : comment.userId})}>
+					<Image style={styles.profileImage} source={{ uri: comment.profileURL }} />
+				</TouchableOpacity>
 				<Text>Date: {comment.createdAt}</Text>
 				<Text style={styles.commentText}>{comment.username}: {comment.content}</Text>
 				{comment.mine ?
@@ -208,7 +213,9 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	const UnderCommentItem = ({ underComment }) => {
 		return (
 			<View style={styles.underCommentItem}>
-				<ExpoImage style={styles.profileImage} source={{ uri: underComment.profileURL }} />
+				<TouchableOpacity onPress={() => navigation.navigate("UserAlarm", {userId : underComment.userId})}>
+					<Image style={styles.profileImage} source={{ uri: underComment.profileURL }} />
+				</TouchableOpacity>
 				<Text>Date: {underComment.createdAt}</Text>
 				<Text style={styles.underCommentText}>{underComment.username}: {underComment.content}</Text>
 				{underComment.mine ?

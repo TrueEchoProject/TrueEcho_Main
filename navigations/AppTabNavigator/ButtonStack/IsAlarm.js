@@ -10,7 +10,7 @@ const IsAlarm = () => {
 					title: "댓글 추가",
 					body: '새로 작성된 댓글이 있어요',
 					data: {  // 알림에 추가 데이터 포함
-						postId: 1,
+						post_id: 1,
 						type: "goPost",
 					}
 				},
@@ -27,7 +27,7 @@ const IsAlarm = () => {
 					title: "답글 추가",
 					body: '당신의 댓글에 답글이 달렸어요',
 					data: {  // 알림에 추가 데이터 포함
-						postId: 2,
+						post_id: 2,
 						type: "goPost",
 					}
 				},
@@ -44,7 +44,7 @@ const IsAlarm = () => {
 					title: "좋아요",
 					body: 'username"님이 좋아요를 눌렀어요!',
 					data: {  // 알림에 추가 데이터 포함
-						postId: 3,
+						post_id: 3,
 						type: "goPost",
 					}
 				},
@@ -113,7 +113,7 @@ const IsAlarm = () => {
 					data: {
 						// 알림에 추가 데이터 포함
 						type: "goUser",
-						user_id: 1,
+						userId: 1,
 					},
 				},
 				trigger: { seconds: 1 },

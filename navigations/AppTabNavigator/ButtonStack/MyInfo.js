@@ -9,11 +9,12 @@ import {
 	Platform,
 	Modal,
 	Dimensions,
-	ActivityIndicator, Button,
+	ActivityIndicator, Button, Image
 } from 'react-native';
 import { Image as ExpoImage } from 'expo-image';
 import Api from "../../../Api";
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator'; // 이미지 리사이징 추가.
 import MapView, { Marker } from "react-native-maps";
 import GetLocation from "../../../SignUp/GetLocation";
 
@@ -93,7 +94,12 @@ const MyInfo = ({ navigation, route }) => {
 				quality: 1,
 			});
 			if (!result.cancelled) {
-				setImageUri(result.assets[0].uri);
+				const manipResult = await ImageManipulator.manipulateAsync(
+					result.uri,
+					[{ resize: { width: 800 } }], // 이미지 크기 조정
+					{ compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+				);
+				setImageUri(manipResult.uri);
 			}
 		} catch (error) {
 			console.error("ImagePicker Error: ", error);
@@ -144,23 +150,40 @@ const MyInfo = ({ navigation, route }) => {
 			return;
 		}
 		
-		const updatedUser = {
-			profileImage : imageUri,
-			username: username,
-			location: serverUserLocation,
-			nickname: editableUserId,
-			x: longitude,
-			y: latitude,
-		};
+		const formData = new FormData();
+		if (imageUri) {
+			formData.append('profileImage', {
+				uri: imageUri,
+				name: 'profile.jpg',
+				type: 'image/jpeg',
+			});
+		}
+		formData.append('username', username);
+		formData.append('location', serverUserLocation);
+		formData.append('nickname', editableUserId);
+		formData.append('x', longitude.toString());
+		formData.append('y', latitude.toString());
 		
 		try {
-			const response = await Api.post(`/setting/myInfo`, updatedUser);
-			console.log('User updated:', response.data);
-			navigation.navigate("MyP", { Update: updatedUser });
+			const response = await Api.patch(`/setting/myInfo`, formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data',
+				},
+			});
+			
+			const responseData = response.data;
+			console.log('User updated:', responseData);
+			if (responseData.code === 'T002') {
+				Alert.alert('알림', '개인정보 수정에 실패했습니다.');
+			} else {
+				navigation.navigate("MyP", { Update: responseData.data });
+			}
 		} catch (error) {
 			console.error('Failed to update user:', error);
 		}
 	};
+	
+	
 	
 	const profileModalVisible = () => {
 		setIsModalVisible(!isModalVisible);
@@ -214,7 +237,7 @@ const MyInfo = ({ navigation, route }) => {
 		<View style={styles.container}>
 			<View style={{ padding: 20, alignItems: "center", }}>
 				<TouchableOpacity onPress={profileModalVisible}>
-					<ExpoImage
+					<Image
 						source={{ uri: imageUri }}
 						style={styles.Image}
 					/>
@@ -450,3 +473,4 @@ const styles = StyleSheet.create({
 });
 
 export default MyInfo;
+

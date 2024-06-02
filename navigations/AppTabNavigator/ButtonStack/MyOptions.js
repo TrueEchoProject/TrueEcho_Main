@@ -8,7 +8,7 @@ import {
 	TouchableOpacity,
 	Modal,
 	Dimensions,
-	Switch, ActivityIndicator,
+	Switch, ActivityIndicator, Image
 } from 'react-native';
 import { FontAwesome5, AntDesign, FontAwesome6, MaterialIcons, Entypo, Ionicons } from '@expo/vector-icons';
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
@@ -383,7 +383,7 @@ const MyOptions = ({ navigation, route }) => {
 								>
 									{blockedUsers.map((user) => (
 										<View key={user.userId} style={styles.scrollModalButton}>
-											<ExpoImage
+											<Image
 												style={styles.profileImage}
 												source={{ uri: user.userProfileUrl ? user.userProfileUrl : defaultImage}}
 											/>
@@ -611,6 +611,7 @@ const MyOptions = ({ navigation, route }) => {
 					<View style={styles.imageContainer}>
 						<Text style={styles.modalText}>QnA</Text>
 						<Text style={styles.modalSmallText}>자주 받는 질문들에 대해 답변해드려요</Text>
+						<Text style={{fontSize:20,fontWeight:"bold", textAlign:"center"}}>추후에 업데이트할 예정.</Text>
 						<ScrollView
 							style={{ width: windowWidth * 0.8, }}
 							contentContainerStyle={styles.scrollContent}
@@ -736,8 +737,8 @@ const MyOptions = ({ navigation, route }) => {
 	return (
 		<View style={styles.container}>
 			<ScrollView style={styles.scrollView}>
-				<TouchableOpacity onPress={() => navigation.navigate('내 설정 편집', { user: user })} style={styles.View}>
-					<ExpoImage source={{ uri: user.profileUrl ? user.profileUrl : defaultImage}} style={styles.Image}/>
+				<TouchableOpacity onPress={() => navigation.navigate('MyInfo', { user: user })} style={styles.View}>
+					<Image source={{ uri: user.profileUrl ? user.profileUrl : defaultImage}} style={styles.Image}/>
 					<View style={{ marginLeft: 10 }}>
 						<Text style={styles.Text}>{user.username}</Text>
 						<Text style={styles.Text}>{user.nickname}</Text>
@@ -749,7 +750,7 @@ const MyOptions = ({ navigation, route }) => {
 						iconType={FontAwesome5}
 						icon="calendar-alt"
 						label="캘린더"
-						onPress={() => navigation.navigate('캘린더')}
+						onPress={() => navigation.navigate('Calendar')}
 					/>
 				</View>
 				<View>

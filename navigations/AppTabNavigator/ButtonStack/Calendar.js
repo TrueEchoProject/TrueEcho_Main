@@ -9,6 +9,7 @@ import {
 	Modal,
 	Dimensions,
 	ScrollView, ActivityIndicator,
+	Image,
 } from 'react-native';
 import Api from '../../../Api';
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
@@ -192,7 +193,7 @@ const Calendar = ({ navigation }) => {
 							onPress={changeImage}
 							style={styles.frontImage}
 						>
-							<ExpoImage
+							<Image
 								source={{ uri: isFrontShowing ? postFront : postBack }}
 								style={styles.smallImage}
 							/>
@@ -201,7 +202,7 @@ const Calendar = ({ navigation }) => {
 							onPress={changeImage}
 							style={styles.backImage}
 						>
-							<ExpoImage
+							<Image
 								source={{ uri: isFrontShowing ? postBack : postFront }}
 								style={styles.fullImage}
 							/>
@@ -268,7 +269,7 @@ const Calendar = ({ navigation }) => {
 						) : (
 							<View key={index} style={styles.selectedImageContainer}>
 								<TouchableOpacity onPress={() => togglePinImage(index)}>
-									<ExpoImage
+									<Image
 										source={{ uri: pin.isFrontShowing ? pin.frontUrl : pin.backUrl }}
 										style={styles.selectedImage} />
 									<Text style={styles.pinDateText}>Date: {pin.date}</Text>

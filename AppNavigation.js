@@ -26,9 +26,12 @@ const AppNavigation = () => {
 				options={{ headerShown: true}}
 			/>
 			<Stack.Screen
-				name="MainPostStackScreen"
+				name="TabNavigation"
 				component={TabNavigation}
-				options={{ headerShown: false }}
+				options={{
+					headerShown: false,
+					headerLeft: null
+				}}
 			/>
 		</Stack.Navigator>
 	);

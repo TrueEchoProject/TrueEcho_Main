@@ -15,10 +15,6 @@ import CardComponent from '../../../components/CardComponent';
 import { MaterialIcons } from "@expo/vector-icons";
 import Api from '../../../Api';
 
-const MemoizedCardComponent = React.memo(CardComponent, (prevProps, nextProps) => {
-	return prevProps.post.id === nextProps.post.id && prevProps.location === nextProps.location && prevProps.isOptionsVisibleExternal === nextProps.isOptionsVisibleExternal;
-});
-
 const PublicPosts = React.forwardRef((props, ref) => {
 	const [range, setRange] = useState(null);
 	const [optionsVisibleStates, setOptionsVisibleStates] = useState({});
@@ -46,8 +42,8 @@ const PublicPosts = React.forwardRef((props, ref) => {
 	
 	const refreshPosts = async () => {
 		setPage(0);
-		firstFetch();
-	}
+		await firstFetch();
+	};
 	
 	const firstFetch = async () => {
 		setRefreshing(true);
@@ -63,8 +59,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		}
 	};
 	const getPosts = async (selectedRange = null, index = 0) => {
-		setRefreshing(true);
-		let url = `/post/read/1?index=${index}&pageCount=5`;
+		let url = `/post/read/1?index=${index}&pageCount=15`;
 		if (selectedRange) {
 			try {
 				setCopiedLocation(location)
@@ -104,7 +99,11 @@ const PublicPosts = React.forwardRef((props, ref) => {
 				setRefreshing(false);
 				return;
 			}
-			setPosts(prevPosts => index === 0 ? newPosts : [...prevPosts, ...newPosts]);
+			// If index is 0, it means we are refreshing the whole list, otherwise we are appending
+			const allPosts = index === 0 ? newPosts : [...posts, ...newPosts];
+			// Sort posts by creation time, assuming posts have a `createdAt` property
+			allPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+			setPosts(allPosts);
 		} catch (error) {
 			console.error('Fetching posts failed:', error);
 		} finally {
@@ -114,7 +113,8 @@ const PublicPosts = React.forwardRef((props, ref) => {
 				setTimeout(() => {
 					pagerViewRef.current?.setPageWithoutAnimation(0);
 				}, 50);
-		}}
+			}
+		}
 	};
 	
 	const toggleOptions = () => {
@@ -136,7 +136,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 			return newStates;
 		});
 		// 추가 데이터 로딩
-		if (newIndex === posts.length - 1) {
+		if (newIndex === posts.length - 5) {
 			setPage(prevPage => {
 				const nextPage = prevPage + 1;
 				getPosts(range, nextPage);
@@ -230,7 +230,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 				>
 					{posts.map((post) => (
 						<View key={post.postId} style={style.container}>
-							<MemoizedCardComponent
+							<CardComponent
 								post={post}
 								onBlock={handleBlock}
 								isOptionsVisibleExternal={optionsVisibleStates[post.postId]}

@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import TabNavigation from './navigations/Tab';
 import * as SplashScreen from 'expo-splash-screen';
 import { Alert, Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import AppNavigation from './AppNavigation';
+import * as Linking from 'expo-linking';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -18,17 +19,77 @@ Notifications.setNotificationHandler({
 
 SplashScreen.preventAutoHideAsync();
 
+const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
+
+const linking = {
+  prefixes: [Linking.createURL('/'), 'trueecho://', 'https://trueecho.app'],
+  config: {
+    screens: {
+      Login: 'login',
+      SignUp: 'signup',
+      ForgotPassword: 'forgot-password',
+      TabNavigation: {
+        path: 'main',
+        screens: {
+          MainPost: {
+            path: 'mainpost',
+            screens: {
+              FeedTab: {
+                path: 'feed-tab',
+                screens: {
+                  FriendFeed: 'friend-feed',
+                  OtherFeed: 'other-feed',
+                },
+              },
+              MyP: 'mypage',
+              Fri: 'friends',
+              MyOp: 'options',
+              Calendar: 'calendar',
+              MyInfo: 'myinfo',
+              Alarm: 'alarm',
+              FeedAlarm: 'feed-alarm/:post_id?',
+              UserAlarm: 'user-alarm/:userId?',
+              IsAlarm: 'is-alarm',
+              MyFeed: 'myfeed',
+            },
+          },
+          Camera: {
+            path: 'camera',
+            screens: {
+              CameraOption: 'camera-option',
+              SendPosts: 'send-posts',
+              FeedPostPage: 'feed-post-page',
+            },
+          },
+          CommunityTab: {
+            path: 'community',
+            screens: {
+              Community: {
+                path: 'community',
+                screens: {
+                  Vote: 'vote',
+                  Result: 'result',
+                },
+              },
+              Fri: 'friends',
+              MyP: 'mypage',
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
 export default function App() {
   const [isReady, setIsReady] = useState(false);
-  const [expoPushToken, setExpoPushToken] = useState('');
   const navigationRef = useRef();
+  const lastNotificationId = useRef(null);
+  const [initialState, setInitialState] = useState();
   
   useEffect(() => {
     async function prepare() {
       try {
-        const token = await registerForPushNotificationsAsync();
-        setExpoPushToken(token);
-        
         const subscription = Notifications.addNotificationReceivedListener(notification => {
           console.log('Notification received:', notification);
         });
@@ -38,11 +99,23 @@ export default function App() {
           handleNotification(response.notification);
         });
         
-        // 앱이 백그라운드에서 시작될 때 알림 데이터를 처리합니다.
         const lastNotificationResponse = await Notifications.getLastNotificationResponseAsync();
         if (lastNotificationResponse) {
           console.log('Last notification response:', lastNotificationResponse);
           handleNotification(lastNotificationResponse.notification);
+        }
+        
+        const storedNotification = await AsyncStorage.getItem('lastNotification');
+        if (storedNotification) {
+          const { type, data } = JSON.parse(storedNotification);
+          handleNavigation(type, data);
+          await AsyncStorage.removeItem('lastNotification');
+        } else {
+          const savedStateString = await AsyncStorage.getItem(PERSISTENCE_KEY);
+          const state = savedStateString ? JSON.parse(savedStateString) : undefined;
+          if (state !== undefined) {
+            setInitialState(state);
+          }
         }
         
         return () => {
@@ -56,57 +129,24 @@ export default function App() {
         await SplashScreen.hideAsync();
       }
     }
-    
     prepare();
   }, []);
   
-  async function registerForPushNotificationsAsync() {
-    if (!Device.isDevice) {
-      Alert.alert('Must use physical device for Push Notifications');
-      return;
+  const handleNotification = async (notification) => {
+    const notificationId = notification.request.identifier;
+    if (lastNotificationId.current === notificationId) {
+      return; // Ignore duplicate notifications
     }
+    lastNotificationId.current = notificationId;
     
-    if (Platform.OS === 'android') {
-      await Notifications.setNotificationChannelAsync('default', {
-        name: 'default',
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#FF231F7C',
-      });
-    }
-    
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return;
-    }
-    
-    try {
-      const projectId = Constants.expoConfig?.extra?.eas?.projectId;
-      if (!projectId) {
-        throw new Error('No projectId configured');
-      }
-      const token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
-      console.log('Push token:', token);
-      return token;
-    } catch (error) {
-      console.error('Error fetching Expo push token:', error);
-    }
-  }
-  
-  const handleNotification = (notification) => {
     const data = notification.request.content.data;
     const type = data.type;
     
     console.log('Notification type:', type);
     console.log('Notification data:', data);
     
-    // 네비게이션 초기화 대기 및 데이터 유효성 검사
+    await AsyncStorage.setItem('lastNotification', JSON.stringify({ type, data }));
+    
     const waitForNavigation = setInterval(() => {
       if (navigationRef.current) {
         clearInterval(waitForNavigation);
@@ -115,52 +155,47 @@ export default function App() {
     }, 100);
   };
   
-  const handleNavigation = (type, data) => {
-    switch (type) {
-      case 'goFriend':
-        handleFriend(data);
-        break;
-      case 'goPost':
-        handlePost(data);
-        break;
-      case 'goRanking':
-        handleRanking(data);
-        break;
-      case 'goUser':
-        handleUser(data);
-        break;
-      case 'random':
-        handleRandom(data);
-        break;
-      default:
-        console.log('Unknown notification type received.');
+  const handleNavigation = async (type, data) => {
+    const url = createNavigationUrl(type, data);
+    if (url) {
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        Linking.openURL(url);
+      } else {
+        console.log(`Can't handle url: ${url}`);
+      }
     }
   };
   
-  const handleFriend = (data) => {
-    navigationRef.current?.navigate('Fri');
-    console.log('Navigating to Fri');
+  const createNavigationUrl = (type, data) => {
+    switch (type) {
+      case 'goFriend':
+        return Linking.createURL('main/mainpost/friends');
+      case 'goPost':
+        return Linking.createURL(`main/mainpost/feed-alarm/${data.post_id}`);
+      case 'goRanking':
+        return Linking.createURL('main/community/community/result');
+      case 'goUser':
+        return Linking.createURL(`main/mainpost/user-alarm/${data.userId}`);
+      case 'random':
+        return Linking.createURL('main/camera/camera-option');
+      default:
+        console.log('Unknown notification type received.');
+        return null;
+    }
   };
-  const handlePost = (data) => {
-    navigationRef.current?.navigate('피드 알람', { post_id: data.postId });
-    console.log('Navigating to 피드 알람 with post_id:', data.postId);
+  
+  const saveState = (state) => {
+    AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state));
   };
-  const handleRanking = (data) => {
-    console.log('Handling ranking:', data);
-    navigationRef.current?.navigate("결과");
-    console.log('Navigating to 결과');
-  };
-  const handleUser = (data) => {
-    console.log('Handling post:', data);
-    navigationRef.current?.navigate("유저 알람", {userId : data.user_id});
-    console.log('Navigating to 유저 알람 with user_id:', data.user_id);
-  };
-  const handleRandom = () => {
-    navigationRef.current?.navigate("CameraOption");
-    console.log('Navigating to CameraOption');
-  };
+  
   return (
-    <NavigationContainer ref={navigationRef}>
+    <NavigationContainer
+      ref={navigationRef}
+      linking={linking}
+      initialState={initialState}
+      onStateChange={saveState}
+    >
       <AppNavigation />
     </NavigationContainer>
   );

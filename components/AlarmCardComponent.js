@@ -8,6 +8,7 @@ import {
 	Share,
 	Dimensions,
 	ActivityIndicator,
+	Image
 } from 'react-native';
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import { Ionicons, Feather, SimpleLineIcons } from "@expo/vector-icons";
@@ -127,10 +128,10 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 			<View style={styles.cardContainer}>
 				<View style={styles.cardItem}>
 					<View style={styles.left}>
-						<TouchableOpacity onPress={() => {navigation.navigate("유저 알람", {userId : post.userId})}}>
-							<ExpoImage
+						<TouchableOpacity onPress={() => {navigation.navigate("UserAlarm", {userId : post.userId})}}>
+							<Image
 								style={styles.thumbnail}
-								source={{ uri: post.profileUrl ? post.profileUrl : defaultImage}}
+								source={{ uri: post.profileUrl }}
 							/>
 						</TouchableOpacity>
 						<View style={styles.body}>

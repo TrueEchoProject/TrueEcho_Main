@@ -20,7 +20,8 @@ export const MainPostStackScreen = () => { // 메인 피드 속 Stack 구성
 							<Button1 onPress={() => navigation.navigate('Fri')} />
 							<Button2 onPress={() => navigation.navigate('MyP')} />
 						</View>
-					)
+					),
+					headerLeft: null
 				})}
 			/>
 			<MainPostStack.Screen
@@ -36,23 +37,23 @@ export const MainPostStackScreen = () => { // 메인 피드 속 Stack 구성
 				component={MyOptions}
 			/>
 			<MainPostStack.Screen
-				name="캘린더"
+				name="Calendar"
 				component={Calendar}
 			/>
 			<MainPostStack.Screen
-				name="내 설정 편집"
+				name="MyInfo"
 				component={MyInfo}
 			/>
 			<MainPostStack.Screen
-				name="알람"
+				name="Alarm"
 				component={Alarm}
 			/>
 			<MainPostStack.Screen
-				name="피드 알람"
+				name="FeedAlarm"
 				component={FeedAlarm}
 			/>
 			<MainPostStack.Screen
-				name="유저 알람"
+				name="UserAlarm"
 				component={UserAlarm}
 			/>
 			<MainPostStack.Screen
@@ -81,9 +82,10 @@ export const CommunityStackScreen = () => { // 커뮤니티 속 Stack 구성
 							<Button1 onPress={() => navigation.navigate('Fri')} />
 							<Button2 onPress={() => navigation.navigate('MyP')} />
 						</View>
-					)
+					),
+					headerLeft: null
 				})}
 			/>
-		</ CommunityStack.Navigator>
+		</CommunityStack.Navigator>
 	);
 }

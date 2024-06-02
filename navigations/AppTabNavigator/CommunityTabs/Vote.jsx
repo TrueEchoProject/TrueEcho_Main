@@ -237,6 +237,14 @@ const Vote = () => {
     setShowStartPage(false);
   };
 
+  const handleRestart = () => {
+    setCurrentIndex(0);
+    setSelectedImage(null);
+    setSelectedUserId(null);
+    setShowStartPage(true);
+    fetchData(); // 데이터를 다시 불러옵니다.
+  };
+  
   if (showStartPage) {
     return <StartPage onStart={handleStart} />;
   }
@@ -254,6 +262,7 @@ const Vote = () => {
       <View style={styles.container}>
         <Text style={styles.endText}>투표가 끝났습니다. 감사합니다!</Text>
         <Button title="랭킹 페이지로 이동" onPress={handleNavigateToRanking} />
+        <Button title="더 많은 투표 하기" onPress={handleRestart} />
       </View>
     );
   }
