@@ -148,6 +148,7 @@ public class SettingServiceImpl implements SettingService{
                 postList.stream().map(
                         post -> new Pin(loginUser, post)
                 ).toList();
+
         log.warn("New pins created = {}",newPins.get(0).getPost().getTitle());
         pinsRepository.saveAll(newPins);
 
