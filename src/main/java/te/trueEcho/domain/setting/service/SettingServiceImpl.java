@@ -139,7 +139,7 @@ public class SettingServiceImpl implements SettingService{
 
         if (editPinsRequest.getUpdatedPostIdList().isEmpty()){
             log.warn("No updated post id list found");
-            return false;
+            return true;
         }
 
         List<Post> postList =  postRepository.getPostByIdList(editPinsRequest.getUpdatedPostIdList());
