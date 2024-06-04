@@ -11,42 +11,48 @@ import te.trueEcho.domain.setting.entity.NotiTimeStatus;
 
 import java.time.LocalDate;
 
+@Schema(description = "회원가입 요청 DTO")
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Validated
 public class RegisterRequest {
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY, name = "닉네임", example = "홍길동이지",requiredMode = Schema.RequiredMode.REQUIRED)
+
+        @Schema(description = "닉네임", example = "홍길동이지", required = true)
         @NotNull
         @Size(min = 3, max = 50)
         private String nickname;
 
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "비밀번호", example = "truefalse02!",requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "비밀번호", example = "truefalse02!", required = true)
+        @NotNull
         @Size(min = 3, max = 100)
         private String password;
 
-        @Size(min = 2, max = 12)
+        @Schema(description = "이름", example = "홍길동", required = true)
         @NotNull
+        @Size(min = 2, max = 12)
         private String name;
 
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "이메일", example = "trueEcho@gmail.com",requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "이메일", example = "trueEcho@gmail.com", required = true)
         @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
         @NotNull
         @Size(min = 3, max = 50)
         private String email;
 
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "성별", example = "남자(1)/여자(0)",requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "성별", example = "MALE", required = true)
         private Gender gender;
 
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "생년월일", example = "2000-1-1",requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "생년월일", example = "2000-01-01", required = true)
+        @NotNull
         private LocalDate dob;
 
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "성별", example = "00-05(0)/06-11(1)/12-17(2)/18-23(3)",requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "알림 시간", example = "MORNING", required = true)
         private NotiTimeStatus notificationTime;
 
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY,name = "지역", example = "서울광역시 용산구",requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "경도 x 좌표", example = "127.0", required = true)
         private double x;
 
+        @Schema(description = "위도 y 좌표", example = "37.5", required = true)
         private double y;
 }

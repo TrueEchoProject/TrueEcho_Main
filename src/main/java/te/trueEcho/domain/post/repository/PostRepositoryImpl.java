@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import te.trueEcho.domain.post.entity.Comment;
 import te.trueEcho.domain.post.entity.Like;
 import te.trueEcho.domain.post.entity.Post;
+import te.trueEcho.domain.post.entity.PostStatus;
 import te.trueEcho.domain.user.entity.User;
 
 import java.time.LocalDateTime;
@@ -223,5 +224,18 @@ public class PostRepositoryImpl implements PostRepository {
             log.error("findCommentById error : {}", e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public boolean existsByUserAndCreatedAtIsAfterAndStatus(User user, LocalDateTime createdAt, PostStatus status) {
+        Long count = em.createQuery(
+                        "SELECT COUNT(p) FROM Post p WHERE p.user = :user AND p.createdAt > :createdAt AND p.status = :status",
+                        Long.class)
+                .setParameter("user", user)
+                .setParameter("createdAt", createdAt)
+                .setParameter("status", status)
+                .getSingleResult();
+
+        return count > 0;
     }
 }

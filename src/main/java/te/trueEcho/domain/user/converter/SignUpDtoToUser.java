@@ -9,7 +9,6 @@ import te.trueEcho.domain.user.entity.Role;
 import te.trueEcho.domain.user.entity.User;
 
 
-@Component
 @NoArgsConstructor
 public class SignUpDtoToUser {
     public User converter(RegisterRequest registerRequest,

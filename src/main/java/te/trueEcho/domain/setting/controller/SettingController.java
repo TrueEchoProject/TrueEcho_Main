@@ -1,4 +1,10 @@
 package te.trueEcho.domain.setting.controller;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +27,7 @@ import te.trueEcho.global.response.ResponseForm;
 
 import javax.annotation.Nullable;
 
+@Tag(name = "Setting API", description = "설정 관리 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/setting")
@@ -35,7 +42,14 @@ public class SettingController {
      제일 많이 받은 투표 (다 똑같으면 : 최신, 안 받으면 : null)
      개인당 핀 [게시물 3개 or 5개]
      */
-
+    @Operation(summary = "마이페이지 조회", description = "마이페이지 정보를 조회합니다.")
+    @Parameters({
+            @Parameter(name = "userId", description = "사용자 ID", example = "1", required = false)
+    })
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "GET_MY_PAGE_SUCCESS - 마이페이지 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "GET_MY_PAGE_FAIL - 마이페이지 조회 실패")
+    })
     @GetMapping("/myPage")
     public ResponseEntity<ResponseForm> getMyPage(@RequestParam @Nullable Long userId) {
         if(userId==null){
@@ -54,6 +68,11 @@ public class SettingController {
      캘린더 [GET]
      이번달 게시물 다 불러오기> -> 게시물
      */
+    @Operation(summary = "이번달 게시물 조회", description = "이번달 모든 게시물을 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "GET_MONTHLY_POST_SUCCESS - 게시물 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "GET_MONTHLY_POST_FAIL - 게시물 조회 실패")
+    })
     @GetMapping("/monthlyPosts")
     public ResponseEntity<ResponseForm> getMonthlyPosts() {
 
@@ -72,7 +91,11 @@ public class SettingController {
      2. 이전에 정해진 핀이 있을 때 수정된 핀이 오는 요청
      3. 이전에 정해진 핀이 있을 때 삭제된 핀이 오는 요청 ->
      */
-
+    @Operation(summary = "핀 목록 조회", description = "핀 목록을 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "GET_PINS_SUCCESS - 핀 목록 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "GET_PINS_FAIL - 핀 목록 조회 실패")
+    })
     @GetMapping("/pins")
     public ResponseEntity<ResponseForm> getPins() {
         PinListResponse pinListResponse = settingService.getPins();
@@ -81,6 +104,11 @@ public class SettingController {
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_PINS_FAIL));
     }
 
+    @Operation(summary = "핀 수정", description = "핀 정보를 수정합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "PUT_PINS_SUCCESS - 핀 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "PUT_PINS_FAIL - 핀 수정 실패")
+    })
     @PutMapping("/pins")
     public ResponseEntity<ResponseForm> editPins(@RequestBody PinsRequest PinsRequest) {
 
@@ -96,7 +124,11 @@ public class SettingController {
      프로필 이미지
      닉네임 중복검사
      */
-
+    @Operation(summary = "개인정보 조회", description = "개인 정보를 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "GET_MY_INFO_SUCCESS - 개인정보 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "GET_MY_INFO_FAIL - 개인정보 조회 실패")
+    })
     @GetMapping("/myInfo")
     public ResponseEntity<ResponseForm> getMyInfo() {
         MyInfoResponse myInfoResponse =  settingService.getMyInfo();
@@ -104,7 +136,19 @@ public class SettingController {
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_MY_INFO_SUCCESS, myInfoResponse)) :
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_MY_INFO_FAIL));
     }
-
+    @Operation(summary = "개인정보 수정", description = "개인 정보를 수정합니다.")
+    @Parameters({
+            @Parameter(name = "profileImage", description = "프로필 이미지 파일", required = false),
+            @Parameter(name = "nickname", description = "닉네임", example = "john_doe", required = false),
+            @Parameter(name = "username", description = "사용자 이름", example = "John Doe", required = false),
+            @Parameter(name = "x", description = "위도", example = "37.7749", required = false),
+            @Parameter(name = "y", description = "경도", example = "-122.4194", required = false)
+    })
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "PUT_MY_INFO_SUCCESS - 개인정보 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "PUT_MY_INFO_FAIL - 개인정보 수정 실패"),
+            @ApiResponse(responseCode = "400", description = "NOT_DUPLICATED_FAIL - 닉네임 중복 검사 실패")
+    })
     @PatchMapping("/myInfo")
     public ResponseEntity<ResponseForm> editMyInfo(    @RequestParam(required = false) MultipartFile profileImage,
                                                        @RequestParam(required = false) String nickname,
@@ -147,7 +191,12 @@ public class SettingController {
      수정 권한 (알림을 못 받았으면, 대기 큐에 넣고, 나중에 알림을 받으면 큐에서 꺼내서 알림 시간대 수정)
     TODO: 이거 자료구조 만들어야 됨.
      */
-
+    @Operation(summary = "알림 시간대 수정", description = "알림 시간대를 수정합니다.")
+    @Parameter(name = "editTime", description = "수정할 알림 시간대", example = "15", required = true)
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "PUT_NOTIFY_TIME_SUCCESS - 알림 시간대 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "PUT_NOTIFY_TIME_FAIL - 알림 시간대 수정 실패")
+    })
     @PatchMapping("/notifyTime")
     public ResponseEntity<ResponseForm> editNotifyTime(@RequestParam int editTime) {
         RandomNotifyTResponse randomNotifyTResponse = settingService.editRandomNotifyTime(editTime);
@@ -156,7 +205,11 @@ public class SettingController {
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.PUT_NOTIFY_TIME_SUCCESS, randomNotifyTResponse.getMsg())) :
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.PUT_NOTIFY_TIME_FAIL));
     }
-
+    @Operation(summary = "알림 시간대 조회", description = "알림 시간대를 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "GET_NOTIFY_TIME_SUCCESS - 알림 시간대 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "GET_NOTIFY_TIME_FAIL - 알림 시간대 조회 실패")
+    })
     @GetMapping("/notifyTime")
     public ResponseEntity<ResponseForm> getNotifyTime() {
         RandomNotifyTResponse randomNotifyTResponse = settingService.getRandomNotifyTime();
@@ -175,7 +228,11 @@ public class SettingController {
     랭킹 결과 -> 내 등수.
     개인적으로 투표 받았을 때
      */
-
+    @Operation(summary = "알림 설정 조회", description = "알림 설정을 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "GET_NOTIFICATION_OPTION_SUCCESS - 알림 설정 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "GET_NOTIFICATION_OPTION_FAIL - 알림 설정 조회 실패")
+    })
     @GetMapping("/notificationSetting")
     public ResponseEntity<ResponseForm> getNotificationSetting() {
         NotificationSettingDto notificationSettingDto = settingService.getNotificationSetting();
@@ -186,7 +243,11 @@ public class SettingController {
             return ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_NOTIFICATION_OPTION_FAIL));
         }
     }
-
+    @Operation(summary = "알림 설정 수정", description = "알림 설정을 수정합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "PUT_NOTIFICATION_OPTION_SUCCESS - 알림 설정 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "PUT_NOTIFICATION_OPTION_FAIL - 알림 설정 수정 실패")
+    })
     @PatchMapping("/notificationSetting")
     public ResponseEntity<ResponseForm> editNotificationSetting(
             @RequestBody NotificationSettingDto notificationSettingDto) {

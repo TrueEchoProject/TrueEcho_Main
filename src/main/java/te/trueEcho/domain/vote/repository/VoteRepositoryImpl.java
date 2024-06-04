@@ -28,7 +28,8 @@ public class VoteRepositoryImpl implements VoteRepository {
     private final EntityManager em;
     private final static ConcurrentHashMap<Integer, Map<Enum<VoteType>, List<Vote>>> todayVoteContent
             = new ConcurrentHashMap<>();
-    private final static ConcurrentLinkedQueue<VoteUsersResponse> voteTargetUsers = new ConcurrentLinkedQueue<>();
+    private final static ConcurrentLinkedQueue<VoteUsersResponse> voteTargetUsers =
+            new ConcurrentLinkedQueue<>();
 
     private static final int voteSize = 10; // 투표지 수
 
@@ -50,7 +51,7 @@ public class VoteRepositoryImpl implements VoteRepository {
     @Transactional
     public VoteUsersResponse getTargetUsers(boolean flag) {
         VoteUsersResponse voteUsersResponse =  voteTargetUsers.poll();
-        
+
         if (flag){
             return voteUsersResponse;
         }
@@ -67,6 +68,7 @@ public class VoteRepositoryImpl implements VoteRepository {
             putTargetUsers(voteUsersResponse);
             return voteUsersResponse;
         }
+
     }
 
     @Scheduled(cron = "0 0 0 * * ?")
@@ -190,7 +192,6 @@ public class VoteRepositoryImpl implements VoteRepository {
     }
 
     
-
 
     public List<VoteResult> getThisWeekVoteResult() {
         try {
