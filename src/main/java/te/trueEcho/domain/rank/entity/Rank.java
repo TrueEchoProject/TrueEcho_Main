@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 import te.trueEcho.domain.notification.entity.NotificationEntity;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.vote.entity.Vote;
-
 import java.time.LocalDate;
 import java.util.List;
+
 
 @Getter
 @Entity
