@@ -24,7 +24,7 @@ import Api from '../Api';
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
-export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
+export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) => {
 	const insets = useSafeAreaInsets(); // Safe Area 여백 얻기
 	const initialMarginTop = Platform.OS === 'ios' ? windowHeight * 0.3 + insets.top : windowHeight * 0.3;
 	const marginTopLimit = Platform.OS === 'ios' ? insets.top : 0;
@@ -37,19 +37,19 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 	const animatedHeight = useRef(new Animated.Value(initialMarginTop)).current;
 	const scrollViewRef = useRef(null);
 	const commentRefs = useRef({});
-	const [hasMore, setHasMore] = useState(true);
 	const scrollPositionRef = useRef(0); // 스크롤 위치 저장용
 	const [replyingTo, setReplyingTo] = useState(null); // 답글을 다는 댓글의 ID
 	const navigation = useNavigation();
-
+	
 	useEffect(() => {
 		if (isVisible) {
 			console.log(postId);
-			fetchComments(); // 초기 페이지 로드
+			setLoading(true);
 			setTextInputValue(''); // 입력 필드 초기화
 			setShowUnderComments({});
 			setReplyingTo(null);
 			setCommentNone(false);
+			setPage(0);
 			Animated.timing(animatedHeight, {
 				toValue: initialMarginTop, // 모달을 초기 높이로 설정
 				duration: 0, // 즉시 변경되도록 시간을 0으로 설정
@@ -57,39 +57,56 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 			}).start();
 		} else {
 			setComments([]);
-			setHasMore(true);
 			setPage(0); // 페이지 번호 초기화
 		}
 	}, [isVisible, postId]);
+	useEffect(() => {
+		if (loading) {
+			fetchComments(page);
+		}
+	}, [loading]);
 	
 	const fetchComments = async (index = 0) => {
-		if (loading || !hasMore) return; // 로딩 중이거나 더 이상 로드할 댓글이 없으면 중복 요청 방지
-		setLoading(true);
-		const currentPosition = scrollPositionRef.current; // 로딩 전 스크롤 위치 저장
+		console.log('fetchComments called with index:', index); // 함수 호출 로그
+		
+		setLoading(true); // 로딩 상태 시작
 		try {
+			const currentPosition = scrollPositionRef.current; // 로딩 전 스크롤 위치 저장
+			console.log('Calling API to fetch comments...'); // API 호출 전 로그
 			const serverResponse = await Api.get(`/post/read/comment/${postId}?index=${index}&pageCount=10`);
-			console.log(serverResponse.data);
-			if (serverResponse.data.status === "500" || (serverResponse.data.data.comments && serverResponse.data.data.comments.length === 0)) {
-				console.log("No more comments to load.");
-				setHasMore(false);
-				setLoading(false);
+			console.log('Fetch Comments Response:', serverResponse.data); // 서버 응답 로그
+			if (serverResponse.data.status !== 202) {
+				console.error("Failed to load comments:", serverResponse.data.message);
 				return;
 			}
-			if (serverResponse.data.data.comments && serverResponse.data.data.comments.length > 0) {
-				setComments(prevComments => [...prevComments, ...serverResponse.data.data.comments]);
+			const fetchedComments = serverResponse.data.data.comments;
+			console.log('Fetched Comments:', fetchedComments); // 가져온 댓글 로그
+			
+			if (fetchedComments && fetchedComments.length > 0) {
+				if (index === 0) {
+					setComments(fetchedComments); // 초기 페이지면 댓글 리스트 초기화
+				} else {
+					setComments(prevComments => [...prevComments, ...fetchedComments]);
+				}
 				setCommentNone(false);
+				if (fetchedComments.length < 10) {
+					setLoading(false);
+				}
 				setTimeout(() => {
 					scrollViewRef.current?.scrollTo({ y: currentPosition, animated: false });
 				}, 0);
 			} else {
 				setCommentNone(true);
-				setHasMore(false);
+				setLoading(false);
 			}
 		} catch (error) {
-			console.error('Fetching comments failed:', error);
+			console.error('Fetching comments failed:', error.message || error); // 명확한 오류 메시지 출력
+		} finally {
+			setLoading(false); // 로딩 상태 종료
+			console.log('Loading state set to false');
 		}
-		setLoading(false);
 	};
+	
 	const handleDeleteComment = async (commentId) => {
 		Alert.alert(
 			"댓글 삭제", // 알림 제목
@@ -102,19 +119,20 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 					onPress: async () => {
 						try {
 							const response = await Api.delete(`/post/delete/comment/${commentId}`);
-							console.log(response.data.message)
+							console.log(response.data.message);
 							setTextInputValue(''); // 입력 필드 초기화
 							setComments([]);
 							setShowUnderComments({});
 							setReplyingTo(null);
 							setTextInputValue("");
 							setCommentNone(false);
-							setHasMore(true); // 삭제 후 다시 댓글을 가져올 수 있도록 설정
-							fetchComments(); // 초기 페이지 로드
+							setPage(0);
+							setLoading(true); // 삭제 후 다시 댓글을 가져올 수 있도록 설정
+							fetchComments(0); // 초기 페이지 로드
 						} catch (error) {
 							console.error('댓글 삭제 실패:', error);
 							setTextInputValue(''); // 입력 필드 초기화
-							setShowUnderComments({})
+							setShowUnderComments({});
 							setReplyingTo(null);
 						}}}]);
 	};
@@ -123,53 +141,62 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 			alert("글을 입력해주세요.");
 			return;
 		}
-		if (replyingTo) {
-			console.log(replyingTo)
-			// 답글 제출 로직
-			try {
-				const response = await Api.post(`/post/write/comment`, {
-					postId : postId,
-					parentCommentId: replyingTo,
-					content: textInputValue
+		try {
+			const response = await Api.post(`/post/write/comment`, {
+				postId: postId,
+				parentCommentId: replyingTo,
+				content: textInputValue
+			});
+			if (replyingTo) {
+				// 답글을 작성한 경우
+				const parentComment = comments.find(comment => comment.commentId === replyingTo);
+				const FcmResponse = await Api.post(`/noti/sendToFCM`, {
+					title: null,
+					body: null,
+					data: {
+						userId: parentComment.userId,
+						notiType: 5,
+						contentId: postId
+					}
 				});
-				console.log(response.data);
-				setTextInputValue(''); // 입력 필드 초기화
-				setComments([]);
-				setShowUnderComments({});
-				setReplyingTo(null);
-				setTextInputValue("");
-				setCommentNone(false);
-				setHasMore(true); // 삭제 후 다시 댓글을 가져올 수 있도록 설정
-				fetchComments(); // 초기 페이지 로드
-				return;  // 함수 실행 종료
-			} catch (error) {
-				console.error('답글 추가 실패:', error);
-			}
-		} else {
-			// 새 댓글 추가 로직
-			try {
-				const response = await Api.post(`/post/write/comment`, {
-					postId: postId,
-					parentCommentId: null,
-					content: textInputValue
+				if (FcmResponse.data) {
+					console.log(FcmResponse.data);
+				}
+			} else {
+				// 댓글을 작성한 경우
+				const FcmResponse = await Api.post(`/noti/sendToFCM`, {
+					title: null,
+					body: null,
+					data: {
+						userId: userId,
+						notiType: 4,
+						contentId: postId
+					}
 				});
-				console.log(response.data);
-				setTextInputValue(''); // 입력 필드 초기화
-				setComments([]);
-				setShowUnderComments({});
-				setReplyingTo(null);
-				setTextInputValue("");
-				setCommentNone(false);
-				setHasMore(true); // 삭제 후 다시 댓글을 가져올 수 있도록 설정
-				fetchComments(); // 초기 페이지 로드
-				scrollViewRef.current?.scrollTo({ y: 0, animated: false }); // 스크롤을 최상단으로 이동
-			} catch (error) {
-				console.error('댓글 추가 실패:', error);
+				if (FcmResponse.data) {
+					console.log(FcmResponse.data);
+				}
 			}
+
+			if (response.data.message === "해당 게시물의 댓글 생성을 성공했습니다.") {
+				setTextInputValue(''); // 입력 필드 초기화
+				setReplyingTo(null);
+				setShowUnderComments({});
+				setPage(0); // 페이지 번호 초기화
+				
+				// 상태 업데이트를 강제하여 렌더링을 유도합니다.
+				setComments([]);
+				setLoading(true); // 로딩 상태 시작
+				await fetchComments(0); // 초기 페이지부터 다시 불러오기
+			}
+		} catch (error) {
+			console.error('댓글 추가 실패:', error);
+		} finally {
+			setTextInputValue(''); // 입력 필드 초기화
+			setReplyingTo(null);
+			setShowUnderComments({});
+			setLoading(false); // 로딩 상태 종료
 		}
-		setTextInputValue(''); // 입력 필드 초기화
-		setShowUnderComments({})
-		setReplyingTo(null);
 	};
 	
 	const CommentItem = React.memo(({ comment, toggleUnderComments, showUnderComments, index }) => {
@@ -186,12 +213,22 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 			};
 		}, [comment.commentId]);
 		
+		const formatDate = (dateString) => {
+			const date = new Date(dateString);
+			const year = date.getFullYear();
+			const month = String(date.getMonth() + 1).padStart(2, '0');
+			const day = String(date.getDate()).padStart(2, '0');
+			const hours = String(date.getHours()).padStart(2, '0');
+			const minutes = String(date.getMinutes()).padStart(2, '0');
+			return `${year}-${month}-${day} ${hours}:${minutes}`;
+		};
+		
 		return (
 			<View style={commentItemStyle} ref={commentItemRef}>
-				<TouchableOpacity onPress={() => navigation.navigate("UserAlarm", {userId : comment.userId})}>
+				<TouchableOpacity onPress={() => navigation.navigate("UserAlarm", { userId: comment.userId })}>
 					<Image style={styles.profileImage} source={{ uri: comment.profileURL }} />
 				</TouchableOpacity>
-				<Text>Date: {comment.createdAt}</Text>
+				<Text>Date: {formatDate(comment.createdAt)}</Text>
 				<Text style={styles.commentText}>{comment.username}: {comment.content}</Text>
 				{comment.mine ?
 					<TouchableOpacity onPress={() => handleDeleteComment(comment.commentId)}>
@@ -212,12 +249,22 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 		);
 	});
 	const UnderCommentItem = ({ underComment }) => {
+		const formatDate = (dateString) => {
+			const date = new Date(dateString);
+			const year = date.getFullYear();
+			const month = String(date.getMonth() + 1).padStart(2, '0');
+			const day = String(date.getDate()).padStart(2, '0');
+			const hours = String(date.getHours()).padStart(2, '0');
+			const minutes = String(date.getMinutes()).padStart(2, '0');
+			return `${year}-${month}-${day} ${hours}:${minutes}`;
+		};
+		
 		return (
 			<View style={styles.underCommentItem}>
-				<TouchableOpacity onPress={() => navigation.navigate("UserAlarm", {userId : underComment.userId})}>
+				<TouchableOpacity onPress={() => navigation.navigate("UserAlarm", { userId: underComment.userId })}>
 					<Image style={styles.profileImage} source={{ uri: underComment.profileURL }} />
 				</TouchableOpacity>
-				<Text>Date: {underComment.createdAt}</Text>
+				<Text>Date: {formatDate(underComment.createdAt)}</Text>
 				<Text style={styles.underCommentText}>{underComment.username}: {underComment.content}</Text>
 				{underComment.mine ?
 					<TouchableOpacity onPress={() => handleDeleteComment(underComment.commentId)}>
@@ -282,7 +329,7 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 		const { contentOffset } = nativeEvent;
 		scrollPositionRef.current = contentOffset.y;
 		if (nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
-			nativeEvent.contentSize.height - 20 && hasMore && !loading) {
+			nativeEvent.contentSize.height - 20 && !loading) {
 			setPage(prevPage => {
 				const nextPage = prevPage + 1;
 				fetchComments(nextPage);
@@ -290,11 +337,11 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 			});
 		}
 	};
-	
 	const handleCancelReply = () => {
 		setReplyingTo(null);
 		setTextInputValue('');  // 입력 필드 초기화
 	};
+	
 	return (
 		<SafeAreaProvider>
 			<Modal
@@ -320,13 +367,13 @@ export const CommentModal = React.memo(({ isVisible, postId, onClose }) => {
 								onScroll={handleScroll}
 								scrollEventThrottle={150} // 이벤트 발생 간격 조정
 							>
-								{commentNone ? (
+								{loading && comments.length === 0 ? (
+									<ActivityIndicator size="large" color="#0000ff" />
+								) : commentNone ? (
 									<>
 										<Text> 댓글이 없습니다. </Text>
 										<Text> 댓글을 추가해보세요!. </Text>
 									</>
-								) : loading && comments.length === 0 ? (
-									<Text>Loading comments...</Text> // 로딩 인디케이터 표시
 								) : (
 									<>
 										{comments.map((comment, index) => (

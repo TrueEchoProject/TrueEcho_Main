@@ -166,6 +166,18 @@ const Vote = () => {
         voteId: voteId
       });
       console.log('Vote result sent successfully:', { userId, voteId });
+      if (response.data) {
+        const FcmResponse = await Api.post(`/noti/sendToFCM`, {
+          title: null,
+          body: null,
+          data: {
+            userId: userId,
+            notiType: 3,
+            contentId: null
+          }
+        });
+        console.log('FCM Response:', FcmResponse.data);
+      }
     } catch (error) {
       console.error('Error sending vote result: ', error);
     }

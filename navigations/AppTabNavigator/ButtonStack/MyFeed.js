@@ -64,7 +64,7 @@ const MyFeed = ({ navigation, route }) => {
 	};
 	const renderItem = ({ item }) => (
 		<TouchableOpacity
-			onPress={() => navigation.navigate("FeedAlarm", { post_id: item.postId })}
+			onPress={() => navigation.navigate("FeedAlarm", { postId: item.postId })}
 			style={styles.postContainer}
 		>
 			<Image source={{ uri: item.postBackUrl || defaultImage }} style={styles.postImage} />

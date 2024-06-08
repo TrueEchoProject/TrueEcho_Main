@@ -10,8 +10,8 @@ const windowHeight = Dimensions.get('window').height;
 
 const UserAlarm = ({ route }) => {
 	const [userId, setUserId] = useState(route.params?.userId);
-	const [serverUserData, setServerUserData] = useState({}); // 서버 유저 데이터
-	const [serverPinData, setServerPinData] = useState([]); // 서버 핀 데이터
+	const [serverUserData, setServerUserData] = useState(null); // 서버 유저 데이터를 null로 초기화
+	const [serverPinData, setServerPinData] = useState([]); // 서버 핀 데이터를 빈 배열로 초기화
 	const [isFriend, setIsFriend] = useState(false); // 친구 여부
 	const [friendLook, setFriendLook] = useState(true); // 친구 여부
 	const [isFrontShowing, setIsFrontShowing] = useState({});
@@ -28,17 +28,17 @@ const UserAlarm = ({ route }) => {
 	}, [route.params?.userId]);
 	useEffect(() => {
 		if (serverUserData) {
-			console.log("server user",serverUserData);
+			console.log("server user", serverUserData);
 		}
 	}, [serverUserData]);
 	useEffect(() => {
 		if (serverPinData) {
-			console.log("server pin",serverPinData);
+			console.log("server pin", serverPinData);
 		}
 	}, [serverPinData]);
 	useEffect(() => {
 		if (isFriend) {
-			console.log("friend",isFriend);
+			console.log("friend", isFriend);
 		}
 	}, [isFriend]);
 	useEffect(() => {
@@ -49,16 +49,20 @@ const UserAlarm = ({ route }) => {
 		try {
 			const serverResponse = await Api.get(`/setting/myPage?userId=${userId}`);
 			if (serverResponse.data) {
+				console.log(serverResponse.data.data)
 				setServerUserData(serverResponse.data.data.pageInfo);
-				setServerPinData(serverResponse.data.data.pinList);
+				setServerPinData(serverResponse.data.data.pinList.pinList || []); // 배열로 초기화
 				setIsFriend(serverResponse.data.data.friend);
 			} else {
 				console.log('No user data returned from API');
+				setServerPinData([]); // 에러 발생 시 빈 배열로 설정
 			}
 		} catch (error) {
 			console.error('Error fetching data', error);
+			setServerPinData([]); // 에러 발생 시 빈 배열로 설정
 		}
-	}
+	};
+	
 	const toggleFriendSend = async () => {
 		console.log(userId, 'userId');
 		try {
@@ -90,7 +94,7 @@ const UserAlarm = ({ route }) => {
 		setCurrentPage(e.nativeEvent.position);
 	};
 	
-	const ProfileImageModal = ({ isVisible, imageUrl, onClose }) => { // 수정: 프로퍼티 이름 Image -> imageUrl 변경
+	const ProfileImageModal = ({ isVisible, imageUrl, onClose }) => {
 		return (
 			<Modal
 				animationType="fade"
@@ -122,10 +126,10 @@ const UserAlarm = ({ route }) => {
 			) : (
 				<>
 					<View style={styles.topContainer}>
-						<View style={{flexDirection: "row"}}>
-							<View style={{marginRight: "auto"}}>
+						<View style={{ flexDirection: "row" }}>
+							<View style={{ marginRight: "auto" }}>
 								<TouchableOpacity onPress={profileImageModalVisible}>
-									<Image source={{ uri: serverUserData.profileUrl ? serverUserData.profileUrl : defaultImage }} style={styles.avatar}/>
+									<Image source={{ uri: serverUserData.profileUrl ? serverUserData.profileUrl : defaultImage }} style={styles.avatar} />
 								</TouchableOpacity>
 								{isModalVisible && (
 									<ProfileImageModal
@@ -138,23 +142,23 @@ const UserAlarm = ({ route }) => {
 									<Text style={styles.name}>{serverUserData.username}</Text>
 									<FontAwesome5
 										name="crown"
-										style={{marginLeft: 10, marginBottom: 10}}
+										style={{ marginLeft: 10, marginBottom: 10 }}
 										size={24}
 										color="blue"
 									/>
 								</View>
 							</View>
-							{!isFriend && ( friendLook === true ? (
+							{!isFriend && (friendLook === true ? (
 									<View style={styles.friendButton}>
 										<TouchableOpacity onPress={toggleFriendSend}>
-											<Text style={{fontSize: 15, color: "white",}}>
+											<Text style={{ fontSize: 15, color: "white", }}>
 												친구 추가
 											</Text>
 										</TouchableOpacity>
 									</View>
 								) : (
 									<View style={styles.friendButton}>
-										<Text style={{fontSize: 15, color: "white",}}>
+										<Text style={{ fontSize: 15, color: "white", }}>
 											추가 완료
 										</Text>
 									</View>
@@ -172,15 +176,15 @@ const UserAlarm = ({ route }) => {
 						{serverPinData.length === 0 ? (
 							<View style={styles.pinPlus}>
 								<View
-									style={{alignItems: "center", padding: 30,}}
+									style={{ alignItems: "center", padding: 30, }}
 								>
 									<AntDesign
 										name="plussquareo"
 										size={40}
-										style={{margin: 20,}}
+										style={{ margin: 20, }}
 										color="white"
 									/>
-									<Text style={[styles.pinsText, {textAlign: 'center'}]}>아직{'\n'}핀이 없어요...</Text>
+									<Text style={[styles.pinsText, { textAlign: 'center' }]}>아직{'\n'}핀이 없어요...</Text>
 								</View>
 							</View>
 						) : (

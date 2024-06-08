@@ -133,13 +133,13 @@ const Alarm = ({ navigation }) => {
 	const handlePress = (alarm) => {
 		switch (alarm.type) {
 			case 4:
-				navigation.navigate("FeedAlarm", { post_id: alarm.post_id });
+				navigation.navigate("FeedAlarm", { postId: alarm.post_id });
 				break;
 			case 5:
-				navigation.navigate("FeedAlarm", { post_id: alarm.post_id });
+				navigation.navigate("FeedAlarm", { postId: alarm.post_id });
 				break;
 			case 6:
-				navigation.navigate("FeedAlarm", { post_id: alarm.post_id });
+				navigation.navigate("FeedAlarm", { postId: alarm.post_id });
 				break;
 			case 7:
 				navigation.navigate("Fri");

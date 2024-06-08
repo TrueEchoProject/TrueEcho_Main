@@ -47,7 +47,7 @@ const Calendar = ({ navigation }) => {
 		try {
 			// Fetch monthly posts
 			const calendarResponse = await Api.get(`/setting/monthlyPosts`);
-			const calendarData = calendarResponse.data.data.monthlyPostList;
+			const calendarData = calendarResponse.data.data.monthlyPostList || [];
 			// Process calendar data to keep the latest post for each date
 			const latestPostsByDate = {};
 			calendarData.forEach(item => {
@@ -64,7 +64,7 @@ const Calendar = ({ navigation }) => {
 			setSpecificDates(newSpecificDates);
 			// Fetch selected pins
 			const pinsResponse = await Api.get(`/setting/pins`);
-			const selectedPinsData = pinsResponse.data.data.pinList;
+			const selectedPinsData = pinsResponse.data?.data?.pinList || [];
 			const newSelectedPins = selectedPinsData.map(pin => ({
 				pinId: pin.pinId,
 				postId: pin.postId,

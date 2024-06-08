@@ -140,10 +140,10 @@ export default function App() {
     lastNotificationId.current = notificationId;
     
     const data = notification.request.content.data;
-    const type = data.type;
-    
-    console.log('Notification type:', type);
-    console.log('Notification data:', data);
+    console.log('Notification raw data:', notification.request.content); // 로그 추가
+    console.log('Notification parsed data:', data); // 로그 추가
+    const type = data.notiType;
+    console.log('Type Is:', type); // 로그 추가
     
     await AsyncStorage.setItem('lastNotification', JSON.stringify({ type, data }));
     
@@ -169,16 +169,22 @@ export default function App() {
   
   const createNavigationUrl = (type, data) => {
     switch (type) {
-      case 'goFriend':
-        return Linking.createURL('main/mainpost/friends');
-      case 'goPost':
-        return Linking.createURL(`main/mainpost/feed-alarm/${data.post_id}`);
-      case 'goRanking':
-        return Linking.createURL('main/community/community/result');
-      case 'goUser':
-        return Linking.createURL(`main/mainpost/user-alarm/${data.userId}`);
-      case 'random':
+      case "0":
         return Linking.createURL('main/camera/camera-option');
+      case "1":
+        return Linking.createURL('main/community/community/result');
+      case "2":
+        return Linking.createURL('main/community/community/result');
+      case "3":
+        return Linking.createURL(`main/mainpost/user-alarm`, { queryParams: { userId: data.contentId }});
+      case "4":
+        return Linking.createURL(`main/mainpost/feed-alarm`, { queryParams: { postId: data.contentId }});
+      case "5":
+        return Linking.createURL(`main/mainpost/feed-alarm`, { queryParams: { postId: data.contentId }});
+      case "6":
+        return Linking.createURL(`main/mainpost/feed-alarm `, { queryParams: { postId: data.contentId }});
+      case "7":
+        return Linking.createURL('main/mainpost/friends');
       default:
         console.log('Unknown notification type received.');
         return null;

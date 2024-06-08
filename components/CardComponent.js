@@ -51,6 +51,16 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 				});
 			if (response.data) {
 				console.log('Likes count updated successfully');
+				const FcmResponse = await Api.post(`/noti/sendToFCM`, {
+					title: null,
+					body: null,
+					data: {
+						userId: post.userId,
+						notiType: 6,
+						contentId: post.postId
+					}
+				});
+				console.log('FCM Response:', FcmResponse.data);
 			}
 		} catch (error) {
 			console.error('Error updating likes count:', error);
@@ -100,8 +110,20 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 					'Content-Type': 'multipart/form-data'
 				}
 			});
-			console.log('Send updated successfully');
-			setFriendLook(false);
+			if (response.data) {
+				console.log('Send updated successfully');
+				setFriendLook(false);
+				const FcmResponse = await Api.post(`/noti/sendToFCM`, {
+					title: null,
+					body: null,
+					data: {
+						userId: post.userId,
+						notiType: 7,
+						contentId: null
+					}
+				});
+				console.log('FCM Response:', FcmResponse.data);
+			}
 		} catch (error) {
 			console.error('Error updating Send:', error);
 		}
@@ -242,6 +264,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 							isVisible={isCommentVisible}
 							postId={post.postId}
 							onClose={() => setIsCommentVisible(false)}
+							userId={post.userId}
 						/>
 						{post.status === "FREE" || post.status === "LATE" ? (
 							<View style={[
@@ -336,4 +359,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default React.memo(CardComponent)
+export default CardComponent

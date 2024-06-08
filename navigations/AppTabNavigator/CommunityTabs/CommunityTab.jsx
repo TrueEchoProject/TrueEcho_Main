@@ -7,7 +7,7 @@ const CommunityStack = createStackNavigator();
 export const CommunityTabScreen = () => {
 	return (
 		<CommunityStack.Navigator
-			initialRouteName="투표" // 최초 어플 실행 시 Vote가 기본 화면으로 설정
+			initialRouteName="Vote" // 최초 어플 실행 시 Vote가 기본 화면으로 설정
 		>
 			<CommunityStack.Screen
 				name="Vote"

@@ -28,7 +28,7 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 	const [layoutSet, setLayoutSet] = useState(false); // 레이아웃 설정 여부 상태 추가
 	const windowWidth = Dimensions.get('window').width;
 	const [friendLook, setFriendLook] = useState(true); // 좋아요 수 관리
-
+	
 	const toggleLike = async () => {
 		const newLikesCount = isLiked ? likesCount - 1 : likesCount + 1;
 		const newIsLiked = !isLiked;
@@ -47,6 +47,16 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 				});
 			if (response.data) {
 				console.log('Likes count updated successfully');
+				const FcmResponse = await Api.post(`/noti/sendToFCM`, {
+					title: null,
+					body: null,
+					data: {
+						userId: post.userId,
+						notiType: 6,
+						contentId: post.postId
+					}
+				});
+				console.log('FCM Response:', FcmResponse.data);
 			}
 		} catch (error) {
 			console.error('Error updating likes count:', error);
@@ -96,8 +106,20 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 					'Content-Type': 'multipart/form-data'
 				}
 			});
-			console.log('Send updated successfully');
-			setFriendLook(false);
+			if (response.data) {
+				console.log('Send updated successfully');
+				setFriendLook(false);
+				const FcmResponse = await Api.post(`/noti/sendToFCM`, {
+					title: null,
+					body: null,
+					data: {
+						userId: post.userId,
+						notiType: 7,
+						contentId: post.postId
+					}
+				});
+				console.log('FCM Response:', FcmResponse.data);
+			}
 		} catch (error) {
 			console.error('Error updating Send:', error);
 		}

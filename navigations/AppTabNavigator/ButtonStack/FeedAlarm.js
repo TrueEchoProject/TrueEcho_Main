@@ -13,11 +13,11 @@ const FeedAlarm = ({ navigation, route }) => {
 		navigation.goBack({ deletedPostId });
 	};
 	useEffect(() => {
-		if (route.params?.post_id) {
-			console.log('Received postId response:', route.params.post_id);
-			setPostId(route.params.post_id);
+		if (route.params?.postId) {
+			console.log('Received postId response:', route.params.postId);
+			setPostId(route.params.postId);
 		}
-	}, [route.params?.post_id]);
+	}, [route.params?.postId]);
 	useEffect(() => {
 		if (post) {
 			console.log('Received postId response:', post);
