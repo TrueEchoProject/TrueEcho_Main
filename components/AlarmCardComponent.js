@@ -26,18 +26,18 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 	const [likesCount, setLikesCount] = useState(post.likesCount); // 좋아요 수 관리
 	const [isCommentVisible, setIsCommentVisible] = useState(false); // 댓글 창 표시 상태
 	const [layoutSet, setLayoutSet] = useState(false); // 레이아웃 설정 여부 상태 추가
+	const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
 	const windowWidth = Dimensions.get('window').width;
 	const [friendLook, setFriendLook] = useState(true); // 좋아요 수 관리
 	
 	const toggleLike = async () => {
+		if (isLoading) return; // 요청 중일 때 추가 요청 차단
+		setIsLoading(true);
+		
 		const newLikesCount = isLiked ? likesCount - 1 : likesCount + 1;
 		const newIsLiked = !isLiked;
 		setIsLiked(newIsLiked);
 		setLikesCount(newLikesCount);
-		
-		console.log('New Likes Count:', newLikesCount);
-		console.log('Post ID:', post.postId);
-		console.log('Is Liked:', newIsLiked);
 		
 		try {
 			const response = await Api.patch(
@@ -46,7 +46,6 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 					isLike: newIsLiked,
 				});
 			if (response.data) {
-				console.log('Likes count updated successfully');
 				const FcmResponse = await Api.post(`/noti/sendToFCM`, {
 					title: null,
 					body: null,
@@ -56,14 +55,18 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 						contentId: post.postId
 					}
 				});
-				console.log('FCM Response:', FcmResponse.data);
 			}
 		} catch (error) {
 			console.error('Error updating likes count:', error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
+	
 	const toggleBlock = async () => {
-		console.log(post.userId);
+		if (isLoading) return; // 요청 중일 때 추가 요청 차단
+		setIsLoading(true);
+		
 		try {
 			const formData = new FormData();
 			formData.append('blockUserId', post.userId);
@@ -80,23 +83,33 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 			}
 		} catch (error) {
 			console.error('Error while blocking the user:', error.response ? error.response.data : error.message);
+		} finally {
+			setIsLoading(false);
 		}
 	};
+	
 	const toggleDelete = async () => {
-		console.log(post.postId);
-	try {
-		const response = await Api.delete(`/post/delete/${post.postId}`);
-		if (response.data) {
-			alert('정상적으로 게시물을 삭제했어요');
-			hideOptions();
-			onActionComplete && onActionComplete(post.postId);
-		}
-	} catch (error) {
-		console.error('Error while blocking the user:', error.response ? error.response.data : error.message);
+		if (isLoading) return; // 요청 중일 때 추가 요청 차단
+		setIsLoading(true);
+		
+		try {
+			const response = await Api.delete(`/post/delete/${post.postId}`);
+			if (response.data) {
+				alert('정상적으로 게시물을 삭제했습니다');
+				hideOptions();
+				onActionComplete && onActionComplete(post.postId);
+			}
+		} catch (error) {
+			console.error('Error while deleting the post:', error.response ? error.response.data : error.message);
+		} finally {
+			setIsLoading(false);
 		}
 	};
+	
 	const toggleFriendSend = async () => {
-		console.log(post.userId);
+		if (isLoading) return; // 요청 중일 때 추가 요청 차단
+		setIsLoading(true);
+		
 		try {
 			const formData = new FormData();
 			formData.append('targetUserId', post.userId);
@@ -107,7 +120,6 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 				}
 			});
 			if (response.data) {
-				console.log('Send updated successfully');
 				setFriendLook(false);
 				const FcmResponse = await Api.post(`/noti/sendToFCM`, {
 					title: null,
@@ -118,10 +130,11 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 						contentId: post.postId
 					}
 				});
-				console.log('FCM Response:', FcmResponse.data);
 			}
 		} catch (error) {
 			console.error('Error updating Send:', error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 	
@@ -284,6 +297,7 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 	);
 };
 
+
 const styles = StyleSheet.create({
 	loader: {
 		flex: 1,
@@ -350,4 +364,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default React.memo(AlarmCardComponent)
+export default AlarmCardComponent

@@ -32,7 +32,6 @@ const FriendPosts = React.forwardRef((props, ref) => {
 		await getPosts(0, true);
 		setRefreshing(false);
 	};
-	
 	const getPosts = async (index, isRefresh = false) => {
 		setIsLoading(true);
 		let url = `/post/read/0?index=${index}&pageCount=15`;
@@ -63,7 +62,12 @@ const FriendPosts = React.forwardRef((props, ref) => {
 		}
 	};
 	
-	const handleBlock = async (postId) => {
+	const handleBlock = async (userId) => {
+		setPosts(prev => prev.filter(item => item.userId !== userId));
+		await new Promise(resolve => setTimeout(resolve, 0));
+	};
+	const handleDelete = async (postId) => {
+		console.log('Delete:', postId);
 		setPosts(prev => prev.filter(item => item.postId !== postId));
 		await new Promise(resolve => setTimeout(resolve, 0));
 	};
@@ -104,6 +108,7 @@ const FriendPosts = React.forwardRef((props, ref) => {
 						<CardComponent
 							post={post}
 							onBlock={handleBlock}
+							onDelete={handleDelete} // onDelete 콜백 전달
 							isOptionsVisibleExternal={optionsVisibleStates[post.postId]}
 							setIsOptionsVisibleExternal={(visible) => setOptionsVisibleStates(prev => ({ ...prev, [post.postId]: visible }))}
 						/>

@@ -12,7 +12,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Notification from "./Notification";
 import GetLocation from './GetLocation';
 import Api from '../Api';
@@ -453,13 +452,6 @@ const SignUpForm = () => {
             />
             {warning === "생년월일 미입력" && <Text style={styles.warningText}>생년월일을 입력해주세요.</Text>}
             <Button title="Show Date Picker" onPress={showDatePicker} />
-            <DateTimePickerModal
-              isVisible={isDatePickerVisible}
-              mode="date"
-              locale="ko"
-              onConfirm={handleConfirm}
-              onCancel={hideDatePicker}
-            />
             {displayAge !== "" && (
               <>
                 <Text style={{ fontSize: hp(6), fontWeight: "bold" }}>만 {`${displayAge}세`}</Text>

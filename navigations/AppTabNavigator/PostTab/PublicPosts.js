@@ -121,9 +121,14 @@ const PublicPosts = React.forwardRef((props, ref) => {
 		setOptionsVisible(!optionsVisible);
 	};
 	
-	const handleBlock = async (postId) => {
+	const handleBlock = async (userId) => {
+		setPosts(prev => prev.filter(item => item.userId !== userId));
+		await new Promise(resolve => setTimeout(resolve, 0));
+	};
+	const handleDelete = async (postId) => {
+		console.log('Delete:', postId);
 		setPosts(prev => prev.filter(item => item.postId !== postId));
-		await new Promise(resolve => setTimeout(resolve, 0)); // 비동기 업데이트를 위한 Promise
+		await new Promise(resolve => setTimeout(resolve, 0));
 	};
 	const handlePageChange = (e) => {
 		const newIndex = e.nativeEvent.position;
@@ -233,6 +238,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 							<CardComponent
 								post={post}
 								onBlock={handleBlock}
+								onDelete={handleDelete} // onDelete 콜백 전달
 								isOptionsVisibleExternal={optionsVisibleStates[post.postId]}
 								setIsOptionsVisibleExternal={(visible) => setOptionsVisibleStates(prev => ({ ...prev, [post.postId]: visible }))}
 							/>

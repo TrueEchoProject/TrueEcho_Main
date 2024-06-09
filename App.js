@@ -110,12 +110,6 @@ export default function App() {
           const { type, data } = JSON.parse(storedNotification);
           handleNavigation(type, data);
           await AsyncStorage.removeItem('lastNotification');
-        } else {
-          const savedStateString = await AsyncStorage.getItem(PERSISTENCE_KEY);
-          const state = savedStateString ? JSON.parse(savedStateString) : undefined;
-          if (state !== undefined) {
-            setInitialState(state);
-          }
         }
         
         return () => {
@@ -176,13 +170,13 @@ export default function App() {
       case "2":
         return Linking.createURL('main/community/community/result');
       case "3":
-        return Linking.createURL(`main/mainpost/user-alarm`, { queryParams: { userId: data.contentId }});
+        return Linking.createURL(`main/mainpost/user-alarm`, { queryParams: { userId: data.contentId } });
       case "4":
-        return Linking.createURL(`main/mainpost/feed-alarm`, { queryParams: { postId: data.contentId }});
+        return Linking.createURL(`main/mainpost/feed-alarm`, { queryParams: { postId: data.contentId } });
       case "5":
-        return Linking.createURL(`main/mainpost/feed-alarm`, { queryParams: { postId: data.contentId }});
+        return Linking.createURL(`main/mainpost/feed-alarm`, { queryParams: { postId: data.contentId } });
       case "6":
-        return Linking.createURL(`main/mainpost/feed-alarm `, { queryParams: { postId: data.contentId }});
+        return Linking.createURL(`main/mainpost/feed-alarm`, { queryParams: { postId: data.contentId } });
       case "7":
         return Linking.createURL('main/mainpost/friends');
       default:
@@ -191,18 +185,13 @@ export default function App() {
     }
   };
   
-  const saveState = (state) => {
-    AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state));
-  };
-  
   return (
     <NavigationContainer
       ref={navigationRef}
       linking={linking}
-      initialState={initialState}
-      onStateChange={saveState}
     >
       <AppNavigation />
     </NavigationContainer>
   );
 }
+

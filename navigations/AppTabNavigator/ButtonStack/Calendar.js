@@ -22,6 +22,7 @@ const Calendar = ({ navigation }) => {
 	const [selectedPins, setSelectedPins] = useState([]); // 선택된 핀들의 정보를 저장할 상태
 	const [serverSelectedPins, setServerSelectedPins] = useState([]); // 서버로부터 받아온 선택된 핀들의 정보를 저장할 상태
 	const [isLoading, setIsLoading] = useState(true);
+	const [isSubmit, setIsSubmit] = useState(false);
 	const [specificDates, setSpecificDates] = useState({});
 	const [currentMonth, setCurrentMonth] = useState(new Date());
 	const [isImageVisible, setIsImageVisible] = useState(false);
@@ -80,6 +81,9 @@ const Calendar = ({ navigation }) => {
 		}
 	};
 	const postPins = async () => {
+		if (isSubmit) return;
+		setIsSubmit(true);
+		
 		if (selectedPins.length === 0) {
 			alert("선택된 핀이 없습니다.");
 			return;
@@ -106,6 +110,8 @@ const Calendar = ({ navigation }) => {
 		} catch (error) {
 			console.error('Error posting pins', error);
 			alert("핀을 제출하는 중 오류가 발생했습니다.");
+		} finally {
+			setIsSubmit(false);
 		}
 	};
 	

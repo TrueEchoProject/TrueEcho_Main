@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Platform, TouchableOpacity, View, StyleSheet, Text, ActivityIndicator, Image } from 'react-native';
 import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import { BlurView } from 'expo-blur';
 import storage from '../AsyncStorage'; // storage.js 파일 위치에 따라 경로 수정함. 현재 임시 주소임.
+import { useFocusEffect } from '@react-navigation/native'; // useFocusEffect 훅 import
 
 const ImageButton = React.memo(({ front_image, back_image, containerHeight, windowWidth }) => {
 	const [isFrontShowing, setIsFrontShowing] = useState(true);
@@ -13,31 +14,33 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
 	const SmallHeight = Math.floor(ImageHeight / 3);
 	const SmallWidth = Math.floor(windowWidth / 3);
 	
-	useEffect(() => {
-		const loadImage = async () => {
-			const Front = await storage.get('postFront');
-			const Back = await storage.get('postBack');
-			console.log('Retrieved data:', Front);
-			console.log('Retrieved data:', Back);
-			if (Front && Back) {
-				setMyPicture(""); // Both images exist
-			} else if (Front) {
-				setMyPicture("front"); // Only front image exists
-			} else if (Back) {
-				setMyPicture("back"); // Only back image exists
-			} else {
-				setMyPicture("none"); // Neither image exists
-			}
-			await new Promise(resolve => setTimeout(resolve, 20)); // 예: 1초 대기
-			setLoading(false);
-		};
-		loadImage();
-	}, []);
+	useFocusEffect(
+		useCallback(() => {
+			loadImage();
+		}, [])
+	);
+	
+	const loadImage = async () => {
+		const Front = await storage.get('postFront');
+		const Back = await storage.get('postBack');
+		console.log('Retrieved data:', Front);
+		console.log('Retrieved data:', Back);
+		if (Front && Back) {
+			setMyPicture(""); // Both images exist
+		} else if (Front) {
+			setMyPicture("front"); // Only front image exists
+		} else if (Back) {
+			setMyPicture("back"); // Only back image exists
+		} else {
+			setMyPicture("none"); // Neither image exists
+		}
+		await new Promise(resolve => setTimeout(resolve, 20)); // 예: 1초 대기
+		setLoading(false);
+	};
 	
 	const changeImage = () => {
 		setIsFrontShowing(!isFrontShowing);
 	};
-	
 	const getBlurIntensity = (isFront) => {
 		if (myPicture === "none") return 50;
 		if ((myPicture === "front" && !isFront) || (myPicture === "back" && isFront)) {

@@ -40,6 +40,8 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
 	const scrollPositionRef = useRef(0); // 스크롤 위치 저장용
 	const [replyingTo, setReplyingTo] = useState(null); // 답글을 다는 댓글의 ID
 	const navigation = useNavigation();
+	const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
+	const [hasMore, setHasMore] = useState(true); // 더 불러올 데이터가 있는지 여부
 	
 	useEffect(() => {
 		if (isVisible) {
@@ -50,6 +52,7 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
 			setReplyingTo(null);
 			setCommentNone(false);
 			setPage(0);
+			setHasMore(true); // 모달이 다시 열릴 때 더 불러올 데이터가 있다고 가정
 			Animated.timing(animatedHeight, {
 				toValue: initialMarginTop, // 모달을 초기 높이로 설정
 				duration: 0, // 즉시 변경되도록 시간을 0으로 설정
@@ -67,80 +70,99 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
 	}, [loading]);
 	
 	const fetchComments = async (index = 0) => {
-		console.log('fetchComments called with index:', index); // 함수 호출 로그
+		if (isLoading) return; // 요청 중일 때 추가 요청 차단
+		setIsLoading(true);
 		
-		setLoading(true); // 로딩 상태 시작
 		try {
-			const currentPosition = scrollPositionRef.current; // 로딩 전 스크롤 위치 저장
-			console.log('Calling API to fetch comments...'); // API 호출 전 로그
+			const currentPosition = scrollPositionRef.current;
 			const serverResponse = await Api.get(`/post/read/comment/${postId}?index=${index}&pageCount=10`);
-			console.log('Fetch Comments Response:', serverResponse.data); // 서버 응답 로그
 			if (serverResponse.data.status !== 202) {
 				console.error("Failed to load comments:", serverResponse.data.message);
 				return;
 			}
 			const fetchedComments = serverResponse.data.data.comments;
-			console.log('Fetched Comments:', fetchedComments); // 가져온 댓글 로그
 			
 			if (fetchedComments && fetchedComments.length > 0) {
 				if (index === 0) {
-					setComments(fetchedComments); // 초기 페이지면 댓글 리스트 초기화
+					setComments(fetchedComments);
 				} else {
 					setComments(prevComments => [...prevComments, ...fetchedComments]);
 				}
 				setCommentNone(false);
 				if (fetchedComments.length < 10) {
-					setLoading(false);
+					setHasMore(false); // 더 이상 불러올 데이터가 없음
 				}
 				setTimeout(() => {
 					scrollViewRef.current?.scrollTo({ y: currentPosition, animated: false });
 				}, 0);
 			} else {
 				setCommentNone(true);
-				setLoading(false);
+				setHasMore(false); // 더 이상 불러올 데이터가 없음
 			}
 		} catch (error) {
-			console.error('Fetching comments failed:', error.message || error); // 명확한 오류 메시지 출력
+			console.error('Fetching comments failed:', error.message || error);
 		} finally {
-			setLoading(false); // 로딩 상태 종료
-			console.log('Loading state set to false');
+			setLoading(false);
+			setIsLoading(false); // 로딩 상태 종료
 		}
 	};
-	
+	const handleScroll = ({ nativeEvent }) => {
+		const { contentOffset } = nativeEvent;
+		scrollPositionRef.current = contentOffset.y;
+		if (nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
+			nativeEvent.contentSize.height - 20 && !loading && hasMore) {
+			setPage(prevPage => {
+				const nextPage = prevPage + 1;
+				fetchComments(nextPage);
+				return nextPage;
+			});
+		}
+	};
+
 	const handleDeleteComment = async (commentId) => {
+		if (isLoading) return; // 요청 중일 때 추가 요청 차단
+		setIsLoading(true);
+		
 		Alert.alert(
-			"댓글 삭제", // 알림 제목
-			"이 댓글을 삭제하시겠습니까?", // 메시지
+			"댓글 삭제",
+			"이 댓글을 삭제하시겠습니까?",
 			[
-				{ text: "취소",
-					onPress: () => console.log("삭제 취소"),
-					style: "cancel" },
-				{ text: "삭제",
-					onPress: async () => {
+				{ text: "취소", onPress: () => console.log("삭제 취소"), style: "cancel" },
+				{ text: "삭제", onPress: async () => {
 						try {
 							const response = await Api.delete(`/post/delete/comment/${commentId}`);
 							console.log(response.data.message);
-							setTextInputValue(''); // 입력 필드 초기화
+							setTextInputValue('');
 							setComments([]);
 							setShowUnderComments({});
 							setReplyingTo(null);
 							setTextInputValue("");
 							setCommentNone(false);
 							setPage(0);
-							setLoading(true); // 삭제 후 다시 댓글을 가져올 수 있도록 설정
-							fetchComments(0); // 초기 페이지 로드
+							setLoading(true);
+							await fetchComments(0);
 						} catch (error) {
 							console.error('댓글 삭제 실패:', error);
 							setTextInputValue(''); // 입력 필드 초기화
 							setShowUnderComments({});
 							setReplyingTo(null);
-						}}}]);
+						} finally {
+							setIsLoading(false); // 로딩 상태 종료
+						}
+					}}
+			]
+		);
 	};
 	const handleSubmitComment = async () => {
+		if (isLoading) return; // 요청 중일 때 추가 요청 차단
+		setIsLoading(true);
+		
 		if (!textInputValue.trim()) {
 			alert("글을 입력해주세요.");
+			setIsLoading(false); // 입력 유효성 검사 실패 시 로딩 상태 종료
 			return;
 		}
+		
 		try {
 			const response = await Api.post(`/post/write/comment`, {
 				postId: postId,
@@ -148,7 +170,6 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
 				content: textInputValue
 			});
 			if (replyingTo) {
-				// 답글을 작성한 경우
 				const parentComment = comments.find(comment => comment.commentId === replyingTo);
 				const FcmResponse = await Api.post(`/noti/sendToFCM`, {
 					title: null,
@@ -163,7 +184,6 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
 					console.log(FcmResponse.data);
 				}
 			} else {
-				// 댓글을 작성한 경우
 				const FcmResponse = await Api.post(`/noti/sendToFCM`, {
 					title: null,
 					body: null,
@@ -177,25 +197,24 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
 					console.log(FcmResponse.data);
 				}
 			}
-
+			
 			if (response.data.message === "해당 게시물의 댓글 생성을 성공했습니다.") {
-				setTextInputValue(''); // 입력 필드 초기화
+				setTextInputValue('');
 				setReplyingTo(null);
 				setShowUnderComments({});
-				setPage(0); // 페이지 번호 초기화
-				
-				// 상태 업데이트를 강제하여 렌더링을 유도합니다.
+				setPage(0);
 				setComments([]);
-				setLoading(true); // 로딩 상태 시작
-				await fetchComments(0); // 초기 페이지부터 다시 불러오기
+				setLoading(true);
+				await fetchComments(0);
 			}
 		} catch (error) {
 			console.error('댓글 추가 실패:', error);
 		} finally {
-			setTextInputValue(''); // 입력 필드 초기화
+			setTextInputValue('');
 			setReplyingTo(null);
 			setShowUnderComments({});
-			setLoading(false); // 로딩 상태 종료
+			setLoading(false);
+			setIsLoading(false); // 로딩 상태 종료
 		}
 	};
 	
@@ -325,18 +344,6 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
 			}
 		},
 	}), [insets.top]); // 의존성 배열 업데이트	// 스크롤 이벤트 처리
-	const handleScroll = ({ nativeEvent }) => {
-		const { contentOffset } = nativeEvent;
-		scrollPositionRef.current = contentOffset.y;
-		if (nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
-			nativeEvent.contentSize.height - 20 && !loading) {
-			setPage(prevPage => {
-				const nextPage = prevPage + 1;
-				fetchComments(nextPage);
-				return nextPage;
-			});
-		}
-	};
 	const handleCancelReply = () => {
 		setReplyingTo(null);
 		setTextInputValue('');  // 입력 필드 초기화
@@ -385,7 +392,7 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
 												index={index}
 											/>
 										))}
-										{loading && hasMore && (
+										{loading && (
 											<ActivityIndicator size="large" color="#0000ff" />
 										)}
 									</>

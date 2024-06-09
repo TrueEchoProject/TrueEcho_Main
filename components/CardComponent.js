@@ -16,7 +16,7 @@ import { ImageButton } from "./ImageButton";
 import { CommentModal } from './CommentModal'; // 댓글 창 컴포넌트 임포트
 import { useNavigation } from '@react-navigation/native'; // useNavigation import
 
-const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExternal, onBlock }) => {
+const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExternal, onBlock, onDelete }) => {
 	const navigation = useNavigation(); // useNavigation 훅 사용
 	const [isOptionsVisible, setIsOptionsVisible] = useState(isOptionsVisibleExternal || false);
 	const [buttonLayout, setButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
@@ -26,6 +26,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 	const [isCommentVisible, setIsCommentVisible] = useState(false); // 댓글 창 표시 상태
 	const [layoutSet, setLayoutSet] = useState(false); // 레이아웃 설정 여부 상태 추가
 	const windowWidth = Dimensions.get('window').width;
+	const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
 	const [friendLook, setFriendLook] = useState(true); // 좋아요 수 관리
 	const defaultImage = "https://ppss.kr/wp-content/uploads/2020/07/01-4-540x304.png";
 
@@ -34,23 +35,20 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 		console.log(`Options Visible for ${post.postId}: ${isOptionsVisibleExternal}`);
 	}, [isOptionsVisibleExternal]); // 이제 외부에서 받은 props가 변경될 때마다 로그를 찍고 상태를 업데이트합니다.
 	const toggleLike = async () => {
+		if (isLoading) return; // 요청 중일 때 추가 요청 차단
+		setIsLoading(true);
+		
 		const newLikesCount = isLiked ? likesCount - 1 : likesCount + 1;
 		const newIsLiked = !isLiked;
 		setIsLiked(newIsLiked);
 		setLikesCount(newLikesCount);
 		
-		console.log('New Likes Count:', newLikesCount);
-		console.log('Post ID:', post.postId);
-		console.log('Is Liked:', newIsLiked);
-		
 		try {
-			const response = await Api.patch(
-				`/post/update/likes`, {
-					postId: post.postId,
-					isLike: newIsLiked,
-				});
+			const response = await Api.patch(`/post/update/likes`, {
+				postId: post.postId,
+				isLike: newIsLiked,
+			});
 			if (response.data) {
-				console.log('Likes count updated successfully');
 				const FcmResponse = await Api.post(`/noti/sendToFCM`, {
 					title: null,
 					body: null,
@@ -60,14 +58,17 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 						contentId: post.postId
 					}
 				});
-				console.log('FCM Response:', FcmResponse.data);
 			}
 		} catch (error) {
 			console.error('Error updating likes count:', error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 	const toggleBlock = async () => {
-		console.log(post.userId);
+		if (isLoading) return; // 요청 중일 때 추가 요청 차단
+		setIsLoading(true);
+		
 		try {
 			const formData = new FormData();
 			formData.append('blockUserId', post.userId);
@@ -80,27 +81,35 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 			if (response.data) {
 				alert('유저를 정상적으로 차단했습니다');
 				hideOptions();
-			onBlock(post.postId); // 차단 이벤트를 상위 컴포넌트에 알림
+				onBlock(post.userId); // 차단 이벤트를 상위 컴포넌트에 알림
 			}
 		} catch (error) {
 			console.error('Error while blocking the user:', error.response ? error.response.data : error.message);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 	const toggleDelete = async () => {
-		console.log(post.postId);
+		if (isLoading) return; // 요청 중일 때 추가 요청 차단
+		setIsLoading(true);
+		
 		try {
 			const response = await Api.delete(`/post/delete/${post.postId}`);
 			if (response.data) {
-				alert('정상적으로 게시물을 삭제했어요');
+				alert('정상적으로 게시물을 삭제했습니다');
 				hideOptions();
-			onBlock(post.postId); // 차단 이벤트를 상위 컴포넌트에 알림
+				onDelete(post.postId); // 삭제 이벤트를 상위 컴포넌트에 알림
 			}
 		} catch (error) {
-			console.error('Error while blocking the user:', error.response ? error.response.data : error.message);
+			console.error('Error while deleting the post:', error.response ? error.response.data : error.message);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 	const toggleFriendSend = async () => {
-		console.log(post.userId);
+		if (isLoading) return; // 요청 중일 때 추가 요청 차단
+		setIsLoading(true);
+		
 		try {
 			const formData = new FormData();
 			formData.append('targetUserId', post.userId);
@@ -111,7 +120,6 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 				}
 			});
 			if (response.data) {
-				console.log('Send updated successfully');
 				setFriendLook(false);
 				const FcmResponse = await Api.post(`/noti/sendToFCM`, {
 					title: null,
@@ -122,10 +130,11 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 						contentId: null
 					}
 				});
-				console.log('FCM Response:', FcmResponse.data);
 			}
 		} catch (error) {
-			console.error('Error updating Send:', error);
+			console.error('Error updating friend send:', error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 	

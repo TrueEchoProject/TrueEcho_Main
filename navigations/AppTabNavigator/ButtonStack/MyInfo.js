@@ -36,6 +36,7 @@ const MyInfo = ({ navigation, route }) => {
 	const [latitude, setLatitude] = useState(null);
 	const [longitude, setLongitude] = useState(null);
 	const [loading, setLoading] = useState(false);
+	const [isSubmit, setIsSubmit] = useState(false);
 	const [refresh, setRefresh] = useState(false);
 	
 	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
@@ -116,30 +117,42 @@ const MyInfo = ({ navigation, route }) => {
 	}, [editableUserId, initialUserId]);
 	
 	const duplicateCheck = async () => {
+		if (isSubmit) return;
+		setIsSubmit(true);
+		
 		if (editableUserId === "") {
 			Alert.alert("알림", "이름을 입력해주세요!");
 			setEditableUserId(initialUserId);
 			return;
 		}
 		console.log('Checking user ID:', editableUserId);
-		await Api.get(`/accounts/nickname/duplication?nickname=${editableUserId}`)
-			.then(response => {
-				console.log('Response data:', response.data);
-				if (response.data.message === "중복된 계정입니다.") {
-					alert('이미 사용 중인 아이디입니다.');
-					setWarning('이미 사용 중인 아이디입니다.');
-				} else {
-					alert('사용 가능한 아이디입니다.');
-					setWarning('사용 가능한 아이디입니다.');
-				}
-				setIsDuplicateChecked(true);
-			})
-			.catch(error => {
-				console.error('Error:', error);
-			});
+		try {
+			await Api.get(`/accounts/nickname/duplication?nickname=${editableUserId}`)
+				.then(response => {
+					console.log('Response data:', response.data);
+					if (response.data.message === "중복된 계정입니다.") {
+						alert('이미 사용 중인 아이디입니다.');
+						setWarning('이미 사용 중인 아이디입니다.');
+					} else {
+						alert('사용 가능한 아이디입니다.');
+						setWarning('사용 가능한 아이디입니다.');
+					}
+					setIsDuplicateChecked(true);
+				})
+				.catch(error => {
+					console.error('Error:', error);
+				});
+		} catch (error) {
+			console.error('Error:', error);
+		} finally {
+			setIsSubmit(false);
+		}
 	};
 	
 	const handleSave = async () => {
+		if (isSubmit) return;
+		setIsSubmit(true);
+		
 		if (editableUserId === "") {
 			Alert.alert("알림", "이름을 입력해주세요!");
 			return;
@@ -173,17 +186,17 @@ const MyInfo = ({ navigation, route }) => {
 			
 			const responseData = response.data;
 			console.log('User updated:', responseData);
-			if (responseData.code === 'T002') {
-				Alert.alert('알림', '개인정보 수정에 실패했습니다.');
+			if (responseData.data.message === '개인정보 수정를 성공했습니다.') {
+				Alert.alert('알림', '개인정보 수정를 성공했습니다.');
 			} else {
 				navigation.navigate("MyP", { Update: responseData.data });
 			}
 		} catch (error) {
 			console.error('Failed to update user:', error);
+		} finally {
+			setIsSubmit(false);
 		}
 	};
-	
-	
 	
 	const profileModalVisible = () => {
 		setIsModalVisible(!isModalVisible);

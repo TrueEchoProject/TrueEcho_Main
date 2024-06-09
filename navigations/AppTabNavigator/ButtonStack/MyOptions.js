@@ -15,6 +15,7 @@ import { Image as ExpoImage } from 'expo-image'; // expo-image 패키지 import
 import axios from "axios";
 import Api from '../../../Api';
 import * as SecureStore from 'expo-secure-store';
+import { CommonActions } from '@react-navigation/native';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -717,7 +718,12 @@ const MyOptions = ({ navigation, route }) => {
 				SecureStore.deleteItemAsync('userEmail'),
 				SecureStore.deleteItemAsync('userPassword')
 			]);
-			navigation.navigate('Login');
+			navigation.dispatch(
+				CommonActions.reset({
+					index: 0,
+					routes: [{ name: 'Login' }],
+				})
+			);
 		} catch (error) {
 			console.error('Error logOut', error);
 		}
@@ -725,7 +731,21 @@ const MyOptions = ({ navigation, route }) => {
 	const deleteAccount = async () => {
 		try {
 			const response = await Api.delete(`/accounts/deleteUser`);
-			alert(response.data.message)
+			if (response.data) {
+				setIsDeleteAccountModal(false)
+				await Promise.all([
+					SecureStore.deleteItemAsync('accessToken'),
+					SecureStore.deleteItemAsync('refreshToken'),
+					SecureStore.deleteItemAsync('userEmail'),
+					SecureStore.deleteItemAsync('userPassword')
+				]);
+				navigation.dispatch(
+					CommonActions.reset({
+						index: 0,
+						routes: [{ name: 'Login' }],
+					})
+				);
+			}
 			console.log(response.data.message); // Correctly update the state here
 		} catch (error) {
 			console.error('Error logOut', error);
