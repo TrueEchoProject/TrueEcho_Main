@@ -68,12 +68,6 @@ const LoginForm = () => {
       return null;
     }
   }
-  
-  const handleChange = (key, value) => {
-    setLoginData({ ...loginData, [key]: value });
-    setWarning("");
-  };
-  
   useEffect(() => {
     const getPushToken = async () => {
       const token = await registerForPushNotificationsAsync();
@@ -86,30 +80,22 @@ const LoginForm = () => {
     };
     getPushToken();
   }, []);
-  
-  useEffect(() => {
+  const handleLogin = () => {
     if (expoPushToken) {
-      console.log('Expo push token state updated:', expoPushToken);
-    }
-  }, [expoPushToken]);
-  
-  const checkLoginCredentials = async () => {
-    try {
-      const storedEmail = await SecureStore.getItemAsync('userEmail');
-      const storedPassword = await SecureStore.getItemAsync('userPassword');
-      if (storedEmail !== null && storedPassword !== null) {
-        submitLoginData(storedEmail, storedPassword);
-      }
-    } catch (error) {
-      console.error("자격 증명을 불러오는 데 실패했습니다.", error);
+      submitLoginData(loginData.email, loginData.password);
+    } else {
+      console.error('Expo push token is not available yet');
     }
   };
   
+  const handleChange = (key, value) => {
+    setLoginData({ ...loginData, [key]: value });
+    setWarning("");
+  };
   const validateEmail = (email) => {
     const re = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
     return re.test(String(email).toLowerCase());
   };
-  
   const submitLoginData = async (email, password) => {
     if (email === "") {
       setWarning("emailEmpty");
@@ -167,10 +153,7 @@ const LoginForm = () => {
           console.error('Token was not obtained');
         }
         setLoading(false);
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'TabNavigation' }],
-        });
+        navigation.navigate('TabNavigation');
       } else if (response.data.status === 401 && response.data.code === 'T001') {
         console.log("로그인 실패: 사용자 인증에 실패했습니다.");
         setLoading(false);
@@ -191,20 +174,6 @@ const LoginForm = () => {
       setLoading(false);
     }
   };
-  
-  const handleLogin = () => {
-    if (expoPushToken) {
-      submitLoginData(loginData.email, loginData.password);
-    } else {
-      console.error('Expo push token is not available yet');
-    }
-  };
-  
-  useEffect(() => {
-    if (expoPushToken) {
-      checkLoginCredentials();
-    }
-  }, [expoPushToken]);
   
   if (loading) {
     return <LoadingScreen />;

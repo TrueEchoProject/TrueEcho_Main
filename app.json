@@ -1,14 +1,11 @@
 {
   "expo": {
-    "name": "TrueEcho",
-    "slug": "trueecho",
+    "name": "YourAppName",
+    "slug": "your-app-slug",
+    "scheme": "trueecho",
     "version": "1.0.0",
     "orientation": "portrait",
-    "scheme": "trueecho",
-    "platforms": [
-      "ios",
-      "android"
-    ],
+    "platforms": ["ios", "android"],
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {

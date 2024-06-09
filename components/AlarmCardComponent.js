@@ -16,6 +16,7 @@ import { ImageButton } from "./ImageButton";
 import { CommentModal } from './CommentModal'; // 댓글 창 컴포넌트 임포트
 import { useNavigation } from '@react-navigation/native'; // useNavigation import
 import Api from '../Api';
+import * as Linking from 'expo-linking';
 
 const AlarmCardComponent = ({ post, onActionComplete }) => {
 	const navigation = useNavigation(); // useNavigation 훅 사용
@@ -62,7 +63,6 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 			setIsLoading(false);
 		}
 	};
-	
 	const toggleBlock = async () => {
 		if (isLoading) return; // 요청 중일 때 추가 요청 차단
 		setIsLoading(true);
@@ -87,7 +87,6 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 			setIsLoading(false);
 		}
 	};
-	
 	const toggleDelete = async () => {
 		if (isLoading) return; // 요청 중일 때 추가 요청 차단
 		setIsLoading(true);
@@ -105,7 +104,6 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 			setIsLoading(false);
 		}
 	};
-	
 	const toggleFriendSend = async () => {
 		if (isLoading) return; // 요청 중일 때 추가 요청 차단
 		setIsLoading(true);

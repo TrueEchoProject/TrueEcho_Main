@@ -4,12 +4,31 @@ import LoginForm from './SignUp/LoginForm';
 import SignUpForm from './SignUp/SignUpForm';
 import ForgotPassword from './SignUp/ForgotPassword';
 import TabNavigation from './navigations/Tab';
+import LoginCheck from "./navigations/LoginCheck";
 
 const Stack = createStackNavigator();
 
 const AppNavigation = () => {
 	return (
-		<Stack.Navigator initialRouteName="Login">
+		<Stack.Navigator initialRouteName="LoginCheck">
+			<Stack.Screen
+				name="LoginCheck"
+				component={LoginCheck}
+				options={{
+					headerShown: false,
+					gestureEnabled: false, // 제스처로 뒤로 가기 비활성화
+					headerLeft: null // 헤더의 뒤로 가기 버튼 비활성화
+				}}
+			/>
+			<Stack.Screen
+				name="TabNavigation"
+				component={TabNavigation}
+				options={{
+					headerShown: false,
+					gestureEnabled: false, // 제스처로 뒤로 가기 비활성화
+					headerLeft: null // 헤더의 뒤로 가기 버튼 비활성화
+				}}
+			/>
 			<Stack.Screen
 				name="Login"
 				component={LoginForm}
@@ -24,14 +43,6 @@ const AppNavigation = () => {
 				name="ForgotPassword" 
 				component={ForgotPassword}
 				options={{ headerShown: true}}
-			/>
-			<Stack.Screen
-				name="TabNavigation"
-				component={TabNavigation}
-				options={{
-					headerShown: false,
-					headerLeft: null
-				}}
 			/>
 		</Stack.Navigator>
 	);
