@@ -1,13 +1,12 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {View, StyleSheet, Text, Animated, Easing, Platform} from 'react-native';
-import * as Notifications from "expo-notifications";
-import Constants from "expo-constants";
-import Api from "../Api";
-import * as SecureStore from "expo-secure-store";
-import * as Linking from "expo-linking";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useRef, useState } from 'react';
+import { View, StyleSheet, Text, Animated, Easing, Platform } from 'react-native';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
+import Api from '../Api';
+import * as SecureStore from 'expo-secure-store';
+import * as Linking from 'expo-linking';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-
 
 Notifications.setNotificationHandler({
 	handleNotification: async () => ({
@@ -60,7 +59,31 @@ const LoginCheck = () => {
 	}, [scaleValue, opacityValue]);
 	
 	useEffect(() => {
-		getPushToken();
+		const initialize = async () => {
+			await getPushToken();
+			
+			const subscription = Notifications.addNotificationReceivedListener(notification => {
+				console.log('Notification received:', notification);
+			});
+			
+			const responseSubscription = Notifications.addNotificationResponseReceivedListener(response => {
+				console.log('Notification clicked:', response);
+				handleNotification(response.notification);
+			});
+			
+			const lastNotificationResponse = await Notifications.getLastNotificationResponseAsync();
+			if (lastNotificationResponse) {
+				console.log('Last notification response:', lastNotificationResponse);
+				handleNotification(lastNotificationResponse.notification);
+			}
+			
+			return () => {
+				subscription.remove();
+				responseSubscription.remove();
+			};
+		};
+		
+		initialize();
 	}, []);
 	
 	const registerForPushNotificationsAsync = async () => {
@@ -102,53 +125,30 @@ const LoginCheck = () => {
 			return null;
 		}
 	};
+	
 	const getPushToken = async () => {
 		const token = await registerForPushNotificationsAsync();
 		if (token) {
 			setExpoPushToken(token);
 			console.log('Expo push token:', token);
-			await prepare(); // 토큰을 얻은 후 prepare 함수 호출
+			await prepare(token); // 토큰을 얻은 후 prepare 함수 호출
 		} else {
 			console.log('Failed to get expo push token');
 		}
 	};
-	const prepare = async () => {
-		console.log("Prepare function called"); // Prepare 함수가 호출되는지 로그 추가
+	
+	const prepare = async (token) => {
+		console.log("Prepare function called");
 		try {
 			const storedEmail = await SecureStore.getItemAsync('userEmail');
 			const storedPassword = await SecureStore.getItemAsync('userPassword');
 			if (storedEmail && storedPassword) {
-				await submitLoginData(storedEmail, storedPassword);
+				await submitLoginData(storedEmail, storedPassword, token);
 			} else {
 				console.log("Stored credentials not found, redirecting to login...");
 				const loginUrl = Linking.createURL('login');
 				Linking.openURL(loginUrl);
 			}
-			
-			const subscription = Notifications.addNotificationReceivedListener(notification => {
-				console.log('Notification received:', notification);
-			});
-			const responseSubscription = Notifications.addNotificationResponseReceivedListener(response => {
-				console.log('Notification clicked:', response);
-				handleNotification(response.notification);
-			});
-			const lastNotificationResponse = await Notifications.getLastNotificationResponseAsync();
-			if (lastNotificationResponse) {
-				console.log('Last notification response:', lastNotificationResponse);
-				handleNotification(lastNotificationResponse.notification);
-			}
-			
-			const storedNotification = await AsyncStorage.getItem('lastNotification');
-			if (storedNotification) {
-				const { type, data } = JSON.parse(storedNotification);
-				handleNavigation(type, data);
-				await AsyncStorage.removeItem('lastNotification');
-			}
-			
-			return () => {
-				subscription.remove();
-				responseSubscription.remove();
-			};
 		} catch (e) {
 			console.warn(e);
 		} finally {
@@ -156,10 +156,9 @@ const LoginCheck = () => {
 		}
 	};
 	
-	const submitLoginData = async (email, password) => {
+	const submitLoginData = async (email, password, token) => {
 		try {
 			const response = await Api.post('/accounts/login', { email, password });
-			
 			console.log("백엔드로 전송", response.data);
 			
 			if (response.data && response.data.status === 200) {
@@ -172,21 +171,24 @@ const LoginCheck = () => {
 				console.log("로그인 정보와 토큰이 성공적으로 저장되었습니다.");
 				
 				const formData = new FormData();
-				formData.append('token', expoPushToken);
-				console.log('FCM token being sent:', expoPushToken);
-				const fcmResponse = await Api.post(`/fcm/save`, formData, {
+				formData.append('token', token);
+				console.log('FCM token being sent:', token);
+				await Api.post(`/fcm/save`, formData, {
 					headers: { 'Content-Type': 'multipart/form-data' },
 				});
 				
-				const mainUrl = Linking.createURL('main/mainpost/feed-tab');
-				Linking.openURL(mainUrl);
+				navigation.reset({
+					index: 0,
+					routes: [{ name: 'TabNavigation' }],
+				});
 			} else if (response.data.status === 401 && response.data.code === 'T001') {
 				console.log("로그인 실패: 사용자 인증에 실패했습니다.");
 				const loginUrl = Linking.createURL('login');
 				Linking.openURL(loginUrl);
 			} else {
 				console.log("로그인 실패: 서버로부터 성공 메시지를 받지 못했습니다.");
-				Linking.openURL('trueecho://login'); // 딥 링크 사용
+				const loginUrl = Linking.createURL('login');
+				Linking.openURL(loginUrl);
 			}
 		} catch (error) {
 			if (error.response && error.response.status === 401 && error.response.data.code === 'T001') {
@@ -201,28 +203,29 @@ const LoginCheck = () => {
 	
 	const handleNotification = async (notification) => {
 		const notificationId = notification.request.identifier;
-		if (lastNotificationId.current === notificationId) {
-			return; // Ignore duplicate notifications
+		if (notificationId === lastNotificationId.current) {
+			return;
 		}
 		lastNotificationId.current = notificationId;
 		
 		const data = notification.request.content.data;
 		const type = data.notiType;
 		
-		await AsyncStorage.setItem('lastNotification', JSON.stringify({ type, data }));
+		if (!type || !data) {
+			console.error('Notification data is missing');
+			return;
+		}
 		
+		handleNavigation(type, data);
 	};
+	
 	const handleNavigation = async (type, data) => {
 		const url = createNavigationUrl(type, data);
 		if (url) {
-			const supported = await Linking.canOpenURL(url);
-			if (supported) {
-				Linking.openURL(url);
-			} else {
-				console.log(`Can't handle url: ${url}`);
-			}
+			Linking.openURL(url);
 		}
 	};
+	
 	const createNavigationUrl = (type, data) => {
 		switch (type) {
 			case "0":

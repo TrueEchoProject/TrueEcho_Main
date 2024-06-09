@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "YourAppName",
-    "slug": "your-app-slug",
+    "name": "TrueEcho",
+    "slug": "trueecho",
     "scheme": "trueecho",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -28,7 +28,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "NOTIFICATIONS"
+      ],
+      "useNextNotificationsApi": true
     },
     "web": {
       "favicon": "./assets/favicon.png"

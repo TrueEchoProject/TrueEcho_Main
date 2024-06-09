@@ -258,10 +258,11 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 						<View style={styles.left}>
 							<TouchableOpacity style={styles.iconButton} onPress={toggleLike}>
 								<Ionicons name={isLiked ? 'heart' : 'heart-outline'} style={styles.icon} size={24} color={isLiked ? 'red' : 'black'}/>
-								<Text>{likesCount}</Text>
+								<Text>{post.likesCount}</Text>
 							</TouchableOpacity>
 							<TouchableOpacity style={styles.iconButton}>
 								<Ionicons name='chatbubbles' style={styles.icon} onPress={toggleCommentVisibility} size={24}/>
+								<Text>{post.commentCount}</Text>
 							</TouchableOpacity>
 						</View>
 						<CommentModal
