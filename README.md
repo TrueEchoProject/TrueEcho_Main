@@ -1,174 +1,443 @@
-<div align="center"> 
+<div align="center" >
+
+# TrueEcho
+
+<h3> 진실된 모습으로 소통하는 앱 </h3>
 
 <img src="https://github.com/TrueEchoProject/TrueEcho_Main/assets/106599507/4c98706b-7d99-4f7e-8cef-c9ea09ef0899" width="250" height="250"/>
 
-<h3>본래의 모습으로 소통하는 SNS 플랫폼</h3>
-<h4>🗝️ KeyWords<h4>
-<p>#REACT NATIVE #쿼리튜닝 #FCS</p>
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FTrueEchoProject%2FTrueEcho_Main&count_bg=%23B2C3EE&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
+
+
+</div>
+
+
+
+
+---
+
+## ✨ 프로젝트 소개
+
+### 비전 및 목표
+- TrueEcho는 사용자가 자신의 진솔한 모습을 공유
+- 네트워킹을 통해 자존감을 높이며 지속적인 성장을 도모할 수 있는 SNS 플랫폼
+- 친구들과 자연스러운 일상을 나누고, 재미있는 콘텐츠를 통해 소통
+
+### 기술적 목표
+- React Native를 활용한 사용자 친화적인 UI/UX 개발
+- Spring Boot를 활용한 RESTful API 설계 및 구현
+- MariaDB와의 효율적인 데이터베이스 통신
+- Firebase Cloud Messaging(FCS)를 활용한 실시간 알림 기능 구현
+- Google Play Store에 배포하기 위한 CI/CD 구축
+- Google Play Store 자동 배포 시스템 구축
+- 팀원 간의 협업을 위한 그라운드 룰 수립
+
+### 📚 기술 스택
+
+### 프론트엔드
+
+<img src="https://img.shields.io/badge/React Native-61DAFB?style=flat&logo=React&logoColor=white" alt="React Native Badge"/><img src="https://img.shields.io/badge/javascript-F7DF1E?style=flat&logo=javascript&logoColor=white" alt="javascript Badge"/><img src="https://img.shields.io/badge/Figma-F24E1E?style=flat&logo=Figma&logoColor=white" alt="Figma Badge"/>
+
+### 백엔드
+
+<img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat&logo=Spring Boot&logoColor=white" alt="Spring Boot Badge"/><img src="https://img.shields.io/badge/MariaDB-003545?style=flat&logo=MariaDB&logoColor=white" alt="MariaDB Badge"/><img src="https://img.shields.io/badge/Firebase-FFCA28?style=flat&logo=Firebase&logoColor=white" alt="Firebase Badge"/><img src="https://img.shields.io/badge/REST API-005571?style=flat&logo=Swagger&logoColor=white" alt="REST API Badge"/>
+
+### 📑 프로젝트 노션 링크
+[![Notion](https://img.shields.io/badge/Notion-TrueEcho-%23000000?style=for-the-badge&logo=notion&logoColor=white)](https://bamlatte.notion.site/TrueEcho-5901c5f619ac4247bc2609efb5e22561?pvs=4)
+
+<a href="">
+<img src="https://github.com/boostcampwm2023/and07-MindSync/assets/39490416/0072864a-ab3f-474b-a3ad-52904d662a1c" width=400 height=150/>
+</a>
 <br>
+(추후 플레이스토어에 배포 후 추가 예정)
+
+---
+## 🎯 기술적 도전
+
+### 프론트엔드
+- [내용추가](홈페이지)
+
+### 백엔드
+- [FCM을 사용한 효율적인 알림 시스템 구현](https://bamlatte.notion.site/754b4397b4fe483e917a85b3b5d4117c?pvs=4)
+
+## 🚀 문제 해결 과정
+- [N + 1 문제를 극악무도하게 66.7%  최적화한 이야기](https://bamlatte.notion.site/1-N-9a0675cb8a0d40c899a0f816be641413?pvs=4)_
+- [JPA 성능 최적화: N+1 문제 해결로 97% 성과를 얻다](https://bamlatte.notion.site/09c78c60348e4aca9b637d90061b186b?pvs=4)
+- [IntelliJ 사용자를 위한 .env 파일로 개발 환경 보호하기](https://bamlatte.notion.site/7c3c15df48884d7b8ab57e6e604ced85?pvs=4)
+---
+
+## 👨‍👩‍👧‍👦 팀원 소개
+| 서희준 | 박준형 |                             백효영                              | 박신형 | 강상호 |
+| :---: | :---: |:------------------------------------------------------------:| :---: | :---: |
+| <img src="https://github.com/HeeJohn.png" width="100"/> | <img src="https://github.com/jun10920.png" width="100"/> | <img src="https://github.com/HyoYoung0829.png" width="100"/> | <img src="https://github.com/HolMoly.png" width="100"/> | <img src="https://github.com/sh7558.png" width="100"/> |
+| **Backend** | **Backend** |                         **Frontend**                         | **Frontend** | **Frontend** |
+| [@HeeJohn](https://github.com/HeeJohn) | [@jun10920](https://github.com/jun10920) |         [@HyoYoung](https://github.com/HyoYoung0829)         | [@HolyMoly](https://github.com/HolMoly) | [@sh7558](https://github.com/sh7558) |
+
+---
+
+## 📅 계획
+<img src="https://github.com/boostcampwm2023/and07-MindSync/assets/106599507/90f991e5-e7ff-44a3-862d-d0f90f88636c" height=400/>
+
+## 📌 요구 및 CSC, CSU 분석
+- 타 게시물에 대한 호기심
+- 하루에 한 번 무작위 시간에 사진 촬영 알림
+- 현실적인 상황을 컨텐츠로 생성
+- 복잡한 기능이 없는 직관적인 촬영 단계
+- 게시물을 통해서 진행하는 재미 컨텐츠
+- 쉬운 친구 추가 & 삭제
+
+### 기능 요구사항
+<img src="https://github.com/TrueEchoProject/TrueEcho_Main/assets/106599507/94f8f740-53b1-4dd6-8b1e-7263cdadf49c" height=400/>
+
+### 요구사항에서 비롯된 CSC
+<img src="https://github.com/TrueEchoProject/TrueEcho_Main/assets/106599507/d5a3b6ee-1a0c-4e1b-8473-df3408f38a6d" height=400/>
+
+### CSC에서 비롯된 CSU
+<img src="https://github.com/TrueEchoProject/TrueEcho_Main/assets/106599507/66788768-01b4-43be-86ef-431303a5964b" height=300/>
+
+### 개발 세부 내용(계속 추가)
+<details>
+  <summary>개발 세부 내용</summary>
+
+| 항목 | 하위 항목 |
+| --- | --- |
+| 회원 관리 | 회원, 회원가입 [시간대 설정], 로그인: one-way 암호화, 로그아웃 (토큰 삭제), 회원 정보 수정, 탈퇴, 차단, 핀 설정 및 삭제 (나중으로 변경) |
+| 회원 식별 (토큰) | 토큰 생성, 토큰 검증, 토큰 재생성, 예외처리 |
+| 친구 관리 | 친구 추가, 친구 삭제, 친구 추천 알고리즘 (전화번호로 찾기, 친구 동기화) |
+| 사진 & 촬영 | Azure 구축, 이미지 업로드, URL 저장, Post 테이블에 저장 |
+| 게시물 | 게시물 출력 (친구, 랜덤 게시물), 정렬, 필터링, 댓글, 좋아요, 게시물에서 친구 추가 |
+| 투표 | 투표지 구축, 투표지 유저 출력, 뽑기 알고리즘, 투표 결과 저장 |
+| 랭킹 | 주차별 랭킹 정보 최신화 로직 (일요일 8시), 쿼리 1: WHERE week -> vote_id로 group(), 쿼리 2: target_user로 group() -> 카운트 -> 탑 3 |
+| 알림 | 무작위 알림 로직, Web socket 구현, 랭크 알림 (일요일 8시), 투표 결과 알림 (투표 받을 시 익명 x), 댓글 알림, 좋아요 알림 |
+| 설정 기능 | 알림 권한 설정, 노출 설정, 시간대 수정 |
+| 에러 처리 & 최적화 | 에러 처리, 최적화 |
+| 배포 | 배포 |
+| ORM - 엔티티 | 각 테이블 연관 관계 점검, 앤티티 정의, 편의 메서드 작성 |
+| 각 단계별 테스트 | 유닛 테스트, 통합 테스트 진행 |
+</details>
+
+---
+
+## 🏛️ 서비스 구성
+
+### 아키텍처
+<img src="https://github.com/TrueEchoProject/TrueEcho_Main/assets/106599507/4945edca-86a9-4460-befa-561f96add95e" height=400/>
+
+### 시스템 흐름도
+<img src="https://github.com/TrueEchoProject/TrueEcho_Main/assets/106599507/61f0f9ad-af40-4544-a32f-0d9e3f928247" height=400/>
+
+### 데이터베이스 ERD
 <div align="center">
-  
-   <img src="https://img.shields.io/badge/React Native-61DAFB?style=flat&logo=React&logoColor=white" alt="React Native Badge"/>
-    <img src="https://img.shields.io/badge/javascript-F7DF1E?style=flat&logo=javascript&logoColor=white" alt="javascript Badge"/>
-   <br>
-  <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat&logo=Spring Boot&logoColor=white" alt="Spring Boot Badge"/>
-  <img src="https://img.shields.io/badge/MariaDB-003545?style=flat&logo=MariaDB&logoColor=white" alt="MariaDB Badge"/>
-   <br>
-  <img src="https://img.shields.io/badge/Figma-F24E1E?style=flat&logo=Figma&logoColor=white" alt="Figma Badge"/>
+  <img src="https://github.com/TrueEchoProject/TrueEcho_Main/assets/106599507/c3566260-bd34-4897-b788-c13f49a0e371" alt="erd" height="700"/>
 </div>
 
+#### ERD 설명
+<details>
+  <summary>테이블 1: Users</summary>
+
+| 컬럼 | 타입 | 설명 |
+| --- | --- | --- |
+| user_id | BIGINT | Primary Key |
+| connect_by_friend | BIT |  |
+| user_birthday | DATE |  |
+| created_at | DATETIME |  |
+| rank_id | BIGINT | Foreign Key, references Ranks(rank_id) |
+| user_name | VARCHAR(20) |  |
+| user_nick_name | VARCHAR(20) |  |
+| refresh_token | VARCHAR(255) |  |
+| user_email | VARCHAR(255) |  |
+| user_location | VARCHAR(255) |  |
+| user_password | VARCHAR(255) |  |
+| user_gender | ENUM |  |
+| user_profile_url | TEXT |  |
+| user_role | ENUM |  |
+| fcm_token | VARCHAR(255) |  |
+| notification_setting_id | BIGINT | Foreign Key, references Notification_setting(notification_setting_id) |
+| x | DOUBLE |  |
+| y | DOUBLE |  |
+
+</details>
+
+<details>
+  <summary>테이블 2: Votes</summary>
+
+| 컬럼 | 타입 | 설명 |
+| --- | --- | --- |
+| vote_id | BIGINT | Primary Key |
+| vote_title | VARCHAR(255) |  |
+| vote_category | ENUM |  |
+
+</details>
+
+<details>
+  <summary>테이블 3: Vote_results</summary>
+
+| 컬럼 | 타입 | 설명 |
+| --- | --- | --- |
+| vote_result_id | BIGINT | Primary Key |
+| created_at | DATETIME |  |
+| user_id_target | BIGINT | Foreign Key, references Users(user_id) |
+| user_id_voter | BIGINT | Foreign Key, references Users(user_id) |
+| vote_id | BIGINT | Foreign Key, references Votes(vote_id) |
+
+</details>
+
+<details>
+  <summary>테이블 4: Notifications</summary>
+
+| 컬럼 | 타입 | 설명 |
+| --- | --- | --- |
+| notifications_id | BIGINT | Primary Key |
+| created_at | DATETIME |  |
+| body | VARCHAR(255) |  |
+| content_id | BIGINT |  |
+| noti_type | INT |  |
+| sender_id | BIGINT | Foreign Key, references Users(user_id) |
+| title | VARCHAR(255) |  |
+| like_id | BIGINT | Foreign Key, references Likes(like_id) |
+| comment_id | BIGINT | Foreign Key, references Comments(comm_id) |
+| rank_id | BIGINT | Foreign Key, references Ranks(rank_id) |
+| vote_result_id | BIGINT | Foreign Key, references Vote_results(vote_result_id) |
+
+</details>
+
+<details>
+  <summary>테이블 5: Ranks</summary>
+
+| 컬럼 | 타입 | 설명 |
+| --- | --- | --- |
+| rank_id | BIGINT | Primary Key |
+| rank_level | INT |  |
+| rank_week | DATE |  |
+
+</details>
+
+<details>
+  <summary>테이블 6: Likes</summary>
+
+| 컬럼 | 타입 | 설명 |
+| --- | --- | --- |
+| like_id | BIGINT | Primary Key |
+| post_id | BIGINT | Foreign Key, references Posts(post_id) |
+| user_id | BIGINT | Foreign Key, references Users(user_id) |
+
+</details>
+
+<details>
+  <summary>테이블 7: Posts</summary>
+
+| 컬럼 | 타입 | 설명 |
+| --- | --- | --- |
+| post_id | BIGINT | Primary Key |
+| created_at | DATETIME |  |
+| user_id | BIGINT | Foreign Key, references Users(user_id) |
+| post_title | VARCHAR(255) |  |
+| post_status | ENUM |  |
+| post_url_back | TEXT |  |
+| post_url_front | TEXT |  |
+
+</details>
+
+<details>
+  <summary>테이블 8: Pins</summary>
+
+| 컬럼 | 타입 | 설명 |
+| --- | --- | --- |
+| pin_id | BIGINT | Primary Key |
+| created_at | DATETIME |  |
+| post_id | BIGINT | Foreign Key, references Posts(post_id) |
+| user_id | BIGINT | Foreign Key, references Users(user_id) |
+
+</details>
+
+<details>
+  <summary>테이블 9: Comments</summary>
+
+| 컬럼 | 타입 | 설명 |
+| --- | --- | --- |
+| comm_id | BIGINT | Primary Key |
+| created_at | DATETIME |  |
+| main_comment_id | BIGINT |  |
+| post_id | BIGINT | Foreign Key, references Posts(post_id) |
+| user_id | BIGINT | Foreign Key, references Users(user_id) |
+| comment_content | TINYTEXT |  |
+| notifications_id | BIGINT | Foreign Key, references Notifications(notifications_id) |
+
+</details>
+
+<details>
+  <summary>테이블 10: Notification_setting</summary>
+
+| 컬럼 | 타입 | 설명 |
+| --- | --- | --- |
+| notification_setting_id | BIGINT | Primary Key |
+| setting_noti_comment | BIT |  |
+| setting_noti_friend | BIT |  |
+| setting_noti_like | BIT |  |
+| setting_noti_time | DATETIME |  |
+| setting_noti_rank | BIT |  |
+| setting_noti_vote | BIT |  |
+| setting_noti_service | BIT |  |
+| setting_noti_in_rank | BIT |  |
+| setting_noti_new_rank | BIT |  |
+| setting_noti_rival | BIT |  |
+| setting_noti_time_status | ENUM |  |
+
+</details>
+
+<details>
+  <summary>테이블 11: Suspended_users</summary>
+
+| 컬럼 | 타입 | 설명 |
+| --- | --- | --- |
+| suspended_date | DATE |  |
+| suspended_user_id | BIGINT | Primary Key, references Users(user_id) |
+| user_id | BIGINT | Primary Key, references Users(user_id) |
+
+</details>
+
+<details>
+  <summary>테이블 12: Blocks</summary>
+
+| 컬럼 | 타입 | 설명 |
+| --- | --- | --- |
+| block_id | BIGINT | Primary Key |
+| block_user_id | BIGINT | Foreign Key, references Users(user_id) |
+| user_id | BIGINT | Foreign Key, references Users(user_id) |
+
+</details>
+
+<details>
+  <summary>테이블 13: Friends</summary>
+
+| 컬럼 | 타입 | 설명 |
+| --- | --- | --- |
+| friend_id | BIGINT | Primary Key |
+| send_user_id | BIGINT | Foreign Key, references Users(user_id) |
+| target_user_id | BIGINT | Foreign Key, references Users(user_id) |
+| friend_status | ENUM |  |
+
+</details>
+
+---
+
+## ⚒️ 주요 기능
+
+### 🔔 알림
+
+무작위 알림이 발생하면 3분 안에 사진을 찍어야합니다.
 <br>
-<a href="https://www.youtube.com/watch?v=0P9qkA3zlHk">🎥 데모영상</a>
-<a href="https://youtu.be/GxQTan4mbsg?si=6rqpcxHHXVsB7A5s">발표영상</a>
-</div>
+다른 알림도 유저들 간에 발생합니다.
 
----
+<table>
+  <tr>
+    <th>기능</th>
+    <th>설명</th>
+  </tr>
+  <tr>
+    <td><strong>무작위</strong></td>
+    <td>알림 <-> 촬영 시간 비교 (2분)</td>
+  </tr>
+  <tr>
+    <td><strong>일반</strong></td>
+    <td>공지사항 / 댓글 / 좋아요</td>
+  </tr>
+</table>
 
-# 🔎 주요 기능
+<img src="https://github.com/TrueEchoProject/TrueEcho_Main/assets/106599507/545bbce1-e0a7-47b3-9d38-58d263f5ee4d" width="300"/>
 
-### 🐱 화상회의
+### 📷 카메라
 
-방 생성 버튼으로 새롭게 방을 만들거나 공유받은 방 코드로 이미 있는 방에 참여할 수 있습니다.
+커스텀 카메라로 본인과 주변 모습을 담습니다.
 
-| ![EnterRoom](https://github.com/boostcampwm2023/web05-AlgoITNi/assets/84272873/10569b04-b729-46d4-8414-9c83c4772330) |
-| -------------------------------------------------------------------------------------------------------------------- |
-| 방에 입장하는 모습                                                                                                   |
+<table>
+  <tr>
+    <th>기능</th>
+    <th>설명</th>
+  </tr>
+  <tr>
+    <td><strong>전/후면 촬영</strong></td>
+    <td>현재 자신의 모습과 주변 환경을 담기 위한 촬영</td>
+  </tr>
+  <tr>
+    <td><strong>줌 인/아웃</strong></td>
+    <td>기본적인 줌인/줌아웃 기능 구현</td>
+  </tr>
+  <tr>
+    <td><strong>플래쉬</strong></td>
+    <td>플래쉬 ON/OFF/AUTO 기능 구현</td>
+  </tr>
+</table>
 
-동료들과 화상회의를 하며 소통할 수 있습니다. <br>
-WebRTC P2P로 통신합시다. <br>
+<img src="https://github.com/TrueEchoProject/TrueEcho_Main/assets/106599507/fe2f659d-f2fb-4b67-a8a4-3174f6d4435a" width="300"/>
 
-| ![4inroom-720](https://github.com/boostcampwm2023/web05-AlgoITNi/assets/84272873/f17be568-0de8-4a86-a0fe-6c683095ccd5) |
-| ---------------------------------------------------------------------------------------------------------------------- |
-| 4명이 모두 입장한 모습                                                                                                 |
+### 👍 메인 피드
 
-### 😎 코드 공동 편집
+게시물에 좋아요와 댓글을 달아 친구들과 소통할 수 있습니다.
 
-코드 편집기를 통해 코드를 작성할 수 있습니다. <br>
-CRDT로 공동편집을 구현해 참여한 사람들과 함께 편집할 수 있습니다.<br>
-집단 지성을 발휘해보세요!
+<table>
+  <tr>
+    <th>기능</th>
+    <th>설명</th>
+  </tr>
+  <tr>
+    <td><strong>전/후면 스왑</strong></td>
+    <td>유저의 얼굴 사진과 배경 사진의 자유로운 전환</td>
+  </tr>
+  <tr>
+    <td><strong>좋아요</strong></td>
+    <td>유저끼리의 소통을 위한 좋아요 기능 구현</td>
+  </tr>
+  <tr>
+    <td><strong>댓글</strong></td>
+    <td>유저끼리의 소통을 위한 댓글 기능 구현</td>
+  </tr>
+</table>
 
-| ![crdt](https://github.com/boostcampwm2023/web05-AlgoITNi/assets/84272873/d41dd3d9-5b3c-4093-9a71-d0a336ff2e47) |
-| --------------------------------------------------------------------------------------------------------------- |
-| 코드를 공동편집하는 모습                                                                                        |
+<img src="https://github.com/TrueEchoProject/TrueEcho_Main/assets/106599507/f19a8e5f-ed57-4b0c-bb6f-bbfae422fa47" width="300"/>
 
-### 📥 문제 보기
+### 🗳️ 커뮤니티
 
-문제의 링크를 입력해 문제를 보면서 풀이할 수 있습니다. <br>
-크롤링을 통해서 입력한 링크를 가져옵니다. <br>
-백준 사이트를 가장 잘 보여줍니다.<br>
+카테고리에 맞게 투표할 수 있는 기능을 제공합니다. 투표 결과에 따라 사용자 랭킹이 결정됩니다.
 
-| ![showProm](https://github.com/boostcampwm2023/web05-AlgoITNi/assets/84272873/d5ca027e-4a29-4b32-b8f5-7e56a62bfdfa) |
-| ------------------------------------------------------------------------------------------------------------------- |
-| 백준 문제를 불러오는 모습                                                                                           |
+<table>
+  <tr>
+    <th>기능</th>
+    <th>설명</th>
+  </tr>
+  <tr>
+    <td><strong>투표</strong></td>
+    <td>랜덤한 질문 + 유저 컨텐츠</td>
+  </tr>
+  <tr>
+    <td><strong>투표 결과</strong></td>
+    <td>축적된 투표결과 랭킹화</td>
+  </tr>
+</table>
 
-### 🐍 코드 실행
+<img src="https://github.com/TrueEchoProject/TrueEcho_Main/assets/106599507/6915bc74-216c-465e-9b6d-d33d79c70bad" width="300"/>
 
-작성한 코드를 실행하고 실행 결과를 확인할 수 있습니다.<br>
-소켓과 메세지 큐를 통해 코드 실행이 요청됩니다. <br>
-지원 언어 : `Python` `Javascript` `Java` `C` `Swift` `Kotlin`
+### 👥 친구 관리
 
-| ![running](https://github.com/boostcampwm2023/web05-AlgoITNi/assets/84272873/0d64245b-4700-46af-8d51-06c8331548ee) |
-| ------------------------------------------------------------------------------------------------------------------ |
-| 작성한 코드를 실행하는 모습                                                                                        |
+친구 관리 및 추천 기능을 통해 네트워킹을 강화할 수 있습니다.
 
-### 💬 채팅
+<table>
+  <tr>
+    <th>기능</th>
+    <th>설명</th>
+  </tr>
+  <tr>
+    <td><strong>친구추천</strong></td>
+    <td>유저간 친구 관계를 식별하여 친구 추천</td>
+  </tr>
+  <tr>
+    <td><strong>친구관리</strong></td>
+    <td>보낸 친구요청 / 받은 친구요청 확인하여 원활한 친구관리</td>
+  </tr>
+</table>
 
-채팅을 통해서도 소통할 수 있습니다. 음성 채팅이 어려운 상황에서나 참고할 자료를 보낼 때 활용할 수 있습니다. <br>
-Pub/Sub을 활용해 다중 서버 환경에서도 채팅을 할 수 있습니다. <br>
-채팅 중 **클로바X**에게 질문하고 답변 받을 수 있습니다.
-
-| ![chat](https://github.com/boostcampwm2023/web05-AlgoITNi/assets/84272873/a1401167-5edc-4395-a87b-b62176aebfc3) |
-| --------------------------------------------------------------------------------------------------------------- |
-| 사용자, AI 와 채팅하는 모습                                                                                     |
-
-# 🔎 기술적 도전
-
-### 프론트엔드의 기술적 도전
-
-- [코드 에디터에서의 공동편집을 위한 CRDT구현](https://energetic-palm-634.notion.site/4826739090cf431e829bd928fd46a297?v=09650c23000d477f828c92563f0c8368&pvs=4)
-  - 3번의 시도와 구현, 문제해결기와 더 나은 기능을 위해 라이브러리를 도입한 이야기
-- [홈화면 성능 최적화 도전하기](https://energetic-palm-634.notion.site/f7286ebaa50f484da0a88a37888f77dc?v=f46a3e1fd63e435c9b1f642d220888ac&pvs=40)
-  - 더 나은 UX를 위해 홈화면 초기 렌더링 성능 약 14% 개선
-- [수많은 모달을 관리하기 위한 공통 모달 만들기](https://energetic-palm-634.notion.site/23cca8a3b3b44fce9a9df4b0a7e70dcd?v=9c4c39359a0e445dbdc2b7cdb2d74c68&pvs=4)
-  - 중첩 모달과 많은 모달들을 쉽고 효율적으로 관리하기위한 모달 시스템 만들기
-
-### 백엔드의 기술적 도전
-
-- [다중 서버 환경에서 코드 실행 동시 요청 처리하기](https://energetic-palm-634.notion.site/bfeb2b52f3f34fe2af9bf93f254f8f5c?v=82acb687cdb74475986d223ac753bf05&pvs=4)
-  - 소켓, Message Queue, Pub/Sub을 도입하여 CPU 사용량 43%, Memory 사용량 21% 감소시킨 이야기
-- [다중 소켓 서버 트래픽 관리하기](https://energetic-palm-634.notion.site/d243a71d17f94018bd94a6b825fddfe4?v=803c0b95332343e1918ee10ff269e4f6&pvs=4)
-  - 중앙서버와 Pub/Sub 도입으로 트래픽 분산 & 확장에 자유로운 구조로 개선
-- [DB 부하 분산하기](https://energetic-palm-634.notion.site/8c129aa38b2f40c784b7641d8941571d?v=340d00941d4641f9bc47ee292d9d9cf5&pvs=4)
-  - Master DB CPU 사용룰 90% 감소 및 요청처리 95% 증가
-- [Nginx 캐싱으로 크롤링 속도 높이기](https://energetic-palm-634.notion.site/270f92cdadaa475aa3827b300c511172?v=d67c232d930549948bdd0ad4c306c14f&pvs=4)
-  - 429 Error 및 InMemory 용량부족 해결 과정 (16만건 처리에 걸리는 시간 64% 감소)
-- [도커 이미지 최적화](https://energetic-palm-634.notion.site/f35c15bc99a842a18ce095fa6bf1c806?v=efbb8ec67beb43b89792200fc1f3c9a1&pvs=4)
-  - 도커 이미지 사이즈 85% 감소시킨 이야기
-
-# 🔎 개발기
-
-개발하면서 공부한 내용들과 고민 과정, 이유, 해결 방법을 기록했습니다.
-
-[FE]
-
-- [Web RTC를 이해해보자](https://energetic-palm-634.notion.site/Web-RTC-1e8d918a19be444da6b0656167df35a6?pvs=4)
-- [S3, CloudFront로 OAC를 통해 프론트엔드 배포하기](https://energetic-palm-634.notion.site/FrontEnd-CICD-with-S3-Cloud-Front-64ac0d2dab194a04b14743d034deb1c5?pvs=4)
-- [로컬 환경에서 쿠키 테스트하기](https://energetic-palm-634.notion.site/8f53abc52d6a4b72816fc4aa9c211de2?pvs=4)
-- [채팅창에 쓰로틀링 적용하기](https://energetic-palm-634.notion.site/9e768460a8904a8e859ba13cab0f78c2?pvs=4)
-- [쉘 스크립트로 디렉토리별 pre-commit 적용하기](https://energetic-palm-634.notion.site/pre-commit-a60bec2c72e440a2ad414a1ab4b18f29?pvs=4)
-
-[BE]
-
-- [세션을 활용해 로그인 후 원래위치로 돌아가기](https://energetic-palm-634.notion.site/d2f6157bdcef40a6a72eacbb28acb798?pvs=4)
-- [Transaction 관심사 분리하기](https://energetic-palm-634.notion.site/AsyncLocalStorage-Transaction-34f42523c0ec43f4b633eb7944c0b29d?pvs=4)
-- [SSL Termination을 통해 안전하게 HTTP 통신하기](https://energetic-palm-634.notion.site/SSL-Termination-HTTP-70c76949740f4452a2899fa1e617628a?pvs=4)
-- [Blue-Green으로 무중단 배포하기](https://energetic-palm-634.notion.site/57396ff1e3174251ba2c7487ab070a53?pvs=4)
-- [Clove X 도입하기](https://energetic-palm-634.notion.site/Clova-Studio-d990f41d3e814b708906e64fd4707a24?pvs=4)
-- [서버에서 OAuth 처리하여 자원 보호하기](https://energetic-palm-634.notion.site/OAuth-2-0-2bc01496ac9c4ed6b0118642c887828d?pvs=4)
-
-[👉 더 많은 기술정리 보러가기](https://www.notion.so/f4562ec49e0245d2b6ef203588c031ea?v=fbfeb754b1a4471e8ffc174a45c64346&pvs=4)
-
-# 🔎서버 아키텍처
-
-![Untitled](https://github.com/boostcampwm2023/web05-AlgoITNi/assets/84272873/019fa58f-c8c0-47f3-87a9-ea7cf36722d0)
-
-# 🔎 팀 소개
-
-|                                  J065 서위영                                   |                                  J094 이동길                                   |                                 J126 이희경                                  |                                 J151 지승민                                  |
-| :----------------------------------------------------------------------------: | :----------------------------------------------------------------------------: | :--------------------------------------------------------------------------: | :--------------------------------------------------------------------------: |
-| <img src="https://avatars.githubusercontent.com/u/96584994?v=4" width="200" /> | <img src="https://avatars.githubusercontent.com/u/99241871?v=4" width="200" /> | <img src="https://avatars.githubusercontent.com/u/84272873?v=4" width="200"> | <img src="https://avatars.githubusercontent.com/u/87487149?v=4" width="200"> |
-|                                 **Front-End**                                  |                                 **Front-End**                                  |                                 **Back-End**                                 |                                 **Back-End**                                 |
-|                       [@HBSPS](https://github.com/HBSPS)                       |                       [@d0422](https://github.com/d0422)                       |                   [@HKLeeeee](https://github.com/HKLeeeee)                   |                  [@Gseungmin](https://github.com/Gseungmin)                  |
-
-![AlgoITNi](https://github.com/boostcampwm2023/web05-AlgoITNi/assets/84272873/db73a539-bb3f-4cf0-af23-81e23adc6b17)
-
-## 우리가 일하는 방식
-
-- [그라운드 룰](https://energetic-palm-634.notion.site/1f2cbea527e341c7ad1c8fd84ed5104d?pvs=4)
-- [깃 컨벤션](https://energetic-palm-634.notion.site/Git-Convention-8563596644404eb49148a940773d2be8?pvs=4)
-- [게더타운 규칙](https://energetic-palm-634.notion.site/b3b67313c1f748e7b58abf99466b000b?pvs=4)
-
----
-
-<a href="https://energetic-palm-634.notion.site/AlgoITNi-4d712d57a7be42bfb625d23d5eab5453?pvs=4">😽 Team Notion </a>
+<img src="https://github.com/TrueEchoProject/TrueEcho_Main/assets/106599507/abb78213-2a75-43e0-887c-7d84e1580e0b" width="300"/>
 
 
 
 
-
-# TrueEcho
-📱 TrueEcho 앱(react native) 스프링 백엔드 구현
-
-# ☝️ TrueEcho : BACKEND
-
-TrueEcho는 사진을 컨텐츠로 한 소셜 네트워킹 서비스입니다. 
-이 저장소는 TrueEcho의 BACKEND 저장소입니다.
-
-### 🧑‍💻 기술 스택
-
-## Backend: Spring Boot
-## Database: [MySQL]
-## Others: [React-Native, AWS RDS, ]
-
-### 👨‍👩‍👧‍👦 팀원
-Huijun Seo - @HeeJohn - gjshj366@gmail.com
