@@ -13,6 +13,7 @@ const MyFeed = ({ navigation, route }) => {
 	
 	useEffect(() => {
 		if (route.params?.deletedPostId) {
+			console.log('Received deletedPostId response:', route.params.deletedPostId);
 			const { deletedPostId } = route.params;
 			setServerPosts(prevPosts => prevPosts.filter(post => post.postId !== deletedPostId));
 		}

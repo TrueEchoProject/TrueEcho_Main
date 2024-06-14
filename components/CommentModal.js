@@ -85,6 +85,9 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
 			if (fetchedComments && fetchedComments.length > 0) {
 				if (index === 0) {
 					setComments(fetchedComments);
+					setTimeout(() => {
+						scrollViewRef.current?.scrollTo({ y: 0, animated: false }); // 스크롤을 최상단으로 설정
+					}, 0);
 				} else {
 					setComments(prevComments => [...prevComments, ...fetchedComments]);
 				}
@@ -92,9 +95,6 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
 				if (fetchedComments.length < 10) {
 					setHasMore(false); // 더 이상 불러올 데이터가 없음
 				}
-				setTimeout(() => {
-					scrollViewRef.current?.scrollTo({ y: currentPosition, animated: false });
-				}, 0);
 			} else {
 				setCommentNone(true);
 				setHasMore(false); // 더 이상 불러올 데이터가 없음
@@ -107,15 +107,12 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
 		}
 	};
 	const handleScroll = ({ nativeEvent }) => {
-		const { contentOffset } = nativeEvent;
+		const { contentOffset, layoutMeasurement, contentSize } = nativeEvent;
 		scrollPositionRef.current = contentOffset.y;
-		if (nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >=
-			nativeEvent.contentSize.height - 20 && !loading && hasMore) {
-			setPage(prevPage => {
-				const nextPage = prevPage + 1;
-				fetchComments(nextPage);
-				return nextPage;
-			});
+		
+		if (layoutMeasurement.height + contentOffset.y >= contentSize.height - 20 && !loading && hasMore) {
+			setPage(prevPage => prevPage + 1);
+			setLoading(true); // 추가 데이터 로드 중 상태 설정
 		}
 	};
 
@@ -156,7 +153,6 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
 	const handleSubmitComment = async () => {
 		if (isLoading) return; // 요청 중일 때 추가 요청 차단
 		setIsLoading(true);
-		
 		if (!textInputValue.trim()) {
 			alert("글을 입력해주세요.");
 			setIsLoading(false); // 입력 유효성 검사 실패 시 로딩 상태 종료
@@ -169,9 +165,11 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
 				parentCommentId: replyingTo,
 				content: textInputValue
 			});
+			let FcmResponse;
 			if (replyingTo) {
 				const parentComment = comments.find(comment => comment.commentId === replyingTo);
-				const FcmResponse = await Api.post(`/noti/sendToFCM`, {
+				console.log('Sending FCM to user:', parentComment.userId);
+				FcmResponse = await Api.post(`/noti/sendToFCM`, {
 					title: null,
 					body: null,
 					data: {
@@ -180,11 +178,9 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
 						contentId: postId
 					}
 				});
-				if (FcmResponse.data) {
-					console.log(FcmResponse.data);
-				}
 			} else {
-				const FcmResponse = await Api.post(`/noti/sendToFCM`, {
+				console.log('Sending FCM to user:', userId);
+				FcmResponse = await Api.post(`/noti/sendToFCM`, {
 					title: null,
 					body: null,
 					data: {
@@ -193,11 +189,10 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
 						contentId: postId
 					}
 				});
-				if (FcmResponse.data) {
-					console.log(FcmResponse.data);
-				}
 			}
-			
+			if (FcmResponse.data) {
+				console.log('FCM Response:', FcmResponse.data);
+			}
 			if (response.data.message === "해당 게시물의 댓글 생성을 성공했습니다.") {
 				setTextInputValue('');
 				setReplyingTo(null);

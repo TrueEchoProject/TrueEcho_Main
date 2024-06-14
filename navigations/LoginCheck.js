@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Text, Animated, Easing, Platform } from 'react-native';
+import { View, StyleSheet, Animated, Easing, Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import Api from '../Api';
 import * as SecureStore from 'expo-secure-store';
 import * as Linking from 'expo-linking';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import {CommonActions, useNavigation} from '@react-navigation/native';
 
 Notifications.setNotificationHandler({
 	handleNotification: async () => ({
@@ -19,7 +19,6 @@ Notifications.setNotificationHandler({
 const LoginCheck = () => {
 	const scaleValue = useRef(new Animated.Value(1)).current;
 	const opacityValue = useRef(new Animated.Value(1)).current;
-	const lastNotificationId = useRef(null);
 	const [expoPushToken, setExpoPushToken] = useState(null);
 	const navigation = useNavigation();
 	
@@ -57,35 +56,23 @@ const LoginCheck = () => {
 			])
 		).start();
 	}, [scaleValue, opacityValue]);
-	
 	useEffect(() => {
 		const initialize = async () => {
 			await getPushToken();
-			
-			const subscription = Notifications.addNotificationReceivedListener(notification => {
-				console.log('Notification received:', notification);
-			});
-			
-			const responseSubscription = Notifications.addNotificationResponseReceivedListener(response => {
-				console.log('Notification clicked:', response);
-				handleNotification(response.notification);
-			});
-			
-			const lastNotificationResponse = await Notifications.getLastNotificationResponseAsync();
-			if (lastNotificationResponse) {
-				console.log('Last notification response:', lastNotificationResponse);
-				handleNotification(lastNotificationResponse.notification);
-			}
-			
-			return () => {
-				subscription.remove();
-				responseSubscription.remove();
-			};
 		};
-		
 		initialize();
 	}, []);
 	
+	const getPushToken = async () => {
+		const token = await registerForPushNotificationsAsync();
+		if (token) {
+			setExpoPushToken(token);
+			console.log('Expo push token:', token);
+			await prepare(token); // 토큰을 얻은 후 prepare 함수 호출
+		} else {
+			console.log('Failed to get expo push token');
+		}
+	};
 	const registerForPushNotificationsAsync = async () => {
 		if (Platform.OS === 'android') {
 			await Notifications.setNotificationChannelAsync('default', {
@@ -125,18 +112,6 @@ const LoginCheck = () => {
 			return null;
 		}
 	};
-	
-	const getPushToken = async () => {
-		const token = await registerForPushNotificationsAsync();
-		if (token) {
-			setExpoPushToken(token);
-			console.log('Expo push token:', token);
-			await prepare(token); // 토큰을 얻은 후 prepare 함수 호출
-		} else {
-			console.log('Failed to get expo push token');
-		}
-	};
-	
 	const prepare = async (token) => {
 		console.log("Prepare function called");
 		try {
@@ -146,8 +121,12 @@ const LoginCheck = () => {
 				await submitLoginData(storedEmail, storedPassword, token);
 			} else {
 				console.log("Stored credentials not found, redirecting to login...");
-				const loginUrl = Linking.createURL('login');
-				Linking.openURL(loginUrl);
+				navigation.dispatch(
+					CommonActions.reset({
+						index: 0,
+						routes: [{ name: 'Login' }],
+					})
+				);
 			}
 		} catch (e) {
 			console.warn(e);
@@ -155,7 +134,6 @@ const LoginCheck = () => {
 			console.log("Hiding splash screen");
 		}
 	};
-	
 	const submitLoginData = async (email, password, token) => {
 		try {
 			const response = await Api.post('/accounts/login', { email, password });
@@ -183,70 +161,33 @@ const LoginCheck = () => {
 				});
 			} else if (response.data.status === 401 && response.data.code === 'T001') {
 				console.log("로그인 실패: 사용자 인증에 실패했습니다.");
-				const loginUrl = Linking.createURL('login');
-				Linking.openURL(loginUrl);
+				navigation.dispatch(
+					CommonActions.reset({
+						index: 0,
+						routes: [{ name: 'Login' }],
+					})
+				);
 			} else {
 				console.log("로그인 실패: 서버로부터 성공 메시지를 받지 못했습니다.");
-				const loginUrl = Linking.createURL('login');
-				Linking.openURL(loginUrl);
+				navigation.dispatch(
+					CommonActions.reset({
+						index: 0,
+						routes: [{ name: 'Login' }],
+					})
+				);
 			}
 		} catch (error) {
 			if (error.response && error.response.status === 401 && error.response.data.code === 'T001') {
 				console.log("로그인 실패: 사용자 인증에 실패했습니다.");
-				const loginUrl = Linking.createURL('login');
-				Linking.openURL(loginUrl);
+				navigation.dispatch(
+					CommonActions.reset({
+						index: 0,
+						routes: [{ name: 'Login' }],
+					})
+				);
 			} else {
 				console.error('네트워크 오류:', error);
 			}
-		}
-	};
-	
-	const handleNotification = async (notification) => {
-		const notificationId = notification.request.identifier;
-		if (notificationId === lastNotificationId.current) {
-			return;
-		}
-		lastNotificationId.current = notificationId;
-		
-		const data = notification.request.content.data;
-		const type = data.notiType;
-		
-		if (!type || !data) {
-			console.error('Notification data is missing');
-			return;
-		}
-		
-		handleNavigation(type, data);
-	};
-	
-	const handleNavigation = async (type, data) => {
-		const url = createNavigationUrl(type, data);
-		if (url) {
-			Linking.openURL(url);
-		}
-	};
-	
-	const createNavigationUrl = (type, data) => {
-		switch (type) {
-			case "0":
-				return Linking.createURL('main/camera/camera-option');
-			case "1":
-				return Linking.createURL('main/community/community/result');
-			case "2":
-				return Linking.createURL('main/community/community/result');
-			case "3":
-				return Linking.createURL(`main/mainpost/user-alarm`, { queryParams: { userId: data.contentId } });
-			case "4":
-				return Linking.createURL(`main/mainpost/feed-alarm`, { queryParams: { postId: data.contentId } });
-			case "5":
-				return Linking.createURL(`main/mainpost/feed-alarm`, { queryParams: { postId: data.contentId } });
-			case "6":
-				return Linking.createURL(`main/mainpost/feed-alarm`, { queryParams: { postId: data.contentId } });
-			case "7":
-				return Linking.createURL('main/mainpost/friends');
-			default:
-				console.log('Unknown notification type received.');
-				return null;
 		}
 	};
 	

@@ -132,13 +132,22 @@ const Alarm = ({ navigation }) => {
 	const handlePress = (alarm) => {
 		switch (alarm.type) {
 			case 4:
-				navigation.navigate("FeedAlarm", { postId: alarm.post_id });
+				navigation.navigate("FeedAlarm", {
+					postId: alarm.post_id,
+					back: true,
+				});
 				break;
 			case 5:
-				navigation.navigate("FeedAlarm", { postId: alarm.post_id });
+				navigation.navigate("FeedAlarm", {
+					postId: alarm.post_id,
+					back: true,
+				});
 				break;
 			case 6:
-				navigation.navigate("FeedAlarm", { postId: alarm.post_id });
+				navigation.navigate("FeedAlarm", {
+					postId: alarm.post_id,
+					back: true,
+				});
 				break;
 			case 7:
 				navigation.navigate("Fri");
@@ -327,7 +336,7 @@ const Alarm = ({ navigation }) => {
 								</TouchableOpacity>
 							)}
 							{alarm.type === 2 && (
-								<TouchableOpacity onPress={() => { navigation.navigate("Result") }} style={{ alignItems: "center", flexDirection: "row" }}>
+								<TouchableOpacity onPress={goResult} style={{ alignItems: "center", flexDirection: "row" }}>
 									<Image
 										source={{ uri: GraphImage }}
 										style={styles.avatar}

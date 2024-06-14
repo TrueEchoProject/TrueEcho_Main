@@ -263,11 +263,10 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 						<View style={styles.left}>
 							<TouchableOpacity style={styles.iconButton} onPress={toggleLike}>
 								<Ionicons name={isLiked ? 'heart' : 'heart-outline'} style={styles.icon} size={24} color={isLiked ? 'red' : 'black'}/>
-								<Text>{post.likesCount}</Text>
+								<Text>{likesCount}</Text>
 							</TouchableOpacity>
 							<TouchableOpacity style={styles.iconButton}>
 								<Ionicons name='chatbubbles' style={styles.icon} onPress={toggleCommentVisibility} size={24}/>
-								<Text>{post.commentCount}</Text>
 							</TouchableOpacity>
 						</View>
 						<CommentModal
@@ -276,7 +275,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 							onClose={() => setIsCommentVisible(false)}
 							userId={post.userId}
 						/>
-						{post.status === "FREE" || post.status === "LATE" ? (
+						{post.status === "FREETIME" || post.status === "LATETIME" ? (
 							<View style={[
 								styles.right,
 								{
@@ -287,10 +286,10 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 									backgroundColor: "#3B4664",
 									borderRadius: 10,}
 							]}>
-								{post.status === "FREE" && (
+								{post.status === "FREETIME" && (
 									<Text style={{ color: "white", fontSize: 25}}>free</Text>
 								)}
-								{post.status === "LATE" && (
+								{post.status === "LATETIME" && (
 									<Text style={{ color: "white", fontSize: 25}}>late</Text>
 								)}
 							</View>

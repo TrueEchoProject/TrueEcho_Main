@@ -41,11 +41,10 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 		setLikesCount(newLikesCount);
 		
 		try {
-			const response = await Api.patch(
-				`/post/update/likes`, {
-					postId: post.postId,
-					isLike: newIsLiked,
-				});
+			const response = await Api.patch(`/post/update/likes`, {
+				postId: post.postId,
+				isLike: newIsLiked,
+			});
 			if (response.data) {
 				const FcmResponse = await Api.post(`/noti/sendToFCM`, {
 					title: null,
@@ -79,6 +78,8 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 			if (response.data) {
 				alert('유저를 정상적으로 차단했습니다');
 				hideOptions();
+				console.log('Blocked user:', post.userId);
+				console.log('Blocked post:', post.postId);
 				onActionComplete && onActionComplete(post.postId);
 			}
 		} catch (error) {
@@ -96,6 +97,8 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 			if (response.data) {
 				alert('정상적으로 게시물을 삭제했습니다');
 				hideOptions();
+				console.log('Blocked user:', post.userId);
+				console.log('Blocked post:', post.postId);
 				onActionComplete && onActionComplete(post.postId);
 			}
 		} catch (error) {
@@ -119,6 +122,7 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 			});
 			if (response.data) {
 				setFriendLook(false);
+				console.log(response.data.message);
 				const FcmResponse = await Api.post(`/noti/sendToFCM`, {
 					title: null,
 					body: null,
@@ -258,19 +262,19 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 						<View style={styles.left}>
 							<TouchableOpacity style={styles.iconButton} onPress={toggleLike}>
 								<Ionicons name={isLiked ? 'heart' : 'heart-outline'} style={styles.icon} size={24} color={isLiked ? 'red' : 'black'}/>
-								<Text>{post.likesCount}</Text>
+								<Text>{likesCount}</Text>
 							</TouchableOpacity>
 							<TouchableOpacity style={styles.iconButton}>
 								<Ionicons name='chatbubbles' style={styles.icon} onPress={toggleCommentVisibility} size={24}/>
-								<Text>{post.commentCount}</Text>
 							</TouchableOpacity>
 						</View>
 						<CommentModal
 							isVisible={isCommentVisible}
 							postId={post.postId}
+							userId={post.userId}
 							onClose={() => setIsCommentVisible(false)}
 						/>
-						{post.status === "FREE" || post.status === "LATE" ? (
+						{post.status === "FREETIME" || post.status === "LATETIME" ? (
 							<View style={[
 								styles.right,
 								{
@@ -281,10 +285,10 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
 									backgroundColor: "#3B4664",
 									borderRadius: 10,}
 							]}>
-								{post.status === "FREE" && (
+								{post.status === "FREETIME" && (
 									<Text style={{ color: "white", fontSize: 25}}>free</Text>
 								)}
-								{post.status === "LATE" && (
+								{post.status === "LATETIME" && (
 									<Text style={{ color: "white", fontSize: 25}}>late</Text>
 								)}
 							</View>

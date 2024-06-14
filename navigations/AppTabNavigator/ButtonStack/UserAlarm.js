@@ -62,7 +62,6 @@ const UserAlarm = ({ route }) => {
 			setServerPinData([]); // 에러 발생 시 빈 배열로 설정
 		}
 	};
-	
 	const toggleFriendSend = async () => {
 		console.log(userId, 'userId');
 		try {

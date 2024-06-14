@@ -7,10 +7,15 @@ const FeedAlarm = ({ navigation, route }) => {
 	const [postId, setPostId] = useState("")
 	const [post, setPost] = useState({})
 	const [isLoading, setIsLoading] = useState(true);
+	const [back, setBack] = useState(false);
 	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
 	
 	const handleActionComplete = (deletedPostId) => {
-		navigation.goBack({ deletedPostId });
+		console.log('deletedPostId:', deletedPostId);
+		if (back) {
+			navigation.goBack({ deletedPostId });
+		}
+		navigation.navigate("MyFeed" ,{ deletedPostId });
 	};
 	useEffect(() => {
 		if (route.params?.postId) {
@@ -18,6 +23,12 @@ const FeedAlarm = ({ navigation, route }) => {
 			setPostId(route.params.postId);
 		}
 	}, [route.params?.postId]);
+	useEffect(() => {
+		if (route.params?.back) {
+			console.log('Received back response:', route.params.back);
+			setBack(route.params.back);
+		}
+	}, [route.params?.back]);
 	useEffect(() => {
 		if (post) {
 			console.log('Received postId response:', post);

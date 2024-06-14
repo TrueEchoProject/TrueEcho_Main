@@ -36,10 +36,10 @@ const PublicPosts = React.forwardRef((props, ref) => {
 	React.useImperativeHandle(ref, () => ({
 		getPosts: refreshPosts,
 	}));
-	useFocusEffect(useCallback(() => {
+	useEffect(() => {
 		refreshPosts();
-	}, []));
-	
+	}, []);
+
 	const refreshPosts = async () => {
 		setPage(0);
 		await firstFetch();

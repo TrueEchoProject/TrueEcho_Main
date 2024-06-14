@@ -31,8 +31,7 @@ const MyPage = ({ navigation, route }) => {
 	
 	useEffect(() => {
 		if (route.params?.Update) {
-			console.log('Received Update response:', route.params.Update);
-			setUserData(route.params.Update);
+			fetchDataFromServer();
 		}
 	}, [route.params?.Update]);
 	useEffect(() => {

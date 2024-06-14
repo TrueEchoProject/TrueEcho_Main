@@ -9,7 +9,9 @@ import {
 	Platform,
 	Modal,
 	Dimensions,
-	ActivityIndicator, Button, Image
+	ActivityIndicator,
+	Button,
+	Image,
 } from 'react-native';
 import { Image as ExpoImage } from 'expo-image';
 import Api from "../../../Api";
@@ -21,7 +23,7 @@ import GetLocation from "../../../SignUp/GetLocation";
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-const MyInfo = ({ navigation, route }) => {
+const MyInfo = ({ navigation }) => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [serverUserLocation, setServerUserLocation] = useState("");
 	const [username, setUsername] = useState("");
@@ -38,16 +40,16 @@ const MyInfo = ({ navigation, route }) => {
 	const [loading, setLoading] = useState(false);
 	const [isSubmit, setIsSubmit] = useState(false);
 	const [refresh, setRefresh] = useState(false);
+	const [isRequestPending, setIsRequestPending] = useState(false); // 요청 상태 관리
 	
 	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
 	
 	const handleLocationReceived = (lat, lon) => {
-		console.log('Received new location:', { lat, lon });
+		console.log('Received new location:', {lat, lon});
 		setLatitude(lat);
 		setLongitude(lon);
 		setLoading(false);
 	};
-	
 	const handleRefresh = () => {
 		setLoading(true);
 		setRefresh(prev => !prev);
@@ -73,7 +75,6 @@ const MyInfo = ({ navigation, route }) => {
 			console.error('Error fetching data', error);
 		}
 	};
-	
 	const PofileInitialization = () => {
 		setImageUri(defaultImage);
 		setIsModalVisible(false);
@@ -81,7 +82,7 @@ const MyInfo = ({ navigation, route }) => {
 	
 	const pickImage = async () => {
 		if (Platform.OS !== 'web') {
-			const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+			const {status} = await ImagePicker.requestMediaLibraryPermissionsAsync();
 			if (status !== 'granted') {
 				Alert.alert('Permission Required', 'Sorry, we need camera roll permissions to make this work!');
 				return;
@@ -97,8 +98,8 @@ const MyInfo = ({ navigation, route }) => {
 			if (!result.cancelled) {
 				const manipResult = await ImageManipulator.manipulateAsync(
 					result.uri,
-					[{ resize: { width: 800 } }], // 이미지 크기 조정
-					{ compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+					[{resize: {width: 800}}], // 이미지 크기 조정
+					{compress: 0.7, format: ImageManipulator.SaveFormat.JPEG}
 				);
 				setImageUri(manipResult.uri);
 			}
@@ -117,49 +118,45 @@ const MyInfo = ({ navigation, route }) => {
 	}, [editableUserId, initialUserId]);
 	
 	const duplicateCheck = async () => {
-		if (isSubmit) return;
-		setIsSubmit(true);
+		if (isRequestPending) return; // 요청 중일 때 함수 실행 막기
+		setIsRequestPending(true); // 요청 상태 시작
 		
 		if (editableUserId === "") {
 			Alert.alert("알림", "이름을 입력해주세요!");
 			setEditableUserId(initialUserId);
+			setIsRequestPending(false); // 요청 상태 종료
 			return;
 		}
 		console.log('Checking user ID:', editableUserId);
 		try {
-			await Api.get(`/accounts/nickname/duplication?nickname=${editableUserId}`)
-				.then(response => {
-					console.log('Response data:', response.data);
-					if (response.data.message === "중복된 계정입니다.") {
-						alert('이미 사용 중인 아이디입니다.');
-						setWarning('이미 사용 중인 아이디입니다.');
-					} else {
-						alert('사용 가능한 아이디입니다.');
-						setWarning('사용 가능한 아이디입니다.');
-					}
-					setIsDuplicateChecked(true);
-				})
-				.catch(error => {
-					console.error('Error:', error);
-				});
+			const response = await Api.get(`/accounts/nickname/duplication?nickname=${editableUserId}`);
+			console.log('Response data:', response.data);
+			if (response.data.message === "중복된 계정입니다.") {
+				alert('이미 사용 중인 아이디입니다.');
+				setWarning('이미 사용 중인 아이디입니다.');
+			} else {
+				alert('사용 가능한 아이디입니다.');
+				setWarning('사용 가능한 아이디입니다.');
+			}
+			setIsDuplicateChecked(true);
 		} catch (error) {
 			console.error('Error:', error);
 		} finally {
-			setIsSubmit(false);
+			setIsRequestPending(false); // 요청 상태 종료
 		}
 	};
-	
 	const handleSave = async () => {
-		if (isSubmit) return;
-		setIsSubmit(true);
+		if (isRequestPending) return; // 요청 중일 때 함수 실행 막기
+		setIsRequestPending(true); // 요청 상태 시작
 		
 		if (editableUserId === "") {
 			Alert.alert("알림", "이름을 입력해주세요!");
+			setIsRequestPending(false); // 요청 상태 종료
 			return;
 		}
-		
 		if (editableUserId !== initialUserId && !isDuplicateChecked) {
 			Alert.alert("알림", "이름 중복 확인을 해주세요!");
+			setIsRequestPending(false); // 요청 상태 종료
 			return;
 		}
 		
@@ -189,20 +186,21 @@ const MyInfo = ({ navigation, route }) => {
 			if (responseData.data.message === '개인정보 수정를 성공했습니다.') {
 				Alert.alert('알림', '개인정보 수정를 성공했습니다.');
 			} else {
-				navigation.navigate("MyP", { Update: responseData.data });
+				navigation.navigate("MyP", {Update: responseData.data});
 			}
 		} catch (error) {
 			console.error('Failed to update user:', error);
 		} finally {
-			setIsSubmit(false);
+			setIsRequestPending(false); // 요청 상태 종료
 		}
 	};
+	
 	
 	const profileModalVisible = () => {
 		setIsModalVisible(!isModalVisible);
 	};
 	
-	const ProfileModal = ({ isVisible, onClose }) => {
+	const ProfileModal = ({isVisible, onClose}) => {
 		return (
 			<Modal
 				animationType="fade"
@@ -230,7 +228,7 @@ const MyInfo = ({ navigation, route }) => {
 						</TouchableOpacity>
 						<TouchableOpacity
 							onPress={onClose}
-							style={[styles.modalButton, { backgroundColor: "grey", }]}
+							style={[styles.modalButton, {backgroundColor: "grey",}]}
 						>
 							<Text style={styles.buttonText}>
 								닫기
@@ -243,15 +241,15 @@ const MyInfo = ({ navigation, route }) => {
 	};
 	
 	if (isLoading) {
-		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff" /></View>;
+		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff"/></View>;
 	}
 	
 	return (
 		<View style={styles.container}>
-			<View style={{ padding: 20, alignItems: "center", }}>
-				<TouchableOpacity onPress={profileModalVisible}>
+			<View style={{padding: 20, alignItems: "center"}}>
+				<TouchableOpacity onPress={profileModalVisible} disabled={isRequestPending}>
 					<Image
-						source={{ uri: imageUri }}
+						source={{uri: imageUri}}
 						style={styles.Image}
 					/>
 				</TouchableOpacity>
@@ -261,15 +259,15 @@ const MyInfo = ({ navigation, route }) => {
 						onClose={() => setIsModalVisible(false)}
 					/>
 				)}
-				<Text style={[styles.smallText, { marginTop: 5 }]}>프로필 사진 변경</Text>
+				<Text style={[styles.smallText, {marginTop: 5}]}>프로필 사진 변경</Text>
 			</View>
-			<View style={{ width: "90%", }}>
+			<View style={{width: "90%"}}>
 				<View style={styles.View}>
 					<Text style={styles.smallText}>이름</Text>
 					<Text style={styles.text}>{username}</Text>
 				</View>
 			</View>
-			<View style={{ width: "90%", }}>
+			<View style={{width: "90%"}}>
 				<View style={{
 					flexDirection: "column",
 					padding: 12,
@@ -278,18 +276,19 @@ const MyInfo = ({ navigation, route }) => {
 					backgroundColor: "#99A1B6",
 				}}>
 					<Text style={styles.smallText}>사용자 이름</Text>
-					<View style={{ flexDirection: "row" }}>
+					<View style={{flexDirection: "row"}}>
 						<TextInput
-							style={[styles.text, { minWidth: "80%", padding: 5 }]}
+							style={[styles.text, {minWidth: "80%", padding: 5}]}
 							onChangeText={handleUserIdChange}
 							value={editableUserId}
-							editable={true}
+							editable={!isRequestPending}
 							returnKeyType="done"
 						/>
 						{showDuplicateButton && (
 							<TouchableOpacity
 								onPress={duplicateCheck}
 								style={styles.duplicateConfirm}
+								disabled={isRequestPending}
 							>
 								<Text style={styles.duplicateText}>중복{'\n'}확인</Text>
 							</TouchableOpacity>
@@ -303,19 +302,20 @@ const MyInfo = ({ navigation, route }) => {
 				}}>
 					{showDuplicateButton &&
 						(!isDuplicateChecked ?
-								<Text style={{ color: "grey" }}>
+								<Text style={{color: "grey"}}>
 									중복 조회를 부탁해요!
 								</Text>
 								:
-								<Text style={warning === '이미 사용 중인 아이디입니다.' ? { color: 'red' } : { color: 'green' }}>
+								<Text style={warning === '이미 사용 중인 아이디입니다.' ? {color: 'red'} : {color: 'green'}}>
 									{warning}
 								</Text>
 						)
 					}
 				</View>
 			</View>
-			<View style={{ width: "90%", }}>
-				<TouchableOpacity onPress={() => setIsLocVisible(!isLocVisible)} style={styles.View}>
+			<View style={{width: "90%"}}>
+				<TouchableOpacity onPress={() => setIsLocVisible(!isLocVisible)} style={styles.View}
+				                  disabled={isRequestPending}>
 					<Text style={styles.smallText}>위치</Text>
 					<Text style={styles.text}>{serverUserLocation}</Text>
 				</TouchableOpacity>
@@ -329,7 +329,7 @@ const MyInfo = ({ navigation, route }) => {
 					<View style={styles.LocModalContainer}>
 						<Text style={styles.title}>이전에 저장된 주소</Text>
 						{loading ? (
-							<ActivityIndicator size="large" color="#0000ff" />
+							<ActivityIndicator size="large" color="#0000ff"/>
 						) : (
 							latitude !== null && longitude !== null && (
 								<MapView
@@ -341,30 +341,30 @@ const MyInfo = ({ navigation, route }) => {
 										longitudeDelta: 0.0421,
 									}}
 								>
-									<Marker coordinate={{ latitude, longitude }} />
+									<Marker coordinate={{latitude, longitude}}/>
 								</MapView>
 							)
 						)}
-						<GetLocation onLocationReceived={handleLocationReceived} refresh={refresh} />
+						<GetLocation onLocationReceived={handleLocationReceived} refresh={refresh}/>
 						<View style={styles.buttonContainer}>
-							<Button title="현재 위치로 변경" onPress={handleRefresh} />
-							<Button title="취소" onPress={() => setIsLocVisible(false)} />
+							<Button title="현재 위치로 변경" onPress={handleRefresh} disabled={isRequestPending}/>
+							<Button title="취소" onPress={() => setIsLocVisible(false)} disabled={isRequestPending}/>
 						</View>
 					</View>
 				</Modal>
 			)}
-			<View style={{ width: "90%", }}>
+			<View style={{width: "90%"}}>
 				<TouchableOpacity
-					style={[styles.saveButton, { backgroundColor: (editableUserId !== initialUserId && !isDuplicateChecked) ? 'lightgrey' : 'grey' }]}
+					style={[styles.saveButton, {backgroundColor: (editableUserId !== initialUserId && !isDuplicateChecked) ? 'lightgrey' : 'grey'}]}
 					onPress={handleSave}
-					disabled={editableUserId !== initialUserId && !isDuplicateChecked}
+					disabled={editableUserId !== initialUserId && !isDuplicateChecked || isRequestPending}
 				>
 					<Text style={styles.saveText}>저장</Text>
 				</TouchableOpacity>
 			</View>
 		</View>
 	);
-}
+};
 
 const styles = StyleSheet.create({
 	loader: {
