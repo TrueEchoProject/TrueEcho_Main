@@ -62,7 +62,7 @@
 
 ## 🚀 문제 해결 과정
 - [N + 1 문제를 극악무도하게 66.7%  최적화한 이야기](https://bamlatte.notion.site/1-N-9a0675cb8a0d40c899a0f816be641413?pvs=4)_
-- [JPA 성능 최적화: N+1 문제 해결로 97% 성과를 얻다](https://bamlatte.notion.site/09c78c60348e4aca9b637d90061b186b?pvs=4)
+- [JPA 성능 최적화: 엔티티 연관관계 개선으로 97% 성과를 얻다](https://bamlatte.notion.site/09c78c60348e4aca9b637d90061b186b?pvs=4)
 - [IntelliJ 사용자를 위한 .env 파일로 개발 환경 보호하기](https://bamlatte.notion.site/7c3c15df48884d7b8ab57e6e604ced85?pvs=4)
 ---
 
