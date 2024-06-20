@@ -511,6 +511,7 @@ const SignUpForm = () => {
             {userData.y && userData.x && (
               <>
                 <MapView
+                  provider={PROVIDER_GOOGLE} // Google Maps를 사용하도록 설정
                   style={styles.map}
                   initialRegion={{
                     latitude: parseFloat(userData.y),
@@ -578,7 +579,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: wp(10),
     paddingBottom: wp(0),
-    backgroundColor:"#fff"
+    backgroundColor: "#fff"
   },
   logo: {
     width: wp(50),
