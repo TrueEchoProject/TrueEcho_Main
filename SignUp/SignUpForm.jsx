@@ -10,14 +10,17 @@ import {
   Button,
   TouchableOpacity,
   ActivityIndicator,
+  Modal,
 } from "react-native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Notification from "./Notification";
 import GetLocation from './GetLocation';
+import CustomDatePicker from "./CustomDatePicker";
 import Api from '../Api';
 import * as SecureStore from 'expo-secure-store';
 import MapView, { Marker } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native'; // useNavigation 훅을 임포트
+
 
 
 const SignUpForm = () => {
@@ -126,8 +129,9 @@ const SignUpForm = () => {
   const showDatePicker = () => setDatePickerVisibility(true);
   const hideDatePicker = () => setDatePickerVisibility(false);
 
+
   const handleConfirm = (date) => {
-    const koreanDate = new Date(date.getTime() + (9 * 60 * 60 * 1000));
+    const koreanDate = new Date(date.getTime() + (9 * 60 * 60 * 1000)); // UTC 시간을 한국 시간으로 변환
     const koreanDateString = koreanDate.toISOString().split('T')[0];
     setUserData({ ...userData, dob: koreanDateString });
 
@@ -146,26 +150,6 @@ const SignUpForm = () => {
       setCheckAuth(false);
     }
   }, [step]);
-
-  // const handleNickNameButtonPress = async () => {
-  //   try {
-  //     const nickname = encodeURIComponent(userData.nickname); // 닉네임 인코딩(닉네임이 한글이면 오류가 생길 수 있음?)
-  //     const response = await Api.get(`/accounts/nickname/duplication?nickname=${nickname}`); // 확인 해야 함.
-  //     console.log("닉네임 중복 검사 성공:", response.data);
-
-  //     if (response.data.isDuplicate) {
-  //       setIsNicknameValid(false); // 닉네임 중복 검사 실패
-  //       setWarning("닉네임이 이미 사용 중입니다.");
-  //     } else {
-  //       setIsNicknameValid(true); // 닉네임 중복 검사 통과
-  //       setWarning("");
-  //     }
-  //   } catch (error) {
-  //     console.error('닉네임 중복 검사 실패:', error);
-  //     setIsNicknameValid(false); // 닉네임 중복 검사 실패
-  //     setWarning("닉네임 중복 검사 중 오류가 발생했습니다.");
-  //   }
-  // };
 
   const calculateAge = (birthdate) => {
     const today = new Date();
@@ -342,6 +326,8 @@ const SignUpForm = () => {
     setLoadingLocation(true);
   };
 
+
+
   return (
     <View style={styles.container}>
       <BackButton />
@@ -458,8 +444,14 @@ const SignUpForm = () => {
                 <Text style={{ fontSize: hp(2.5) }}>친구들의 일상을 볼 수 있어요!</Text>
               </>
             )}
+            <CustomDatePicker
+              isVisible={isDatePickerVisible}
+              onConfirm={handleConfirm}
+              onCancel={hideDatePicker}
+            />
           </>
         )}
+
         {step === 5 && (
           <>
             <Text style={styles.text}>성별</Text>
