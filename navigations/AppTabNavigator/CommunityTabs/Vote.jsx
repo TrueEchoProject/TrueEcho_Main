@@ -98,7 +98,7 @@ const Vote = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState([]);
   const [userLoading, setUserLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isFrontImage, setIsFrontImage] = useState(true);
@@ -144,10 +144,14 @@ const Vote = () => {
     setUserLoading(true);
     try {
       const response = await Api.get('/vote/read/users?userCount=4');
-      console.log('Full response:', response.data); // 전체 응답 로그 추가
       if (response.data.status === 202) {
-        console.log('Fetched user data:', response.data.data.userList); // 콘솔 로그 추가
-        setUserData(response.data.data.userList);
+        const uniqueUsers = response.data.data.userList.reduce((acc, user) => {
+          if (!acc.some(u => u.id === user.id)) {
+            acc.push(user);
+          }
+          return acc;
+        }, []);
+        setUserData(uniqueUsers.slice(0, 4)); // 중복 제거 후 4개의 유저만 설정
       } else {
         console.error('Failed to fetch user data: ', response.data.message);
       }
@@ -157,7 +161,7 @@ const Vote = () => {
       setUserLoading(false);
     }
   };
-  
+
 
   const sendVoteResult = async (userId, voteId) => {
     try {
@@ -256,7 +260,7 @@ const Vote = () => {
     setShowStartPage(true);
     fetchData(); // 데이터를 다시 불러옵니다.
   };
-  
+
   if (showStartPage) {
     return <StartPage onStart={handleStart} />;
   }
@@ -309,7 +313,7 @@ const Vote = () => {
               <ActivityIndicator size="small" color="#0000ff" />
             ) : (
               <View style={styles.userContainer}>
-                {userData && userData.map((user) => (
+                {userData && userData.slice(0, 4).map((user) => (
                   <TouchableOpacity
                     key={user.id}
                     style={[
@@ -322,6 +326,7 @@ const Vote = () => {
                     <Text>{user.username}</Text>
                   </TouchableOpacity>
                 ))}
+
               </View>
             )}
           </View>
