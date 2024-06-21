@@ -17,7 +17,7 @@ import { Image as ExpoImage } from 'expo-image';
 import Api from "../../../Api";
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator'; // 이미지 리사이징 추가.
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import GetLocation from "../../../SignUp/GetLocation";
 
 const windowWidth = Dimensions.get('window').width;
@@ -333,6 +333,7 @@ const MyInfo = ({ navigation }) => {
 						) : (
 							latitude !== null && longitude !== null && (
 								<MapView
+								provider={PROVIDER_GOOGLE}
 									style={styles.map}
 									region={{
 										latitude: latitude,

@@ -18,7 +18,7 @@ import GetLocation from './GetLocation';
 import CustomDatePicker from "./CustomDatePicker";
 import Api from '../Api';
 import * as SecureStore from 'expo-secure-store';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native'; // useNavigation 훅을 임포트
 
 
