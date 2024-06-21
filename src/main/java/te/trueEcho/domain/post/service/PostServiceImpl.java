@@ -6,6 +6,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import te.trueEcho.domain.friend.entity.Friend;
 import te.trueEcho.domain.friend.repository.FriendRepositoryImpl;
 import te.trueEcho.domain.post.converter.CommentToDto;
 import te.trueEcho.domain.post.converter.DtoToComment;
@@ -16,8 +17,13 @@ import te.trueEcho.domain.post.entity.Like;
 import te.trueEcho.domain.post.entity.Post;
 import te.trueEcho.domain.post.entity.PostStatus;
 import te.trueEcho.domain.post.repository.PostRepository;
+import te.trueEcho.domain.user.entity.SuspendedUser;
 import te.trueEcho.domain.user.entity.User;
+import te.trueEcho.domain.user.repository.BlockRepository;
+import te.trueEcho.domain.user.repository.SuspendedUserRepository;
 import te.trueEcho.domain.user.repository.UserRepository;
+import te.trueEcho.global.response.ExceptionResponse;
+import te.trueEcho.global.response.ResponseInterface;
 import te.trueEcho.global.util.AuthUtil;
 import te.trueEcho.infra.azure.AzureUploader;
 
@@ -27,15 +33,7 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.Date;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
-
-import static te.trueEcho.domain.post.entity.PostStatus.fromValue;
 
 @Slf4j
 @Service
@@ -50,7 +48,8 @@ public class PostServiceImpl implements PostService {
     private final PostToDto postToDto;
     private final CommentToDto commentToDto;
     private final DtoToComment dtoToComment;
-    public Comment comment;
+    private final BlockRepository blockRepository;
+    private final SuspendedUserRepository suspendedUserRepository;
 
     private static String getFilterLocation(ReadPostRequest readPostRequest) {
         String filterLocation = "";
@@ -59,7 +58,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public ReadPostResponse getSinglePost(Long postId) {
+    public ResponseInterface getSinglePost(Long postId) {
         User requestUser = authUtil.getLoginUser();
         Post targetPost = postRepository.getPostById(postId);
 
@@ -68,8 +67,31 @@ public class PostServiceImpl implements PostService {
             return null;
         }
 
+        // 정지된 사용자이면 예외처리
+        if(suspendedUserRepository.findSuspendedUserByEmail(targetPost.getUser().getEmail()) != null){
+            return ExceptionResponse.builder()
+                    .exceptionMessage("정지된 사용자입니다.")
+                    .exceptionCode("403")
+                    .build();
+        }
+
+        // 차단된 게시물이면 예외처리
+        if(blockRepository.getBlockList(requestUser).contains(targetPost.getUser())){
+            return ExceptionResponse.builder()
+                    .exceptionMessage("차단된 사용자입니다.")
+                    .exceptionCode("403")
+                    .build();
+        }
+
+
         return ReadPostResponse.builder()
                 .isMine(targetPost.getUser().equals(requestUser))
+                .isMyLike(
+                        targetPost.getLikes().stream().anyMatch(
+                                like -> like.getUser().getId().equals(requestUser.getId())
+                        )
+                )
+                .isFriend(friendRepository.findMyFriendsByUser(requestUser).contains(targetPost.getUser()))
                 .postFrontUrl(targetPost.getUrlFront())
                 .postBackUrl(targetPost.getUrlBack())
                 .createdAt(targetPost.getCreatedAt())
@@ -81,11 +103,6 @@ public class PostServiceImpl implements PostService {
                 .userId(targetPost.getUser().getId())
                 .username(targetPost.getUser().getName())
                 .profileUrl(targetPost.getUser().getProfileURL())
-                .isMyLike(
-                        targetPost.getLikes().stream().anyMatch(
-                                like -> like.getUser().getId().equals(requestUser.getId())
-                        )
-                )
                 .build();
     }
 
@@ -96,18 +113,19 @@ public class PostServiceImpl implements PostService {
         log.warn("foundUser: {}", foundUser.getId());
         String yourLocation = foundUser.getLocation();
 
+
         // 필터링하는 위치 [ default -> all ]
         String filterLocation = getFilterLocation(readPostRequest);
 
         // 게시물 조회
         List<User> filteredUser = new ArrayList<>();
-        boolean isFriend = true;
+        List<User> friendGroup = new ArrayList<>();
         switch (readPostRequest.getType()) {
             case FRIEND:
                 filteredUser = friendRepository.findMyFriendsByUser(foundUser);
                 break;
             case PUBLIC:
-                isFriend = friendRepository.findMyFriendsByUser(foundUser).contains(foundUser); // 친구인지 확인
+                friendGroup = friendRepository.findMyFriendsByUser(foundUser); // 친구인지 확인
                 filteredUser = userRepository.findUsersByLocation(filterLocation, foundUser);
                 break;
             case MINE:
@@ -117,10 +135,31 @@ public class PostServiceImpl implements PostService {
                 log.error("Invalid feed type: {}", readPostRequest.getType());
         }
 
-        List<Post> postList = postRepository.getAllPost(readPostRequest.getPageCount(), readPostRequest.getIndex(), filteredUser);
-        // post -> Dto 컨버터
+        filteredUser = filterUserWithBlockAndSuspended(filteredUser, foundUser);
 
-        return postToDto.converter(postList, yourLocation, foundUser.getId(), isFriend);
+        List<Post> postList = postRepository.getAllPost(readPostRequest.getPageCount(),
+                                                        readPostRequest.getIndex(),
+                                                        filteredUser );
+
+        return postToDto.converter(postList, yourLocation, foundUser.getId(),readPostRequest.getType(),  friendGroup);
+    }
+
+    List<User> filterUserWithBlockAndSuspended(List<User> users, User user){
+        List<User> filteredUsers = new ArrayList<>();
+
+        List<SuspendedUser> allSuspendedUser = suspendedUserRepository.findAll();
+        List<User> allBlockedUser =  blockRepository.getBlockList(user);
+
+        users.forEach(u -> {
+                    boolean notB = !allBlockedUser.contains(u);
+                    boolean notS = !allSuspendedUser.contains(u);
+                    if (notB && notS) {
+                        filteredUsers.add(u);
+                    }
+                }
+        );
+
+        return filteredUsers;
     }
 
     @Override
