@@ -3,13 +3,14 @@ package te.trueEcho.domain.post.dto;
 import lombok.Builder;
 import lombok.Getter;
 import te.trueEcho.domain.post.entity.PostStatus;
+import te.trueEcho.global.response.ResponseInterface;
 
 import java.time.LocalDateTime;
 
 
 @Getter
 @Builder
-public class ReadPostResponse {
+public class ReadPostResponse implements ResponseInterface {
         private  final String username;
         private final Long userId;
         private final boolean isMine;
