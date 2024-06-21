@@ -82,7 +82,7 @@ const MyInfo = ({ navigation }) => {
 	
 	const pickImage = async () => {
 		if (Platform.OS !== 'web') {
-			const {status} = await ImagePicker.requestMediaLibraryPermissionsAsync();
+			const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 			if (status !== 'granted') {
 				Alert.alert('Permission Required', 'Sorry, we need camera roll permissions to make this work!');
 				return;
@@ -95,11 +95,11 @@ const MyInfo = ({ navigation }) => {
 				aspect: [4, 4],
 				quality: 1,
 			});
-			if (!result.cancelled) {
+			if (!result.canceled) { // 변경된 부분: result.cancelled -> result.canceled
 				const manipResult = await ImageManipulator.manipulateAsync(
-					result.uri,
-					[{resize: {width: 800}}], // 이미지 크기 조정
-					{compress: 0.7, format: ImageManipulator.SaveFormat.JPEG}
+					result.assets[0].uri, // 변경된 부분: result.uri -> result.assets[0].uri
+					[{ resize: { width: 800 } }], // 이미지 크기 조정
+					{ compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
 				);
 				setImageUri(manipResult.uri);
 			}
