@@ -152,6 +152,18 @@ public class UserAuthController {
     @PatchMapping("/password")
     public ResponseEntity<ResponseForm> updatePassword(
             @RequestBody UpdatePasswordRequest registerRequest) {
+
+        boolean isVerified = userAuthService.checkEmailCode(
+                CheckCodeRequest.builder()
+                        .email(registerRequest.getEmail())
+                        .checkCode(registerRequest.getVerificationCode())
+                        .build()
+        );
+
+        if (!isVerified) {
+            return ResponseEntity.ok(ResponseForm.of(VERIFY_EMAIL_FAIL));
+        }
+
         final boolean isUpdated = userAuthService.updatePassword(registerRequest);
 
         return isUpdated ?
