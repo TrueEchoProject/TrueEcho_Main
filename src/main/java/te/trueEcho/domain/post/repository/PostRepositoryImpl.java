@@ -44,6 +44,7 @@ public class PostRepositoryImpl implements PostRepository {
         try {
             return em.createQuery("select p from Post p " +
                             "join fetch p.user " +
+                            "left join fetch p.likes " +
                             "where p.id = :postId", Post.class)
                     .setParameter("postId", postId)
                     .getSingleResult();
