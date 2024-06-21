@@ -69,7 +69,7 @@ public class PostServiceImpl implements PostService {
         }
 
         return ReadPostResponse.builder()
-                .isMine(targetPost.getUser() != requestUser)
+                .isMine(targetPost.getUser().equals(requestUser))
                 .postFrontUrl(targetPost.getUrlFront())
                 .postBackUrl(targetPost.getUrlBack())
                 .createdAt(targetPost.getCreatedAt())
