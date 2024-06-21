@@ -156,14 +156,6 @@ public class SettingController {
                                                        @RequestParam(required = false) Double x,
                                                        @RequestParam(required = false) Double y) {
 
-        boolean isDuplicated =  userAuthService.isTypeDuplicated(
-                UserCheckRequest.builder()
-                        .nickname(nickname)
-                        .build(), ValidationType.NICKNAME);
-
-        if (isDuplicated){
-            return ResponseEntity.ok(ResponseForm.of(ResponseCode.NOT_DUPLICATED_FAIL));
-        }
 
         boolean isEdited =  settingService.editMyInfo(EditMyInfoRequest.builder()
                 .profileImage(profileImage)
