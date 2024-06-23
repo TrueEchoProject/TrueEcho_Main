@@ -23,6 +23,7 @@ public class PostToDto {
                             .userId(post.getUser().getId())
                             .isMine(Objects.equals(post.getUser().getId(), userId))
                             .isFriend(isFriend)
+                            .likesCount(post.getLikes().size())
                             .title(post.getTitle())
                             .postFrontUrl(post.getUrlFront())
                             .postBackUrl(post.getUrlBack())
