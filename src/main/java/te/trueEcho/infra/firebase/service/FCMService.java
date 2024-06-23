@@ -6,20 +6,12 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import te.trueEcho.domain.notification.dto.NotificationDto;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.UserAuthRepository;
 import te.trueEcho.global.util.AuthUtil;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 @Slf4j
@@ -69,41 +61,22 @@ public class FCMService {
         userAuthRepository.save(user);
     }
 
-    private final String EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
-
-    public void sendNotification(String expoPushToken, NotificationDto dto) {
-        RestTemplate restTemplate = new RestTemplate();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept", "application/json");
-        headers.set("Accept-Encoding", "gzip, deflate");
-        headers.set("Content-Type", "application/json");
-
-        Map<String, Object> body = new HashMap<>();
-        body.put("to", expoPushToken);
-        body.put("sound", "default");
-        body.put("title", dto.getTitle());
-        body.put("body", dto.getBody());
-        body.put("data", Map.of("userId", String.valueOf(dto.getData().getUserId()),
-                "contentId", String.valueOf(dto.getData().getContentId()),
-                "notiType", String.valueOf(dto.getData().getNotiType())));
-
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+    public void sendNotification(String token, NotificationDto dto) {
+        Message message = Message.builder()
+                .setToken(token)
+                .setNotification(Notification.builder().setTitle(dto.getTitle()).setBody(dto.getBody()).build())
+                .putData("userId", String.valueOf(dto.getData().getUserId()))
+                .putData("postId", String.valueOf(dto.getData().getContentId()))
+                .putData("notiType", String.valueOf(dto.getData().getNotiType()))
+                .build();
 
         try {
-            ResponseEntity<String> response = restTemplate.exchange(EXPO_PUSH_URL, HttpMethod.POST, request, String.class);
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                log.info("Push notification sent successfully!");
-            } else {
-                log.error("Failed to send push notification. Response: " + response.getBody());
-            }
+            String response = FirebaseMessaging.getInstance().send(message);
+            log.info("Successfully sent message: {}", response);
+        } catch (FirebaseMessagingException e) {
+            handleFirebaseMessagingException(e, token);
         } catch (Exception e) {
-            if (e instanceof FirebaseMessagingException) {
-                handleFirebaseMessagingException((FirebaseMessagingException) e, expoPushToken);
-            } else {
-                log.error("Error sending message", e);
-            }
+            log.error("Error sending message", e);
         }
     }
 

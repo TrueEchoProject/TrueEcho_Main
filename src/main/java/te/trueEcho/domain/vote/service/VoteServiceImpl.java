@@ -80,20 +80,22 @@ public class VoteServiceImpl implements VoteService {
                 return null;
             }
 
-            Map<Long, Post> latestPostsByUser = new LinkedHashMap<>();
+            Map<User, Post> latestPostsByUser = new LinkedHashMap<>();
 
             for (Post post : randomPosts) {
                 User user = post.getUser();
-                if (!latestPostsByUser.containsKey(user.getId())) {
-                    latestPostsByUser.put(user.getId(), post);
+                if (!latestPostsByUser.containsKey(user)) {
+                    latestPostsByUser.put(user, post);
                 }else{
-                    Post latestPost = latestPostsByUser.get(user.getId());
+                    Post latestPost = latestPostsByUser.get(user);
                     if (latestPost.getCreatedAt().isBefore(post.getCreatedAt())) {
-                        latestPostsByUser.put(user.getId(), post);
+                        latestPostsByUser.put(user, post);
                     }
                 }
             }
-            cacheShuffledList(voteUserCount, Arrays.asList(latestPostsByUser.values().toArray()), false);
+
+            cacheShuffledList(voteUserCount, Arrays.asList(randomPosts.toArray()), false);
+
             return getRandomUsersWithPostForVote(voteUserCount);
         }
     }
@@ -184,5 +186,9 @@ public class VoteServiceImpl implements VoteService {
                 .photoBackUrl(postList.get(0).getUrlBack())
                 .photoFrontUrl(postList.get(0).getUrlFront())
                 .build();
+
+
     }
+
+
 }

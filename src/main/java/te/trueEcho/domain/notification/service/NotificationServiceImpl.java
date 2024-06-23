@@ -29,9 +29,12 @@ import java.util.Date;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -71,7 +74,7 @@ public class NotificationServiceImpl implements NotificationService {
 //                    notificationEditService.checkIfUserIsWaiting(receiver);
 
                     // db에 알림 저장
-                    saveNotiInDB(request.getTitle(), request.getBody(), request, receiver, sender);
+                    saveNotiInDB(request.getTitle(), request.getBody(), request, receiver, null);
                     return true;
 
                 case SERVICE:
@@ -80,7 +83,7 @@ public class NotificationServiceImpl implements NotificationService {
                     fcmService.sendNotification(token, request);
 
                     // db에 알림 저장
-                    saveNotiInDB(request.getTitle(), request.getBody(), request, receiver, sender);
+                    saveNotiInDB(request.getTitle(), request.getBody(), request, receiver, null);
                     return true;
 
                 // 클라이언트에서 서버로 이벤트 감지해서 데이터 전송하고 클라이언트로 알림을 보내는 경우
@@ -92,13 +95,7 @@ public class NotificationServiceImpl implements NotificationService {
                         //fcmData 재료
                         String voteTitle = voteRepository.findLastVoteTitleByUserId(request.getData().getUserId());
                         String title = "투표받음";
-                        String ageGroup;
-                        if (sender.getAge() < 10) {
-                            ageGroup = "어린이";
-                        } else {
-                            ageGroup = (sender.getAge() / 10) * 10 + "대"; // 연령대를 구함
-                        }
-                        String body = voteTitle + "질문에 " + ageGroup + " " + sender.getGender() + " " + sender.getNickname() + "님이 투표하셨어요. 확인해볼까요?";
+                        String body = voteTitle + "질문에" + sender.getAge() + " " + sender.getGender() + " " + sender.getNickname() + "님이 투표하셨어요. 확인해볼까요?";
 
                         //fcmData 생성
                         NotificationDto fcmData = getNotificationDto(title, body, request);
