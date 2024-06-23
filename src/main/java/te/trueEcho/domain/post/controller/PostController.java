@@ -15,7 +15,7 @@ import te.trueEcho.domain.post.entity.PostStatus;
 import te.trueEcho.domain.post.service.PostService;
 import te.trueEcho.global.response.ResponseCode;
 import te.trueEcho.global.response.ResponseForm;
-
+import te.trueEcho.global.response.ResponseInterface;
 
 
 @Tag(name = "Post API", description = "게시물 관리 API")
@@ -70,7 +70,7 @@ public class PostController {
     @GetMapping("/read")
     public ResponseEntity<ResponseForm> readSinglePost(@RequestParam Long postId){
 
-        ReadPostResponse postGetDtoList =  postService.getSinglePost(postId);
+        ResponseInterface postGetDtoList =  postService.getSinglePost(postId);
 
         return  postGetDtoList != null ?
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_POST_SUCCESS, postGetDtoList)) :
@@ -184,18 +184,6 @@ public class PostController {
             @RequestBody WriteCommentRequest writeCommentRequest){
 
         boolean isWritten = postService.writeComment(writeCommentRequest);
-//
-//        if(isWritten){
-//            notificationController.sendNotification(
-//                    NotificationDto.builder().data(
-//                            NotificationDto.Data.builder()
-//                                                .postId(writeCommentRequest.getPostId()) // contentid임.
-//                                                .userId(writeCommentRequest.getReceiverId())
-//                                                .notiType(NotiType.COMMENT.ordinal())
-//                                                .build())
-//                            .build()
-//            );
-//        }
 
         return isWritten ?
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.POST_COMMENT_SUCCESS)) :

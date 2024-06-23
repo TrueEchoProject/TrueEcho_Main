@@ -88,10 +88,10 @@ public class User extends CreatedDateAudit {
     private String fcmToken;
 
     @OneToMany(mappedBy = "sendUser", cascade = CascadeType.ALL)
-    private List<Friend> friend;
+    private List<Friend> friend = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Block> block;
+    private List<Block> blockedUsers = new ArrayList<>();
 
 //    @OneToOne(mappedBy = "user",  cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //    private SuspendedUser suspendedUser;
