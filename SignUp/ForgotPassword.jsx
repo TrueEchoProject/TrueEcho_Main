@@ -8,6 +8,7 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import * as SecureStore from 'expo-secure-store';
 import Api from '../Api';
 import { useNavigation } from '@react-navigation/native';
 
@@ -100,6 +101,8 @@ const ForgotPassword = () => {
       const response = await Api.patch('/accounts/password', { email, newPassword });
       
       if (response.data && response.data.status === 200 && response.data.code === "U0015") {
+        await SecureStore.deleteItemAsync('userEmail');
+        await SecureStore.deleteItemAsync('userPassword');
         navigation.navigate('Login'); // 로그인 폼으로 이동
       } else {
         setWarning("resetPasswordFailed");
