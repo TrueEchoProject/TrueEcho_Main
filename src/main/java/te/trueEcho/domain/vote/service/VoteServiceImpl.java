@@ -186,9 +186,5 @@ public class VoteServiceImpl implements VoteService {
                 .photoBackUrl(postList.get(0).getUrlBack())
                 .photoFrontUrl(postList.get(0).getUrlFront())
                 .build();
-
-
     }
-
-
 }
