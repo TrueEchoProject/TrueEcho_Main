@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import te.trueEcho.domain.setting.dto.notiset.NotificationSettingDto;
-import te.trueEcho.domain.user.entity.User;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

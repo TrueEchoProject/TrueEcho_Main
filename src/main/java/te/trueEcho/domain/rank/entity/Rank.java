@@ -33,7 +33,7 @@ public class Rank {
     private List<User> users;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "vote_id", unique = true)
+    @JoinColumn(name = "vote_id")
     private Vote vote;
 
     @OneToOne(mappedBy = "rank", cascade=CascadeType.ALL)

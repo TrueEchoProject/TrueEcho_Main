@@ -119,7 +119,6 @@ public class User extends CreatedDateAudit {
     @JoinColumn(name = "notification_setting_id", nullable = false)
     private NotificationSetting notificationSetting;
 
-
     @OneToMany(mappedBy = "receiver", fetch = FetchType.LAZY , orphanRemoval = true)
     private List<NotificationEntity> notificationEntity = new ArrayList<>();
 
