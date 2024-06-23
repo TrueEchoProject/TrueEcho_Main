@@ -32,106 +32,118 @@ const FriendsScreen = () => {
 	const [requests, setRequests] = useState([]);
 	const [friends, setFriends] = useState([]);
 	const [loading, setLoading] = useState(false);
-	
+
 	useEffect(() => {
-		setLoading(true);
-		if (activeTab === 'invite') {
-			fetchInvitedUsers();
-		} else if (activeTab === 'recommend') {
-			fetchRecommendedUsers();
-		} else if (activeTab === 'request') {
-			fetchFriendRequests();
-		} else if (activeTab === 'friends') {
-			fetchFriends();
-		}
+		const initializeData = async () => {
+			setLoading(true);
+			await fetchInvitedUsers();
+			if (activeTab === 'recommend') {
+				await fetchRecommendedUsers();
+			} else if (activeTab === 'invite') {
+				await fetchInvitedUsers();
+			} else if (activeTab === 'request') {
+				await fetchFriendRequests();
+			} else if (activeTab === 'friends') {
+				await fetchFriends();
+			}
+			setLoading(false);
+		};
+		initializeData();
 	}, [activeTab]);
-	
+
 	const fetchRecommendedUsers = useCallback(async () => {
 		try {
 			const response = await Api.get('/friends/recommend');
-			console.log('Recommended users response:', response.data); // 응답 데이터 확인
+			console.log('Recommended users response:', response.data);
 			if (response.data && Array.isArray(response.data.data)) {
-				setUsers(response.data.data);
+				const recommendedUsers = response.data.data;
+				const filteredUsers = recommendedUsers.filter(user => !invitedUsers.some(invited => invited.userId === user.userId));
+				setUsers(filteredUsers);
 			} else {
-				setUsers([]); // 기본값 설정
+				setUsers([]);
 			}
 		} catch (error) {
 			Alert.alert('에러', '추천 친구 목록을 불러오는 중 에러가 발생했습니다.');
-		} finally {
-			setLoading(false);
 		}
-	}, []);
-	
+	}, [invitedUsers]);
+
 	const fetchInvitedUsers = useCallback(async () => {
 		try {
 			const response = await Api.get('/friends/confirmRequest/send');
-			console.log('Invited users response:', response.data); // 응답 데이터 확인
+			console.log('Invited users response:', response.data);
 			if (response.data && Array.isArray(response.data.data)) {
 				setInvitedUsers(response.data.data);
-				console.log('Invited users state set:', response.data.data); // 상태 설정 확인
+				console.log('Invited users state set:', response.data.data);
 			} else {
-				setInvitedUsers([]); // 기본값 설정
+				setInvitedUsers([]);
 			}
 		} catch (error) {
 			Alert.alert('에러', '보낸 친구 요청 목록을 불러오는 중 에러가 발생했습니다.');
-		} finally {
-			setLoading(false);
 		}
 	}, []);
-	
+
 	const fetchFriendRequests = useCallback(async () => {
 		try {
 			const response = await Api.get('/friends/confirmRequest/receive');
-			console.log('Friend requests response:', response.data); // 응답 데이터 확인
+			console.log('Friend requests response:', response.data);
 			if (response.data && Array.isArray(response.data.data)) {
 				setRequests(response.data.data);
 			} else {
-				setRequests([]); // 기본값 설정
+				setRequests([]);
 			}
 		} catch (error) {
 			Alert.alert('에러', '받은 친구 요청 목록을 불러오는 중 에러가 발생했습니다.');
-		} finally {
-			setLoading(false);
 		}
 	}, []);
-	
+
 	const fetchFriends = useCallback(async () => {
 		try {
 			const response = await Api.get('/friends/read');
-			console.log('Friends response:', response.data); // 응답 데이터 확인
+			console.log('Friends response:', response.data);
 			if (response.data && Array.isArray(response.data.data)) {
-				const friends = response.data.data; // 전체 데이터를 사용
+				const friends = response.data.data;
 				setFriends(friends);
 			} else {
-				setFriends([]); // 기본값 설정
+				setFriends([]);
 			}
 		} catch (error) {
 			Alert.alert('에러', '친구 목록을 불러오는 중 에러가 발생했습니다.');
-		} finally {
-			setLoading(false);
 		}
 	}, []);
-	
+
 	const inviteFriend = async (userId) => {
 		try {
 			console.log('Inviting friend with userId:', userId);
+
 			const formData = new FormData();
 			formData.append('targetUserId', userId);
-			const response = await Api.post('/friends/add', formData);
+
+			const accessToken = await getAccessToken();
+			console.log('Access Token:', accessToken);
+
+			const response = await Api.post('/friends/add', formData, {
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+					'Content-Type': 'multipart/form-data',
+				},
+			});
+
 			console.log('Invite friend response:', response.data);
-			if (response.data.success) {
+
+			if (response.data.code === "T002" && response.data.message === "친구 추가에 성공했습니다.") {
 				const invitedUser = users.find(user => user.userId === userId);
 				setInvitedUsers([...invitedUsers, invitedUser]);
+				setUsers(users.filter(user => user.userId !== userId));
 				Alert.alert('성공', '친구 초대 완료');
 			} else {
-				Alert.alert('실패', '친구 초대 실패');
+				Alert.alert('실패', response.data.message || '친구 초대 실패');
 			}
 		} catch (error) {
 			console.error('Error inviting friend:', error.message);
 			Alert.alert('실패', '친구 초대 실패');
 		}
 	};
-	
+
 	const acceptFriendRequest = async (userId) => {
 		try {
 			const formData = new FormData();
@@ -143,7 +155,7 @@ const FriendsScreen = () => {
 					'Content-Type': 'multipart/form-data',
 				},
 			});
-			console.log('Accept friend request response:', response.data); // 응답 데이터 확인
+			console.log('Accept friend request response:', response.data);
 			if (response.data.status === 202) {
 				Alert.alert('성공', '친구 요청 수락 완료');
 				fetchFriendRequests();
@@ -156,7 +168,7 @@ const FriendsScreen = () => {
 			Alert.alert('실패', '친구 요청 수락 실패');
 		}
 	};
-	
+
 	const rejectFriendRequest = async (userId) => {
 		try {
 			const formData = new FormData();
@@ -169,7 +181,7 @@ const FriendsScreen = () => {
 				},
 				data: formData
 			});
-			console.log('Reject friend request response:', response.data); // 응답 데이터 확인
+			console.log('Reject friend request response:', response.data);
 			if (response.data.status === 202) {
 				Alert.alert('성공', '친구 요청 거절 완료');
 				fetchFriendRequests();
@@ -181,7 +193,7 @@ const FriendsScreen = () => {
 			Alert.alert('실패', '친구 요청 거절 실패');
 		}
 	};
-	
+
 	const deleteFriend = async (friendId) => {
 		try {
 			const formData = new FormData();
@@ -194,7 +206,7 @@ const FriendsScreen = () => {
 				},
 				data: formData
 			});
-			console.log('Delete friend response:', response.data); // 응답 데이터 확인
+			console.log('Delete friend response:', response.data);
 			if (response.data.status === 202) {
 				Alert.alert('성공', '친구 삭제 완료');
 				fetchFriends();
@@ -206,7 +218,7 @@ const FriendsScreen = () => {
 			Alert.alert('실패', '친구 삭제 실패');
 		}
 	};
-	
+
 	const getFilteredUsers = useCallback(() => {
 		const lowercasedQuery = searchQuery.toLowerCase();
 		const data = activeTab === 'recommend' ? users : activeTab === 'invite' ? invitedUsers : activeTab === 'request' ? requests : friends;
@@ -214,7 +226,7 @@ const FriendsScreen = () => {
 			item.nickname.toLowerCase().includes(lowercasedQuery) || (item.email && item.email.toLowerCase().includes(lowercasedQuery))
 		);
 	}, [searchQuery, activeTab, users, invitedUsers, requests, friends]);
-	
+
 	const renderUser = ({ item }) => (
 		<ListItem>
 			<Avatar source={{ uri: item.userProfileUrl }} rounded />
@@ -222,7 +234,13 @@ const FriendsScreen = () => {
 				<ListItem.Title>{item.nickname}</ListItem.Title>
 				{item.email && <ListItem.Subtitle>{item.email}</ListItem.Subtitle>}
 			</ListItem.Content>
-			{activeTab === 'recommend' && <Button title="친구 추가" onPress={() => inviteFriend(item.userId)} />}
+			{activeTab === 'recommend' && (
+				invitedUsers.some(invited => invited.userId === item.userId) ? (
+					<Button title="친구 요청 중" disabled />
+				) : (
+					<Button title="친구 추가" onPress={() => inviteFriend(item.userId)} />
+				)
+			)}
 			{activeTab === 'request' && (
 				<View style={styles.requestButtons}>
 					<Button title="수락" onPress={() => acceptFriendRequest(item.userId)} />
@@ -232,7 +250,7 @@ const FriendsScreen = () => {
 			{activeTab === 'friends' && <Button title="삭제" onPress={() => deleteFriend(item.userId)} />}
 		</ListItem>
 	);
-	
+
 	return (
 		<View style={styles.container}>
 			<TextInput

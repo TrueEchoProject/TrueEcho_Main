@@ -14,21 +14,21 @@ export const CameraStackScreen = () => {
 				name="CameraOption"
 				component={Camera}
 				options={{
-					headerLeft: null
+					headerShown: false
 				}}
 			/>
 			<CameraStacks.Screen
 				name="SendPosts"
 				component={SendPostStack}
 				options={{
-					headerLeft: null
+					headerShown: false
 				}}
 			/>
 			<CameraStacks.Screen
 				name="FeedPostPage"
 				component={FeedPostPage}
 				options={{
-					headerLeft: null
+					headerShown: false
 				}}
 			/>
 		</CameraStacks.Navigator>

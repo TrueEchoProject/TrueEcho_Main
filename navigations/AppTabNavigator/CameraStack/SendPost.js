@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, Button, StyleSheet, Image, Text } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Image, Text } from 'react-native';
 import * as ImageManipulator from 'expo-image-manipulator'; // 이미지 조작 라이브러리
 import * as FileSystem from 'expo-file-system'; // 파일 시스템 라이브러리
 import { useNavigation } from '@react-navigation/native';
@@ -24,7 +24,7 @@ export const ImageDouble = React.memo(({ cameraData, setCameraData }) => {
   const backImageUri = cameraData.back.uris[cameraData.back.selectedIndex] || defaultImage;
 
   return (
-    <View style={styles.container}>
+    <View style={styles.imageContainer}>
       <TouchableOpacity onPress={swapImageIndices} style={styles.imageTouchable}>
         <Image source={{ uri: backImageUri }} style={styles.mainImage} />
         <View style={styles.smallImageContainer}>
@@ -105,10 +105,14 @@ const SendPostStack = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <Text>Timer: {Math.floor(timer / 60)}:{timer % 60 < 10 ? `0${timer % 60}` : timer % 60}</Text>
+      <Text style={styles.timerText}>Timer: {Math.floor(timer / 60)}:{timer % 60 < 10 ? `0${timer % 60}` : timer % 60}</Text>
       <ImageDouble cameraData={cameraData} setCameraData={setCameraData} />
-      <Button title="Go to Camera" onPress={goToCameraScreen} />
-      <Button title="Next" onPress={handleNext} />
+      <TouchableOpacity style={styles.button} onPress={goToCameraScreen}>
+        <Text style={styles.buttonText}>다시 촬영하기</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={handleNext}>
+        <Text style={styles.buttonText}>다음으로</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -118,9 +122,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative',
+    backgroundColor: '#f0f4f7',
+    padding: 20,
+  },
+  imageContainer: {
     width: '100%',
-    height: '100%',
+    height: '60%',
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
   },
   imageTouchable: {
     width: '100%',
@@ -146,6 +157,23 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     zIndex: 0,
+  },
+  timerText: {
+    fontSize: 20,
+    marginBottom: 20,
+    color: '#333',
+  },
+  button: {
+    backgroundColor: '#4CAF50',
+    padding: 10,
+    marginVertical: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    width: '80%',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
   },
 });
 
