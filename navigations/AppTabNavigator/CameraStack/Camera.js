@@ -4,47 +4,50 @@ import { Camera as ExpoCamera } from 'expo-camera/legacy';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 
-const CameraScreen = ({ navigation }) => {
+const CameraScreen = ({ navigation, route }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraType, setCameraType] = useState(ExpoCamera.Constants.Type.back);
   const [flashMode, setFlashMode] = useState(ExpoCamera.Constants.FlashMode.off);
   const [zoom, setZoom] = useState(0);
   const [isFocused, setIsFocused] = useState(false);
-  const [timer, setTimer] = useState(180); // 타이머 초기화
+  const initialTimer = route.params?.remainingTime ?? 180;
+  const [timer, setTimer] = useState(initialTimer); // 타이머 초기화
   const cameraRef = useRef(null);
-  
+
   useEffect(() => {
     (async () => {
       const { status } = await ExpoCamera.requestCameraPermissionsAsync();
       setHasPermission(status === 'granted');
     })();
   }, []);
-  
+
   useFocusEffect(
     React.useCallback(() => {
       setIsFocused(true);
       setCameraType(ExpoCamera.Constants.Type.back);
-      setTimer(180);
-      
+
       return () => setIsFocused(false);
     }, [])
   );
-  
+
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      setTimer(prevTimer => {
-        if (prevTimer > 0) {
-          return prevTimer - 1;
-        } else {
-          clearInterval(intervalId);
-          return 0;
-        }
-      });
-    }, 1000);
+    let intervalId;
+    if (timer > 0) {
+      intervalId = setInterval(() => {
+        setTimer(prevTimer => {
+          if (prevTimer > 0) {
+            return prevTimer - 1;
+          } else {
+            clearInterval(intervalId);
+            return 0;
+          }
+        });
+      }, 1000);
+    }
     
     return () => clearInterval(intervalId);
-  }, []);
-  
+  }, [timer]);
+
   const takePicture = async () => {
     if (cameraRef.current) {
       const options = { quality: 0.5, base64: true, skipProcessing: true };
@@ -53,12 +56,12 @@ const CameraScreen = ({ navigation }) => {
     }
     return null;
   };
-  
+
   const handleCapture = async () => {
     const firstPictureData = await takePicture();
     let frontCameraUris = [];
     let backCameraUris = [];
-    
+
     if (firstPictureData && firstPictureData.uri) {
       if (cameraType === ExpoCamera.Constants.Type.back) {
         backCameraUris.push(firstPictureData.uri);
@@ -66,10 +69,10 @@ const CameraScreen = ({ navigation }) => {
         frontCameraUris.push(firstPictureData.uri);
       }
     }
-    
+
     const nextCameraType = cameraType === ExpoCamera.Constants.Type.back ? ExpoCamera.Constants.Type.front : ExpoCamera.Constants.Type.front;
     setCameraType(nextCameraType);
-    
+
     setTimeout(async () => {
       const secondPictureData = await takePicture();
       if (secondPictureData && secondPictureData.uri) {
@@ -79,12 +82,12 @@ const CameraScreen = ({ navigation }) => {
           frontCameraUris.push(secondPictureData.uri);
         }
       }
-      
+
       // FeedPostPage로 데이터를 전달합니다
       navigation.navigate("FeedPostPage", { frontCameraUris, backCameraUris, remainingTime: timer });
     }, 1000);
   };
-  
+
   const handleFlashMode = () => {
     setFlashMode((prevMode) => {
       switch (prevMode) {
@@ -98,7 +101,7 @@ const CameraScreen = ({ navigation }) => {
       }
     });
   };
-  
+
   const handleCameraType = () => {
     setCameraType(
       cameraType === ExpoCamera.Constants.Type.back
@@ -106,7 +109,7 @@ const CameraScreen = ({ navigation }) => {
         : ExpoCamera.Constants.Type.back
     );
   };
-  
+
   const handleZoomOut = () => {
     if (Platform.OS === 'ios') {
       setZoom(zoom - 0.01 >= 0 ? zoom - 0.01 : 0);
@@ -114,7 +117,7 @@ const CameraScreen = ({ navigation }) => {
       setZoom(zoom - 0.1 >= 0 ? zoom - 0.1 : 0);
     }
   };
-  
+
   const handleZoomIn = () => {
     if (Platform.OS === 'ios') {
       setZoom(zoom + 0.01 <= 1 ? zoom + 0.01 : 1);
@@ -122,7 +125,7 @@ const CameraScreen = ({ navigation }) => {
       setZoom(zoom + 0.1 <= 10 ? zoom + 0.1 : 10);
     }
   };
-  
+
   return (
     <View style={styles.container}>
       {hasPermission === null ? (

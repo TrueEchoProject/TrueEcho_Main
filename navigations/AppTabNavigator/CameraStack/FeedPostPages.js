@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, Modal, Image, Alert, TouchableOpacity, Keyboard, Button} from 'react-native';
+import { View, Text, StyleSheet, TextInput, Modal, Image, Alert, TouchableOpacity, Keyboard, Button } from 'react-native';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { useNavigation } from '@react-navigation/native';
 import storage from '../../../AsyncStorage';
 import Api from '../../../Api';
 import ImageDouble from './ImageDouble';
-import { MaterialIcons } from '@expo/vector-icons'; // 아이콘 추가
+import { MaterialIcons } from '@expo/vector-icons';
 
 const FeedPostPage = ({ route }) => {
   const navigation = useNavigation();
@@ -28,7 +28,7 @@ const FeedPostPage = ({ route }) => {
   const [timer, setTimer] = useState(remainingTime || 180);
   const [friendRangeButtonText, setFriendRangeButtonText] = useState('친구범위');
   const [cameraButtonText, setCameraButtonText] = useState('사진설정');
-  const [isSubmitting, setIsSubmitting] = useState(false); // 중복 요청 방지 상태
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const defaultImageUri = 'https://via.placeholder.com/1000';
 
@@ -106,14 +106,14 @@ const FeedPostPage = ({ route }) => {
   };
 
   const shareFeed = async () => {
-    if (isSubmitting) return; // 이미 제출 중이면 아무 작업도 하지 않음
+    if (isSubmitting) return;
 
     if (!title.trim()) {
       Alert.alert('오류', '제목을 입력해주세요!');
       return;
     }
 
-    setIsSubmitting(true); // 제출 시작
+    setIsSubmitting(true);
 
     const formData = new FormData();
 
@@ -195,11 +195,11 @@ const FeedPostPage = ({ route }) => {
 
         Alert.alert('사진이 성공적으로 저장되었습니다.', `저장 시간: ${formattedTime}`);
 
-        if (friendRange === 'FRIEND') {
-          navigation.navigate('FriendFeed', { initialPage: 0 });
-        } else {
-          navigation.navigate('OtherFeed', { initialPage: 0 });
-        }
+        // Reset the navigation stack and navigate to CameraScreen
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'MainPost' }],
+        });
       } else {
         console.error('Unexpected response status:', response.status);
         Alert.alert('오류', '피드 업로드 중 예상치 못한 오류가 발생했습니다.');
@@ -207,14 +207,18 @@ const FeedPostPage = ({ route }) => {
     } catch (error) {
       console.error('피드 업로드 오류:', error.response ? error.response.data : error.message);
       Alert.alert('오류', '피드 업로드 중 오류가 발생했습니다.');
-      navigation.navigate('CameraOption');
+      navigation.navigate('CameraOption', { remainingTime: timer });
     } finally {
-      setIsSubmitting(false); // 제출 완료
+      setIsSubmitting(false);
     }
   };
 
   const handleTitleSave = () => {
     Keyboard.dismiss();
+  };
+
+  const handleBack = () => {
+    navigation.navigate('CameraOption', { remainingTime: timer });
   };
 
   return (
@@ -243,7 +247,7 @@ const FeedPostPage = ({ route }) => {
       <TouchableOpacity style={styles.submitButton} onPress={shareFeed} disabled={isSubmitting}>
         <Text style={styles.submitButtonText}>피드에 올리기</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
         <Text style={styles.backButtonText}>뒤로 가기</Text>
       </TouchableOpacity>
       <Modal
