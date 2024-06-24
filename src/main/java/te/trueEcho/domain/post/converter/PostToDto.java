@@ -4,6 +4,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 import te.trueEcho.domain.friend.entity.Friend;
 import te.trueEcho.domain.post.dto.FeedType;
+import te.trueEcho.domain.post.dto.PostedIn24H;
 import te.trueEcho.domain.post.dto.ReadPostResponse;
 import te.trueEcho.domain.post.dto.PostListResponse;
 import te.trueEcho.domain.post.entity.Post;
@@ -20,7 +21,8 @@ public class PostToDto {
                                        String yourLocation,
                                        Long userId,
                                        FeedType feedType,
-                                       List<User> friendGroup) {
+                                       List<User> friendGroup,
+                                       PostedIn24H postedIn24H) {
         List<ReadPostResponse> readPostResponseList = postList.stream()
                 .map(post -> ReadPostResponse.builder()
                         .postId(post.getId())
@@ -63,6 +65,8 @@ public class PostToDto {
         return  PostListResponse.builder()
                 .yourLocation(yourLocation)
                 .readPostResponse(readPostResponseList)
-                .postCount(readPostResponseList.size()).build();
+                .postCount(readPostResponseList.size())
+                .postedIn24H(postedIn24H)
+                .build();
     }
 }

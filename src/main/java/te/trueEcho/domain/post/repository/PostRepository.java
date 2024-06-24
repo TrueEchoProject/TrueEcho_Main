@@ -12,7 +12,7 @@ public interface PostRepository {
     List<Post> getAllPost(int pageCount, int index, List<User> filteredUser);
 
     Post getPostById(Long postId);
-
+    Post getLatestPostByUser(User user);
     List<Comment> readCommentWithUnderComments(Long postId);
 
 

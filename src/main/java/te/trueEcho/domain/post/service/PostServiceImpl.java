@@ -58,12 +58,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public ResponseInterface getSinglePost(Long postId) {
+    public ResponseInterface getSinglePost(SinglePostRequest singlePostRequest) {
         User requestUser = authUtil.getLoginUser();
-        Post targetPost = postRepository.getPostById(postId);
+        Post targetPost = postRepository.getPostById(singlePostRequest.getPostId());
+
 
         if (targetPost == null) {
-            log.error("Post not found - postId: {}", postId);
+            log.error("Post not found - postId: {}", singlePostRequest.getPostId());
             return null;
         }
 
@@ -83,8 +84,18 @@ public class PostServiceImpl implements PostService {
                     .build();
         }
 
+        PostedIn24H postedIn24H = null;
+        if(singlePostRequest.isRequireRefresh()){
+            postedIn24H = checkIfPostedIn24H(requestUser);
+        }
 
+        return singlePostToDtoConverter(postedIn24H, targetPost, requestUser);
+    }
+
+
+    private ReadPostResponse singlePostToDtoConverter(PostedIn24H postedIn24H, Post targetPost, User requestUser) {
         return ReadPostResponse.builder()
+                .postedIn24H(postedIn24H)
                 .isMine(targetPost.getUser().equals(requestUser))
                 .isMyLike(
                         targetPost.getLikes().stream().anyMatch(
@@ -106,6 +117,25 @@ public class PostServiceImpl implements PostService {
                 .build();
     }
 
+    private PostedIn24H checkIfPostedIn24H(User requestUser) {
+        PostedIn24H postedIn24H;
+        Post latestPost = postRepository.getLatestPostByUser(requestUser);
+        if (latestPost==null){
+            postedIn24H = PostedIn24H.builder()
+                    .postedFront(false)
+                    .postedBack(false)
+                    .postedAt(null)
+                    .build();
+        }else{
+            postedIn24H = PostedIn24H.builder()
+                    .postedFront(latestPost.getUrlFront() != null)
+                    .postedBack(latestPost.getUrlBack() != null)
+                    .postedAt(latestPost.getCreatedAt())
+                    .build();
+        }
+        return postedIn24H;
+    }
+
     @Override
     public PostListResponse getAllPostByType(ReadPostRequest readPostRequest) {
         // 요청자의 위치
@@ -116,6 +146,12 @@ public class PostServiceImpl implements PostService {
 
         // 필터링하는 위치 [ default -> all ]
         String filterLocation = getFilterLocation(readPostRequest);
+
+        PostedIn24H postedIn24H = null;
+        // 내 게시물은 오차피 볼 수 있기 때문에 상태 갱신이 불필요.
+        if(readPostRequest.isRequireRefresh() && readPostRequest.getType() != FeedType.MINE){
+            postedIn24H = checkIfPostedIn24H(foundUser);
+        }
 
         // 게시물 조회
         List<User> filteredUser = new ArrayList<>();
@@ -141,7 +177,10 @@ public class PostServiceImpl implements PostService {
                                                         readPostRequest.getIndex(),
                                                         filteredUser );
 
-        return postToDto.converter(postList, yourLocation, foundUser.getId(),readPostRequest.getType(),  friendGroup);
+        return postToDto.converter(
+                                postList, yourLocation,
+                                foundUser.getId(),readPostRequest.getType(),
+                                friendGroup, postedIn24H);
     }
 
     List<User> filterUserWithBlockAndSuspended(List<User> users, User user){

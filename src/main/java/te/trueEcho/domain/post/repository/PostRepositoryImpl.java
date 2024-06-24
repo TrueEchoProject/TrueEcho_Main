@@ -54,12 +54,30 @@ public class PostRepositoryImpl implements PostRepository {
         }
     }
 
+    public Post getLatestPostByUser(User user) {
+        try {
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime oneDayAgo = now.minusDays(1);
+            return em.createQuery("select p from Post p " +
+                            "where p.user = :user and " +
+                            "p.createdAt >= :oneDayAgo " +
+                            "order by p.createdAt desc", Post.class)
+                    .setParameter("user", user)
+                    .setParameter("oneDayAgo", oneDayAgo)
+                    .setMaxResults(1)
+                    .getSingleResult();
+        } catch (Exception e) {
+            log.error("getLatestPostByUser error : {}", e.getMessage());
+            return null;
+        }
+    }
+
     /**
      * 먼저 그 게시물에 해당하는 메인 댓글을 조회하고,
      * 그 댓글을 이용해 서브 댓글 조회하기.
-     * <p>
-     * 서브댓글에서 시작해서 조호히하기
-     * <p>
+     * 
+     * 서브댓글에서 시작해서 조회하기
+     * 
      * 메인 댓글에서 시작해서 조회하기.
      */
     public List<Comment> readCommentWithUnderComments(Long postId) {
@@ -75,12 +93,12 @@ public class PostRepositoryImpl implements PostRepository {
 
     public List<Post> getRandomPost() {
         try {
-            LocalDateTime twoDaysAgo = LocalDateTime.now().minusDays(50); // 나중에는 이틀로 제한
+
             return em.createQuery("select p from Post p " +
                             "join fetch p.user " +
-                            "where p.createdAt >= :twoDaysAgo " +
                             "order by p.createdAt desc", Post.class)
-                    .setParameter("twoDaysAgo", twoDaysAgo)
+                    .setFirstResult(0)
+                    .setMaxResults(50)
                     .getResultList();
 
         } catch (Exception e) {
@@ -132,6 +150,7 @@ public class PostRepositoryImpl implements PostRepository {
             Post post = em.find(Post.class, postId);
             if (post != null) {
                 em.remove(post);
+                em.flush();
                 return true;
             }
             return false;
