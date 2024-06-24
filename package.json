@@ -57,7 +57,8 @@
     "react-native-screens": "3.31.1",
     "react-native-svg": "^15.3.0",
     "react-native-svg-transformer": "^1.4.0",
-    "styled-components": "^6.1.11"
+    "styled-components": "^6.1.11",
+    "expo-linear-gradient": "~13.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",

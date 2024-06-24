@@ -47,7 +47,7 @@ const CameraScreen = ({ navigation }) => {
   
   const takePicture = async () => {
     if (cameraRef.current) {
-      const options = { quality: 1.0, base64: true, skipProcessing: true };
+      const options = { quality: 0.5, base64: true, skipProcessing: true };
       const data = await cameraRef.current.takePictureAsync(options);
       return data;
     }
@@ -80,7 +80,8 @@ const CameraScreen = ({ navigation }) => {
         }
       }
       
-      navigation.navigate("SendPosts", { frontCameraUris, backCameraUris, remainingTime: timer, ratio: "16:9" });
+      // FeedPostPage로 데이터를 전달합니다
+      navigation.navigate("FeedPostPage", { frontCameraUris, backCameraUris, remainingTime: timer });
     }, 1000);
   };
   
@@ -137,7 +138,6 @@ const CameraScreen = ({ navigation }) => {
               flashMode={flashMode}
               zoom={zoom}
               ref={cameraRef}
-              ratio="16:9" // 카메라 비율을 16:9로 설정
             />
           )}
           <View style={styles.zoomContainer}>

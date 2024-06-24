@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, Modal, Image, Alert, TouchableOpacity, Keyboard, ScrollView, Button } from 'react-native';
+import { View, Text, StyleSheet, Button, TextInput, Modal, Image, Alert, TouchableOpacity, Keyboard } from 'react-native';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { useNavigation } from '@react-navigation/native';
-import { ImageDouble } from './SendPost';
 import storage from '../../../AsyncStorage';
 import Api from '../../../Api';
-import { MaterialIcons } from '@expo/vector-icons';
+import ImageDouble from './ImageDouble'; 
 
 const FeedPostPage = ({ route }) => {
   const navigation = useNavigation();
+  const { frontCameraUris, backCameraUris, remainingTime } = route.params; 
   const [cameraData, setCameraData] = useState({
     front: {
-      uris: [route.params.frontImage],
+      uris: frontCameraUris,
       selectedIndex: 0,
     },
     back: {
-      uris: [route.params.backImage],
+      uris: backCameraUris,
       selectedIndex: 0,
     },
   });
@@ -24,7 +24,7 @@ const FeedPostPage = ({ route }) => {
   const [friendRangeModalVisible, setFriendRangeModalVisible] = useState(false);
   const [friendRange, setFriendRange] = useState('FRIEND');
   const [selectedCamera, setSelectedCamera] = useState('double');
-  const [timer, setTimer] = useState(route.params.remainingTime || 180);
+  const [timer, setTimer] = useState(remainingTime || 180); // 타이머 설정
   const [friendRangeButtonText, setFriendRangeButtonText] = useState('친구범위');
   const [cameraButtonText, setCameraButtonText] = useState('사진설정');
   
@@ -97,18 +97,13 @@ const FeedPostPage = ({ route }) => {
     } else if (selectedCamera === 'back') {
       return <Image source={{ uri: backImage || defaultImageUri }} style={styles.cameraImage} />;
     } else if (selectedCamera === 'double') {
-      return <ImageDouble cameraData={cameraData} setCameraData={setCameraData} defaultImageUri={defaultImageUri} />;
+      return <ImageDouble cameraData={cameraData} setCameraData={setCameraData} />;
     } else {
       return <Text>No image available</Text>;
     }
   };
   
   const shareFeed = async () => {
-    if (!title) {
-      Alert.alert('알림', '제목을 입력해주세요!');
-      return;
-    }
-
     const formData = new FormData();
     
     formData.append('type', friendRange);
@@ -211,32 +206,32 @@ const FeedPostPage = ({ route }) => {
   
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.timerText}>Timer: {Math.floor(timer / 60)}:{timer % 60 < 10 ? `0${timer % 60}` : timer % 60}</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.titleInput}
-            onChangeText={setTitle}
-            value={title}
-            placeholder="제목을 입력해주세요."
-            onSubmitEditing={handleTitleSave}
-          />
-        </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={() => setFriendRangeModalVisible(true)}>
-            <Text style={styles.buttonText}>{friendRangeButtonText}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
-            <Text style={styles.buttonText}>{cameraButtonText}</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.imageContainer}>
-          {renderCameraImage()}
-        </View>
-        <TouchableOpacity style={styles.uploadButton} onPress={shareFeed}>
-          <Text style={styles.uploadButtonText}>피드에 올리기</Text>
+      <Text>Timer: {Math.floor(timer / 60)}:{timer % 60 < 10 ? `0${timer % 60}` : timer % 60}</Text>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.titleInput}
+          onChangeText={setTitle}
+          value={title}
+          placeholder="제목을 입력해주세요."
+          onSubmitEditing={handleTitleSave}
+        />
+        <Button title="입력" onPress={handleTitleSave} />
+      </View>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.button} onPress={() => setFriendRangeModalVisible(true)}>
+          <Text style={styles.buttonText}>{friendRangeButtonText}</Text>
         </TouchableOpacity>
-      </ScrollView>
+        <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
+          <Text style={styles.buttonText}>{cameraButtonText}</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.imageContainer}>
+        {renderCameraImage()}
+      </View>
+      <Button title="피드에 올리기" onPress={shareFeed} />
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Text style={styles.backButtonText}>뒤로 가기</Text>
+      </TouchableOpacity>
       <Modal
         animationType="slide"
         transparent={true}
@@ -247,9 +242,6 @@ const FeedPostPage = ({ route }) => {
           <View style={styles.modalContent}>
             <Button title="친구" onPress={() => handleFriendRangeSelection('friends')} />
             <Button title="전체" onPress={() => handleFriendRangeSelection('everyone')} />
-            <TouchableOpacity style={styles.closeButton} onPress={() => setFriendRangeModalVisible(false)}>
-              <MaterialIcons name="close" size={24} color="black" />
-            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -264,9 +256,6 @@ const FeedPostPage = ({ route }) => {
             <Button title="전면 카메라" onPress={() => handleCameraSelection('front')} />
             <Button title="후면 카메라" onPress={() => handleCameraSelection('back')} />
             <Button title="전/후면 카메라" onPress={() => handleCameraSelection('double')} />
-            <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
-              <MaterialIcons name="close" size={24} color="black" />
-            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -277,93 +266,63 @@ const FeedPostPage = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f8ff',
-  },
-  scrollContainer: {
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    paddingVertical: 20,
-  },
-  timerText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginVertical: 10,
-    color: '#333',
+    backgroundColor: 'white',
+    paddingTop: 20,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '90%',
-    marginBottom: 20,
+    width: '100%',
+    paddingLeft: 12,
   },
   titleInput: {
     flex: 1,
     height: 40,
+    marginVertical: 12,
     borderWidth: 1,
-    borderColor: '#add8e6',
-    borderRadius: 5,
-    paddingLeft: 10,
-    fontSize: 16,
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 5,
+    padding: 10,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '90%',
-    marginBottom: 20,
+    width: '100%',
+    padding: 10,
   },
   button: {
-    backgroundColor: '#add8e6',
+    backgroundColor: '#007bff',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 5,
   },
   buttonText: {
-    color: '#fff',
+    color: 'white',
     fontSize: 16,
   },
   imageContainer: {
-    width: '100%',
+    width: '90%',
     aspectRatio: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 5,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 5,
   },
   cameraImage: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover', // 이미지의 aspectRatio에 맞춰 컨테이너를 채움
   },
-  uploadButton: {
-    backgroundColor: '#20b2aa',
-    paddingVertical: 15,
-    paddingHorizontal: 30,
+  backButton: {
+    backgroundColor: '#007bff',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 5,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 5,
+    position: 'absolute',
+    bottom: 20,
   },
-  uploadButtonText: {
-    color: '#fff',
-    fontSize: 18,
+  backButtonText: {
+    color: 'white',
+    fontSize: 16,
   },
   modalContainer: {
     flex: 1,
@@ -377,16 +336,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '80%',
     alignItems: 'center',
-    position: 'relative',
-    shadowColor: '#000',
-    shadowOpacity: 0.25,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 5,
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
   },
 });
 

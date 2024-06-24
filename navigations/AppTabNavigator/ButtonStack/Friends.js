@@ -1,301 +1,484 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, TextInput, Button, FlatList, StyleSheet, Alert, ActivityIndicator } from 'react-native';
-import { ListItem, Avatar } from 'react-native-elements';
+import { View, TextInput, FlatList, StyleSheet, Alert, ActivityIndicator, TouchableOpacity, Text } from 'react-native';
+import { ListItem, Avatar, Icon } from 'react-native-elements';
+import { LinearGradient } from 'expo-linear-gradient';
 import Api from '../../../Api';
 import * as SecureStore from 'expo-secure-store';
 
 const getCurrentUserId = async () => {
-	try {
-		const currentUserId = await SecureStore.getItemAsync('currentUserId');
-		return currentUserId;
-	} catch (error) {
-		console.error('Failed to get current user ID from SecureStore:', error);
-		return null;
-	}
+    try {
+        const currentUserId = await SecureStore.getItemAsync('currentUserId');
+        return currentUserId;
+    } catch (error) {
+        console.error('Failed to get current user ID from SecureStore:', error);
+        return null;
+    }
 };
 
 const getAccessToken = async () => {
-	try {
-		const accessToken = await SecureStore.getItemAsync('accessToken');
-		return accessToken;
-	} catch (error) {
-		console.error('Failed to get access token from SecureStore:', error);
-		return null;
-	}
+    try {
+        const accessToken = await SecureStore.getItemAsync('accessToken');
+        return accessToken;
+    } catch (error) {
+        console.error('Failed to get access token from SecureStore:', error);
+        return null;
+    }
 };
 
 const FriendsScreen = () => {
-	const [searchQuery, setSearchQuery] = useState('');
-	const [activeTab, setActiveTab] = useState('recommend');
-	const [users, setUsers] = useState([]);
-	const [invitedUsers, setInvitedUsers] = useState([]);
-	const [requests, setRequests] = useState([]);
-	const [friends, setFriends] = useState([]);
-	const [loading, setLoading] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [activeTab, setActiveTab] = useState('recommend');
+    const [subTab, setSubTab] = useState('receive'); // 수신/송신을 위한 서브탭 상태
+    const [users, setUsers] = useState([]);
+    const [invitedUsers, setInvitedUsers] = useState([]);
+    const [requests, setRequests] = useState([]);
+    const [friends, setFriends] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-	useEffect(() => {
-		const initializeData = async () => {
-			setLoading(true);
-			await fetchInvitedUsers();
-			if (activeTab === 'recommend') {
-				await fetchRecommendedUsers();
-			} else if (activeTab === 'invite') {
-				await fetchInvitedUsers();
-			} else if (activeTab === 'request') {
-				await fetchFriendRequests();
-			} else if (activeTab === 'friends') {
-				await fetchFriends();
-			}
-			setLoading(false);
-		};
-		initializeData();
-	}, [activeTab]);
+    useEffect(() => {
+        const initializeData = async () => {
+            setLoading(true);
+            await fetchInvitedUsers();
+            if (activeTab === 'recommend') {
+                await fetchRecommendedUsers();
+            } else if (activeTab === 'invite') {
+                await fetchInvitedUsers();
+            } else if (activeTab === 'request') {
+                if (subTab === 'receive') {
+                    await fetchFriendRequests();
+                } else {
+                    await fetchInvitedUsers();
+                }
+            } else if (activeTab === 'friends') {
+                await fetchFriends();
+            }
+            setLoading(false);
+        };
+        initializeData();
+    }, [activeTab, subTab]);
 
-	const fetchRecommendedUsers = useCallback(async () => {
-		try {
-			const response = await Api.get('/friends/recommend');
-			console.log('Recommended users response:', response.data);
-			if (response.data && Array.isArray(response.data.data)) {
-				const recommendedUsers = response.data.data;
-				const filteredUsers = recommendedUsers.filter(user => !invitedUsers.some(invited => invited.userId === user.userId));
-				setUsers(filteredUsers);
-			} else {
-				setUsers([]);
-			}
-		} catch (error) {
-			Alert.alert('에러', '추천 친구 목록을 불러오는 중 에러가 발생했습니다.');
-		}
-	}, [invitedUsers]);
+    const fetchRecommendedUsers = useCallback(async () => {
+        try {
+            const response = await Api.get('/friends/recommend');
+            console.log('Recommended users response:', response.data);
+            if (response.data && Array.isArray(response.data.data)) {
+                const recommendedUsers = response.data.data;
+                const filteredUsers = recommendedUsers.filter(user => !invitedUsers.some(invited => invited.userId === user.userId));
+                setUsers(filteredUsers);
+            } else {
+                setUsers([]);
+            }
+        } catch (error) {
+            Alert.alert('에러', '추천 친구 목록을 불러오는 중 에러가 발생했습니다.');
+        }
+    }, [invitedUsers]);
 
-	const fetchInvitedUsers = useCallback(async () => {
-		try {
-			const response = await Api.get('/friends/confirmRequest/send');
-			console.log('Invited users response:', response.data);
-			if (response.data && Array.isArray(response.data.data)) {
-				setInvitedUsers(response.data.data);
-				console.log('Invited users state set:', response.data.data);
-			} else {
-				setInvitedUsers([]);
-			}
-		} catch (error) {
-			Alert.alert('에러', '보낸 친구 요청 목록을 불러오는 중 에러가 발생했습니다.');
-		}
-	}, []);
+    const fetchInvitedUsers = useCallback(async () => {
+        try {
+            const response = await Api.get('/friends/confirmRequest/send');
+            console.log('Invited users response:', response.data);
+            if (response.data && Array.isArray(response.data.data)) {
+                setInvitedUsers(response.data.data);
+                console.log('Invited users state set:', response.data.data);
+            } else {
+                setInvitedUsers([]);
+            }
+        } catch (error) {
+            Alert.alert('에러', '보낸 친구 요청 목록을 불러오는 중 에러가 발생했습니다.');
+        }
+    }, []);
 
-	const fetchFriendRequests = useCallback(async () => {
-		try {
-			const response = await Api.get('/friends/confirmRequest/receive');
-			console.log('Friend requests response:', response.data);
-			if (response.data && Array.isArray(response.data.data)) {
-				setRequests(response.data.data);
-			} else {
-				setRequests([]);
-			}
-		} catch (error) {
-			Alert.alert('에러', '받은 친구 요청 목록을 불러오는 중 에러가 발생했습니다.');
-		}
-	}, []);
+    const fetchFriendRequests = useCallback(async () => {
+        try {
+            const response = await Api.get('/friends/confirmRequest/receive');
+            console.log('Friend requests response:', response.data);
+            if (response.data && Array.isArray(response.data.data)) {
+                setRequests(response.data.data);
+            } else {
+                setRequests([]);
+            }
+        } catch (error) {
+            Alert.alert('에러', '받은 친구 요청 목록을 불러오는 중 에러가 발생했습니다.');
+        }
+    }, []);
 
-	const fetchFriends = useCallback(async () => {
-		try {
-			const response = await Api.get('/friends/read');
-			console.log('Friends response:', response.data);
-			if (response.data && Array.isArray(response.data.data)) {
-				const friends = response.data.data;
-				setFriends(friends);
-			} else {
-				setFriends([]);
-			}
-		} catch (error) {
-			Alert.alert('에러', '친구 목록을 불러오는 중 에러가 발생했습니다.');
-		}
-	}, []);
+    const fetchFriends = useCallback(async () => {
+        try {
+            const response = await Api.get('/friends/read');
+            console.log('Friends response:', response.data);
+            if (response.data && Array.isArray(response.data.data)) {
+                const friends = response.data.data;
+                setFriends(friends);
+            } else {
+                setFriends([]);
+            }
+        } catch (error) {
+            Alert.alert('에러', '친구 목록을 불러오는 중 에러가 발생했습니다.');
+        }
+    }, []);
 
-	const inviteFriend = async (userId) => {
-		try {
-			console.log('Inviting friend with userId:', userId);
+    const inviteFriend = async (userId) => {
+        try {
+            console.log('Inviting friend with userId:', userId);
 
-			const formData = new FormData();
-			formData.append('targetUserId', userId);
+            const formData = new FormData();
+            formData.append('targetUserId', userId);
 
-			const accessToken = await getAccessToken();
-			console.log('Access Token:', accessToken);
+            const accessToken = await getAccessToken();
+            console.log('Access Token:', accessToken);
 
-			const response = await Api.post('/friends/add', formData, {
-				headers: {
-					Authorization: `Bearer ${accessToken}`,
-					'Content-Type': 'multipart/form-data',
-				},
-			});
+            const response = await Api.post('/friends/add', formData, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
 
-			console.log('Invite friend response:', response.data);
+            console.log('Invite friend response:', response.data);
 
-			if (response.data.code === "T002" && response.data.message === "친구 추가에 성공했습니다.") {
-				const invitedUser = users.find(user => user.userId === userId);
-				setInvitedUsers([...invitedUsers, invitedUser]);
-				setUsers(users.filter(user => user.userId !== userId));
-				Alert.alert('성공', '친구 초대 완료');
-			} else {
-				Alert.alert('실패', response.data.message || '친구 초대 실패');
-			}
-		} catch (error) {
-			console.error('Error inviting friend:', error.message);
-			Alert.alert('실패', '친구 초대 실패');
-		}
-	};
+            if (response.data.code === "T002" && response.data.message === "친구 추가에 성공했습니다.") {
+                const invitedUser = users.find(user => user.userId === userId);
+                setInvitedUsers([...invitedUsers, invitedUser]);
+                setUsers(users.filter(user => user.userId !== userId));
+                Alert.alert('성공', '친구 초대 완료');
+            } else {
+                Alert.alert('실패', response.data.message || '친구 초대 실패');
+            }
+        } catch (error) {
+            console.error('Error inviting friend:', error.message);
+            Alert.alert('실패', '친구 초대 실패');
+        }
+    };
 
-	const acceptFriendRequest = async (userId) => {
-		try {
-			const formData = new FormData();
-			formData.append('sendUserId', userId);
-			const accessToken = await getAccessToken();
-			const response = await Api.put('/friends/accept', formData, {
-				headers: {
-					Authorization: `Bearer ${accessToken}`,
-					'Content-Type': 'multipart/form-data',
-				},
-			});
-			console.log('Accept friend request response:', response.data);
-			if (response.data.status === 202) {
-				Alert.alert('성공', '친구 요청 수락 완료');
-				fetchFriendRequests();
-				fetchFriends();
-			} else {
-				Alert.alert('실패', '친구 요청 수락 실패');
-			}
-		} catch (error) {
-			console.error('Error accepting friend request:', error.message);
-			Alert.alert('실패', '친구 요청 수락 실패');
-		}
-	};
+    const cancelFriendRequest = async (userId) => {
+        try {
+            console.log('Cancelling friend request for userId:', userId);
 
-	const rejectFriendRequest = async (userId) => {
-		try {
-			const formData = new FormData();
-			formData.append('sendUserId', userId);
-			const accessToken = await getAccessToken();
-			const response = await Api.delete('/friends/reject', {
-				headers: {
-					Authorization: `Bearer ${accessToken}`,
-					'Content-Type': 'multipart/form-data',
-				},
-				data: formData
-			});
-			console.log('Reject friend request response:', response.data);
-			if (response.data.status === 202) {
-				Alert.alert('성공', '친구 요청 거절 완료');
-				fetchFriendRequests();
-			} else {
-				Alert.alert('실패', '친구 요청 거절 실패');
-			}
-		} catch (error) {
-			console.error('Error rejecting friend request:', error.message);
-			Alert.alert('실패', '친구 요청 거절 실패');
-		}
-	};
+            const formData = new FormData();
+            formData.append('targetUserId', userId);
 
-	const deleteFriend = async (friendId) => {
-		try {
-			const formData = new FormData();
-			formData.append('friendId', friendId);
-			const accessToken = await getAccessToken();
-			const response = await Api.delete('/friends/delete', {
-				headers: {
-					Authorization: `Bearer ${accessToken}`,
-					'Content-Type': 'multipart/form-data',
-				},
-				data: formData
-			});
-			console.log('Delete friend response:', response.data);
-			if (response.data.status === 202) {
-				Alert.alert('성공', '친구 삭제 완료');
-				fetchFriends();
-			} else {
-				Alert.alert('실패', '친구 삭제 실패');
-			}
-		} catch (error) {
-			console.error('Error deleting friend:', error.message);
-			Alert.alert('실패', '친구 삭제 실패');
-		}
-	};
+            const accessToken = await getAccessToken();
+            console.log('Access Token:', accessToken);
 
-	const getFilteredUsers = useCallback(() => {
-		const lowercasedQuery = searchQuery.toLowerCase();
-		const data = activeTab === 'recommend' ? users : activeTab === 'invite' ? invitedUsers : activeTab === 'request' ? requests : friends;
-		return data.filter((item) =>
-			item.nickname.toLowerCase().includes(lowercasedQuery) || (item.email && item.email.toLowerCase().includes(lowercasedQuery))
-		);
-	}, [searchQuery, activeTab, users, invitedUsers, requests, friends]);
+            const response = await Api.delete('/friends/cancel', {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+                data: formData,
+            });
 
-	const renderUser = ({ item }) => (
-		<ListItem>
-			<Avatar source={{ uri: item.userProfileUrl }} rounded />
-			<ListItem.Content>
-				<ListItem.Title>{item.nickname}</ListItem.Title>
-				{item.email && <ListItem.Subtitle>{item.email}</ListItem.Subtitle>}
-			</ListItem.Content>
-			{activeTab === 'recommend' && (
-				invitedUsers.some(invited => invited.userId === item.userId) ? (
-					<Button title="친구 요청 중" disabled />
-				) : (
-					<Button title="친구 추가" onPress={() => inviteFriend(item.userId)} />
-				)
-			)}
-			{activeTab === 'request' && (
-				<View style={styles.requestButtons}>
-					<Button title="수락" onPress={() => acceptFriendRequest(item.userId)} />
-					<Button title="거절" onPress={() => rejectFriendRequest(item.userId)} />
-				</View>
-			)}
-			{activeTab === 'friends' && <Button title="삭제" onPress={() => deleteFriend(item.userId)} />}
-		</ListItem>
-	);
+            console.log('Cancel friend request response:', response.data);
 
-	return (
-		<View style={styles.container}>
-			<TextInput
-				style={styles.searchInput}
-				placeholder="친구 추가 또는 검색"
-				value={searchQuery}
-				onChangeText={setSearchQuery}
-			/>
-			{loading ? (
-				<ActivityIndicator size="large" color="#0000ff" />
-			) : (
-				<FlatList data={getFilteredUsers()} keyExtractor={(item) => item.userId.toString()} renderItem={renderUser} />
-			)}
-			<View style={styles.footer}>
-				<Button title="추천" onPress={() => setActiveTab('recommend')} color={activeTab === 'recommend' ? 'blue' : 'gray'} />
-				<Button title="초대" onPress={() => setActiveTab('invite')} color={activeTab === 'invite' ? 'blue' : 'gray'} />
-				<Button title="친구 요청" onPress={() => setActiveTab('request')} color={activeTab === 'request' ? 'blue' : 'gray'} />
-				<Button title="친구 목록" onPress={() => setActiveTab('friends')} color={activeTab === 'friends' ? 'blue' : 'gray'} />
-			</View>
-		</View>
-	);
+            if (response.data.code === "T002" && response.data.message === "친구 요청 취소에 성공했습니다.") {
+                setInvitedUsers(invitedUsers.filter(user => user.userId !== userId));
+                Alert.alert('성공', '친구 요청이 취소되었습니다.');
+            } else {
+                Alert.alert('실패', response.data.message || '친구 요청 취소에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('Error cancelling friend request:', error.message);
+            Alert.alert('실패', '친구 요청 취소에 실패했습니다.');
+        }
+    };
+
+    const acceptFriendRequest = async (userId) => {
+        try {
+            const formData = new FormData();
+            formData.append('sendUserId', userId);
+            const accessToken = await getAccessToken();
+            const response = await Api.put('/friends/accept', formData, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            console.log('Accept friend request response:', response.data);
+            if (response.data.status === 202) {
+                Alert.alert('성공', '친구 요청 수락 완료');
+                fetchFriendRequests();
+                fetchFriends();
+            } else {
+                Alert.alert('실패', '친구 요청 수락 실패');
+            }
+        } catch (error) {
+            console.error('Error accepting friend request:', error.message);
+            Alert.alert('실패', '친구 요청 수락 실패');
+        }
+    };
+
+    const rejectFriendRequest = async (userId) => {
+        try {
+            const formData = new FormData();
+            formData.append('sendUserId', userId);
+            const accessToken = await getAccessToken();
+            const response = await Api.delete('/friends/reject', {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+                data: formData
+            });
+            console.log('Reject friend request response:', response.data);
+            if (response.data.status === 202) {
+                Alert.alert('성공', '친구 요청 거절 완료');
+                fetchFriendRequests();
+            } else {
+                Alert.alert('실패', '친구 요청 거절 실패');
+            }
+        } catch (error) {
+            console.error('Error rejecting friend request:', error.message);
+            Alert.alert('실패', '친구 요청 거절 실패');
+        }
+    };
+
+    const deleteFriend = async (friendId) => {
+        try {
+            const formData = new FormData();
+            formData.append('friendId', friendId);
+            const accessToken = await getAccessToken();
+            const response = await Api.delete('/friends/delete', {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+                data: formData
+            });
+            console.log('Delete friend response:', response.data);
+            if (response.data.status === 202) {
+                Alert.alert('성공', '친구 삭제 완료');
+                fetchFriends();
+            } else {
+                Alert.alert('실패', '친구 삭제 실패');
+            }
+        } catch (error) {
+            console.error('Error deleting friend:', error.message);
+            Alert.alert('실패', '친구 삭제 실패');
+        }
+    };
+
+    const getFilteredUsers = useCallback(() => {
+        const lowercasedQuery = searchQuery.toLowerCase();
+        const data = activeTab === 'recommend' ? users : activeTab === 'invite' ? invitedUsers : activeTab === 'request' ? (subTab === 'receive' ? requests : invitedUsers) : friends;
+        return data.filter((item) =>
+            item.nickname.toLowerCase().includes(lowercasedQuery) || (item.email && item.email.toLowerCase().includes(lowercasedQuery))
+        );
+    }, [searchQuery, activeTab, subTab, users, invitedUsers, requests, friends]);
+
+    const renderUser = ({ item }) => (
+        <ListItem containerStyle={styles.listItem}>
+            <Avatar source={{ uri: item.userProfileUrl }} rounded />
+            <ListItem.Content>
+                <ListItem.Title style={styles.listItemTitle}>{item.nickname}</ListItem.Title>
+                {item.email && <ListItem.Subtitle style={styles.listItemSubtitle}>{item.email}</ListItem.Subtitle>}
+            </ListItem.Content>
+            {activeTab === 'recommend' && (
+                invitedUsers.some(invited => invited.userId === item.userId) ? (
+                    <TouchableOpacity style={styles.disabledButton}>
+                        <Text style={styles.disabledButtonText}>완료</Text>
+                    </TouchableOpacity>
+                ) : (
+                    <LinearGradient colors={['#61a3ff', '#3b5998', '#4c669f']} style={styles.gradientButton}>
+                        <TouchableOpacity style={styles.innerButton} onPress={() => inviteFriend(item.userId)}>
+                            <Text style={styles.buttonText}>추가</Text>
+                        </TouchableOpacity>
+                    </LinearGradient>
+                )
+            )}
+            {activeTab === 'request' && subTab === 'receive' && (
+                <View style={styles.requestButtons}>
+                    <LinearGradient colors={['#61a3ff', '#3b5998', '#4c669f']} style={styles.gradientButton}>
+                        <TouchableOpacity style={styles.innerButton} onPress={() => acceptFriendRequest(item.userId)}>
+                            <Text style={styles.buttonText}>수락</Text>
+                        </TouchableOpacity>
+                    </LinearGradient>
+                    <LinearGradient colors={['#000', '#000', '#000']} style={styles.gradientButton}>
+                        <TouchableOpacity style={styles.innerButton} onPress={() => rejectFriendRequest(item.userId)}>
+                            <Text style={styles.buttonText}>거절</Text>
+                        </TouchableOpacity>
+                    </LinearGradient>
+                </View>
+            )}
+            {activeTab === 'request' && subTab === 'send' && (
+                <LinearGradient colors={['#000', '#000', '#000']} style={styles.gradientButton}>
+                    <TouchableOpacity style={styles.innerButton} onPress={() => cancelFriendRequest(item.userId)}>
+                        <Text style={styles.buttonText}>취소</Text>
+                    </TouchableOpacity>
+                </LinearGradient>
+            )}
+            {activeTab === 'friends' && (
+                <LinearGradient colors={['#000', '#000', '#000']} style={styles.gradientButton}>
+                    <TouchableOpacity style={styles.innerButton} onPress={() => deleteFriend(item.userId)}>
+                        <Text style={styles.buttonText}>삭제</Text>
+                    </TouchableOpacity>
+                </LinearGradient>
+            )}
+        </ListItem>
+    );
+
+    return (
+        <View style={styles.container}>
+            <View style={styles.header}>
+                <LinearGradient colors={activeTab === 'recommend' ? ['#61a3ff', '#3b5998', '#4c669f'] : ['#000', '#000', '#000']} style={styles.gradientTab}>
+                    <TouchableOpacity onPress={() => setActiveTab('recommend')} style={styles.tabButton}>
+                        <Text style={[styles.tabButtonText, activeTab === 'recommend' && styles.activeTabButtonText]}>추천</Text>
+                    </TouchableOpacity>
+                </LinearGradient>
+                <LinearGradient colors={activeTab === 'request' ? ['#61a3ff', '#3b5998', '#4c669f'] : ['#000', '#000', '#000']} style={styles.gradientTab}>
+                    <TouchableOpacity onPress={() => setActiveTab('request')} style={styles.tabButton}>
+                        <Text style={[styles.tabButtonText, activeTab === 'request' && styles.activeTabButtonText]}>요청</Text>
+                    </TouchableOpacity>
+                </LinearGradient>
+                <LinearGradient colors={activeTab === 'friends' ? ['#61a3ff', '#3b5998', '#4c669f'] : ['#000', '#000', '#000']} style={styles.gradientTab}>
+                    <TouchableOpacity onPress={() => setActiveTab('friends')} style={styles.tabButton}>
+                        <Text style={[styles.tabButtonText, activeTab === 'friends' && styles.activeTabButtonText]}>목록</Text>
+                    </TouchableOpacity>
+                </LinearGradient>
+            </View>
+            <View style={styles.searchSection}>
+                <Icon style={styles.searchIcon} name="search" size={24} color="#aaa" />
+                <TextInput
+                    style={styles.searchInput}
+                    placeholder="검색"
+                    placeholderTextColor="#aaa"
+                    value={searchQuery}
+                    onChangeText={setSearchQuery}
+                />
+            </View>
+            {activeTab === 'request' && (
+                <View style={styles.subHeader}>
+                    <LinearGradient colors={subTab === 'receive' ? ['#61a3ff', '#3b5998', '#4c669f'] : ['#000', '#000', '#000']} style={styles.subTab}>
+                        <TouchableOpacity onPress={() => setSubTab('receive')} style={styles.tabButton}>
+                            <Text style={[styles.subTabButtonText, subTab === 'receive' && styles.activeSubTabButtonText]}>수신</Text>
+                        </TouchableOpacity>
+                    </LinearGradient>
+                    <LinearGradient colors={subTab === 'send' ? ['#61a3ff', '#3b5998', '#4c669f'] : ['#000', '#000', '#000']} style={styles.subTab}>
+                        <TouchableOpacity onPress={() => setSubTab('send')} style={styles.tabButton}>
+                            <Text style={[styles.subTabButtonText, subTab === 'send' && styles.activeSubTabButtonText]}>송신</Text>
+                        </TouchableOpacity>
+                    </LinearGradient>
+                </View>
+            )}
+            {loading ? (
+                <ActivityIndicator size="large" color="#0000ff" />
+            ) : (
+                <FlatList data={getFilteredUsers()} keyExtractor={(item) => item.userId.toString()} renderItem={renderUser} />
+            )}
+        </View>
+    );
 };
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		padding: 10,
-	},
-	searchInput: {
-		fontSize: 18,
-		padding: 10,
-		margin: 10,
-		borderWidth: 1,
-		borderColor: '#ccc',
-	},
-	footer: {
-		flexDirection: 'row',
-		justifyContent: 'space-around',
-		padding: 10,
-	},
-	requestButtons: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		width: 100,
-	},
+    container: {
+        flex: 1,
+        backgroundColor: '#000',
+    },
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        padding: 10,
+        backgroundColor: '#000',
+    },
+    subHeader: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        paddingVertical: 10,
+    },
+    tabButton: {
+        padding: 15,
+        borderRadius: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    gradientTab: {
+        flex: 1,
+        marginHorizontal: 5,
+        borderRadius: 5,
+    },
+    subTab: {
+        flex: 0.45,
+        marginHorizontal: 5,
+        borderRadius: 5,
+    },
+    tabButtonText: {
+        color: '#fff',
+        fontSize: 16, // 글씨 크기를 키움
+    },
+    activeTabButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 16, // 글씨 크기를 키움
+    },
+    subTabButtonText: {
+        color: '#fff',
+    },
+    activeSubTabButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+    },
+    searchSection: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#222',
+        borderRadius: 5,
+        margin: 10,
+        paddingHorizontal: 10,
+    },
+    searchIcon: {
+        padding: 5,
+        fontSize: 24, // 아이콘 크기를 키움
+        color: '#aaa', // 아이콘 색상 변경
+		marginTop: 4, // 아이콘 위치를 아래로 내림
+		marginRight: 3, // 아이콘 위치를 오른쪽으로 이동
+    },
+    searchInput: {
+        flex: 1,
+        fontSize: 18,
+        color: '#fff',
+        paddingVertical: 10,
+        paddingLeft: 0, // 아이콘 공간 확보
+    },
+    listItem: {
+        backgroundColor: '#fff',
+        borderRadius: 5,
+        marginVertical: 5,
+        paddingHorizontal: 10,
+    },
+    listItemTitle: {
+        color: '#000',
+    },
+    listItemSubtitle: {
+        color: '#aaa',
+    },
+    gradientButton: {
+        borderRadius: 5,
+    },
+    innerButton: {
+        padding: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 80, // 버튼의 길이를 늘림
+    },
+    buttonText: {
+        color: '#fff',
+        textAlign: 'center',
+    },
+    requestButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-around', // 버튼 사이의 공간을 조절
+        width: 180, // 공간을 더 확보
+    },
+    disabledButton: {
+        backgroundColor: '#333',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 70,
+    },
+    disabledButtonText: {
+        color: '#fff',
+    },
 });
 
 export default FriendsScreen;

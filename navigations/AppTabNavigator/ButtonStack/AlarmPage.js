@@ -33,55 +33,81 @@ const Alarm = ({ navigation }) => {
 	
 	const fetchPost = async (index) => {
 		try {
-			setIsLoading(true);
-			const serverResponse = await Api.get(`/noti/readPost?index=${index}&pageCount=10`);
-			if (serverResponse.data.message === "게시물 알림 피드 조회에 실패했습니다.") {
-				alert("알림을 불러올 게 없습니다.");
-				setAlarmPost([]);
-				setHasMore(false);
-				return;
+		  setIsLoading(true);
+		  const serverResponse = await Api.get(`/noti/readPost`, {
+			params: {
+			  index: index,
+			  pageCount: 10
 			}
-			const processedData = processLikeAlarms(serverResponse.data.data.allNotis.filter(alarm => alarm.type === 6));
-			const newAlarms = [...serverResponse.data.data.allNotis.filter(alarm => alarm.type !== 6), ...processedData];
-			
-			if (newAlarms.length > 0) {
-				setAlarmPost(prevAlarms => [...prevAlarms, ...newAlarms]);
-				setPage(prevPage => prevPage + 1);
-			} else {
-				setHasMore(false);
-			}
+		  });
+		  if (serverResponse.data.message === "게시물 알림 피드 조회에 실패했습니다.") {
+			alert("알림을 불러올 게 없습니다.");
+			setAlarmPost([]);
+			setHasMore(false);
+			return;
+		  }
+		  const processedData = processLikeAlarms(serverResponse.data.data.allNotis.filter(alarm => alarm.type === 6));
+		  const newAlarms = [...serverResponse.data.data.allNotis.filter(alarm => alarm.type !== 6), ...processedData];
+	  
+		  if (newAlarms.length > 0) {
+			setAlarmPost(prevAlarms => [...prevAlarms, ...newAlarms]);
+			setPage(prevPage => prevPage + 1);
+		  } else {
+			setHasMore(false);
+		  }
 		} catch (error) {
-			console.error('Error fetching data', error);
+		  if (error.response && error.response.status === 500) {
+			alert('서버에 오류가 발생했습니다. 나중에 다시 시도해주세요.');
+		  } else if (error.response && error.response.status === 400) {
+			alert('잘못된 요청입니다. 요청 파라미터를 확인해주세요.');
+		  } else {
+			alert('데이터를 가져오는 중 오류가 발생했습니다.');
+		  }
+		  console.error('Error fetching data', error);
 		} finally {
-			setIsLoading(false);
-			setInitialLoad(false); // 초기 로드 상태 업데이트
+		  setIsLoading(false);
+		  setInitialLoad(false);
 		}
-	};
-	const fetchCommunity = async (index) => {
+	  };
+	  
+	  const fetchCommunity = async (index) => {
 		try {
-			setIsLoading(true);
-			const serverResponse = await Api.get(`/noti/readCommunity?index=${index}&pageCount=10`);
-			if (serverResponse.data.message === "커뮤니티 알림 피드 조회에 실패했습니다.") {
-				alert("알림을 불러올 게 없습니다.");
-				setAlarmCommunity([]);
-				setHasMore(false);
-				return;
+		  setIsLoading(true);
+		  const serverResponse = await Api.get(`/noti/readCommunity`, {
+			params: {
+			  index: index,
+			  pageCount: 10
 			}
-			const newAlarms = serverResponse.data.data.allNotis;
-			
-			if (newAlarms.length > 0) {
-				setAlarmCommunity(prevAlarms => [...prevAlarms, ...newAlarms]);
-				setPage(prevPage => prevPage + 1);
-			} else {
-				setHasMore(false);
-			}
+		  });
+		  if (serverResponse.data.message === "커뮤니티 알림 피드 조회에 실패했습니다.") {
+			alert("알림을 불러올 게 없습니다.");
+			setAlarmCommunity([]);
+			setHasMore(false);
+			return;
+		  }
+		  const newAlarms = serverResponse.data.data.allNotis;
+	  
+		  if (newAlarms.length > 0) {
+			setAlarmCommunity(prevAlarms => [...prevAlarms, ...newAlarms]);
+			setPage(prevPage => prevPage + 1);
+		  } else {
+			setHasMore(false);
+		  }
 		} catch (error) {
-			console.error('Error fetching data', error);
+		  if (error.response && error.response.status === 500) {
+			alert('서버에 오류가 발생했습니다. 나중에 다시 시도해주세요.');
+		  } else if (error.response && error.response.status === 400) {
+			alert('잘못된 요청입니다. 요청 파라미터를 확인해주세요.');
+		  } else {
+			alert('데이터를 가져오는 중 오류가 발생했습니다.');
+		  }
+		  console.error('Error fetching data', error);
 		} finally {
-			setIsLoading(false);
-			setInitialLoad(false); // 초기 로드 상태 업데이트
+		  setIsLoading(false);
+		  setInitialLoad(false);
 		}
-	};
+	  };
+	  
 	const toggleSetting = async (item) => {
 		setSelected(item);
 		setPage(0);

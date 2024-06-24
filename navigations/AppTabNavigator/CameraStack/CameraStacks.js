@@ -18,13 +18,6 @@ export const CameraStackScreen = () => {
 				}}
 			/>
 			<CameraStacks.Screen
-				name="SendPosts"
-				component={SendPostStack}
-				options={{
-					headerShown: false
-				}}
-			/>
-			<CameraStacks.Screen
 				name="FeedPostPage"
 				component={FeedPostPage}
 				options={{
