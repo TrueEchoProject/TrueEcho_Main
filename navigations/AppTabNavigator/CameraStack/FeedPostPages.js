@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, TextInput, Modal, Image, Alert, TouchableOpacity, Keyboard } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Modal, Image, Alert, TouchableOpacity, Keyboard, Button } from 'react-native';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { useNavigation } from '@react-navigation/native';
 import storage from '../../../AsyncStorage';
 import Api from '../../../Api';
-import ImageDouble from './ImageDouble'; 
+import ImageDouble from './ImageDouble';
+import { MaterialIcons } from '@expo/vector-icons'; // 아이콘 추가
 
 const FeedPostPage = ({ route }) => {
   const navigation = useNavigation();
-  const { frontCameraUris, backCameraUris, remainingTime } = route.params; 
+  const { frontCameraUris, backCameraUris, remainingTime } = route.params;
   const [cameraData, setCameraData] = useState({
     front: {
       uris: frontCameraUris,
@@ -24,12 +25,12 @@ const FeedPostPage = ({ route }) => {
   const [friendRangeModalVisible, setFriendRangeModalVisible] = useState(false);
   const [friendRange, setFriendRange] = useState('FRIEND');
   const [selectedCamera, setSelectedCamera] = useState('double');
-  const [timer, setTimer] = useState(remainingTime || 180); // 타이머 설정
+  const [timer, setTimer] = useState(remainingTime || 180);
   const [friendRangeButtonText, setFriendRangeButtonText] = useState('친구범위');
   const [cameraButtonText, setCameraButtonText] = useState('사진설정');
-  
-  const defaultImageUri = 'https://via.placeholder.com/1000'; // 기본 이미지 URI
-  
+
+  const defaultImageUri = 'https://via.placeholder.com/1000';
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       setTimer((prevTimer) => {
@@ -41,10 +42,10 @@ const FeedPostPage = ({ route }) => {
         }
       });
     }, 1000);
-    
+
     return () => clearInterval(intervalId);
   }, []);
-  
+
   const resizeImage = async (uri) => {
     try {
       const manipResult = await ImageManipulator.manipulateAsync(
@@ -62,14 +63,14 @@ const FeedPostPage = ({ route }) => {
       return null;
     }
   };
-  
+
   const handleFriendRangeSelection = (range) => {
     const newScope = range === 'friends' ? 'FRIEND' : 'PUBLIC';
     setFriendRange(newScope);
     setFriendRangeModalVisible(false);
     setFriendRangeButtonText(range === 'friends' ? '친구' : '전체');
   };
-  
+
   const handleCameraSelection = (cameraType) => {
     setModalVisible(false);
     setSelectedCamera(cameraType);
@@ -87,11 +88,11 @@ const FeedPostPage = ({ route }) => {
         setCameraButtonText('사진설정');
     }
   };
-  
+
   const renderCameraImage = () => {
     const frontImage = cameraData.front.uris[cameraData.front.selectedIndex];
     const backImage = cameraData.back.uris[cameraData.back.selectedIndex];
-    
+
     if (selectedCamera === 'front') {
       return <Image source={{ uri: frontImage || defaultImageUri }} style={styles.cameraImage} />;
     } else if (selectedCamera === 'back') {
@@ -102,19 +103,24 @@ const FeedPostPage = ({ route }) => {
       return <Text>No image available</Text>;
     }
   };
-  
+
   const shareFeed = async () => {
+    if (!title.trim()) {
+      Alert.alert('오류', '제목을 입력해주세요!');
+      return;
+    }
+
     const formData = new FormData();
-    
+
     formData.append('type', friendRange);
     console.log('type:', friendRange);
-    
+
     formData.append('title', title);
     console.log('title:', title);
-    
+
     let resizedFrontImage = null;
     let resizedBackImage = null;
-    
+
     if (selectedCamera === 'front' || selectedCamera === 'double') {
       if (cameraData.front.uris[cameraData.front.selectedIndex]) {
         resizedFrontImage = await resizeImage(cameraData.front.uris[cameraData.front.selectedIndex]);
@@ -128,7 +134,7 @@ const FeedPostPage = ({ route }) => {
         }
       }
     }
-    
+
     if (selectedCamera === 'back' || selectedCamera === 'double') {
       if (cameraData.back.uris[cameraData.back.selectedIndex]) {
         resizedBackImage = await resizeImage(cameraData.back.uris[cameraData.back.selectedIndex]);
@@ -142,31 +148,31 @@ const FeedPostPage = ({ route }) => {
         }
       }
     }
-    
+
     if (selectedCamera === 'front' && !resizedFrontImage) {
       console.log('postBack not added, no back image selected');
     }
-    
+
     if (selectedCamera === 'back' && !resizedBackImage) {
       console.log('postFront not added, no front image selected');
     }
-    
+
     const currentTime = new Date();
     const formattedTime = `${currentTime.getFullYear()}-${String(currentTime.getMonth() + 1).padStart(2, '0')}-${String(currentTime.getDate()).padStart(2, '0')}-${String(currentTime.getHours()).padStart(2, '0')}-${String(currentTime.getMinutes()).padStart(2, '0')}`;
     formData.append('todayShot', formattedTime);
     console.log('todayShot:', formattedTime);
-    
+
     try {
       const response = await Api.post('https://port-0-true-echo-85phb42blucciuvv.sel5.cloudtype.app/post/write', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      
+
       if (response.status === 202 || response.status === 200) {
         const { data } = response;
         console.log('Server Response: ', data);
-        
+
         await storage.set('title', title);
         console.log(`Title stored: ${title}`);
         await storage.set('type', friendRange);
@@ -181,9 +187,9 @@ const FeedPostPage = ({ route }) => {
         }
         await storage.set('todayShot', formattedTime);
         console.log(`TodayShot stored: ${formattedTime}`);
-        
+
         Alert.alert('사진이 성공적으로 저장되었습니다.', `저장 시간: ${formattedTime}`);
-        
+
         if (friendRange === 'FRIEND') {
           navigation.navigate('FriendFeed', { initialPage: 0 });
         } else {
@@ -199,11 +205,11 @@ const FeedPostPage = ({ route }) => {
       navigation.navigate('CameraOption');
     }
   };
-  
+
   const handleTitleSave = () => {
     Keyboard.dismiss();
   };
-  
+
   return (
     <View style={styles.container}>
       <Text>Timer: {Math.floor(timer / 60)}:{timer % 60 < 10 ? `0${timer % 60}` : timer % 60}</Text>
@@ -215,7 +221,6 @@ const FeedPostPage = ({ route }) => {
           placeholder="제목을 입력해주세요."
           onSubmitEditing={handleTitleSave}
         />
-        <Button title="입력" onPress={handleTitleSave} />
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={() => setFriendRangeModalVisible(true)}>
@@ -240,6 +245,9 @@ const FeedPostPage = ({ route }) => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
+            <TouchableOpacity style={styles.closeButton} onPress={() => setFriendRangeModalVisible(false)}>
+              <MaterialIcons name="close" size={24} color="black" />
+            </TouchableOpacity>
             <Button title="친구" onPress={() => handleFriendRangeSelection('friends')} />
             <Button title="전체" onPress={() => handleFriendRangeSelection('everyone')} />
           </View>
@@ -253,6 +261,9 @@ const FeedPostPage = ({ route }) => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
+            <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+              <MaterialIcons name="close" size={24} color="black" />
+            </TouchableOpacity>
             <Button title="전면 카메라" onPress={() => handleCameraSelection('front')} />
             <Button title="후면 카메라" onPress={() => handleCameraSelection('back')} />
             <Button title="전/후면 카메라" onPress={() => handleCameraSelection('double')} />
@@ -336,6 +347,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '80%',
     alignItems: 'center',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
   },
 });
 
