@@ -44,8 +44,6 @@ public class Comment extends CreatedDateAudit {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "mainComment", cascade = CascadeType.ALL)
     private List<Comment> subComments = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "comment", orphanRemoval = true)
-    private NotificationEntity notificationEntity;
 
     @Builder
     public Comment( String content, Post post, User user,
@@ -54,7 +52,5 @@ public class Comment extends CreatedDateAudit {
         this.post = post;
         this.user = user;
         this.mainComment = mainComment;
-        this.notificationEntity = notificationEntity;
-
     }
 }

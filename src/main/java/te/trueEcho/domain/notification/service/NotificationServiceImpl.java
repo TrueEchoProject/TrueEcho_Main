@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import te.trueEcho.domain.notification.dto.PostFeedNotiResponse;
+import org.springframework.transaction.annotation.Transactional;
 import te.trueEcho.domain.notification.dto.*;
 import te.trueEcho.domain.notification.entity.NotificationEntity;
 import te.trueEcho.domain.notification.repository.NotificationRepository;
@@ -22,19 +22,11 @@ import te.trueEcho.domain.vote.repository.VoteRepositoryImpl;
 import te.trueEcho.global.util.AuthUtil;
 import te.trueEcho.infra.firebase.service.FCMService;
 
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -327,6 +319,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     // NotiTimeStatus에 따라서 알람을 보낼 유저를 선별하여 알람을 보내는 메소드
+    @Transactional
     public void sendNotiByNotiTimeStatus(NotiTimeStatus notiTimeStatus) {
         // 무작위 시간을 생성
         Random random = new Random();

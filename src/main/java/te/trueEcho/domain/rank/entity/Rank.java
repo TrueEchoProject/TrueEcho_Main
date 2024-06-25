@@ -36,15 +36,11 @@ public class Rank {
     @JoinColumn(name = "vote_id", unique = true)
     private Vote vote;
 
-    @OneToOne(mappedBy = "rank", cascade=CascadeType.ALL)
-    private NotificationEntity notificationEntity;
-
     @Builder
     public Rank(int rankLevel, LocalDate rankWeek, List<User> users, Vote vote, NotificationEntity notificationEntity) {
         this.rankLevel = rankLevel;
         this.rankWeek = rankWeek;
         this.users = users;
         this.vote = vote;
-        this.notificationEntity = notificationEntity;
     }
 }
