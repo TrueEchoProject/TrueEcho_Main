@@ -44,19 +44,16 @@ const FriendsScreen = () => {
             } else if (activeTab === 'invite') {
                 await fetchInvitedUsers();
             } else if (activeTab === 'request') {
-                if (subTab === 'receive') {
-                    await fetchFriendRequests();
-                } else {
-                    await fetchInvitedUsers();
-                }
+                setSubTab('receive'); // 요청 탭으로 전환될 때 항상 수신 탭을 설정
+                await fetchFriendRequests();
             } else if (activeTab === 'friends') {
                 await fetchFriends();
             }
             setLoading(false);
         };
         initializeData();
-    }, [activeTab, subTab]);
-
+    }, [activeTab]);
+    
     const fetchRecommendedUsers = useCallback(async () => {
         try {
             const response = await Api.get('/friends/recommend');
@@ -153,25 +150,26 @@ const FriendsScreen = () => {
     const cancelFriendRequest = async (userId) => {
         try {
             console.log('Cancelling friend request for userId:', userId);
-
+    
             const formData = new FormData();
             formData.append('targetUserId', userId);
-
+    
             const accessToken = await getAccessToken();
             console.log('Access Token:', accessToken);
-
-            const response = await Api.delete('/friends/cancel', {
+    
+            const response = await Api.post('/friends/cancel', formData, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                     'Content-Type': 'multipart/form-data',
                 },
-                data: formData,
             });
-
+    
             console.log('Cancel friend request response:', response.data);
-
+    
             if (response.data.code === "T002" && response.data.message === "친구 요청 취소에 성공했습니다.") {
-                setInvitedUsers(invitedUsers.filter(user => user.userId !== userId));
+                // 초대된 사용자 목록과 요청된 사용자 목록에서 해당 사용자를 제거
+                setInvitedUsers((prevInvitedUsers) => prevInvitedUsers.filter(user => user.userId !== userId));
+                setRequests((prevRequests) => prevRequests.filter(user => user.userId !== userId));
                 Alert.alert('성공', '친구 요청이 취소되었습니다.');
             } else {
                 Alert.alert('실패', response.data.message || '친구 요청 취소에 실패했습니다.');
@@ -180,8 +178,8 @@ const FriendsScreen = () => {
             console.error('Error cancelling friend request:', error.message);
             Alert.alert('실패', '친구 요청 취소에 실패했습니다.');
         }
-    };
-
+    };    
+    
     const acceptFriendRequest = async (userId) => {
         try {
             const formData = new FormData();
