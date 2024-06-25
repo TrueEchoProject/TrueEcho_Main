@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface PostService {
 
-    ResponseInterface getSinglePost(Long postId);
+    ResponseInterface getSinglePost(SinglePostRequest singlePostRequest);
 
     PostListResponse getAllPostByType(ReadPostRequest readPostRequest);
 

@@ -6,11 +6,11 @@ import lombok.Getter;
 @Getter
 @Builder
 public class ReadPostRequest {
-    private int pageCount;
-    private int index;
-    private String location;
-    private FeedType type;
-
+    private final int pageCount;
+    private final int index;
+    private final String location;
+    private final FeedType type;
+    private final boolean requireRefresh;
 }
 
 

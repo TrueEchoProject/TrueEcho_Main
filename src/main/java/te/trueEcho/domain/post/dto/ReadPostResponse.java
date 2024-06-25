@@ -25,5 +25,6 @@ public class ReadPostResponse implements ResponseInterface {
         private final int commentCount;
         private final boolean isFriend;
         private final boolean isMyLike;
+        private final PostedIn24H postedIn24H;
     }
 
