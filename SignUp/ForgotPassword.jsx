@@ -51,8 +51,6 @@ const ForgotPassword = () => {
     }
   };
   
-  
-  
   // 인증 코드를 검증하는 함수
   const handleVerifyCode = async () => {
     if (code === "") {
@@ -84,7 +82,6 @@ const ForgotPassword = () => {
     }
   };
   
-  
   // 비밀번호를 재설정하는 함수
   const handleResetPassword = async () => {
     if (newPassword === "") {
@@ -98,7 +95,7 @@ const ForgotPassword = () => {
     setLoading(true);
     
     try {
-      const response = await Api.patch('/accounts/password', { email, newPassword });
+      const response = await Api.patch('/accounts/password', { email, newPassword, verificationCode: code });
       
       if (response.data && response.data.status === 200 && response.data.code === "U0015") {
         await SecureStore.deleteItemAsync('userEmail');
