@@ -10,9 +10,11 @@
     "json-server": "json-server --watch db.json"
   },
   "dependencies": {
+    "16": "^0.0.2",
     "@expo/vector-icons": "^14.0.2",
     "@ptomasroos/react-native-multi-slider": "^2.2.2",
     "@react-native-async-storage/async-storage": "1.23.1",
+    "@react-native-community/blur": "^4.4.0",
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/stack": "^6.3.29",
@@ -27,6 +29,7 @@
     "expo-image": "~1.12.9",
     "expo-image-manipulator": "^12.0.5",
     "expo-image-picker": "~15.0.5",
+    "expo-linear-gradient": "~13.0.2",
     "expo-linking": "~6.3.1",
     "expo-location": "~17.0.1",
     "expo-modules-core": "^1.12.12",
@@ -57,8 +60,7 @@
     "react-native-screens": "3.31.1",
     "react-native-svg": "^15.3.0",
     "react-native-svg-transformer": "^1.4.0",
-    "styled-components": "^6.1.11",
-    "expo-linear-gradient": "~13.0.2"
+    "styled-components": "^6.1.11"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",

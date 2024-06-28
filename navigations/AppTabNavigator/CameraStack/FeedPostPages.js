@@ -105,6 +105,14 @@ const FeedPostPage = ({ route }) => {
     }
   };
 
+  // 스토리지를 초기화하는 함수
+  const clearStorage = async () => {
+    await storage.remove('postFront');
+    await storage.remove('postBack');
+    await storage.remove('postedIn24H');
+    Alert.alert('Storage cleared', 'The storage has been cleared.');
+  };
+
   const shareFeed = async () => {
     if (isSubmitting) return;
 
@@ -193,9 +201,17 @@ const FeedPostPage = ({ route }) => {
         await storage.set('todayShot', formattedTime);
         console.log(`TodayShot stored: ${formattedTime}`);
 
+        const postedIn24H = {
+          postedFront: !!resizedFrontImage,
+          postedBack: !!resizedBackImage,
+          postedAt: formattedTime
+        };
+        await storage.set('postedIn24H', JSON.stringify(postedIn24H));
+        console.log('PostedIn24H stored:', postedIn24H);
+
         Alert.alert('사진이 성공적으로 저장되었습니다.', `저장 시간: ${formattedTime}`);
 
-        // Reset the navigation stack and navigate to CameraScreen
+        // Reset the navigation stack and navigate to MainPost
         navigation.reset({
           index: 0,
           routes: [{ name: 'MainPost' }],
@@ -249,6 +265,9 @@ const FeedPostPage = ({ route }) => {
       </TouchableOpacity>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
         <Text style={styles.backButtonText}>뒤로 가기</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.clearButton} onPress={clearStorage}>
+        <Text style={styles.clearButtonText}>스토리지 초기화</Text>
       </TouchableOpacity>
       <Modal
         animationType="slide"
@@ -356,6 +375,18 @@ const styles = StyleSheet.create({
     bottom: 20,
   },
   backButtonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  clearButton: {
+    backgroundColor: '#ff0000',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    position: 'absolute',
+    bottom: 70,
+  },
+  clearButtonText: {
     color: 'white',
     fontSize: 16,
   },
