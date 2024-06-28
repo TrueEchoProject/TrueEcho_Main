@@ -93,6 +93,7 @@ public class NotificationServiceImpl implements NotificationService {
                         String voteTitle = voteRepository.findLastVoteTitleByUserId(request.getData().getUserId());
                         String title = "투표받음";
                         String ageGroup;
+
                         if (sender.getAge() < 10) {
                             ageGroup = "어린이";
                         } else {
