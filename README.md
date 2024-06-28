@@ -4,10 +4,8 @@
 
 <h3> 진실된 모습으로 소통하는 앱 </h3>
 
-<img src="https://github.com/TrueEchoProject/TrueEcho_Main/assets/106599507/4c98706b-7d99-4f7e-8cef-c9ea09ef0899" width="250" height="250"/>
-
+![KakaoTalk_20240624_212207785](https://github.com/TrueEchoProject/TrueEcho_Main/assets/106599507/ff47c3cc-42c7-46b3-a265-4aa6dbfc1021)
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FTrueEchoProject%2FTrueEcho_Main&count_bg=%23B2C3EE&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
-
 
 </div>
 
@@ -44,12 +42,6 @@
 
 ### 📑 프로젝트 노션 링크
 [![Notion](https://img.shields.io/badge/Notion-TrueEcho-%23000000?style=for-the-badge&logo=notion&logoColor=white)](https://bamlatte.notion.site/TrueEcho-5901c5f619ac4247bc2609efb5e22561?pvs=4)
-
-<a href="">
-<img src="https://github.com/boostcampwm2023/and07-MindSync/assets/39490416/0072864a-ab3f-474b-a3ad-52904d662a1c" width=400 height=150/>
-</a>
-<br>
-(추후 플레이스토어에 배포 후 추가 예정)
 
 ---
 ## 🎯 기술적 도전
