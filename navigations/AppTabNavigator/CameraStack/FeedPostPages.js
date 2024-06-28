@@ -117,8 +117,8 @@ const FeedPostPage = ({ route }) => {
     if (isSubmitting) return;
 
     if (!title.trim()) {
-      Alert.alert('오류', '제목을 입력해주세요!');
-      return;
+        Alert.alert('오류', '제목을 입력해주세요!');
+        return;
     }
 
     setIsSubmitting(true);
@@ -126,108 +126,86 @@ const FeedPostPage = ({ route }) => {
     const formData = new FormData();
 
     formData.append('type', friendRange);
-    console.log('type:', friendRange);
-
     formData.append('title', title);
-    console.log('title:', title);
 
     let resizedFrontImage = null;
     let resizedBackImage = null;
 
     if (selectedCamera === 'front' || selectedCamera === 'double') {
-      if (cameraData.front.uris[cameraData.front.selectedIndex]) {
-        resizedFrontImage = await resizeImage(cameraData.front.uris[cameraData.front.selectedIndex]);
-        if (resizedFrontImage) {
-          formData.append('postFront', {
-            uri: resizedFrontImage.uri,
-            type: 'image/jpeg',
-            name: 'resizedFront.jpg',
-          });
-          console.log('postFront added:', resizedFrontImage.uri);
+        if (cameraData.front.uris[cameraData.front.selectedIndex]) {
+            resizedFrontImage = await resizeImage(cameraData.front.uris[cameraData.front.selectedIndex]);
+            if (resizedFrontImage) {
+                formData.append('postFront', {
+                    uri: resizedFrontImage.uri,
+                    type: 'image/jpeg',
+                    name: 'resizedFront.jpg',
+                });
+            }
         }
-      }
     }
 
     if (selectedCamera === 'back' || selectedCamera === 'double') {
-      if (cameraData.back.uris[cameraData.back.selectedIndex]) {
-        resizedBackImage = await resizeImage(cameraData.back.uris[cameraData.back.selectedIndex]);
-        if (resizedBackImage) {
-          formData.append('postBack', {
-            uri: resizedBackImage.uri,
-            type: 'image/jpeg',
-            name: 'resizedBack.jpg',
-          });
-          console.log('postBack added:', resizedBackImage.uri);
+        if (cameraData.back.uris[cameraData.back.selectedIndex]) {
+            resizedBackImage = await resizeImage(cameraData.back.uris[cameraData.back.selectedIndex]);
+            if (resizedBackImage) {
+                formData.append('postBack', {
+                    uri: resizedBackImage.uri,
+                    type: 'image/jpeg',
+                    name: 'resizedBack.jpg',
+                });
+            }
         }
-      }
-    }
-
-    if (selectedCamera === 'front' && !resizedFrontImage) {
-      console.log('postBack not added, no back image selected');
-    }
-
-    if (selectedCamera === 'back' && !resizedBackImage) {
-      console.log('postFront not added, no front image selected');
     }
 
     const currentTime = new Date();
     const formattedTime = `${currentTime.getFullYear()}-${String(currentTime.getMonth() + 1).padStart(2, '0')}-${String(currentTime.getDate()).padStart(2, '0')}-${String(currentTime.getHours()).padStart(2, '0')}-${String(currentTime.getMinutes()).padStart(2, '0')}`;
     formData.append('todayShot', formattedTime);
-    console.log('todayShot:', formattedTime);
 
     try {
-      const response = await Api.post('https://port-0-true-echo-85phb42blucciuvv.sel5.cloudtype.app/post/write', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      if (response.status === 202 || response.status === 200) {
-        const { data } = response;
-        console.log('Server Response: ', data);
-
-        await storage.set('title', title);
-        console.log(`Title stored: ${title}`);
-        await storage.set('type', friendRange);
-        console.log(`Type stored: ${friendRange}`);
-        if (resizedFrontImage) {
-          await storage.set('postFront', resizedFrontImage.uri);
-          console.log(`PostFront stored: ${resizedFrontImage.uri}`);
-        }
-        if (resizedBackImage) {
-          await storage.set('postBack', resizedBackImage.uri);
-          console.log(`PostBack stored: ${resizedBackImage.uri}`);
-        }
-        await storage.set('todayShot', formattedTime);
-        console.log(`TodayShot stored: ${formattedTime}`);
-
-        const postedIn24H = {
-          postedFront: !!resizedFrontImage,
-          postedBack: !!resizedBackImage,
-          postedAt: formattedTime
-        };
-        await storage.set('postedIn24H', JSON.stringify(postedIn24H));
-        console.log('PostedIn24H stored:', postedIn24H);
-
-        Alert.alert('사진이 성공적으로 저장되었습니다.', `저장 시간: ${formattedTime}`);
-
-        // Reset the navigation stack and navigate to MainPost
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'MainPost' }],
+        const response = await Api.post('post/write', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
         });
-      } else {
-        console.error('Unexpected response status:', response.status);
-        Alert.alert('오류', '피드 업로드 중 예상치 못한 오류가 발생했습니다.');
-      }
+
+        if (response.status === 202 || response.status === 200) {
+            const { data } = response;
+
+            await storage.set('title', title);
+            await storage.set('type', friendRange);
+            if (resizedFrontImage) {
+                await storage.set('postFront', resizedFrontImage.uri);
+            }
+            if (resizedBackImage) {
+                await storage.set('postBack', resizedBackImage.uri);
+            }
+            await storage.set('todayShot', formattedTime);
+
+            const postedIn24H = {
+                postedFront: !!resizedFrontImage,
+                postedBack: !!resizedBackImage,
+                postedAt: formattedTime
+            };
+            await storage.set('postedIn24H', JSON.stringify(postedIn24H));
+
+            // Reset the navigation stack and navigate to MainPost
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'MainPost' }],
+            });
+        } else {
+            console.error('Unexpected response status:', response.status);
+            Alert.alert('오류', '피드 업로드 중 예상치 못한 오류가 발생했습니다.');
+        }
     } catch (error) {
-      console.error('피드 업로드 오류:', error.response ? error.response.data : error.message);
-      Alert.alert('오류', '피드 업로드 중 오류가 발생했습니다.');
-      navigation.navigate('CameraOption', { remainingTime: timer });
+        console.error('피드 업로드 오류:', error.response ? error.response.data : error.message);
+        Alert.alert('오류', '피드 업로드 중 오류가 발생했습니다.');
+        navigation.navigate('CameraOption', { remainingTime: timer });
     } finally {
-      setIsSubmitting(false);
+        setIsSubmitting(false);
     }
-  };
+};
+
 
   const handleTitleSave = () => {
     Keyboard.dismiss();

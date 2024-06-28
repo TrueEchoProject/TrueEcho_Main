@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { TouchableOpacity, View, StyleSheet, Text, ActivityIndicator, Image } from 'react-native';
+import { Platform, TouchableOpacity, View, StyleSheet, Text, ActivityIndicator } from 'react-native';
+import { Image as ExpoImage } from 'expo-image';
 import { BlurView } from 'expo-blur';
-import storage from '../AsyncStorage';
-import { useFocusEffect } from '@react-navigation/native';
-
-const defaultImage = require('../assets/trueecho.png');
+import storage from '../AsyncStorage'; // storage.js 파일 위치에 따라 경로 수정함. 현재 임시 주소임.
+import { useFocusEffect } from '@react-navigation/native'; // useFocusEffect 훅 import
 
 const ImageButton = React.memo(({ front_image, back_image, containerHeight, windowWidth }) => {
     const [isFrontShowing, setIsFrontShowing] = useState(true);
     const [myPicture, setMyPicture] = useState("");
     const [loading, setLoading] = useState(true);
-    const [postedIn24H, setPostedIn24H] = useState(null);
+    const defaultImage = "https://ppss.kr/wp-content/uploads/2020/07/01-4-540x304.png";
     const ImageHeight = Math.floor(containerHeight);
     const SmallHeight = Math.floor(ImageHeight / 3);
     const SmallWidth = Math.floor(windowWidth / 3);
@@ -24,9 +23,8 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
     const loadImage = async () => {
         const Front = await storage.get('postFront');
         const Back = await storage.get('postBack');
-        const postedData = await storage.get('postedIn24H');
-        setPostedIn24H(JSON.parse(postedData));
-
+        console.log('Retrieved data:', Front);
+        console.log('Retrieved data:', Back);
         if (Front && Back) {
             setMyPicture(""); // Both images exist
         } else if (Front) {
@@ -45,12 +43,11 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
     };
 
     const getBlurIntensity = (isFront) => {
-        if (!postedIn24H) return 100; // 블러 강도를 100으로 설정
-        if (isFront && !postedIn24H.postedFront) return 100; // 블러 강도를 100으로 설정
-        if (!isFront && !postedIn24H.postedBack) return 100; // 블러 강도를 100으로 설정
-        const postedAt = new Date(postedIn24H.postedAt);
-        const now = new Date();
-        return Math.abs(now - postedAt) / 36e5 > 24 ? 100 : 0; // 블러 강도를 100으로 설정
+        if (myPicture === "none") return 50;
+        if ((myPicture === "front" && !isFront) || (myPicture === "back" && isFront)) {
+            return 50;
+        }
+        return 0;
     };
 
     const renderOverlayText = (isFront) => {
@@ -81,32 +78,29 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
             )}
             <TouchableOpacity onPress={changeImage} style={styles.smallImageContainer}>
                 <View style={{ position: 'relative' }}>
-                    <Image
-                        source={isFrontShowing ? (front_image ? { uri: front_image } : defaultImage) : (back_image ? { uri: back_image } : defaultImage)}
+                    <ExpoImage
+                        source={{ uri: isFrontShowing ? (front_image || defaultImage) : (back_image || defaultImage) }}
                         style={[styles.smallImage, { height: SmallHeight, width: SmallWidth }]}
+                        blurRadius={getBlurIntensity(isFrontShowing)}
                     />
                     {getBlurIntensity(isFrontShowing) > 0 && (
-                        <>
-                            <BlurView intensity={getBlurIntensity(isFrontShowing)} style={styles.blurView} />
-                            <View style={[styles.overlayView, { opacity: 0.7 }]}/>
-                        </>
+                        <BlurView intensity={getBlurIntensity(isFrontShowing)} style={styles.blurView} />
                     )}
                 </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={changeImage} style={{ zIndex: 1 }}>
                 <View style={{ position: 'relative' }}>
-                    <Image
-                        source={isFrontShowing ? (back_image ? { uri: back_image } : defaultImage) : (front_image ? { uri: front_image } : defaultImage)}
+                    <ExpoImage
+                        source={{ uri: isFrontShowing ? (back_image || defaultImage) : (front_image || defaultImage) }}
                         style={[styles.largeImage, { height: ImageHeight, width: windowWidth }]}
+                        blurRadius={getBlurIntensity(!isFrontShowing)}
                     />
                     {getBlurIntensity(!isFrontShowing) > 0 && (
-                        <>
-                            <BlurView intensity={getBlurIntensity(!isFrontShowing)} style={styles.blurView} />
-                            <View style={[styles.overlayView, { opacity: 0.7 }]}/>
+                        <BlurView intensity={getBlurIntensity(!isFrontShowing)} style={styles.blurView}>
                             {renderOverlayText(!isFrontShowing) && (
                                 <Text style={styles.overlayText}>{renderOverlayText(!isFrontShowing)}</Text>
                             )}
-                        </>
+                        </BlurView>
                     )}
                 </View>
             </TouchableOpacity>
@@ -160,10 +154,6 @@ const styles = StyleSheet.create({
         ...StyleSheet.absoluteFillObject,
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    overlayView: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'black',
     },
 });
 
