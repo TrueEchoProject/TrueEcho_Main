@@ -77,6 +77,7 @@ export const CommunityStackScreen = () => { // 커뮤니티 속 Stack 구성
 				name="Community"
 				component={CommunityTabScreen}
 				options={({ navigation }) => ({ // 커뮤니티 화면에서 상단 네비 구현
+					headerShown: false,
 					headerRight: () => (
 						<View style={{flexDirection: 'row'}}>
 							<Button1 onPress={() => navigation.navigate('Fri')} />

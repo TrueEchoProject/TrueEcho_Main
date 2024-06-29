@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   TextInput,
   Pressable,
   StyleSheet,
-  ActivityIndicator
+  ActivityIndicator,
+  Image,StatusBar,Platform,
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import * as SecureStore from 'expo-secure-store';
@@ -20,7 +21,8 @@ const ForgotPassword = () => {
   const [step, setStep] = useState(1); // 현재 단계 상태 관리
   const [loading, setLoading] = useState(false); // 로딩 상태 관리
   const [warning, setWarning] = useState(""); // 경고 메시지 상태 관리
-  
+
+
   // 인증 코드를 이메일로 전송하는 함수
   const handleSendCode = async () => {
     if (email === "") {
@@ -114,6 +116,11 @@ const ForgotPassword = () => {
   
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <View>
+        <Image style={styles.logo} source={require('../assets/logo.png')} />
+      </View>
+      <View style={styles.inputcontainer}>
       {step === 1 && ( // 1단계: 이메일 입력
         <>
           <Text style={styles.text}>비밀번호 찾기</Text>
@@ -122,12 +129,13 @@ const ForgotPassword = () => {
             value={email}
             onChangeText={setEmail}
             style={styles.input}
+            placeholderTextColor="#FFFFFF"
           />
           {warning === "emailEmpty" && <Text style={styles.warningText}>이메일을 입력해주세요.</Text>}
           {warning === "sendCodeFailed" && <Text style={styles.warningText}>코드 전송에 실패했습니다. 다시 시도해주세요.</Text>}
           {warning === "networkError" && <Text style={styles.warningText}>네트워크 오류가 발생했습니다. 다시 시도해주세요.</Text>}
           <Pressable style={styles.continueBtn} onPress={handleSendCode}>
-            {loading ? <ActivityIndicator size="small" color="#FFFFFF" /> : <Text style={styles.btnText}>인증 코드 보내기</Text>}
+            {loading ? <ActivityIndicator size="small" color="#FFFFFF" /> : <Text style={styles.btnText}>인증</Text>}
           </Pressable>
         </>
       )}
@@ -139,6 +147,7 @@ const ForgotPassword = () => {
             value={code}
             onChangeText={setCode}
             style={styles.input}
+            placeholderTextColor="#FFFFFF"
           />
           {warning === "codeEmpty" && <Text style={styles.warningText}>인증 코드를 입력해주세요.</Text>}
           {warning === "verifyCodeFailed" && <Text style={styles.warningText}>코드 인증에 실패했습니다. 다시 시도해주세요.</Text>}
@@ -157,6 +166,7 @@ const ForgotPassword = () => {
             onChangeText={setNewPassword}
             style={styles.input}
             secureTextEntry
+            placeholderTextColor="#FFFFFF"
           />
           {warning === "passwordEmpty" && <Text style={styles.warningText}>비밀번호를 입력해주세요.</Text>}
           {warning === "shortPassword" && <Text style={styles.warningText}>비밀번호는 최소 6자 이상이어야 합니다.</Text>}
@@ -167,6 +177,7 @@ const ForgotPassword = () => {
           </Pressable>
         </>
       )}
+      </View>
     </View>
   );
 };
@@ -174,35 +185,43 @@ const ForgotPassword = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: wp(10),
+    alignItems: "center",
+    backgroundColor: "black"
+  },
+  logo: { 
+    width: wp(80),
+    height: hp(40),
+    alignSelf: "center"
+  },
+  inputcontainer: {
+    width: wp(80),
   },
   text: {
     fontWeight: 'bold',
-    fontSize: hp(4),
+    color: "#fff",
+    fontSize: hp(2.5),
     marginBottom: hp(2),
   },
   input: {
-    width: wp(85),
-    borderBottomWidth: 2,
-    borderColor: '#3B4664',
-    borderRadius: 5,
+    width: wp(80),
+    borderBottomWidth: 1,
+    borderColor: "#fff",
+    fontSize: hp(2),
     paddingVertical: hp(1),
-    marginTop: hp(2),
-    fontSize: hp(3),
+    color: "#fff"
   },
   continueBtn: {
-    backgroundColor: '#3B4664',
-    width: wp(90),
-    padding: wp(2),
+    backgroundColor: '#fff',
+    width: wp(15),
+    padding: wp(3),
     paddingHorizontal: wp(4),
     borderRadius: 15,
     marginTop: hp(2),
+    alignSelf: 'flex-end', // 오른쪽 정렬 추가
   },
   btnText: {
-    fontSize: hp(3),
-    color: '#fff',
+    fontSize: hp(2),
+    color: 'black',
     fontWeight: 'bold',
     textAlign: 'center',
   },

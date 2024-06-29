@@ -1,22 +1,17 @@
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Animated, PanResponder, Dimensions, Image, TouchableOpacity, Button, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Animated, PanResponder, Dimensions, Image, TouchableOpacity, Button, ImageBackground, Pressable } from 'react-native';
 import Api from '../../../Api'; // 경로를 필요에 따라 업데이트하십시오.
 import { useNavigation } from '@react-navigation/native';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { LinearGradient } from 'expo-linear-gradient';
 
 
 const { width, height } = Dimensions.get('window');
 const defaultImages = [
-  require('../../../assets/emoji.png'),
-  require('../../../assets/fire.png'),
-  require('../../../assets/amazing.png'),
-  require('../../../assets/funny.png'),
-  require('../../../assets/vr.png'),
-  require('../../../assets/heart.png'),
-  // 필요한 만큼 이미지를 추가하세요
+  require('../../../assets/logo.png'),
 ];
-const backgroundImage = require('../../../assets/splash.png'); // 배경 이미지 경로를 필요에 따라 업데이트하십시오.
+const backgroundImage = require('../../../assets/logo2.png'); // 배경 이미지 경로를 필요에 따라 업데이트하십시오.
 
 const getRandomDefaultImage = () => {
   const randomIndex = Math.floor(Math.random() * defaultImages.length);
@@ -77,17 +72,24 @@ const StartPage = ({ onStart }) => {
   };
 
   return (
-    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
+    <ImageBackground source={backgroundImage} style={styles.backgroundImage} resizeMode="cover">
       <View style={styles.container}>
         <Animated.View
           {...panResponder.panHandlers}
           style={[styles.startContainer, { transform: position.getTranslateTransform() }]}
         >
-          <Text style={styles.startText}>슬라이드하여 투표를 시작하세요!</Text>
-          <Animated.View style={[styles.goContainer, slideStyle]}>
-            <Text style={styles.goText}>GO</Text>
-            <AntDesign name="doubleright" size={56} color="#333" style={styles.icon} />
-          </Animated.View>
+          <View style={{ height: hp(40) }}>
+            <Text style={{ fontSize: hp(2.5), color: "#fff", textAlign: "center" }}>10개의 질문을 준비했어요!</Text>
+            <Text style={styles.startText}>투표를 시작해볼까요?</Text>
+          </View>
+          <View style={{ alignItems: 'center' }}>
+            <Text style={styles.goText}>슬라이드로</Text>
+            <Text style={styles.goText}>투표 시작하기!</Text>
+
+            <Animated.View style={[styles.goContainer, slideStyle]}>
+              <AntDesign name="doubleright" size={56} color="#fff" style={styles.icon} />
+            </Animated.View>
+          </View>
         </Animated.View>
       </View>
     </ImageBackground>
@@ -286,56 +288,69 @@ const Vote = () => {
   const currentItem = data[currentIndex];
 
   return (
-    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
-      <View style={styles.container}>
-        <Animated.View
-          {...panResponder.panHandlers}
-          style={[styles.itemContainer, { transform: position.getTranslateTransform() }]}
-        >
-          <View style={styles.scrollContainer}>
-            <Text style={styles.title}>{currentItem.title}</Text>
-            <View style={styles.imageContainer}>
-              {!selectedImage && (
-                <View style={styles.placeholderImage}>
-                  <Image source={defaultImage} style={styles.selectedImage} />
+    <View style={{ flex: 1 }}>
+      <ImageBackground source={backgroundImage} style={styles.backgroundImage} resizeMode="cover">
+        <View style={styles.container}>
+          <Animated.View
+            {...panResponder.panHandlers}
+            style={[styles.itemContainer, { transform: position.getTranslateTransform() }]}
+          >
+            <View style={styles.scrollContainer}>
+              <Text style={styles.title}>{currentItem.title}</Text>
+              <View style={styles.imageContainer}>
+                {!selectedImage && (
+                  <View>
+                    <Image source={defaultImage} style={styles.placeholderImage} />
+                  </View>
+                )}
+                {selectedImage && (selectedImage.front || selectedImage.back) && (
+                  <TouchableOpacity onPress={toggleImage}>
+                    <Image
+                      source={{ uri: isFrontImage ? selectedImage.front : selectedImage.back }}
+                      style={styles.selectedImage}
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
+              {userLoading ? (
+                <ActivityIndicator size="small" color="#0000ff" />
+              ) : (
+                <View style={styles.bottomContainer}>
+                  <View style={styles.userContainer}>
+                    {userData && userData.slice(0, 4).map((user) => (
+                      <TouchableOpacity
+                        key={user.id}
+                        onPress={() => handleUserClick(user.id, user.photoFrontUrl, user.photoBackUrl)}
+                      >
+                        {selectedUserId === user.id ? (
+                          <LinearGradient
+                            colors={['#1BC5DA', '#263283']}
+                            style={styles.selectedUserButton}
+                          >
+                            <Image source={{ uri: user.profileUrl }} style={styles.profileImage} />
+                            <Text style={styles.btnText}>{user.username}</Text>
+                          </LinearGradient>
+                        ) : (
+                          <View style={styles.userButton}>
+                            <Image source={{ uri: user.profileUrl }} style={styles.profileImage} />
+                            <Text>{user.username}</Text>
+                          </View>
+                        )}
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                  <View style={styles.refreshButtonContainer}>
+                    <Pressable onPress={handleRefresh} style={styles.refreshButton}>
+                      <AntDesign name="reload1" size={24} color="black" />
+                    </Pressable>
+                  </View>
                 </View>
               )}
-              {selectedImage && (selectedImage.front || selectedImage.back) && (
-                <TouchableOpacity onPress={toggleImage}>
-                  <Image
-                    source={{ uri: isFrontImage ? selectedImage.front : selectedImage.back }}
-                    style={styles.selectedImage}
-                  />
-                </TouchableOpacity>
-              )}
             </View>
-            {userLoading ? (
-              <ActivityIndicator size="small" color="#0000ff" />
-            ) : (
-              <View style={styles.userContainer}>
-                {userData && userData.slice(0, 4).map((user) => (
-                  <TouchableOpacity
-                    key={user.id}
-                    style={[
-                      styles.userButton,
-                      selectedUserId === user.id && styles.selectedUserButton
-                    ]}
-                    onPress={() => handleUserClick(user.id, user.photoFrontUrl, user.photoBackUrl)}
-                  >
-                    <Image source={{ uri: user.profileUrl }} style={styles.profileImage} />
-                    <Text>{user.username}</Text>
-                  </TouchableOpacity>
-                ))}
-
-              </View>
-            )}
-          </View>
-          <View style={styles.refreshButtonContainer}>
-            <Button title="유저 새로고침" onPress={handleRefresh} />
-          </View>
-        </Animated.View>
-      </View>
-    </ImageBackground>
+          </Animated.View>
+        </View>
+      </ImageBackground>
+    </View>
   );
 
 };
@@ -343,21 +358,19 @@ const Vote = () => {
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
-    resizeMode: 'cover',
+    resizeMode: 'contain',
   },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 10,
+    marginTop: hp(4),
   },
   itemContainer: {
-    width: wp('90%'),
+    width: wp('100%'),
     padding: 10,
-    borderWidth: 4,
-    borderColor: '#525E7D',
-    backgroundColor: '#fff',
-    borderRadius: 10,
+    backgroundColor: 'black',
     flex: 1,
     justifyContent: 'space-between',
   },
@@ -370,19 +383,23 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     height: hp('8%'),
-    // marginBottom: 5,
+    color: "#fff",
     alignItems: 'center',
+    marginHorizontal: wp(4),
   },
   imageContainer: {
-    height: hp('38%'),
+    height: hp('50%'), // 크기를 키움
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 5,
+    marginBottom: hp(2),
   },
   selectedImage: {
-    width: wp('80%'),
-    height: '100%',
+    width: wp('80%'), // 크기를 키움
+    aspectRatio: 1, // 이 속성을 추가하여 비율을 유지하면서 크기 조정
     resizeMode: 'contain',
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: "#fff"
   },
   placeholderImage: {
     width: wp('80%'),
@@ -396,37 +413,58 @@ const styles = StyleSheet.create({
     color: '#aaa',
     fontSize: wp('4%'),
   },
+  bottomContainer: {
+    flexDirection: 'column', // 열 방향으로 정렬
+    justifyContent: 'center', // 공간을 중앙에 배치
+    alignItems: 'center',
+    width: wp('100%'), // 전체 너비를 차지
+    paddingHorizontal: wp('5%'), // 좌우에 여백 추가
+    marginBottom: hp(2), // 아래 여백 추가
+  },
   userContainer: {
-    height: hp('20%'),
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
   },
   userButton: {
     flexDirection: 'column',
     alignItems: 'center',
     margin: 5,
     padding: 5,
-    backgroundColor: '#ddd',
-    borderRadius: 5,
-    width: wp('35%'), // 2*2 그리드를 위해 버튼 너비 조정
-    height: wp('20%'),
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    width: wp('20%'),
+    height: hp('15%'),
     justifyContent: 'center',
   },
   selectedUserButton: {
-    backgroundColor: '#7C86A0',
+    flexDirection: 'column',
+    alignItems: 'center',
+    margin: 5,
+    padding: 5,
+    borderRadius: 5,
+    width: wp('20%'),
+    height: hp('15%'),
+    justifyContent: 'center',
   },
   profileImage: {
     width: wp('13%'),
     height: wp('13%'),
     borderRadius: wp('7.5%'),
-
+    marginBottom: 5,
+  },
+  btnText: {
+    fontSize: wp(3.5),
+    fontWeight: 'bold',
   },
   refreshButtonContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: hp('6.5%'),
+    height: hp('6%'),
+    width: wp(13),
+    borderRadius: 15,
+    backgroundColor: "#fff",
+    marginTop: hp(2),
   },
   endText: {
     fontSize: wp('5%'),
@@ -435,15 +473,13 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   startContainer: {
-    width: wp('90%'),
-    height: hp('50%'),
+    width: wp('100%'),
+    height: hp('100%'),
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: 'black',
     borderRadius: 10,
     padding: 20,
-    borderWidth: 1,
-    borderColor: '#ccc',
     shadowColor: '#000', // 그림자 추가
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -454,21 +490,23 @@ const styles = StyleSheet.create({
     fontSize: wp('6%'),
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 20,
-    color: '#333',
+    color: '#fff',
   },
   goContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   goText: {
-    fontSize: wp('12%'),
+    fontSize: wp('5%'),
     fontWeight: 'bold',
-    color: '#333',
+    color: '#fff',
+    marginBottom: 5,
   },
   icon: {
     transform: [{ translateX: 10 }],
+    marginLeft: -30,
   },
 });
+
 
 export default Vote;
