@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -21,10 +21,9 @@ import * as SecureStore from 'expo-secure-store';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native'; // useNavigation 훅을 임포트
 
-
-
 const SignUpForm = () => {
   const navigation = useNavigation(); // navigation 초기화
+  const [loading, setLoading] = useState(false); // 로딩 상태 추가
   const [step, setStep] = useState(1);
   const [userData, setUserData] = useState({
     email: "",
@@ -52,6 +51,8 @@ const SignUpForm = () => {
   // const [isNicknameValid, setIsNicknameValid] = useState(false); // 닉네임 중복검사 통과 여부.
   const [isAuthValid, setIsAuthValid] = useState(false); // 인증 여부 상태 변수 추가
   const [isSendingEmail, setIsSendingEmail] = useState(false); // 이메인 인증 로딩 인디케이터.
+  const emailInputRef = useRef(null);
+
 
   const BackButton = () => (
     <Pressable style={styles.loginBtn} onPress={() => navigation.goBack()}>
@@ -111,12 +112,15 @@ const SignUpForm = () => {
       setWarning(validationWarning);
       return;
     }
-
     setWarning("");
     if (step < 9) {
       setStep(step + 1);
     } else {
-      sendDataToServer(userData);
+      if (!loading) { // 로딩 중이 아닐 때만 실행
+        setLoading(true);
+        await sendDataToServer(userData);
+        setLoading(false);
+      }
     }
   };
 
@@ -173,19 +177,12 @@ const SignUpForm = () => {
     try {
       const response = await Api.post('/accounts/register', userData);
       console.log("백엔드로 전송", response.data);
-
-      // 응답 헤더에서 토큰 추출
-      // const accessToken = response.headers['authorization'];
-      // const refreshToken = response.headers['refresh-token']; // [수정필요] 어떻게 담겨서 올지 모름. 바꿔야 함.
-
       if (response.data.code === "U001") {
         // 성공적으로 서버에 데이터 전송 후, 로컬 스토리지에 저장
         await SecureStore.setItemAsync('userEmail', userData.email);
         await SecureStore.setItemAsync('userPassword', userData.password);
         await SecureStore.setItemAsync('y', String(userData.y)); // 유저 위치를 캐싱.
         await SecureStore.setItemAsync('x', String(userData.x)); // 유저 위치를 캐싱.
-        // await SecureStore.setItemAsync('accessToken', accessToken);
-        // await SecureStore.setItemAsync('refreshToken', refreshToken);
         console.log("로컬 스토리지에 저장 완료");
 
         // 로컬에 저장된 값 확인
@@ -193,15 +190,11 @@ const SignUpForm = () => {
         const storedPassword = await SecureStore.getItemAsync('userPassword');
         const storedy = await SecureStore.getItemAsync('y');
         const storedx = await SecureStore.getItemAsync('x');
-        // const storedAccessToken = await SecureStore.getItemAsync('accessToken');
-        // const storedRefreshToken = await SecureStore.getItemAsync('refreshToken');
 
         console.log("Stored Email:", storedEmail);
         console.log("Stored Password:", storedPassword);
         console.log("Stored y:", storedy);
         console.log("Stored x:", storedx);
-        // console.log("Stored AccessToken:", storedAccessToken);
-        // console.log("Stored RefreshToken:", storedRefreshToken);
 
         console.log("서버로 보낸 데이터:", userData); // 보낸 데이터 확인.
 
@@ -244,10 +237,10 @@ const SignUpForm = () => {
     }
   };
 
-
   const handleEmailButtonPress = () => {
     if (!isCodeSent) {
       sendEmailToServer(userData.email);
+      emailInputRef.current.blur();
       startCountdowns();  // 이메일 인증 버튼을 눌렀을 때 카운트다운 시작
     } else if (canResend) {
       resendAuthCode();
@@ -326,8 +319,6 @@ const SignUpForm = () => {
     setLoadingLocation(true);
   };
 
-
-
   return (
     <View style={styles.container}>
       <BackButton />
@@ -353,6 +344,7 @@ const SignUpForm = () => {
               onChangeText={(text) => handleChange('email', text)}
               style={styles.input}
               keyboardType="email-address"
+              ref={emailInputRef}
             />
             {warning === "이메일 공란" && <Text style={styles.warningText}>이메일을 입력해주세요.</Text>}
             {warning === "이메일 정규식 오류" && <Text style={styles.warningText}>올바른 이메일을 입력해주세요.</Text>}
@@ -383,9 +375,10 @@ const SignUpForm = () => {
                 {warning === "인증번호 인증 성공" && <Text style={styles.successText}>인증 성공! 다음으로 넘어가주세요.</Text>}
                 {timer === 0 && <Text style={styles.warningText}>인증 시간이 초과되었습니다. 다시 인증해주세요.</Text>}
                 <Text style={styles.description}>남은 시간: {Math.floor(timer / 60)}:{('0' + (timer % 60)).slice(-2)}</Text>
-                <Button title="인증 번호 확인" onPress={verifyCode} />
+                <Button title="인증 번호 확인" onPress={verifyCode} disabled={isAuthValid} />
               </>
             )}
+
           </>
         )}
         {step === 2 && (
@@ -552,11 +545,11 @@ const SignUpForm = () => {
       </View>
       <KeyboardAvoidingView style={styles.buttonContainer}>
         {step > 1 && (
-          <Pressable style={styles.backBtn} onPress={goBack}>
+          <Pressable style={styles.backBtn} onPress={goBack} disabled={loading}>
             <Text style={styles.btnText}>Back</Text>
           </Pressable>
         )}
-        <Pressable style={styles.continueBtn} onPress={continueClick}>
+        <Pressable style={styles.continueBtn} onPress={continueClick} disabled={loading}>
           <Text style={styles.btnText}>{step < 9 ? "Continue" : "Finish"}</Text>
         </Pressable>
       </KeyboardAvoidingView>
