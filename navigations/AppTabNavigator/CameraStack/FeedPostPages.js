@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, Modal, Image, Alert, TouchableOpacity, Keyboard, Button } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Image, Alert, TouchableOpacity, Keyboard, Dimensions } from 'react-native';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { useNavigation } from '@react-navigation/native';
 import storage from '../../../AsyncStorage';
 import Api from '../../../Api';
 import ImageDouble from './ImageDouble';
 import { MaterialIcons } from '@expo/vector-icons';
+
+const { width, height } = Dimensions.get('window');
 
 const FeedPostPage = ({ route }) => {
   const navigation = useNavigation();
@@ -21,18 +23,18 @@ const FeedPostPage = ({ route }) => {
     },
   });
   const [title, setTitle] = useState(route.params.title || '');
-  const [modalVisible, setModalVisible] = useState(false);
-  const [friendRangeModalVisible, setFriendRangeModalVisible] = useState(false);
   const [friendRange, setFriendRange] = useState('FRIEND');
-  const [selectedCamera, setSelectedCamera] = useState('double');
-  const [timer, setTimer] = useState(remainingTime || 180);
-  const [friendRangeButtonText, setFriendRangeButtonText] = useState('친구범위');
-  const [cameraButtonText, setCameraButtonText] = useState('사진설정');
+  const [selectedCamera, setSelectedCamera] = useState('dual');
+  const [timer, setTimer] = useState(remainingTime !== undefined ? remainingTime : 180);
+  const [friendRangeButtonText, setFriendRangeButtonText] = useState('Friend');
+  const [cameraButtonText, setCameraButtonText] = useState('Dual');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const defaultImageUri = 'https://via.placeholder.com/1000';
 
   useEffect(() => {
+    if (timer === 0) return; // 타이머가 0초가 되면 더 이상 감소하지 않도록
+
     const intervalId = setInterval(() => {
       setTimer((prevTimer) => {
         if (prevTimer > 0) {
@@ -45,7 +47,7 @@ const FeedPostPage = ({ route }) => {
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [timer]);
 
   const resizeImage = async (uri) => {
     try {
@@ -65,29 +67,29 @@ const FeedPostPage = ({ route }) => {
     }
   };
 
-  const handleFriendRangeSelection = (range) => {
-    const newScope = range === 'friends' ? 'FRIEND' : 'PUBLIC';
-    setFriendRange(newScope);
-    setFriendRangeModalVisible(false);
-    setFriendRangeButtonText(range === 'friends' ? '친구' : '전체');
+  const handleFriendRangeToggle = () => {
+    setFriendRange((prevRange) => {
+      const newRange = prevRange === 'FRIEND' ? 'PUBLIC' : 'FRIEND';
+      setFriendRangeButtonText(newRange === 'FRIEND' ? 'Friend' : 'Public');
+      return newRange;
+    });
   };
 
-  const handleCameraSelection = (cameraType) => {
-    setModalVisible(false);
-    setSelectedCamera(cameraType);
-    switch (cameraType) {
-      case 'front':
-        setCameraButtonText('전면사진');
-        break;
-      case 'back':
-        setCameraButtonText('후면사진');
-        break;
-      case 'double':
-        setCameraButtonText('전/후면사진');
-        break;
-      default:
-        setCameraButtonText('사진설정');
-    }
+  const handleCameraSelection = () => {
+    setSelectedCamera((prevCamera) => {
+      switch (prevCamera) {
+        case 'front':
+          setCameraButtonText('Back');
+          return 'back';
+        case 'back':
+          setCameraButtonText('Dual');
+          return 'dual';
+        case 'dual':
+        default:
+          setCameraButtonText('Front');
+          return 'front';
+      }
+    });
   };
 
   const renderCameraImage = () => {
@@ -98,19 +100,11 @@ const FeedPostPage = ({ route }) => {
       return <Image source={{ uri: frontImage || defaultImageUri }} style={styles.cameraImage} />;
     } else if (selectedCamera === 'back') {
       return <Image source={{ uri: backImage || defaultImageUri }} style={styles.cameraImage} />;
-    } else if (selectedCamera === 'double') {
+    } else if (selectedCamera === 'dual') {
       return <ImageDouble cameraData={cameraData} setCameraData={setCameraData} />;
     } else {
       return <Text>No image available</Text>;
     }
-  };
-
-  // 스토리지를 초기화하는 함수
-  const clearStorage = async () => {
-    await storage.remove('postFront');
-    await storage.remove('postBack');
-    await storage.remove('postedIn24H');
-    Alert.alert('Storage cleared', 'The storage has been cleared.');
   };
 
   const shareFeed = async () => {
@@ -131,7 +125,7 @@ const FeedPostPage = ({ route }) => {
     let resizedFrontImage = null;
     let resizedBackImage = null;
 
-    if (selectedCamera === 'front' || selectedCamera === 'double') {
+    if (selectedCamera === 'front' || selectedCamera === 'dual') {
         if (cameraData.front.uris[cameraData.front.selectedIndex]) {
             resizedFrontImage = await resizeImage(cameraData.front.uris[cameraData.front.selectedIndex]);
             if (resizedFrontImage) {
@@ -144,7 +138,7 @@ const FeedPostPage = ({ route }) => {
         }
     }
 
-    if (selectedCamera === 'back' || selectedCamera === 'double') {
+    if (selectedCamera === 'back' || selectedCamera === 'dual') {
         if (cameraData.back.uris[cameraData.back.selectedIndex]) {
             resizedBackImage = await resizeImage(cameraData.back.uris[cameraData.back.selectedIndex]);
             if (resizedBackImage) {
@@ -204,8 +198,7 @@ const FeedPostPage = ({ route }) => {
     } finally {
         setIsSubmitting(false);
     }
-};
-
+  };
 
   const handleTitleSave = () => {
     Keyboard.dismiss();
@@ -215,71 +208,45 @@ const FeedPostPage = ({ route }) => {
     navigation.navigate('CameraOption', { remainingTime: timer });
   };
 
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
   return (
     <View style={styles.container}>
-      <Text>Timer: {Math.floor(timer / 60)}:{timer % 60 < 10 ? `0${timer % 60}` : timer % 60}</Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.titleInput}
-          onChangeText={setTitle}
-          value={title}
-          placeholder="제목을 입력해주세요."
-          onSubmitEditing={handleTitleSave}
-        />
-      </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => setFriendRangeModalVisible(true)}>
-          <Text style={styles.buttonText}>{friendRangeButtonText}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
-          <Text style={styles.buttonText}>{cameraButtonText}</Text>
-        </TouchableOpacity>
-      </View>
+      <Text style={styles.timerText}>
+        {formatTime(timer)}
+      </Text>
       <View style={styles.imageContainer}>
         {renderCameraImage()}
+        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+          <MaterialIcons name="arrow-back" size={24} color="black" />
+        </TouchableOpacity>
+        <View style={styles.innerButtonContainer}>
+          <TouchableOpacity style={styles.innerButton} onPress={handleCameraSelection}>
+            <Text style={styles.innerButtonText}>{cameraButtonText}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.innerButton} onPress={handleFriendRangeToggle}>
+            <Text style={styles.innerButtonText}>{friendRangeButtonText}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      <TouchableOpacity style={styles.submitButton} onPress={shareFeed} disabled={isSubmitting}>
-        <Text style={styles.submitButtonText}>피드에 올리기</Text>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          onChangeText={setTitle}
+          value={title}
+          placeholder="글을 작성해주세요"
+          placeholderTextColor="white"
+          onSubmitEditing={handleTitleSave}
+        />
+        <View style={styles.inputUnderline} />
+      </View>
+      <TouchableOpacity style={styles.shareButton} onPress={shareFeed} disabled={isSubmitting}>
+        <Text style={styles.shareButtonText}>공유</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>뒤로 가기</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.clearButton} onPress={clearStorage}>
-        <Text style={styles.clearButtonText}>스토리지 초기화</Text>
-      </TouchableOpacity>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={friendRangeModalVisible}
-        onRequestClose={() => setFriendRangeModalVisible(!friendRangeModalVisible)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity style={styles.closeButton} onPress={() => setFriendRangeModalVisible(false)}>
-              <MaterialIcons name="close" size={24} color="black" />
-            </TouchableOpacity>
-            <Button title="친구" onPress={() => handleFriendRangeSelection('friends')} />
-            <Button title="전체" onPress={() => handleFriendRangeSelection('everyone')} />
-          </View>
-        </View>
-      </Modal>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(!modalVisible)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
-              <MaterialIcons name="close" size={24} color="black" />
-            </TouchableOpacity>
-            <Button title="전면 카메라" onPress={() => handleCameraSelection('front')} />
-            <Button title="후면 카메라" onPress={() => handleCameraSelection('back')} />
-            <Button title="전/후면 카메라" onPress={() => handleCameraSelection('double')} />
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 };
@@ -287,86 +254,91 @@ const FeedPostPage = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
+    backgroundColor: '#000',
     alignItems: 'center',
-    backgroundColor: 'white',
-    paddingTop: 20,
+    paddingVertical: 20,
+  },
+  timerText: {
+    color: 'white',
+    fontSize: 24,
+    marginBottom: 10,
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    paddingLeft: 12,
-  },
-  titleInput: {
-    flex: 1,
-    height: 40,
-    marginVertical: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    padding: 10,
-  },
-  button: {
-    backgroundColor: '#007bff',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    width: '90%',
+    backgroundColor: 'black',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     borderRadius: 5,
+    marginBottom: 10,
   },
-  buttonText: {
+  input: {
     color: 'white',
     fontSize: 16,
   },
+  inputUnderline: {
+    height: 1,
+    backgroundColor: 'gray',
+    marginTop: 5,
+  },
   imageContainer: {
     width: '90%',
-    aspectRatio: 1,
+    aspectRatio: 3 / 4, // 4:3 비율로 설정
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    borderRadius: 15,
+    overflow: 'hidden',
+    position: 'relative',
+    marginBottom: 10,
   },
   cameraImage: {
     width: '100%',
     height: '100%',
   },
-  submitButton: {
-    backgroundColor: '#007bff',
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '90%',
+    marginBottom: 10,
+  },
+  innerButtonContainer: {
+    flexDirection: 'row',
+    position: 'absolute',
+    bottom: 10,
+    width: '90%',
+    justifyContent: 'space-evenly',
+  },
+  innerButton: {
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 5,
-    marginBottom: 20,
+    borderRadius: 10,
   },
-  submitButtonText: {
+  innerButtonText: {
     color: 'white',
+    fontSize: 16,
+  },
+  shareButton: {
+    backgroundColor: '#fff',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    width: '90%',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'gray',
+  },
+  shareButtonText: {
+    color: '#000',
     fontSize: 16,
   },
   backButton: {
-    backgroundColor: '#007bff',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
     position: 'absolute',
-    bottom: 20,
-  },
-  backButtonText: {
-    color: 'white',
-    fontSize: 16,
-  },
-  clearButton: {
-    backgroundColor: '#ff0000',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    position: 'absolute',
-    bottom: 70,
-  },
-  clearButtonText: {
-    color: 'white',
-    fontSize: 16,
+    top: 10,
+    right: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    borderRadius: 15,
+    padding: 5,
   },
   modalContainer: {
     flex: 1,

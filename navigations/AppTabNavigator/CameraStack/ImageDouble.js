@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity, Image, StyleSheet } from 'react-native';
 
-const defaultImage = 'https://via.placeholder.com/1000'; // 기본 이미지 URI
+const defaultImage = 'https://via.placeholder.com/1000';
 
 const ImageDouble = ({ cameraData, setCameraData }) => {
   const swapImageIndices = () => {
@@ -12,7 +12,7 @@ const ImageDouble = ({ cameraData, setCameraData }) => {
       },
       back: {
         uris: prevData.front.uris,
-        selectedIndex: prevData.front.selectedIndex,
+        selectedIndex: 0,
       },
     }));
   };
@@ -49,11 +49,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     left: 10,
-    width: 100,
-    height: 100,
-    borderWidth: 2,
-    borderColor: 'white',
+    width: 120, // 너비를 줄임
+    height: 160, // 높이를 늘려 직사각형 모양으로 변경
     zIndex: 1,
+    borderRadius: 20, // 모서리를 더 둥글게 설정
+    overflow: 'hidden', // 이미지가 둥근 모서리에 맞게 잘리도록 설정
   },
   smallImage: {
     width: '100%',

@@ -3,6 +3,7 @@ import { StyleSheet, View, TouchableOpacity, Text, Platform } from 'react-native
 import { Camera as ExpoCamera } from 'expo-camera/legacy';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 const CameraScreen = ({ navigation, route }) => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -10,7 +11,7 @@ const CameraScreen = ({ navigation, route }) => {
   const [flashMode, setFlashMode] = useState(ExpoCamera.Constants.FlashMode.off);
   const [zoom, setZoom] = useState(0);
   const [isFocused, setIsFocused] = useState(false);
-  const initialTimer = route.params?.remainingTime ?? 180;
+  const initialTimer = route.params?.remainingTime !== undefined ? route.params.remainingTime : 180;
   const [timer, setTimer] = useState(initialTimer); // 타이머 초기화
   const cameraRef = useRef(null);
 
@@ -31,6 +32,8 @@ const CameraScreen = ({ navigation, route }) => {
   );
 
   useEffect(() => {
+    if (timer === 0) return; // 타이머가 0초가 되면 더 이상 감소하지 않도록
+
     let intervalId;
     if (timer > 0) {
       intervalId = setInterval(() => {
@@ -51,7 +54,17 @@ const CameraScreen = ({ navigation, route }) => {
   const takePicture = async () => {
     if (cameraRef.current) {
       const options = { quality: 0.5, base64: true, skipProcessing: true };
-      const data = await cameraRef.current.takePictureAsync(options);
+      let data = await cameraRef.current.takePictureAsync(options);
+
+      if (cameraType === ExpoCamera.Constants.Type.front) {
+        const manipResult = await ImageManipulator.manipulateAsync(
+          data.uri,
+          [{ flip: ImageManipulator.FlipType.Horizontal }],
+          { compress: 0.75, format: ImageManipulator.SaveFormat.JPEG }
+        );
+        data.uri = manipResult.uri;
+      }
+
       return data;
     }
     return null;
@@ -70,7 +83,7 @@ const CameraScreen = ({ navigation, route }) => {
       }
     }
 
-    const nextCameraType = cameraType === ExpoCamera.Constants.Type.back ? ExpoCamera.Constants.Type.front : ExpoCamera.Constants.Type.front;
+    const nextCameraType = cameraType === ExpoCamera.Constants.Type.back ? ExpoCamera.Constants.Type.front : ExpoCamera.Constants.Type.back;
     setCameraType(nextCameraType);
 
     setTimeout(async () => {
@@ -126,6 +139,12 @@ const CameraScreen = ({ navigation, route }) => {
     }
   };
 
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
   return (
     <View style={styles.container}>
       {hasPermission === null ? (
@@ -153,19 +172,19 @@ const CameraScreen = ({ navigation, route }) => {
             </TouchableOpacity>
           </View>
           <View style={styles.timerContainer}>
-            <Text style={styles.timerText}>Timer: {Math.floor(timer / 60)}:{timer % 60 < 10 ? `0${timer % 60}` : timer % 60}</Text>
+            <Text style={styles.timerText}>{formatTime(timer)}</Text>
           </View>
           <View style={styles.controlPanel}>
             <TouchableOpacity style={styles.iconButton} onPress={handleFlashMode}>
-              {flashMode === ExpoCamera.Constants.FlashMode.off && <MaterialIcons name="flash-off" size={24} color="white" />}
-              {flashMode === ExpoCamera.Constants.FlashMode.on && <MaterialIcons name="flash-on" size={24} color="white" />}
-              {flashMode === ExpoCamera.Constants.FlashMode.auto && <MaterialIcons name="flash-auto" size={24} color="white" />}
+              {flashMode === ExpoCamera.Constants.FlashMode.off && <MaterialIcons name="flash-off" size={28} color="white" />}
+              {flashMode === ExpoCamera.Constants.FlashMode.on && <MaterialIcons name="flash-on" size={28} color="white" />}
+              {flashMode === ExpoCamera.Constants.FlashMode.auto && <MaterialIcons name="flash-auto" size={28} color="white" />}
             </TouchableOpacity>
             <TouchableOpacity style={styles.captureButton} onPress={handleCapture}>
-              <FontAwesome name="camera" size={24} color="white" />
+              <FontAwesome name="camera" size={28} color="white" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconButton} onPress={handleCameraType}>
-              <MaterialIcons name="flip-camera-ios" size={24} color="white" />
+              <MaterialIcons name="flip-camera-ios" size={28} color="white" />
             </TouchableOpacity>
           </View>
         </React.Fragment>
@@ -184,43 +203,49 @@ const styles = StyleSheet.create({
   },
   controlPanel: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
     bottom: 20,
-    left: 20,
-    right: 20,
+    left: 0,
+    right: 0,
   },
   iconButton: {
-    padding: 10,
-    borderRadius: 30,
+    padding: 15, // Increased padding for larger buttons
+    borderRadius: 35,
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    marginHorizontal: 15,
   },
   captureButton: {
-    padding: 15,
-    borderRadius: 35,
+    padding: 20, // Increased padding for larger button
+    borderRadius: 40,
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
     borderColor: 'white',
     borderWidth: 2,
+    marginHorizontal: 25,
   },
   zoomContainer: {
-    position: 'absolute',
-    bottom: 85,
-    left: 0,
-    right: 0,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'absolute',
+    bottom: 100,
+    left: 0,
+    right: 0,
   },
   zoomButton: {
-    marginHorizontal: 20,
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    borderRadius: 30,
-    padding: 10,
+    borderRadius: 25,
+    width: 45, // Increased width for larger button
+    height: 45, // Increased height for larger button
+    justifyContent: 'center', // Center content horizontally
+    alignItems: 'center', // Center content vertically
+    marginHorizontal: 20,
   },
   zoomText: {
     color: 'white',
-    fontSize: 18,
+    fontSize: 28, // Increased font size
+    textAlign: 'center',
   },
   timerContainer: {
     position: 'absolute',
@@ -232,7 +257,7 @@ const styles = StyleSheet.create({
   },
   timerText: {
     color: 'white',
-    fontSize: 18,
+    fontSize: 32,
   },
 });
 
