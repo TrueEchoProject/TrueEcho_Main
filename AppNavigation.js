@@ -8,9 +8,9 @@ import LoginCheck from "./navigations/LoginCheck";
 
 const Stack = createStackNavigator();
 
-const AppNavigation = () => {
+const AppNavigation = ({ initialRouteName }) => {
 	return (
-		<Stack.Navigator initialRouteName="LoginCheck">
+		<Stack.Navigator initialRouteName={initialRouteName}>
 			<Stack.Screen
 				name="LoginCheck"
 				component={LoginCheck}
