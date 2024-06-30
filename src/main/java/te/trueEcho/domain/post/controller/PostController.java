@@ -15,7 +15,7 @@ import te.trueEcho.domain.post.entity.PostStatus;
 import te.trueEcho.domain.post.service.PostService;
 import te.trueEcho.global.response.ResponseCode;
 import te.trueEcho.global.response.ResponseForm;
-
+import te.trueEcho.global.response.ResponseInterface;
 
 
 @Tag(name = "Post API", description = "게시물 관리 API")
@@ -68,9 +68,15 @@ public class PostController {
             @ApiResponse(responseCode = "400", description = "GET_POST_FAIL - 게시물 조회 실패")
     })
     @GetMapping("/read")
-    public ResponseEntity<ResponseForm> readSinglePost(@RequestParam Long postId){
+    public ResponseEntity<ResponseForm> readSinglePost(@RequestParam Long postId,
+                                                       @RequestParam(required = false) boolean requireRefresh){
 
-        ReadPostResponse postGetDtoList =  postService.getSinglePost(postId);
+        ResponseInterface postGetDtoList =
+                postService.getSinglePost(SinglePostRequest.builder()
+                                                            .postId(postId)
+                                                            .requireRefresh(requireRefresh)
+                                                            .build()
+                                        );
 
         return  postGetDtoList != null ?
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.GET_POST_SUCCESS, postGetDtoList)) :
@@ -94,7 +100,8 @@ public class PostController {
             @PathVariable int type,
             @RequestParam(required = false) String location,
             @RequestParam int index,
-            @RequestParam int pageCount){
+            @RequestParam int pageCount,
+            @RequestParam(required = false) boolean requireRefresh){
 
         PostListResponse postGetDtoList =  postService.getAllPostByType(
                 ReadPostRequest.builder()
@@ -102,6 +109,7 @@ public class PostController {
                         .pageCount(pageCount)
                         .type(FeedType.values()[type])
                         .location(location)
+                        .requireRefresh(requireRefresh)
                         .build()
         );
 
@@ -184,18 +192,6 @@ public class PostController {
             @RequestBody WriteCommentRequest writeCommentRequest){
 
         boolean isWritten = postService.writeComment(writeCommentRequest);
-//
-//        if(isWritten){
-//            notificationController.sendNotification(
-//                    NotificationDto.builder().data(
-//                            NotificationDto.Data.builder()
-//                                                .postId(writeCommentRequest.getPostId()) // contentid임.
-//                                                .userId(writeCommentRequest.getReceiverId())
-//                                                .notiType(NotiType.COMMENT.ordinal())
-//                                                .build())
-//                            .build()
-//            );
-//        }
 
         return isWritten ?
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.POST_COMMENT_SUCCESS)) :

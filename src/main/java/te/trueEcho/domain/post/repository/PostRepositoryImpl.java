@@ -13,10 +13,7 @@ import te.trueEcho.domain.post.entity.PostStatus;
 import te.trueEcho.domain.user.entity.User;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @Slf4j
@@ -44,6 +41,7 @@ public class PostRepositoryImpl implements PostRepository {
         try {
             return em.createQuery("select p from Post p " +
                             "join fetch p.user " +
+                            "left join fetch p.likes " +
                             "where p.id = :postId", Post.class)
                     .setParameter("postId", postId)
                     .getSingleResult();
@@ -53,12 +51,54 @@ public class PostRepositoryImpl implements PostRepository {
         }
     }
 
+    @Override
+    public Comment getCommentById(Long commentId) {
+        try {
+            return em.createQuery("SELECT c FROM Comment c WHERE c.id = :commentId", Comment.class)
+                    .setParameter("commentId", commentId)
+                    .getSingleResult();
+        } catch (Exception e) {
+            log.error("getCommentById error : {}", e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public Like getLikeById(Long likeId) {
+        try {
+            return em.createQuery("SELECT l FROM Like l WHERE l.id = :likeId", Like.class)
+                    .setParameter("likeId", likeId)
+                    .getSingleResult();
+        } catch (Exception e) {
+            log.error("getLikeById error : {}", e.getMessage());
+            return null;
+        }
+    }
+
+    public Post getLatestPostByUser(User user) {
+        try {
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime oneDayAgo = now.minusDays(1);
+            return em.createQuery("select p from Post p " +
+                            "where p.user = :user and " +
+                            "p.createdAt >= :oneDayAgo " +
+                            "order by p.createdAt desc", Post.class)
+                    .setParameter("user", user)
+                    .setParameter("oneDayAgo", oneDayAgo)
+                    .setMaxResults(1)
+                    .getSingleResult();
+        } catch (Exception e) {
+            log.error("getLatestPostByUser error : {}", e.getMessage());
+            return null;
+        }
+    }
+
     /**
      * 먼저 그 게시물에 해당하는 메인 댓글을 조회하고,
      * 그 댓글을 이용해 서브 댓글 조회하기.
-     * <p>
-     * 서브댓글에서 시작해서 조호히하기
-     * <p>
+     *
+     * 서브댓글에서 시작해서 조회하기
+     *
      * 메인 댓글에서 시작해서 조회하기.
      */
     public List<Comment> readCommentWithUnderComments(Long postId) {
@@ -74,12 +114,12 @@ public class PostRepositoryImpl implements PostRepository {
 
     public List<Post> getRandomPost() {
         try {
-            LocalDateTime twoDaysAgo = LocalDateTime.now().minusDays(50); // 나중에는 이틀로 제한
+
             return em.createQuery("select p from Post p " +
                             "join fetch p.user " +
-                            "where p.createdAt >= :twoDaysAgo " +
                             "order by p.createdAt desc", Post.class)
-                    .setParameter("twoDaysAgo", twoDaysAgo)
+                    .setFirstResult(0)
+                    .setMaxResults(50)
                     .getResultList();
 
         } catch (Exception e) {
@@ -131,6 +171,7 @@ public class PostRepositoryImpl implements PostRepository {
             Post post = em.find(Post.class, postId);
             if (post != null) {
                 em.remove(post);
+                em.flush();
                 return true;
             }
             return false;
@@ -171,8 +212,6 @@ public class PostRepositoryImpl implements PostRepository {
         }
 
     }
-
-
 
     @Override
     public boolean deleteLike(Like like) {
@@ -237,5 +276,28 @@ public class PostRepositoryImpl implements PostRepository {
                 .getSingleResult();
 
         return count > 0;
+    }
+
+    @Override
+    public Comment getCommentByIdAndSender(Long contentId, Long senderId) {
+        Comment comment = em.createQuery("SELECT c FROM Comment c " +
+                        "JOIN FETCH c.user " +
+                        "WHERE c.id = :contentId AND c.user.id = :senderId", Comment.class)
+                .setParameter("contentId", contentId)
+                .setParameter("senderId", senderId)
+                .getSingleResult();
+        return comment;
+    }
+
+
+    @Override
+    public Like getLikeByIdAndSender(Long contentId, Long id) {
+        Like like = em.createQuery("SELECT l FROM Like l " +
+                        "JOIN FETCH l.user " +
+                        "WHERE l.id = :contentId AND l.user.id = :senderId", Like.class)
+                .setParameter("contentId", contentId)
+                .setParameter("senderId", id)
+                .getSingleResult();
+        return like;
     }
 }

@@ -50,6 +50,25 @@ public class FriendService {
             return false;
         }
     }
+    public boolean cancelRequest(Long targetUserId) {
+        try {
+            final User sendUser = authUtil.getLoginUser();
+            final User targetUser = userAuthService.findUserByID(targetUserId);
+
+            if (sendUser == null || targetUser == null) {
+                log.error("User not found");
+                return false;
+            }
+
+            friendRepository.rejectRequest(targetUser, sendUser);
+
+            return true;
+
+        } catch (Exception e) {
+            log.error("Error occurred while adding friend", e);
+            return false;
+        }
+    }
 
     public List<ConfirmFriendResponse> confirmRequest(String type) {
         try {
@@ -173,7 +192,7 @@ public class FriendService {
                 return response;
             }
 
-            List<User> friendList = getFriendList(loginUser);
+            List<User> friendList = getFriendListForRecommend(loginUser);
             if (friendList == null) {
                 log.error("No friends found for the user");
                 return response;
@@ -184,7 +203,7 @@ public class FriendService {
 
             // 친구의 친구들을 찾아서 추천 맵에 추가
             for (User friend : friends) {
-                List<User> fofList = getFriendList(friend);
+                List<User> fofList = getFriendListForRecommend(friend);
                 if (fofList != null) {
                     for (User fof : fofList) {
                         if (!friends.contains(fof) && !fof.equals(loginUser)) {
@@ -217,6 +236,18 @@ public class FriendService {
 
         try {
             friendList = friendRepository.getFriendList(loginUser);
+        } catch (Exception e) {
+            log.error("Error occurred while getting friend list", e);
+        }
+
+        return friendList;
+    }
+
+    private List<User> getFriendListForRecommend(User loginUser) {
+        List<User> friendList = new ArrayList<>();
+
+        try {
+            friendList = friendRepository.getFriendListForRecommend(loginUser);
         } catch (Exception e) {
             log.error("Error occurred while getting friend list", e);
         }

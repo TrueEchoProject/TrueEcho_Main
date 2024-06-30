@@ -12,6 +12,9 @@ public class UpdatePasswordRequest {
     @Schema(description = "이메일", example = "trueEcho@gmail.com", required = true)
     private final String email;
 
+    @Schema(description = "인증코드", example = "123456", required = true)
+    private final String verificationCode;
+
     @Schema(description = "새 비밀번호", example = "newSecurePassword123!", required = true)
     private final String newPassword;
 }

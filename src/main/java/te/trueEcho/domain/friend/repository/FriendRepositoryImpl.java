@@ -102,4 +102,31 @@ public class FriendRepositoryImpl implements FriendRepository {
             return Collections.emptyList();
         }
     }
+
+    public List<User> getFriendListForRecommend(User loginUser) {
+        try {
+            List<Friend> friends = em.createQuery("select f from Friend f" +
+                            " join fetch f.sendUser" +
+                            " join fetch f.targetUser " +
+                            "where (f.sendUser = :loginUser or f.targetUser = :loginUser)" +
+                            " and f.status = :friendStatus", Friend.class)
+                    .setParameter("loginUser", loginUser)
+                    .setParameter("friendStatus", FRIEND)
+                    .getResultList();
+
+            List<User> allUsers = new ArrayList<>();
+            for (Friend friend : friends) {
+                if (friend.getSendUser().equals(loginUser)) {
+                    allUsers.add(friend.getTargetUser());
+                } else {
+                    allUsers.add(friend.getSendUser());
+                }
+            }
+
+            return allUsers;
+        } catch (Exception e) {
+            log.error("Error occurred while getting friend list for recommendation", e);
+            return Collections.emptyList();
+        }
+    }
 }

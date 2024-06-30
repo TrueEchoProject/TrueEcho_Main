@@ -88,10 +88,10 @@ public class User extends CreatedDateAudit {
     private String fcmToken;
 
     @OneToMany(mappedBy = "sendUser", cascade = CascadeType.ALL)
-    private List<Friend> friend;
+    private List<Friend> friend = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Block> block;
+    private List<Block> blockedUsers = new ArrayList<>();
 
 //    @OneToOne(mappedBy = "user",  cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //    private SuspendedUser suspendedUser;
@@ -118,6 +118,7 @@ public class User extends CreatedDateAudit {
     @OneToOne(fetch = FetchType.LAZY,  cascade=CascadeType.ALL)
     @JoinColumn(name = "notification_setting_id", nullable = false)
     private NotificationSetting notificationSetting;
+
 
     @OneToMany(mappedBy = "receiver", fetch = FetchType.LAZY , orphanRemoval = true)
     private List<NotificationEntity> notificationEntity = new ArrayList<>();

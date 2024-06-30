@@ -79,6 +79,24 @@ public class FriendController {
                 ResponseEntity.ok(ResponseForm.of(ACCEPT_FRIEND_FAIL));
 
     }
+    @Operation(summary = "친구 요청 취소", description = "친구 요청을 취소합니다.")
+    @Parameters({
+            @Parameter(name = "targetUserId", description = "추가한 친구의 사용자 ID", required = true, example = "123")
+    })
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "ADD_FRIEND_SUCCESS - 친구 요청 취소 성공"),
+            @ApiResponse(responseCode = "400", description = "ADD_FRIEND_FAIL - 친구 요청 취소 실패")
+    })
+    @PostMapping("/cancel")
+    public ResponseEntity<ResponseForm> cancelRequest(@RequestParam Long targetUserId) {
+
+        boolean isCanceled = friendService.cancelRequest(targetUserId);
+        return isCanceled ?
+                ResponseEntity.ok(ResponseForm.of(CANCEL_FRIENDREQUEST_SUCCESS)) :
+                ResponseEntity.ok(ResponseForm.of(CANCEL_FRIENDREQUEST_FAIL));
+
+    }
+
     @Operation(summary = "친구 요청 거절", description = "친구 요청을 거절합니다.")
     @Parameters({
             @Parameter(name = "sendUserId", description = "요청을 보낸 사용자의 ID", required = true, example = "456")

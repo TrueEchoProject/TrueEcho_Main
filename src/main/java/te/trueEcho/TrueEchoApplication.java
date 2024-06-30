@@ -11,10 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableJpaAuditing
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 public class TrueEchoApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(TrueEchoApplication.class, args);
-
 	}
-
 }

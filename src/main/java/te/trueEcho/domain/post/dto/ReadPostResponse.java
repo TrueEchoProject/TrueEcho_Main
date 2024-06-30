@@ -3,13 +3,14 @@ package te.trueEcho.domain.post.dto;
 import lombok.Builder;
 import lombok.Getter;
 import te.trueEcho.domain.post.entity.PostStatus;
+import te.trueEcho.global.response.ResponseInterface;
 
 import java.time.LocalDateTime;
 
 
 @Getter
 @Builder
-public class ReadPostResponse {
+public class ReadPostResponse implements ResponseInterface {
         private  final String username;
         private final Long userId;
         private final boolean isMine;
@@ -24,5 +25,6 @@ public class ReadPostResponse {
         private final int commentCount;
         private final boolean isFriend;
         private final boolean isMyLike;
+        private final PostedIn24H postedIn24H;
     }
 

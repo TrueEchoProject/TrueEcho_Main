@@ -2,7 +2,6 @@ package te.trueEcho.domain.vote.repository;
 
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,8 +12,6 @@ import te.trueEcho.domain.vote.entity.Vote;
 import te.trueEcho.domain.vote.entity.VoteCategory;
 import te.trueEcho.domain.vote.entity.VoteResult;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoField;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -130,6 +127,23 @@ public class VoteRepositoryImpl implements VoteRepository {
         } else {
             em.merge(result);
             return false;
+        }
+    }
+
+    @Override
+    public VoteResult getVoteResultByVoteId_noti(Long voteId, Long targetUserId, Long senderUserId) {
+        try {
+            return em.createQuery("SELECT vr FROM VoteResult vr " +
+                            "WHERE vr.vote.id = :voteId " +
+                            "AND vr.userTarget.id = :targetUserId " +
+                            "AND vr.userVoter.id = :senderUserId", VoteResult.class)
+                    .setParameter("voteId", voteId)
+                    .setParameter("targetUserId", targetUserId)
+                    .setParameter("senderUserId", senderUserId)
+                    .getSingleResult();
+        } catch (Exception e) {
+            log.warn("this is error {}", e);
+            return null;
         }
     }
 

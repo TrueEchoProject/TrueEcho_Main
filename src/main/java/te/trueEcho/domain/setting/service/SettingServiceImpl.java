@@ -139,7 +139,7 @@ public class SettingServiceImpl implements SettingService{
 
         if (editPinsRequest.getUpdatedPostIdList().isEmpty()){
             log.warn("No updated post id list found");
-            return true;
+            return false;
         }
 
         List<Post> postList =  postRepository.getPostByIdList(editPinsRequest.getUpdatedPostIdList());
@@ -148,7 +148,6 @@ public class SettingServiceImpl implements SettingService{
                 postList.stream().map(
                         post -> new Pin(loginUser, post)
                 ).toList();
-
         log.warn("New pins created = {}",newPins.get(0).getPost().getTitle());
         pinsRepository.saveAll(newPins);
 

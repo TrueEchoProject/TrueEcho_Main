@@ -11,8 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import te.trueEcho.global.response.ResponseForm;
-import te.trueEcho.infra.firebase.dto.FCMTokenResponse;
 import te.trueEcho.infra.firebase.service.FCMService;
+
 import static te.trueEcho.global.response.ResponseCode.*;
 
 
