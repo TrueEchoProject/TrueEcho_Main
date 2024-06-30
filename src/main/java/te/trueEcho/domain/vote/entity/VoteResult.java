@@ -36,14 +36,10 @@ public class VoteResult extends CreatedDateAudit {
     @JoinColumn(name = "vote_id")
     private Vote vote;
 
-    @OneToOne(mappedBy = "voteResult", cascade=CascadeType.ALL)
-    private NotificationEntity notificationEntity;
-
     @Builder
     public VoteResult(User userVoter, User userTarget, Vote vote, NotificationEntity notificationEntity){
         this.userVoter = userVoter;
         this.userTarget = userTarget;
         this.vote = vote;
-        this.notificationEntity = notificationEntity;
     }
 }

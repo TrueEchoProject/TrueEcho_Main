@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import te.trueEcho.domain.rank.dto.RankListResponse;
+import te.trueEcho.domain.rank.entity.Rank;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.vote.entity.Vote;
 
@@ -59,6 +60,16 @@ public class RankRepositoryImpl implements RankRepository{
             log.error("Error occurred while caching this week's rank", e);
         }
         return null;
+    }
+
+    @Override
+    public Rank getRankById(Long rankId) {
+        try {
+            return em.find(Rank.class, rankId);
+        } catch (Exception e) {
+            log.error("Error occurred while getting rank by id", e);
+            return null;
+        }
     }
 
 

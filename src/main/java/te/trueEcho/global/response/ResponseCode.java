@@ -56,6 +56,8 @@ public enum ResponseCode {
     ACCEPT_FRIEND_FAIL(202, "T002", "친구 요청 수락에 실패했습니다."),
     REJECT_FRIEND_SUCCESS(202, "T002", "친구 요청 거절에 성공했습니다."),
     REJECT_FRIEND_FAIL(202, "T002", "친구 요청 거절에 실패했습니다."),
+    CANCEL_FRIENDREQUEST_SUCCESS(202, "T002", "친구 요청 취소에 성공했습니다"),
+    CANCEL_FRIENDREQUEST_FAIL(202, "T002", "친구 요청 취소에 실패했습니다"),
     DELETE_FRIEND_SUCCESS(202, "T002", "친구 삭제에 성공했습니다."),
     DELETE_FRIEND_FAIL(202, "T002", "친구 삭제에 실패했습니다."),
     READ_FRIENDLIST_SUCCESS(202, "T002", "친구 목록 조회에 성공했습니다."),

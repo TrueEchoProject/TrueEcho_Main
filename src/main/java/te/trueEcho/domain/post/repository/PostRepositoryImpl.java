@@ -13,10 +13,7 @@ import te.trueEcho.domain.post.entity.PostStatus;
 import te.trueEcho.domain.user.entity.User;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @Slf4j
@@ -50,6 +47,30 @@ public class PostRepositoryImpl implements PostRepository {
                     .getSingleResult();
         } catch (Exception e) {
             log.error("getPostById error : {}", e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public Comment getCommentById(Long commentId) {
+        try {
+            return em.createQuery("SELECT c FROM Comment c WHERE c.id = :commentId", Comment.class)
+                    .setParameter("commentId", commentId)
+                    .getSingleResult();
+        } catch (Exception e) {
+            log.error("getCommentById error : {}", e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public Like getLikeById(Long likeId) {
+        try {
+            return em.createQuery("SELECT l FROM Like l WHERE l.id = :likeId", Like.class)
+                    .setParameter("likeId", likeId)
+                    .getSingleResult();
+        } catch (Exception e) {
+            log.error("getLikeById error : {}", e.getMessage());
             return null;
         }
     }
@@ -192,7 +213,6 @@ public class PostRepositoryImpl implements PostRepository {
 
     }
 
-
     @Override
     public boolean deleteLike(Like like, Post targetPost) {
         try {
@@ -261,5 +281,28 @@ public class PostRepositoryImpl implements PostRepository {
                 .getSingleResult();
 
         return count > 0;
+    }
+
+    @Override
+    public Comment getCommentByIdAndSender(Long contentId, Long senderId) {
+        Comment comment = em.createQuery("SELECT c FROM Comment c " +
+                        "JOIN FETCH c.user " +
+                        "WHERE c.id = :contentId AND c.user.id = :senderId", Comment.class)
+                .setParameter("contentId", contentId)
+                .setParameter("senderId", senderId)
+                .getSingleResult();
+        return comment;
+    }
+
+
+    @Override
+    public Like getLikeByIdAndSender(Long contentId, Long id) {
+        Like like = em.createQuery("SELECT l FROM Like l " +
+                        "JOIN FETCH l.user " +
+                        "WHERE l.id = :contentId AND l.user.id = :senderId", Like.class)
+                .setParameter("contentId", contentId)
+                .setParameter("senderId", id)
+                .getSingleResult();
+        return like;
     }
 }

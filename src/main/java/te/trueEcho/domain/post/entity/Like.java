@@ -35,13 +35,9 @@ public class Like {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(mappedBy = "like", cascade=CascadeType.ALL)
-    private NotificationEntity notificationEntity;
-
     @Builder
     public Like( Post post, User user,  NotificationEntity notificationEntity) {
         this.post = post;
         this.user = user;
-        this.notificationEntity = notificationEntity;
     }
 }
