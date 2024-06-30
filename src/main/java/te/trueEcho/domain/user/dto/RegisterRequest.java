@@ -48,7 +48,7 @@ public class RegisterRequest {
         private LocalDate dob;
 
         @Schema(description = "알림 시간", example = "MORNING", required = true)
-        private int notificationTime;
+        private NotiTimeStatus notificationTime;
 
         @Schema(description = "경도 x 좌표", example = "127.0", required = true)
         private double x;

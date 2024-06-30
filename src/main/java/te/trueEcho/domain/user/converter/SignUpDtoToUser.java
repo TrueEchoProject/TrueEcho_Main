@@ -26,7 +26,7 @@ public class SignUpDtoToUser {
                 .gender(registerRequest.getGender())
                 .coordinate(coordinate)
                 .location(location)
-                .notificationTimeStatus(NotiTimeStatus.values()[registerRequest.getNotificationTime()])
+                .notificationTimeStatus(registerRequest.getNotificationTime())
                 .build();
     }
 }
