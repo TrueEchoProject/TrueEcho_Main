@@ -13,9 +13,12 @@ public interface VoteRepository {
      void createSelectedVoteContents();
 
      boolean saveVoteResult(VoteResult result);
+
      List<Vote> getRandomVoteWithSize(int size);
      void putTargetUsers(VoteUsersResponse voteUsersResponse) ;
      VoteUsersResponse getTargetUsers(boolean flag);
+
+     VoteResult getVoteResultByVoteId_noti(Long voteId, Long targetUserId, Long senderUserId);
 
      Vote findVoteById(Long voteId);
 

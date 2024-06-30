@@ -11,10 +11,13 @@ import java.util.List;
 public interface PostRepository {
     List<Post> getAllPost(int pageCount, int index, List<User> filteredUser);
 
-    Post getPostById(Long postId);
     Post getLatestPostByUser(User user);
     List<Comment> readCommentWithUnderComments(Long postId);
 
+    Post getPostById(Long postId);
+    Comment getCommentById(Long commentId);
+
+    Like getLikeById(Long likeId);
 
     List<Post> getRandomPost();
     Comment getParentComment(Long commentId);
@@ -25,10 +28,15 @@ public interface PostRepository {
     boolean deleteLike(Like like);
     void save(Post post);
     void saveLike(Like like);
+
     Like findLikeByUserAndPost(User user, Post post);
     List<Post> getPostByIdList(List<Long> postIdList);
 
     Comment findCommentById(Long commentId);
 
     boolean existsByUserAndCreatedAtIsAfterAndStatus(User user, LocalDateTime createdAt, PostStatus status);
+
+    Comment getCommentByIdAndSender(Long contentId, Long senderId);
+
+    Like getLikeByIdAndSender(Long contentId, Long id);
 }
