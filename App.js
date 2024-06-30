@@ -93,16 +93,16 @@ const App = () => {
   }, []);
 
 	useEffect(() => {
-    const initialize = async () => {
-      const token = await getPushToken();
-      const loginSuccess = await prepare(token);
-      if (!loginSuccess) {
-        setInitialRoute('Login'); // prepare가 실패한 경우 Login으로 설정
-      }
-      await checkLastNotification();
-    };
-    initialize();
-  }, []);
+	const initialize = async () => {
+		const token = await getPushToken();
+		const loginSuccess = await prepare(token);
+		if (!loginSuccess) {
+			setInitialRoute('Login'); // prepare가 실패한 경우 Login으로 설정
+		}
+		await checkLastNotification();
+	};
+	initialize();
+}, []);
 
 	const checkLastNotification = async () => {
 		const lastNotificationResponse = await Notifications.getLastNotificationResponseAsync();
@@ -243,7 +243,13 @@ const App = () => {
       const storedEmail = await SecureStore.getItemAsync('userEmail');
       const storedPassword = await SecureStore.getItemAsync('userPassword');
       if (storedEmail && storedPassword) {
-        return await submitLoginData(storedEmail, storedPassword, token);
+        const loginSuccess = await submitLoginData(storedEmail, storedPassword, token);
+        if (loginSuccess) {
+          setInitialRoute('TabNavigation'); // 로그인 성공 시 TabNavigation으로 설정
+        } else {
+          setInitialRoute('Login'); // 로그인 실패 시 Login으로 설정
+        }
+        return loginSuccess;
       } else {
         console.log("Stored credentials not found, redirecting to login...");
         setIsLoggedIn(false);
