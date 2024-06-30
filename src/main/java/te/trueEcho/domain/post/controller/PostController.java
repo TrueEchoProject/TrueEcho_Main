@@ -149,6 +149,7 @@ public class PostController {
         return likeUpdateResponse != null ?
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.UPDATE_LIKES_SUCCESS, likeUpdateResponse)) :
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.UPDATE_LIKES_FAIL));
+
     }
 
     @Operation(summary = "댓글 목록 조회", description = "특정 게시물의 댓글 목록을 조회합니다.")

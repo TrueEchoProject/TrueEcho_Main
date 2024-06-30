@@ -75,9 +75,9 @@ public class PostRepositoryImpl implements PostRepository {
     /**
      * 먼저 그 게시물에 해당하는 메인 댓글을 조회하고,
      * 그 댓글을 이용해 서브 댓글 조회하기.
-     * 
+     *
      * 서브댓글에서 시작해서 조회하기
-     * 
+     *
      * 메인 댓글에서 시작해서 조회하기.
      */
     public List<Comment> readCommentWithUnderComments(Long postId) {
@@ -193,26 +193,30 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
 
-
     @Override
-    public boolean deleteLike(Like like) {
+    public boolean deleteLike(Like like, Post targetPost) {
         try {
-            if (like != null) {
-                em.remove(like);
-                return true;
+            if(like == null || targetPost == null) {
+                return false;
             }
-            return false;
+            targetPost.getLikes().remove(like);
+            em.remove(like);
+            log.info("deleteLike successful: {}", like.getId());
+            return true;
         } catch (Exception e) {
-            log.error("deleteLike error : {}", e.getMessage());
+            log.error("deleteLike error : {}", e.getMessage(), e);
             return false;
         }
     }
-    @Transactional
+
+
+    @Override
     public void saveLike(Like like) {
         try {
             em.persist(like);
         } catch (Exception e) {
-            log.error("saveLike error : {}", e.getMessage());
+            log.error("saveLike error : {}", e.getMessage(), e);
+            throw e;
         }
     }
 
