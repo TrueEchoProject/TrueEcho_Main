@@ -38,6 +38,8 @@ const ForgotPassword = () => {
           email: email
         }
       });
+
+      console.log('서버 응답 (인증 코드 전송):', response.data); // 서버 응답 데이터 출력
       
       if (response.data && response.data.status === 200 && response.data.code === "U004") {
         setStep(2); // 다음 단계로 이동
@@ -69,7 +71,9 @@ const ForgotPassword = () => {
           checkCode: code
         }
       });
-      
+  
+      console.log('서버 응답 (코드 검증):', response.data); // 서버 응답 데이터 출력
+
       if (response.data && response.data.status === 200 && response.data.code === "U002") {
         setStep(3); // 다음 단계로 이동
         setWarning("");
@@ -93,12 +97,20 @@ const ForgotPassword = () => {
       setWarning("shortPassword");
       return;
     }
-    
+  
     setLoading(true);
-    
+  
     try {
-      const response = await Api.patch('/accounts/password', { email, newPassword, verificationCode: code });
-      
+      const data = { 
+        email: email, 
+        newPassword: newPassword, 
+        verificationCode: code 
+      };
+      console.log('전송 데이터:', data); // 콘솔에 데이터 출력
+  
+      const response = await Api.patch('/accounts/password', data);
+      console.log('서버 응답:', response.data); // 서버 응답 데이터 출력
+  
       if (response.data && response.data.status === 200 && response.data.code === "U0015") {
         await SecureStore.deleteItemAsync('userEmail');
         await SecureStore.deleteItemAsync('userPassword');
@@ -113,6 +125,9 @@ const ForgotPassword = () => {
       setLoading(false);
     }
   };
+  
+  
+  
   
   return (
     <View style={styles.container}>
@@ -212,7 +227,7 @@ const styles = StyleSheet.create({
   },
   continueBtn: {
     backgroundColor: '#fff',
-    width: wp(15),
+    // width: wp(15),
     padding: wp(3),
     paddingHorizontal: wp(4),
     borderRadius: 15,
