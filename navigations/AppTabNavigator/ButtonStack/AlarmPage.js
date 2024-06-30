@@ -16,11 +16,67 @@ const Alarm = ({ navigation }) => {
 	const [initialLoad, setInitialLoad] = useState(true); // 초기 로드 상태를 추가
 	const GraphImage = "https://i.ibb.co/NybJtMb/DALL-E-2024-05-06-18-33-20-A-simple-and-clear-bar-chart-representing-a-generic-voting-result-suitabl.webp";
 	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
-	
+
 	useEffect(() => {
-		fetchPost(1);
+		// fetchPost(1);  // Fetch from API
+		// Using dummy data for testing
+		setAlarmPost(dummyDataPost);
+		setAlarmCommunity(dummyDataCommunity);
+		setIsLoading(false);
+		setInitialLoad(false);
 	}, []);
-	
+
+	const dummyDataPost = [
+		{
+			type: 4,
+			profile_url: null,
+			username: '강상호',
+			comment: '안녕',
+			created_at: new Date(),
+			post_back_url: null,
+			post_id: '1',  // post_id 추가
+		},
+		{
+			type: 5,
+			profile_url: null,
+			username: '서희준',
+			comment: 'This is a dummy reply.',
+			created_at: new Date(),
+			post_back_url: null,
+			post_id: '2',  // post_id 추가
+		},
+		{
+			type: 6,
+			profile_urls: [null, null],
+			like_username: 'testuser3',
+			created_at: new Date(),
+			post_back_url: null,
+			post_id: '3',  // post_id 추가
+		},
+	];
+
+	const dummyDataCommunity = [
+		{
+			type: 1,
+			rank_vote: 'Best User',
+			rank: 1,
+			created_at: new Date(),
+		},
+		{
+			type: 2,
+			created_at: new Date(),
+		},
+		{
+			type: 3,
+			user_id: '1234',
+			vote: 'Favorite Food',
+			age: 25,
+			gender: 0,
+			username: 'testuser4',
+			created_at: new Date(),
+		},
+	];
+
 	const goResult = async () => {
 		const url = Linking.createURL('main/community/community/result');
 		const supported = await Linking.canOpenURL(url);
@@ -30,98 +86,100 @@ const Alarm = ({ navigation }) => {
 			console.log(`Can't handle url: ${url}`);
 		}
 	};
-	
+
 	const fetchPost = async (index) => {
 		try {
-		  setIsLoading(true);
-		  const serverResponse = await Api.get(`/noti/readPost`, {
-			params: {
-			  index: index,
-			  pageCount: 10
+			setIsLoading(true);
+			const serverResponse = await Api.get(`/noti/readPost`, {
+				params: {
+					index: index,
+					pageCount: 10
+				}
+			});
+			if (serverResponse.data.message === "게시물 알림 피드 조회에 실패했습니다.") {
+				alert("알림을 불러올 게 없습니다.");
+				setAlarmPost([]);
+				setHasMore(false);
+				return;
 			}
-		  });
-		  if (serverResponse.data.message === "게시물 알림 피드 조회에 실패했습니다.") {
-			alert("알림을 불러올 게 없습니다.");
-			setAlarmPost([]);
-			setHasMore(false);
-			return;
-		  }
-		  const processedData = processLikeAlarms(serverResponse.data.data.allNotis.filter(alarm => alarm.type === 6));
-		  const newAlarms = [...serverResponse.data.data.allNotis.filter(alarm => alarm.type !== 6), ...processedData];
-	  
-		  if (newAlarms.length > 0) {
-			setAlarmPost(prevAlarms => [...prevAlarms, ...newAlarms]);
-			setPage(prevPage => prevPage + 1);
-		  } else {
-			setHasMore(false);
-		  }
+			const processedData = processLikeAlarms(serverResponse.data.data.allNotis.filter(alarm => alarm.type === 6));
+			const newAlarms = [...serverResponse.data.data.allNotis.filter(alarm => alarm.type !== 6), ...processedData];
+
+			if (newAlarms.length > 0) {
+				setAlarmPost(prevAlarms => [...prevAlarms, ...newAlarms]);
+				setPage(prevPage => prevPage + 1);
+			} else {
+				setHasMore(false);
+			}
 		} catch (error) {
-		  if (error.response && error.response.status === 500) {
-			alert('서버에 오류가 발생했습니다. 나중에 다시 시도해주세요.');
-		  } else if (error.response && error.response.status === 400) {
-			alert('잘못된 요청입니다. 요청 파라미터를 확인해주세요.');
-		  } else {
-			alert('데이터를 가져오는 중 오류가 발생했습니다.');
-		  }
-		  console.error('Error fetching data', error);
+			if (error.response && error.response.status === 500) {
+				alert('서버에 오류가 발생했습니다. 나중에 다시 시도해주세요.');
+			} else if (error.response && error.response.status === 400) {
+				alert('잘못된 요청입니다. 요청 파라미터를 확인해주세요.');
+			} else {
+				alert('데이터를 가져오는 중 오류가 발생했습니다.');
+			}
+			console.error('Error fetching data', error);
 		} finally {
-		  setIsLoading(false);
-		  setInitialLoad(false);
+			setIsLoading(false);
+			setInitialLoad(false);
 		}
-	  };
-	  
-	  const fetchCommunity = async (index) => {
+	};
+
+	const fetchCommunity = async (index) => {
 		try {
-		  setIsLoading(true);
-		  const serverResponse = await Api.get(`/noti/readCommunity`, {
-			params: {
-			  index: index,
-			  pageCount: 10
+			setIsLoading(true);
+			const serverResponse = await Api.get(`/noti/readCommunity`, {
+				params: {
+					index: index,
+					pageCount: 10
+				}
+			});
+			if (serverResponse.data.message === "커뮤니티 알림 피드 조회에 실패했습니다.") {
+				alert("알림을 불러올 게 없습니다.");
+				setAlarmCommunity([]);
+				setHasMore(false);
+				return;
 			}
-		  });
-		  if (serverResponse.data.message === "커뮤니티 알림 피드 조회에 실패했습니다.") {
-			alert("알림을 불러올 게 없습니다.");
-			setAlarmCommunity([]);
-			setHasMore(false);
-			return;
-		  }
-		  const newAlarms = serverResponse.data.data.allNotis;
-	  
-		  if (newAlarms.length > 0) {
-			setAlarmCommunity(prevAlarms => [...prevAlarms, ...newAlarms]);
-			setPage(prevPage => prevPage + 1);
-		  } else {
-			setHasMore(false);
-		  }
+			const newAlarms = serverResponse.data.data.allNotis;
+
+			if (newAlarms.length > 0) {
+				setAlarmCommunity(prevAlarms => [...prevAlarms, ...newAlarms]);
+				setPage(prevPage => prevPage + 1);
+			} else {
+				setHasMore(false);
+			}
 		} catch (error) {
-		  if (error.response && error.response.status === 500) {
-			alert('서버에 오류가 발생했습니다. 나중에 다시 시도해주세요.');
-		  } else if (error.response && error.response.status === 400) {
-			alert('잘못된 요청입니다. 요청 파라미터를 확인해주세요.');
-		  } else {
-			alert('데이터를 가져오는 중 오류가 발생했습니다.');
-		  }
-		  console.error('Error fetching data', error);
+			if (error.response && error.response.status === 500) {
+				alert('서버에 오류가 발생했습니다. 나중에 다시 시도해주세요.');
+			} else if (error.response && error.response.status === 400) {
+				alert('잘못된 요청입니다. 요청 파라미터를 확인해주세요.');
+			} else {
+				alert('데이터를 가져오는 중 오류가 발생했습니다.');
+			}
+			console.error('Error fetching data', error);
 		} finally {
-		  setIsLoading(false);
-		  setInitialLoad(false);
+			setIsLoading(false);
+			setInitialLoad(false);
 		}
-	  };
-	  
+	};
+
 	const toggleSetting = async (item) => {
 		setSelected(item);
 		setPage(0);
 		setHasMore(true);
 		setAlarmPost([]);
 		setAlarmCommunity([]);
-		
+
 		if (item === "게시물") {
-			fetchPost(1);
+			// fetchPost(1); // Fetch from API
+			setAlarmPost(dummyDataPost); // Use dummy data for testing
 		} else if (item === "커뮤니티") {
-			fetchCommunity(1);
+			// fetchCommunity(1); // Fetch from API
+			setAlarmCommunity(dummyDataCommunity); // Use dummy data for testing
 		}
 	};
-	
+
 	const processLikeAlarms = (alarms) => {
 		const groupedByPostId = alarms.reduce((acc, alarm) => {
 			if (!acc[alarm.post_id]) {
@@ -136,7 +194,7 @@ const Alarm = ({ navigation }) => {
 			}
 			return acc;
 		}, {});
-		
+
 		return Object.values(groupedByPostId).map(alarm => ({
 			...alarm,
 			like_username: formatUsernames(alarm.like_usernames),
@@ -154,21 +212,11 @@ const Alarm = ({ navigation }) => {
 			return <Text><Text style={styles.emphasizedText}>{usernames[0]}</Text>님과 <Text style={styles.emphasizedText}>{usernames[1]}</Text>님 외 <Text style={styles.emphasizedText}>여러 명</Text>이 회원님의 사진을 좋아합니다</Text>;
 		}
 	};
-	
+
 	const handlePress = (alarm) => {
 		switch (alarm.type) {
 			case 4:
-				navigation.navigate("FeedAlarm", {
-					postId: alarm.post_id,
-					back: true,
-				});
-				break;
 			case 5:
-				navigation.navigate("FeedAlarm", {
-					postId: alarm.post_id,
-					back: true,
-				});
-				break;
 			case 6:
 				navigation.navigate("FeedAlarm", {
 					postId: alarm.post_id,
@@ -182,7 +230,7 @@ const Alarm = ({ navigation }) => {
 				console.log("알 수 없는 액션");
 		}
 	};
-	
+
 	const getGenderText = (gender) => {
 		return gender === 0 ? "남성" : "여성";
 	};
@@ -190,7 +238,7 @@ const Alarm = ({ navigation }) => {
 		const ageGroup = Math.floor(age / 10) * 10;
 		return `${ageGroup}대`;
 	};
-	
+
 	const handleScroll = ({ nativeEvent }) => {
 		if (isCloseToBottom(nativeEvent) && hasMore && !isLoading) {
 			if (selected === "게시물") {
@@ -200,12 +248,12 @@ const Alarm = ({ navigation }) => {
 			}
 		}
 	};
-	
+
 	const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
 		const paddingToBottom = 20;
 		return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
 	};
-	
+
 	if (initialLoad && isLoading) {
 		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff"/></View>;
 	}
@@ -387,7 +435,7 @@ const Alarm = ({ navigation }) => {
 											<Text style={styles.emphasizedText}>{alarm.vote}</Text>
 											" 질문에
 											<Text style={styles.emphasizedText}> {getAgeText(alarm.age)}</Text>
-											<Text style={styles.emphasizedText}> {getGenderText(alarm.gender)} </Text>
+											 <Text style={styles.emphasizedText}> {getGenderText(alarm.gender)} </Text>
 											<Text style={styles.emphasizedText}>{alarm.username}</Text>
 											님이 투표하셨어요. 확인해볼까요?
 										</Text>

@@ -158,41 +158,16 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
 			setIsLoading(false); // 입력 유효성 검사 실패 시 로딩 상태 종료
 			return;
 		}
-		
+	
 		try {
-			const response = await Api.post(`/post/write/comment`, {
+			const requestData = {
 				postId: postId,
 				parentCommentId: replyingTo,
 				content: textInputValue
-			});
-			let FcmResponse;
-			if (replyingTo) {
-				const parentComment = comments.find(comment => comment.commentId === replyingTo);
-				console.log('Sending FCM to user:', parentComment.userId);
-				FcmResponse = await Api.post(`/noti/sendToFCM`, {
-					title: null,
-					body: null,
-					data: {
-						userId: parentComment.userId,
-						notiType: 5,
-						contentId: postId
-					}
-				});
-			} else {
-				console.log('Sending FCM to user:', userId);
-				FcmResponse = await Api.post(`/noti/sendToFCM`, {
-					title: null,
-					body: null,
-					data: {
-						userId: userId,
-						notiType: 4,
-						contentId: postId
-					}
-				});
-			}
-			if (FcmResponse.data) {
-				console.log('FCM Response:', FcmResponse.data);
-			}
+			};
+			console.log('Request data:', requestData);
+			const response = await Api.post(`/post/write/comment`, requestData);
+			
 			if (response.data.message === "해당 게시물의 댓글 생성을 성공했습니다.") {
 				setTextInputValue('');
 				setReplyingTo(null);
@@ -212,6 +187,7 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
 			setIsLoading(false); // 로딩 상태 종료
 		}
 	};
+	
 	
 	const CommentItem = React.memo(({ comment, toggleUnderComments, showUnderComments, index }) => {
 		const isReplyingTo = replyingTo === comment.commentId; // 현재 답글을 작성 중인지 확인

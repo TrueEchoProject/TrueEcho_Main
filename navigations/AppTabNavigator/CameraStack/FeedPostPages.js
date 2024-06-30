@@ -33,7 +33,7 @@ const FeedPostPage = ({ route }) => {
   const defaultImageUri = 'https://via.placeholder.com/1000';
 
   useEffect(() => {
-    if (timer === 0) return; // 타이머가 0초가 되면 더 이상 감소하지 않도록
+    if (timer === 0) return;
 
     const intervalId = setInterval(() => {
       setTimer((prevTimer) => {
@@ -111,8 +111,8 @@ const FeedPostPage = ({ route }) => {
     if (isSubmitting) return;
 
     if (!title.trim()) {
-        Alert.alert('오류', '제목을 입력해주세요!');
-        return;
+      Alert.alert('오류', '제목을 입력해주세요!');
+      return;
     }
 
     setIsSubmitting(true);
@@ -126,29 +126,29 @@ const FeedPostPage = ({ route }) => {
     let resizedBackImage = null;
 
     if (selectedCamera === 'front' || selectedCamera === 'dual') {
-        if (cameraData.front.uris[cameraData.front.selectedIndex]) {
-            resizedFrontImage = await resizeImage(cameraData.front.uris[cameraData.front.selectedIndex]);
-            if (resizedFrontImage) {
-                formData.append('postFront', {
-                    uri: resizedFrontImage.uri,
-                    type: 'image/jpeg',
-                    name: 'resizedFront.jpg',
-                });
-            }
+      if (cameraData.front.uris[cameraData.front.selectedIndex]) {
+        resizedFrontImage = await resizeImage(cameraData.front.uris[cameraData.front.selectedIndex]);
+        if (resizedFrontImage) {
+          formData.append('postFront', {
+            uri: resizedFrontImage.uri,
+            type: 'image/jpeg',
+            name: 'resizedFront.jpg',
+          });
         }
+      }
     }
 
     if (selectedCamera === 'back' || selectedCamera === 'dual') {
-        if (cameraData.back.uris[cameraData.back.selectedIndex]) {
-            resizedBackImage = await resizeImage(cameraData.back.uris[cameraData.back.selectedIndex]);
-            if (resizedBackImage) {
-                formData.append('postBack', {
-                    uri: resizedBackImage.uri,
-                    type: 'image/jpeg',
-                    name: 'resizedBack.jpg',
-                });
-            }
+      if (cameraData.back.uris[cameraData.back.selectedIndex]) {
+        resizedBackImage = await resizeImage(cameraData.back.uris[cameraData.back.selectedIndex]);
+        if (resizedBackImage) {
+          formData.append('postBack', {
+            uri: resizedBackImage.uri,
+            type: 'image/jpeg',
+            name: 'resizedBack.jpg',
+          });
         }
+      }
     }
 
     const currentTime = new Date();
@@ -156,47 +156,54 @@ const FeedPostPage = ({ route }) => {
     formData.append('todayShot', formattedTime);
 
     try {
-        const response = await Api.post('post/write', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
+      const response = await Api.post('post/write', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
-        if (response.status === 202 || response.status === 200) {
-            const { data } = response;
+      if (response.status === 202 || response.status === 200) {
+        const { data } = response;
 
-            await storage.set('title', title);
-            await storage.set('type', friendRange);
-            if (resizedFrontImage) {
-                await storage.set('postFront', resizedFrontImage.uri);
-            }
-            if (resizedBackImage) {
-                await storage.set('postBack', resizedBackImage.uri);
-            }
-            await storage.set('todayShot', formattedTime);
-
-            const postedIn24H = {
-                postedFront: !!resizedFrontImage,
-                postedBack: !!resizedBackImage,
-                postedAt: formattedTime
-            };
-            await storage.set('postedIn24H', JSON.stringify(postedIn24H));
-
-            // Reset the navigation stack and navigate to MainPost
-            navigation.reset({
-                index: 0,
-                routes: [{ name: 'MainPost' }],
-            });
-        } else {
-            console.error('Unexpected response status:', response.status);
-            Alert.alert('오류', '피드 업로드 중 예상치 못한 오류가 발생했습니다.');
+        await storage.set('title', title);
+        await storage.set('type', friendRange);
+        if (resizedFrontImage) {
+          await storage.set('postFront', resizedFrontImage.uri);
         }
+        if (resizedBackImage) {
+          await storage.set('postBack', resizedBackImage.uri);
+        }
+        await storage.set('todayShot', formattedTime);
+
+        const postedIn24H = {
+          postedFront: !!resizedFrontImage,
+          postedBack: !!resizedBackImage,
+          postedAt: formattedTime
+        };
+        await storage.set('postedIn24H', JSON.stringify(postedIn24H));
+
+        // Navigate to the appropriate tab
+        if (friendRange === 'PUBLIC') {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'MainPost', params: { initialTab: 'OtherFeed' } }],
+          });
+        } else {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'MainPost', params: { initialTab: 'FriendFeed' } }],
+          });
+        }
+      } else {
+        console.error('Unexpected response status:', response.status);
+        Alert.alert('오류', '피드 업로드 중 예상치 못한 오류가 발생했습니다.');
+      }
     } catch (error) {
-        console.error('피드 업로드 오류:', error.response ? error.response.data : error.message);
-        Alert.alert('오류', '피드 업로드 중 오류가 발생했습니다.');
-        navigation.navigate('CameraOption', { remainingTime: timer });
+      console.error('피드 업로드 오류:', error.response ? error.response.data : error.message);
+      Alert.alert('오류', '피드 업로드 중 오류가 발생했습니다.');
+      navigation.navigate('CameraOption', { remainingTime: timer });
     } finally {
-        setIsSubmitting(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -256,40 +263,41 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000',
     alignItems: 'center',
-    paddingVertical: 20,
+    paddingVertical: height * 0.02,
   },
   timerText: {
     color: 'white',
-    fontSize: 24,
-    marginBottom: 10,
+    fontSize: width * 0.06,
+    marginBottom: height * 0.01,
   },
   inputContainer: {
     width: '90%',
     backgroundColor: 'black',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 5,
-    marginBottom: 10,
+    paddingHorizontal: width * 0.02,
+    paddingVertical: height * 0.01,
+    borderRadius: width * 0.02,
+    marginBottom: height * 0.01,
   },
   input: {
     color: 'white',
-    fontSize: 16,
+    fontSize: width * 0.04,
   },
   inputUnderline: {
     height: 1,
     backgroundColor: 'gray',
-    marginTop: 5,
+    marginTop: height * 0.005,
   },
   imageContainer: {
     width: '90%',
-    aspectRatio: 3 / 4, // 4:3 비율로 설정
+    aspectRatio: 3 / 4,
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 15,
+    borderRadius: width * 0.04,
     overflow: 'hidden',
     position: 'relative',
-    marginBottom: 10,
+    marginBottom: height * 0.01,
+    flex: 1, // Flex 속성을 사용하여 남은 공간을 채우도록 설정
   },
   cameraImage: {
     width: '100%',
@@ -299,30 +307,30 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '90%',
-    marginBottom: 10,
+    marginBottom: height * 0.01,
   },
   innerButtonContainer: {
     flexDirection: 'row',
     position: 'absolute',
-    bottom: 10,
+    bottom: height * 0.01,
     width: '90%',
     justifyContent: 'space-evenly',
   },
   innerButton: {
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
+    paddingVertical: height * 0.01,
+    paddingHorizontal: width * 0.05,
+    borderRadius: width * 0.02,
   },
   innerButtonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: width * 0.04,
   },
   shareButton: {
     backgroundColor: '#fff',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 10,
+    paddingVertical: height * 0.02,
+    paddingHorizontal: width * 0.05,
+    borderRadius: width * 0.05,
     width: '90%',
     alignItems: 'center',
     borderWidth: 1,
@@ -330,15 +338,15 @@ const styles = StyleSheet.create({
   },
   shareButtonText: {
     color: '#000',
-    fontSize: 16,
+    fontSize: width * 0.04,
   },
   backButton: {
     position: 'absolute',
-    top: 10,
-    right: 10,
+    top: height * 0.01,
+    right: width * 0.02,
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    borderRadius: 15,
-    padding: 5,
+    borderRadius: width * 0.02,
+    padding: width * 0.01,
   },
   modalContainer: {
     flex: 1,
@@ -348,15 +356,15 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
+    padding: width * 0.05,
+    borderRadius: width * 0.02,
     width: '80%',
     alignItems: 'center',
   },
   closeButton: {
     position: 'absolute',
-    top: 10,
-    right: 10,
+    top: height * 0.01,
+    right: width * 0.02,
   },
 });
 

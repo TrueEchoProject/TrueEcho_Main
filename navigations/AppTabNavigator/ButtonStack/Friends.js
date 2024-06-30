@@ -28,7 +28,7 @@ const getAccessToken = async () => {
 const FriendsScreen = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState('recommend');
-    const [subTab, setSubTab] = useState('receive'); // 수신/송신을 위한 서브탭 상태
+    const [subTab, setSubTab] = useState('receive');
     const [users, setUsers] = useState([]);
     const [invitedUsers, setInvitedUsers] = useState([]);
     const [requests, setRequests] = useState([]);
@@ -44,7 +44,7 @@ const FriendsScreen = () => {
             } else if (activeTab === 'invite') {
                 await fetchInvitedUsers();
             } else if (activeTab === 'request') {
-                setSubTab('receive'); // 요청 탭으로 전환될 때 항상 수신 탭을 설정
+                setSubTab('receive');
                 await fetchFriendRequests();
             } else if (activeTab === 'friends') {
                 await fetchFriends();
@@ -167,7 +167,6 @@ const FriendsScreen = () => {
             console.log('Cancel friend request response:', response.data);
     
             if (response.data.code === "T002" && response.data.message === "친구 요청 취소에 성공했습니다.") {
-                // 초대된 사용자 목록과 요청된 사용자 목록에서 해당 사용자를 제거
                 setInvitedUsers((prevInvitedUsers) => prevInvitedUsers.filter(user => user.userId !== userId));
                 setRequests((prevRequests) => prevRequests.filter(user => user.userId !== userId));
                 Alert.alert('성공', '친구 요청이 취소되었습니다.');
@@ -276,7 +275,7 @@ const FriendsScreen = () => {
                         <Text style={styles.disabledButtonText}>완료</Text>
                     </TouchableOpacity>
                 ) : (
-                    <LinearGradient colors={['#61a3ff', '#3b5998', '#4c669f']} style={styles.gradientButton}>
+                    <LinearGradient colors={['#1BC5DA', '#263283']} style={styles.gradientButton}>
                         <TouchableOpacity style={styles.innerButton} onPress={() => inviteFriend(item.userId)}>
                             <Text style={styles.buttonText}>추가</Text>
                         </TouchableOpacity>
@@ -285,7 +284,7 @@ const FriendsScreen = () => {
             )}
             {activeTab === 'request' && subTab === 'receive' && (
                 <View style={styles.requestButtons}>
-                    <LinearGradient colors={['#61a3ff', '#3b5998', '#4c669f']} style={styles.gradientButton}>
+                    <LinearGradient colors={['#1BC5DA', '#263283']} style={styles.gradientButton}>
                         <TouchableOpacity style={styles.innerButton} onPress={() => acceptFriendRequest(item.userId)}>
                             <Text style={styles.buttonText}>수락</Text>
                         </TouchableOpacity>
@@ -317,17 +316,17 @@ const FriendsScreen = () => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <LinearGradient colors={activeTab === 'recommend' ? ['#61a3ff', '#3b5998', '#4c669f'] : ['#000', '#000', '#000']} style={styles.gradientTab}>
+                <LinearGradient colors={activeTab === 'recommend' ? ['#1BC5DA', '#263283'] : ['#000', '#000', '#000']} style={styles.gradientTab}>
                     <TouchableOpacity onPress={() => setActiveTab('recommend')} style={styles.tabButton}>
                         <Text style={[styles.tabButtonText, activeTab === 'recommend' && styles.activeTabButtonText]}>추천</Text>
                     </TouchableOpacity>
                 </LinearGradient>
-                <LinearGradient colors={activeTab === 'request' ? ['#61a3ff', '#3b5998', '#4c669f'] : ['#000', '#000', '#000']} style={styles.gradientTab}>
+                <LinearGradient colors={activeTab === 'request' ? ['#1BC5DA', '#263283'] : ['#000', '#000', '#000']} style={styles.gradientTab}>
                     <TouchableOpacity onPress={() => setActiveTab('request')} style={styles.tabButton}>
                         <Text style={[styles.tabButtonText, activeTab === 'request' && styles.activeTabButtonText]}>요청</Text>
                     </TouchableOpacity>
                 </LinearGradient>
-                <LinearGradient colors={activeTab === 'friends' ? ['#61a3ff', '#3b5998', '#4c669f'] : ['#000', '#000', '#000']} style={styles.gradientTab}>
+                <LinearGradient colors={activeTab === 'friends' ? ['#1BC5DA', '#263283'] : ['#000', '#000', '#000']} style={styles.gradientTab}>
                     <TouchableOpacity onPress={() => setActiveTab('friends')} style={styles.tabButton}>
                         <Text style={[styles.tabButtonText, activeTab === 'friends' && styles.activeTabButtonText]}>목록</Text>
                     </TouchableOpacity>
@@ -345,13 +344,13 @@ const FriendsScreen = () => {
             </View>
             {activeTab === 'request' && (
                 <View style={styles.subHeader}>
-                    <LinearGradient colors={subTab === 'receive' ? ['#61a3ff', '#3b5998', '#4c669f'] : ['#000', '#000', '#000']} style={styles.subTab}>
-                        <TouchableOpacity onPress={() => setSubTab('receive')} style={styles.tabButton}>
+                    <LinearGradient colors={subTab === 'receive' ? ['#1BC5DA', '#263283'] : ['#000', '#000', '#000']} style={styles.subTab}>
+                        <TouchableOpacity onPress={() => setSubTab('receive')} style={styles.subTabButton}>
                             <Text style={[styles.subTabButtonText, subTab === 'receive' && styles.activeSubTabButtonText]}>수신</Text>
                         </TouchableOpacity>
                     </LinearGradient>
-                    <LinearGradient colors={subTab === 'send' ? ['#61a3ff', '#3b5998', '#4c669f'] : ['#000', '#000', '#000']} style={styles.subTab}>
-                        <TouchableOpacity onPress={() => setSubTab('send')} style={styles.tabButton}>
+                    <LinearGradient colors={subTab === 'send' ? ['#1BC5DA', '#263283'] : ['#000', '#000', '#000']} style={styles.subTab}>
+                        <TouchableOpacity onPress={() => setSubTab('send')} style={styles.subTabButton}>
                             <Text style={[styles.subTabButtonText, subTab === 'send' && styles.activeSubTabButtonText]}>송신</Text>
                         </TouchableOpacity>
                     </LinearGradient>
@@ -360,7 +359,12 @@ const FriendsScreen = () => {
             {loading ? (
                 <ActivityIndicator size="large" color="#0000ff" />
             ) : (
-                <FlatList data={getFilteredUsers()} keyExtractor={(item) => item.userId.toString()} renderItem={renderUser} />
+                <FlatList 
+                    style={styles.userList}
+                    data={getFilteredUsers()} 
+                    keyExtractor={(item) => item.userId.toString()} 
+                    renderItem={renderUser} 
+                />
             )}
         </View>
     );
@@ -384,61 +388,65 @@ const styles = StyleSheet.create({
     },
     tabButton: {
         padding: 15,
-        borderRadius: 5,
+        borderRadius: 15,
         alignItems: 'center',
         justifyContent: 'center',
     },
     gradientTab: {
         flex: 1,
         marginHorizontal: 5,
-        borderRadius: 5,
+        borderRadius: 15,
     },
     subTab: {
-        flex: 0.45,
+        flex: 0.25, // 길이를 조정
         marginHorizontal: 5,
-        borderRadius: 5,
+        borderRadius: 15,
     },
     tabButtonText: {
         color: '#fff',
-        fontSize: 16, // 글씨 크기를 키움
+        fontSize: 18,
     },
     activeTabButtonText: {
         color: '#fff',
         fontWeight: 'bold',
-        fontSize: 16, // 글씨 크기를 키움
+        fontSize: 18,
     },
     subTabButtonText: {
         color: '#fff',
+        fontSize: 18, // 글자 크기 조정
     },
     activeSubTabButtonText: {
         color: '#fff',
         fontWeight: 'bold',
+        fontSize: 18, // 글자 크기 조정
     },
     searchSection: {
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: '#222',
-        borderRadius: 5,
+        borderRadius: 15,
         margin: 10,
         paddingHorizontal: 10,
+        width: '95%', // 너비를 동일하게 설정
+        alignSelf: 'center',
     },
     searchIcon: {
         padding: 5,
-        fontSize: 24, // 아이콘 크기를 키움
-        color: '#aaa', // 아이콘 색상 변경
-		marginTop: 4, // 아이콘 위치를 아래로 내림
-		marginRight: 3, // 아이콘 위치를 오른쪽으로 이동
+        fontSize: 24,
+        color: '#aaa',
+        marginTop: 4,
+        marginRight: 3,
     },
     searchInput: {
         flex: 1,
         fontSize: 18,
         color: '#fff',
         paddingVertical: 10,
-        paddingLeft: 0, // 아이콘 공간 확보
+        paddingLeft: 0,
     },
     listItem: {
         backgroundColor: '#fff',
-        borderRadius: 5,
+        borderRadius: 15,
         marginVertical: 5,
         paddingHorizontal: 10,
     },
@@ -449,13 +457,13 @@ const styles = StyleSheet.create({
         color: '#aaa',
     },
     gradientButton: {
-        borderRadius: 5,
+        borderRadius: 15,
     },
     innerButton: {
         padding: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        width: 80, // 버튼의 길이를 늘림
+        width: 70,
     },
     buttonText: {
         color: '#fff',
@@ -463,19 +471,30 @@ const styles = StyleSheet.create({
     },
     requestButtons: {
         flexDirection: 'row',
-        justifyContent: 'space-around', // 버튼 사이의 공간을 조절
-        width: 180, // 공간을 더 확보
+        justifyContent: 'space-around',
+        width: 150, // 양옆 길이를 줄임
+    },
+    subTabButton: {
+        paddingVertical: 10,
+        paddingHorizontal: 20, // 버튼 크기 조정
+        borderRadius: 15,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     disabledButton: {
         backgroundColor: '#333',
         padding: 10,
-        borderRadius: 5,
+        borderRadius: 15,
         alignItems: 'center',
         justifyContent: 'center',
-        width: 70,
+        width: 80,
     },
     disabledButtonText: {
         color: '#fff',
+    },
+    userList: {
+        width: '95%', // 너비를 동일하게 설정
+        alignSelf: 'center',
     },
 });
 
