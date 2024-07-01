@@ -8,19 +8,14 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import te.trueEcho.domain.notification.entity.NotificationEntity;
 import te.trueEcho.domain.user.entity.User;
+import te.trueEcho.global.entity.CreatedDateAudit;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "likes", uniqueConstraints = {
-        @UniqueConstraint(
-                name = "likes_uk",
-                columnNames = {"post_id", "user_id"}
-        )
-    }
-)
-public class Like {
+@Table(name = "likes")
+public class Like extends CreatedDateAudit {
 
     @Id
     @Column(name = "like_id")
