@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Animated, Easing, Platform, AppState } from 'react-native';
+import { View, StyleSheet, Animated, Easing, Platform, AppState,StatusBar} from 'react-native';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import * as SecureStore from 'expo-secure-store';
@@ -382,6 +382,7 @@ const App = () => {
 
 	return (
 		<NavigationContainer linking={linking}>
+			<StatusBar barStyle="light-content" backgroundColor="black" />
 			<AppNavigation initialRouteName={initialRoute} />
 		</NavigationContainer>
 	);

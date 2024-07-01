@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, StatusBar,ActivityIndicator  } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import PagerView from 'react-native-pager-view';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -41,13 +41,7 @@ const Result = React.memo(({ navigation }) => {
   if (loading) {
     return (
       <View style={styles.emptyPage}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Vote')}
-          style={{ padding: 20, backgroundColor: "grey" }}
-        >
-          <Text>뒤로가기</Text>
-        </TouchableOpacity>
-        <Text style={styles.emptyText}>로딩 중...</Text>
+        <ActivityIndicator size="large" color="#ffffff" />
       </View>
     );
   }
@@ -132,6 +126,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: "black"
   },
   emptyText: {
     fontSize: 16,
