@@ -42,7 +42,7 @@ const AppNavigation = ({ initialRouteName }) => {
 			<Stack.Screen
 				name="ForgotPassword" 
 				component={ForgotPassword}
-				options={{ headerShown: true}}
+				options={{ headerShown: false}}
 			/>
 		</Stack.Navigator>
 	);

@@ -188,7 +188,6 @@ const LoginForm = () => {
       <View>
         <Image style={styles.logo} source={require('../assets/logo.png')} />
       </View>
-
       <View style={styles.inputBox}>
         <Text style={{color: "#fff", fontWeight: "bold", fontSize: hp(2)}}>이메일 주소</Text>
         <TextInput

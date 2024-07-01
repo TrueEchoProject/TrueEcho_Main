@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 10,
-    marginTop: hp(4),
+    // marginTop: hp(4),
     backgroundColor: "black"
   },
   itemContainer: {
@@ -392,6 +392,8 @@ const styles = StyleSheet.create({
     color: "#fff",
     alignItems: 'center',
     marginHorizontal: wp(4),
+    marginTop: hp(4),
+
   },
   imageContainer: {
     height: hp('50%'), // 크기를 키움

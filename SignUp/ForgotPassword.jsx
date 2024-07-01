@@ -22,6 +22,12 @@ const ForgotPassword = () => {
   const [loading, setLoading] = useState(false); // 로딩 상태 관리
   const [warning, setWarning] = useState(""); // 경고 메시지 상태 관리
 
+  const BackButton = () => (
+    <Pressable style={styles.loginBtn} onPress={() => navigation.goBack()}>
+      <Text style={styles.loginBtnText}>로그인</Text>
+    </Pressable>
+  );
+
   // 인증 코드를 이메일로 전송하는 함수
   const handleSendCode = async () => {
     if (email === "") {
@@ -97,7 +103,8 @@ const ForgotPassword = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <BackButton />
+      <StatusBar barStyle="light-content" backgroundColor="#fff" />
       <View>
         <Image style={styles.logo} source={require('../assets/logo.png')} />
       </View>
@@ -200,6 +207,18 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: hp(2),
     marginTop: hp(1),
+  },
+  loginBtn: {
+    position: 'absolute',
+    top: hp(4),
+    left: wp(5),
+    backgroundColor: 'transparent',
+    zIndex: 1, // 여기에 zIndex 속성을 추가합니다.
+  },
+  loginBtnText: {
+    color: '#fff',
+    fontSize: hp(2),
+    fontWeight: 'bold',
   },
 });
 
