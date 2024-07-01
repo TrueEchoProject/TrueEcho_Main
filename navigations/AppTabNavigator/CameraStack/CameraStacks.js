@@ -4,6 +4,7 @@ import { Camera, SendPostStack } from './index';
 import FeedPostPage from './FeedPostPages';
 import { View, Image } from "react-native";
 import { Button1, Button2 } from "../../../components/Button";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 const CameraStacks = createStackNavigator();
 
@@ -11,7 +12,7 @@ const LogoTitle = () => {
   return (
     <Image
       source={require('../../../assets/logoFont.png')} // 이미지 경로를 실제 경로로 수정하세요.
-      style={{ width: 140, height: 40 }} // 원하는 스타일로 수정할 수 있습니다.
+      style={{ width: wp('35%'), height: hp('5%'), marginLeft: -8 }} // marginLeft 값을 조정하여 원하는 스타일로 수정할 수 있습니다.
       resizeMode="contain"
     />
   );
@@ -24,7 +25,7 @@ export const CameraStackScreen = () => {
         name="CameraOption"
         component={Camera}
         options={{
-			headerTitle: props => <LogoTitle {...props} />,
+          headerTitle: props => <LogoTitle {...props} />,
           headerTitleAlign: 'left',
           headerStyle: {
             backgroundColor: 'black', // 헤더 배경색을 검정색으로 설정
