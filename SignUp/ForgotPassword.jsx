@@ -6,7 +6,7 @@ import {
   Pressable,
   StyleSheet,
   ActivityIndicator,
-  Image,StatusBar,Platform,
+  Image, StatusBar, Platform,
 } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import * as SecureStore from 'expo-secure-store';
@@ -22,16 +22,15 @@ const ForgotPassword = () => {
   const [loading, setLoading] = useState(false); // 로딩 상태 관리
   const [warning, setWarning] = useState(""); // 경고 메시지 상태 관리
 
-
   // 인증 코드를 이메일로 전송하는 함수
   const handleSendCode = async () => {
     if (email === "") {
       setWarning("emailEmpty");
       return;
     }
-    
+
     setLoading(true);
-    
+
     try {
       const response = await Api.get(`/accounts/email`, {
         params: {
@@ -40,7 +39,7 @@ const ForgotPassword = () => {
       });
 
       console.log('서버 응답 (인증 코드 전송):', response.data); // 서버 응답 데이터 출력
-      
+
       if (response.data && response.data.status === 200 && response.data.code === "U004") {
         setStep(2); // 다음 단계로 이동
         setWarning("");
@@ -54,63 +53,33 @@ const ForgotPassword = () => {
       setLoading(false);
     }
   };
-  
-  // 인증 코드를 검증하는 함수
-  const handleVerifyCode = async () => {
+
+  // 비밀번호를 재설정하는 함수
+  const handleResetPassword = async () => {
     if (code === "") {
       setWarning("codeEmpty");
       return;
-    }
-    
-    setLoading(true);
-    
-    try {
-      const response = await Api.get(`/accounts/checkcode`, {
-        params: {
-          email: email,
-          checkCode: code
-        }
-      });
-  
-      console.log('서버 응답 (코드 검증):', response.data); // 서버 응답 데이터 출력
-
-      if (response.data && response.data.status === 200 && response.data.code === "U002") {
-        setStep(3); // 다음 단계로 이동
-        setWarning("");
-      } else {
-        setWarning("verifyCodeFailed");
-      }
-    } catch (error) {
-      console.error('코드 인증 오류:', error);
-      setWarning("networkError");
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  // 비밀번호를 재설정하는 함수
-  const handleResetPassword = async () => {
-    if (newPassword === "") {
+    } else if (newPassword === "") {
       setWarning("passwordEmpty");
       return;
     } else if (newPassword.length < 6) {
       setWarning("shortPassword");
       return;
     }
-  
+
     setLoading(true);
-  
+
     try {
-      const data = { 
-        email: email, 
-        newPassword: newPassword, 
-        verificationCode: code 
+      const data = {
+        email: email,
+        newPassword: newPassword,
+        verificationCode: code
       };
       console.log('전송 데이터:', data); // 콘솔에 데이터 출력
-  
+
       const response = await Api.patch('/accounts/password', data);
       console.log('서버 응답:', response.data); // 서버 응답 데이터 출력
-  
+
       if (response.data && response.data.status === 200 && response.data.code === "U0015") {
         await SecureStore.deleteItemAsync('userEmail');
         await SecureStore.deleteItemAsync('userPassword');
@@ -125,10 +94,7 @@ const ForgotPassword = () => {
       setLoading(false);
     }
   };
-  
-  
-  
-  
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
@@ -136,62 +102,53 @@ const ForgotPassword = () => {
         <Image style={styles.logo} source={require('../assets/logo.png')} />
       </View>
       <View style={styles.inputcontainer}>
-      {step === 1 && ( // 1단계: 이메일 입력
-        <>
-          <Text style={styles.text}>비밀번호 찾기</Text>
-          <TextInput
-            placeholder="이메일을 입력해주세요."
-            value={email}
-            onChangeText={setEmail}
-            style={styles.input}
-            placeholderTextColor="#FFFFFF"
-          />
-          {warning === "emailEmpty" && <Text style={styles.warningText}>이메일을 입력해주세요.</Text>}
-          {warning === "sendCodeFailed" && <Text style={styles.warningText}>코드 전송에 실패했습니다. 다시 시도해주세요.</Text>}
-          {warning === "networkError" && <Text style={styles.warningText}>네트워크 오류가 발생했습니다. 다시 시도해주세요.</Text>}
-          <Pressable style={styles.continueBtn} onPress={handleSendCode}>
-            {loading ? <ActivityIndicator size="small" color="#FFFFFF" /> : <Text style={styles.btnText}>인증</Text>}
-          </Pressable>
-        </>
-      )}
-      {step === 2 && ( // 2단계: 인증 코드 입력
-        <>
-          <Text style={styles.text}>인증 코드 입력</Text>
-          <TextInput
-            placeholder="인증 코드를 입력해주세요."
-            value={code}
-            onChangeText={setCode}
-            style={styles.input}
-            placeholderTextColor="#FFFFFF"
-          />
-          {warning === "codeEmpty" && <Text style={styles.warningText}>인증 코드를 입력해주세요.</Text>}
-          {warning === "verifyCodeFailed" && <Text style={styles.warningText}>코드 인증에 실패했습니다. 다시 시도해주세요.</Text>}
-          {warning === "networkError" && <Text style={styles.warningText}>네트워크 오류가 발생했습니다. 다시 시도해주세요.</Text>}
-          <Pressable style={styles.continueBtn} onPress={handleVerifyCode}>
-            {loading ? <ActivityIndicator size="small" color="#FFFFFF" /> : <Text style={styles.btnText}>코드 인증</Text>}
-          </Pressable>
-        </>
-      )}
-      {step === 3 && ( // 3단계: 새 비밀번호 입력
-        <>
-          <Text style={styles.text}>새 비밀번호 입력</Text>
-          <TextInput
-            placeholder="새 비밀번호를 입력해주세요."
-            value={newPassword}
-            onChangeText={setNewPassword}
-            style={styles.input}
-            secureTextEntry
-            placeholderTextColor="#FFFFFF"
-          />
-          {warning === "passwordEmpty" && <Text style={styles.warningText}>비밀번호를 입력해주세요.</Text>}
-          {warning === "shortPassword" && <Text style={styles.warningText}>비밀번호는 최소 6자 이상이어야 합니다.</Text>}
-          {warning === "resetPasswordFailed" && <Text style={styles.warningText}>비밀번호 재설정에 실패했습니다. 다시 시도해주세요.</Text>}
-          {warning === "networkError" && <Text style={styles.warningText}>네트워크 오류가 발생했습니다. 다시 시도해주세요.</Text>}
-          <Pressable style={styles.continueBtn} onPress={handleResetPassword}>
-            {loading ? <ActivityIndicator size="small" color="#FFFFFF" /> : <Text style={styles.btnText}>비밀번호 재설정</Text>}
-          </Pressable>
-        </>
-      )}
+        {step === 1 && ( // 1단계: 이메일 입력
+          <>
+            <Text style={styles.text}>비밀번호 찾기</Text>
+            <TextInput
+              placeholder="이메일을 입력해주세요."
+              value={email}
+              onChangeText={setEmail}
+              style={styles.input}
+              placeholderTextColor="#FFFFFF"
+            />
+            {warning === "emailEmpty" && <Text style={styles.warningText}>이메일을 입력해주세요.</Text>}
+            {warning === "sendCodeFailed" && <Text style={styles.warningText}>코드 전송에 실패했습니다. 다시 시도해주세요.</Text>}
+            {warning === "networkError" && <Text style={styles.warningText}>네트워크 오류가 발생했습니다. 다시 시도해주세요.</Text>}
+            <Pressable style={styles.continueBtn} onPress={handleSendCode}>
+              {loading ? <ActivityIndicator size="small" color="#FFFFFF" /> : <Text style={styles.btnText}>인증</Text>}
+            </Pressable>
+          </>
+        )}
+        {step === 2 && ( // 2단계: 인증 코드와 새 비밀번호 입력
+          <>
+            <Text style={styles.text}>인증 코드</Text>
+            <TextInput
+              placeholder="인증 코드를 입력해주세요."
+              value={code}
+              onChangeText={setCode}
+              style={styles.input}
+              placeholderTextColor="#FFFFFF"
+            />
+            <Text style={styles.text}>새 비밀번호</Text>
+            <TextInput
+              placeholder="새 비밀번호를 입력해주세요."
+              value={newPassword}
+              onChangeText={setNewPassword}
+              style={styles.input}
+              secureTextEntry
+              placeholderTextColor="#FFFFFF"
+            />
+            {warning === "codeEmpty" && <Text style={styles.warningText}>인증 코드를 입력해주세요.</Text>}
+            {warning === "passwordEmpty" && <Text style={styles.warningText}>비밀번호를 입력해주세요.</Text>}
+            {warning === "shortPassword" && <Text style={styles.warningText}>비밀번호는 최소 6자 이상이어야 합니다.</Text>}
+            {warning === "resetPasswordFailed" && <Text style={styles.warningText}>비밀번호 재설정에 실패했습니다. 다시 시도해주세요.</Text>}
+            {warning === "networkError" && <Text style={styles.warningText}>네트워크 오류가 발생했습니다. 다시 시도해주세요.</Text>}
+            <Pressable style={styles.continueBtn} onPress={handleResetPassword}>
+              {loading ? <ActivityIndicator size="small" color="#FFFFFF" /> : <Text style={styles.btnText}>비밀번호 재설정</Text>}
+            </Pressable>
+          </>
+        )}
       </View>
     </View>
   );
@@ -215,19 +172,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: "#fff",
     fontSize: hp(2.5),
-    marginBottom: hp(2),
+    marginVertical: hp(2),
   },
   input: {
     width: wp(80),
     borderBottomWidth: 1,
     borderColor: "#fff",
     fontSize: hp(2),
-    paddingVertical: hp(1),
+    paddingBottom: hp(1),
     color: "#fff"
   },
   continueBtn: {
     backgroundColor: '#fff',
-    // width: wp(15),
     padding: wp(3),
     paddingHorizontal: wp(4),
     borderRadius: 15,
