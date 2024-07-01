@@ -1,58 +1,59 @@
 import React from 'react';
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"; // 하단 Tab 네비게이터
-import { MaterialIcons } from "@expo/vector-icons";
-import { MainPostStackScreen, CommunityStackScreen } from "./Stack"
-import { CommunityTabScreen } from "./AppTabNavigator/CommunityTabs/CommunityTab";
-import { CameraStackScreen } from "./AppTabNavigator/CameraStack/CameraStacks"
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { AntDesign, Ionicons, Entypo, SimpleLineIcons } from "@expo/vector-icons"; // 필요한 아이콘 패키지 import
+import { MainPostStackScreen, CommunityStackScreen } from "./Stack";
+import { CameraStackScreen } from "./AppTabNavigator/CameraStack/CameraStacks";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'; // 라이브러리 import
 
 const Tab = createBottomTabNavigator();
 
-const TabIcon = ({ name, color, size }) => { // 화면의 아이콘 설정값 불러오기
-	return <MaterialIcons name={name} size={size} color={color}/>
-}
-
 const TabNavigation = () => {
-	return (
-		<Tab.Navigator // 네비게이터 전반의 설정
-			screenOptions={{
-				tabBarShowLabel: false, // 아이콘 이외의 글자 보기 옵션
-				tabBarStyle: { //네비게이터 style 설정
-					borderTopColor: '#111111', // 네비게이터 border
-					borderTopWidth: 1, // 네비게이터 border
-				},
-			}}
-		>
-			<Tab.Screen // 각 tab의 옵션
-				name="MainPost"
-				component={MainPostStackScreen} // 메인 피드 속 Stack 연결
-				options={{
-					headerShown: false,
-					tabBarIcon: props => { //위의 아이콘 설정값 대입
-						return TabIcon({...props, name: 'home'});
-					},
-				}}
-			/>
-			<Tab.Screen //하단
-				name="Camera"
-				component={CameraStackScreen}
-				options={{
-					tabBarIcon: props => { //위의 아이콘 설정값 대입
-						return TabIcon({...props, name: 'camera'});
-					},
-				}}
-			/>
-			<Tab.Screen
-				name="CommunityTab"
-				component={CommunityStackScreen} // 커뮤니티 속 Stack 연결
-				options={{
-					headerShown: false,
-					tabBarIcon: props => { //위의 아이콘 설정값 대입
-						return TabIcon({...props, name: 'people'});
-					},
-				}}
-			/>
-		</Tab.Navigator>
-	);
+    return (
+        <Tab.Navigator
+            screenOptions={({ route }) => ({
+                tabBarShowLabel: false,
+                tabBarStyle: {
+                    backgroundColor: '#000000', // 네비게이터 배경색을 검정색으로 설정
+                    borderTopColor: '#ffffff', // 네비게이터 탑 보더 색상을 흰색으로 설정
+                    borderTopWidth: 1,
+                    height: hp('8%'), // 높이를 디바이스 높이의 10%로 설정
+                    paddingBottom: hp('2%'),
+                    paddingTop: hp('2%'),
+                },
+                tabBarIcon: ({ focused, color, size }) => {
+                    if (route.name === 'MainPost') {
+                        return focused ? <Entypo name="home" size={24} color="#ffffff" /> : <SimpleLineIcons name="home" size={21} color="#ffffff" />;
+                    } else if (route.name === 'Camera') {
+                        return focused ? <AntDesign name="camera" size={24} color="#ffffff" /> : <AntDesign name="camerao" size={24} color="#ffffff" />;
+                    } else if (route.name === 'CommunityTab') {
+                        return focused ? <Ionicons name="people" size={24} color="#ffffff" /> : <Ionicons name="people-outline" size={24} color="#ffffff" />;
+                    }
+                },
+            })}
+        >
+            <Tab.Screen
+                name="MainPost"
+                component={MainPostStackScreen}
+                options={{
+                    headerShown: false,
+                }}
+            />
+            <Tab.Screen
+                name="Camera"
+                component={CameraStackScreen}
+                options={{
+                    headerShown: false,
+                }}
+            />
+            <Tab.Screen
+                name="CommunityTab"
+                component={CommunityStackScreen}
+                options={{
+                    headerShown: false,
+                }}
+            />
+        </Tab.Navigator>
+    );
 };
 
 export default TabNavigation;
