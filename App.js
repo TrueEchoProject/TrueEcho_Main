@@ -92,16 +92,21 @@ const App = () => {
     };
   }, []);
 
-	useEffect(() => {
-	const initialize = async () => {
-		const token = await getPushToken();
-		const loginSuccess = await prepare(token);
-		if (!loginSuccess) {
-			setInitialRoute('Login'); // prepare가 실패한 경우 Login으로 설정
-		}
-		await checkLastNotification();
-	};
-	initialize();
+  useEffect(() => {
+    const initialize = async () => {
+        const token = await getPushToken();
+        const loginSuccess = await prepare(token);
+        if (!loginSuccess) {
+            setInitialRoute('Login'); // prepare가 실패한 경우 Login으로 설정
+        }
+        await checkLastNotification();
+        const initialUrl = await Linking.getInitialURL();
+        if (initialUrl) {
+            console.log('Initial URL:', initialUrl);
+            handleInitialUrl(initialUrl);
+        }
+    };
+    initialize();
 }, []);
 
 	const checkLastNotification = async () => {
@@ -131,6 +136,17 @@ const App = () => {
   const handleAppStateChange = (nextAppState) => {
     console.log('App state changed to:', nextAppState);
   };
+
+  const handleInitialUrl = async (url) => {
+    const token = await getPushToken();
+    const loginSuccess = await prepare(token);
+    if (loginSuccess) {
+        setInitialRoute('TabNavigation'); // 자동 로그인 후 TabNavigation으로 설정
+        Linking.openURL(url);
+    } else {
+        setInitialRoute('Login'); // 로그인 실패 시 Login으로 설정
+    }
+};
 
 	const handleNotification = async (notification) => {
     console.log('Notification received:', notification);
