@@ -1,6 +1,6 @@
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Animated, PanResponder, Dimensions, Image, TouchableOpacity, Button, ImageBackground, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Animated, PanResponder, Dimensions, Image, TouchableOpacity, ImageBackground, Pressable, StatusBar } from 'react-native';
 import Api from '../../../Api'; // 경로를 필요에 따라 업데이트하십시오.
 import { useNavigation } from '@react-navigation/native';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -11,7 +11,7 @@ const { width, height } = Dimensions.get('window');
 const defaultImages = [
   require('../../../assets/logo.png'),
 ];
-const backgroundImage = require('../../../assets/logo2.png'); // 배경 이미지 경로를 필요에 따라 업데이트하십시오.
+const backgroundImage = require('../../../assets/logoFont.png'); // 배경 이미지 경로를 필요에 따라 업데이트하십시오.
 
 const getRandomDefaultImage = () => {
   const randomIndex = Math.floor(Math.random() * defaultImages.length);
@@ -72,7 +72,7 @@ const StartPage = ({ onStart }) => {
   };
 
   return (
-    <ImageBackground source={backgroundImage} style={styles.backgroundImage} resizeMode="cover">
+    <ImageBackground source={backgroundImage} style={styles.fullSizeBackground} resizeMode="cover">
       <View style={styles.container}>
         <Animated.View
           {...panResponder.panHandlers}
@@ -279,8 +279,12 @@ const Vote = () => {
     return (
       <View style={styles.container}>
         <Text style={styles.endText}>투표가 끝났습니다. 감사합니다!</Text>
-        <Button title="랭킹 페이지로 이동" onPress={handleNavigateToRanking} />
-        <Button title="더 많은 투표 하기" onPress={handleRestart} />
+        <Pressable style={styles.endButton} onPress={handleNavigateToRanking}>
+          <Text style={styles.endButtonText}>랭킹 페이지로 이동</Text>
+        </Pressable>
+        <Pressable style={styles.endButton} onPress={handleRestart}>
+          <Text style={styles.endButtonText}>더 많은 투표 하기</Text>
+        </Pressable>
       </View>
     );
   }
@@ -289,7 +293,7 @@ const Vote = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <ImageBackground source={backgroundImage} style={styles.backgroundImage} resizeMode="cover">
+      <ImageBackground source={backgroundImage} style={styles.fullSizeBackground} resizeMode="cover">
         <View style={styles.container}>
           <Animated.View
             {...panResponder.panHandlers}
@@ -358,7 +362,8 @@ const Vote = () => {
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
-    resizeMode: 'contain',
+    width: wp(100),
+    resizeMode: 'cover',
   },
   container: {
     flex: 1,
@@ -366,6 +371,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     marginTop: hp(4),
+    backgroundColor: "black"
   },
   itemContainer: {
     width: wp('100%'),
@@ -406,7 +412,6 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    borderColor: '#ddd',
     borderRadius: 10,
   },
   placeholderText: {
@@ -471,6 +476,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     padding: 20,
+    color: "#fff"
   },
   startContainer: {
     width: wp('100%'),
@@ -505,6 +511,22 @@ const styles = StyleSheet.create({
   icon: {
     transform: [{ translateX: 10 }],
     marginLeft: -30,
+  },
+  endButton: {
+    width: wp(50),
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: hp(2),
+    marginVertical: hp(2)
+  },
+  endButtonText: {
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  fullSizeBackground: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
   },
 });
 

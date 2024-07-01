@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import PagerView from 'react-native-pager-view';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -21,7 +21,7 @@ const Result = React.memo(({ navigation }) => {
   const [thisWeek, setThisWeek] = useState('');
   const [loading, setLoading] = useState(true);
   const pagerRef = useRef(null);
-  
+
   useEffect(() => {
     const initFetch = async () => {
       const data = await fetchData();
@@ -31,13 +31,13 @@ const Result = React.memo(({ navigation }) => {
     };
     initFetch();
   }, []);
-  
+
   const goToPage = useCallback((pageIndex) => {
     if (pagerRef.current) {
       pagerRef.current.setPage(pageIndex);
     }
   }, []);
-  
+
   if (loading) {
     return (
       <View style={styles.emptyPage}>
@@ -51,9 +51,10 @@ const Result = React.memo(({ navigation }) => {
       </View>
     );
   }
-  
+
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="black" />
       <PagerView ref={pagerRef} style={styles.pagerView} initialPage={0} scrollEnabled={false}>
         {questions.map((question, index) => (
           <View key={question.voteId.toString()} style={styles.page}>
