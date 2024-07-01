@@ -814,12 +814,12 @@ public class NotificationServiceImpl implements NotificationService {
     public void sendLateNightNoti() {
         sendNotiByNotiTimeStatus(NotiTimeStatus.LATE_NIGHT);
     }
-
-    @Scheduled(cron = "0 49 0 * * ?", zone = "Asia/Seoul")
-    @Transactional
-    public void sendEx() {
-        sendNotiByNotiTimeStatus(NotiTimeStatus.DAWN);
-    }
+//
+//    @Scheduled(cron = "0 49 0 * * ?", zone = "Asia/Seoul")
+//    @Transactional
+//    public void sendEx() {
+//        sendNotiByNotiTimeStatus(NotiTimeStatus.DAWN);
+//    }
 
 //    public void saveNotiInDB(String title, String body, NotificationDto request, User receiver, User sender) {
 //        NotificationEntity notification = NotificationEntity.builder()
