@@ -182,53 +182,27 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
                             <Text style={{ fontSize: 12, fontWeight: "300" }} note>{new Date(post.createdAt).toDateString()}</Text>
                         </View>
                     </View>
-                    <View style={{
-                        flexDirection: "column",
-                        marginLeft: "auto",
+                </View>
+                <View style={styles.imageButtonContainer} onLayout={onImageButtonLayout}>
+                    <ImageButton
+                        front_image={post.postFrontUrl ? post.postFrontUrl : Image.resolveAssetSource(defaultImage).uri}
+                        back_image={post.postBackUrl ? post.postBackUrl : Image.resolveAssetSource(defaultImage).uri}
+                        containerHeight={imageButtonHeight}
+                        windowWidth={windowWidth}
+                    />
+                    <TouchableOpacity style={styles.optionsIcon} onPress={toggleOptionsVisibility} onLayout={(event) => {
+                        const layout = event.nativeEvent.layout;
+                        setButtonLayout(layout);
                     }}>
-                        {post.friend === false && (friendLook === true ? (
-                            <View style={[
-                                styles.right,
-                                {
-                                    backgroundColor: "#3B4664",
-                                    padding: 5,
-                                    marginBottom: 5,
-                                    borderRadius: 3,
-                                }
-                            ]}>
-                                <TouchableOpacity onPress={toggleFriendSend}>
-                                    <Text style={{
-                                        fontSize: 15,
-                                        color: "white",
-                                    }}>
-                                        친구 추가
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-                        ) : (
-                            <View style={[
-                                styles.right,
-                                {
-                                    backgroundColor: "#3B4664",
-                                    padding: 5,
-                                    marginBottom: 5,
-                                    borderRadius: 3,
-                                }
-                            ]}>
-                                <Text style={{
-                                    fontSize: 15,
-                                    color: "white",
-                                }}>
-                                    추가 완료
-                                </Text>
-                            </View>
-                        )
-                        )}
-                        <TouchableOpacity style={styles.right} onPress={toggleOptionsVisibility} onLayout={(event) => {
-                            const layout = event.nativeEvent.layout;
-                            setButtonLayout(layout);
-                        }}>
-                            <SimpleLineIcons name="options-vertical" size={20} color="black" />
+                        <SimpleLineIcons name="options-vertical" size={20} color="white" />
+                    </TouchableOpacity>
+                    <View style={styles.iconsContainer}>
+                        <TouchableOpacity style={styles.iconButton} onPress={toggleLike}>
+                            <Ionicons name={isLiked ? 'heart' : 'heart-outline'} style={styles.icon} size={24} color={isLiked ? 'red' : 'white'} />
+                            <Text style={styles.iconText}>{likesCount}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.iconButton}>
+                            <Ionicons name='chatbubbles' style={styles.icon} onPress={toggleCommentVisibility} size={24} color="white" />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -252,55 +226,29 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
                         )}
                     </View>
                 )}
-                <View style={styles.imageButtonContainer} onLayout={onImageButtonLayout}>
-                    <ImageButton
-                        front_image={post.postFrontUrl ? post.postFrontUrl : Image.resolveAssetSource(defaultImage).uri}
-                        back_image={post.postBackUrl ? post.postBackUrl : Image.resolveAssetSource(defaultImage).uri}
-                        containerHeight={imageButtonHeight}
-                        windowWidth={windowWidth}
-                    />
-                </View>
-                <View style={{ padding: 5, zIndex: 2, minHeight: 90, backgroundColor: "white", }}>
-                    <View style={[styles.cardItem, { padding: 10 }]}>
+                <View style={{ padding: 0, zIndex: 2, minHeight: 50, backgroundColor: "white", justifyContent: 'flex-end', }}>
+                    <View style={[styles.cardItem, styles.bottomTextContainer]}>
                         <Text style={styles.title}>{post.title}</Text>
-                    </View>
-                    <View style={styles.cardItem}>
-                        <View style={styles.left}>
-                            <TouchableOpacity style={styles.iconButton} onPress={toggleLike}>
-                                <Ionicons name={isLiked ? 'heart' : 'heart-outline'} style={styles.icon} size={24} color={isLiked ? 'red' : 'black'} />
-                                <Text>{likesCount}</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.iconButton}>
-                                <Ionicons name='chatbubbles' style={styles.icon} onPress={toggleCommentVisibility} size={24} />
-                            </TouchableOpacity>
-                        </View>
-                        <CommentModal
-                            isVisible={isCommentVisible}
-                            postId={post.postId}
-                            onClose={() => setIsCommentVisible(false)}
-                            userId={post.userId}
-                        />
                         {post.status === "FREETIME" || post.status === "LATETIME" ? (
                             <View style={[
                                 styles.right,
-                                {
-                                    marginLeft: 'auto',
-                                    padding: 5,
-                                    paddingLeft: 30,
-                                    paddingRight: 30,
-                                    backgroundColor: "#3B4664",
-                                    borderRadius: 10,
-                                }
+                                styles.freeTextContainer,
                             ]}>
                                 {post.status === "FREETIME" && (
-                                    <Text style={{ color: "white", fontSize: 25 }}>free</Text>
+                                    <Text style={styles.freeText}>free</Text>
                                 )}
                                 {post.status === "LATETIME" && (
-                                    <Text style={{ color: "white", fontSize: 25 }}>late</Text>
+                                    <Text style={styles.freeText}>late</Text>
                                 )}
                             </View>
                         ) : null}
                     </View>
+                    <CommentModal
+                        isVisible={isCommentVisible}
+                        postId={post.postId}
+                        onClose={() => setIsCommentVisible(false)}
+                        userId={post.userId}
+                    />
                 </View>
             </View>
         </TouchableWithoutFeedback>
@@ -315,6 +263,20 @@ const styles = StyleSheet.create({
     },
     imageButtonContainer: {
         flex: 1,
+        position: 'relative', // 추가
+    },
+    optionsIcon: {
+        position: 'absolute',
+        top: 10,
+        right: 10,
+        zIndex: 3,
+    },
+    iconsContainer: {
+        position: 'absolute',
+        bottom: 10,
+        right: 10,
+        zIndex: 3,
+        flexDirection: 'row',
     },
     optionsContainer: {
         position: 'absolute',
@@ -359,6 +321,22 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: '900',
+        color: 'black',
+    },
+    bottomTextContainer: {
+        justifyContent: 'space-between', // 제목과 free 텍스트를 양쪽에 배치
+        alignItems: 'center',
+    },
+    freeTextContainer: {
+        backgroundColor: "#3B4664",
+        padding: 5,
+        paddingLeft: 30,
+        paddingRight: 30,
+        borderRadius: 10,
+    },
+    freeText: {
+        color: "white",
+        fontSize: 25,
     },
     iconButton: {
         flexDirection: 'row',
@@ -368,6 +346,9 @@ const styles = StyleSheet.create({
     },
     icon: {
         marginRight: 4,
+    },
+    iconText: {
+        color: 'white',
     },
     right: {
         marginLeft: 'auto',

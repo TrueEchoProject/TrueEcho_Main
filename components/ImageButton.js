@@ -140,8 +140,8 @@ const styles = StyleSheet.create({
     smallImageContainer: {
         zIndex: 2,
         position: 'absolute',
-        top: 10,
-        left: 10,
+        top: 20,
+        left: 20,
     },
     smallImage: {
         borderColor: '#ffffff',

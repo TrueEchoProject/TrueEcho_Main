@@ -1,97 +1,106 @@
 import React from 'react';
-import { View } from 'react-native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { View, StyleSheet } from 'react-native';
 import { FriendPosts, PublicPosts } from './index';
 import FeedButton from "../../../components/FeedButton";
 
 const MainPostTab = createBottomTabNavigator();
 
 export const MainPostTabScreen = ({ route }) => {
-  const friendPostsRef = React.useRef(); // 탭의 활성화 확인
-  const PublicPostsRef = React.useRef(); // 탭의 활성화 확인
-  const initialTab = route.params?.initialTab || 'FriendFeed'; // 초기 탭 설정
+  const friendPostsRef = React.useRef();
+  const PublicPostsRef = React.useRef();
+  const initialTab = route.params?.initialTab || 'FriendFeed';
 
   return (
     <MainPostTab.Navigator
       screenOptions={{
-        tabBarStyle: { display: 'none' } // 하단 탭 바 숨김
+        tabBarStyle: { display: 'none' },
+        headerTitleAlign: "center",
+        headerStyle: {
+          height: 70, // 상단 헤더의 높이를 적절히 조정
+          backgroundColor: 'black', // 상단 헤더의 배경색을 검정색으로 설정
+        }
       }}
-      initialRouteName={initialTab} // 동적으로 초기 탭 설정
+      initialRouteName={initialTab}
     >
       <MainPostTab.Screen
         name="FriendFeed"
         children={(props) => <FriendPosts ref={friendPostsRef} {...props} />}
         options={({ navigation }) => ({
           headerTitle: () => {
-            // 현재 활성화된 탭 이름 가져오기
             const currentRouteName = navigation.getState().routes[navigation.getState().index].name;
             return (
-              <View style={{ flexDirection: 'row' }}>
+              <View style={styles.headerContainer}>
                 <FeedButton
                   title="친구"
                   onPress={() => {
-                    if (currentRouteName === 'FriendFeed') { // 현재 활성화된 탭과 비교
+                    if (currentRouteName === 'FriendFeed') {
                       friendPostsRef.current.getPosts();
                     } else { navigation.navigate('FriendFeed') }
                   }}
-                  isSelected={currentRouteName === 'FriendFeed'} // FeedButton 스타일 전환
+                  isSelected={currentRouteName === 'FriendFeed'}
                 />
                 <FeedButton
                   title="더보기"
                   onPress={() => {
-                    if (currentRouteName === 'OtherFeed') { // 현재 활성화된 탭과 비교
-                      PublicPostsRef.current.getPosts(); // FriendFeed의 새로고침 함수 호출
+                    if (currentRouteName === 'OtherFeed') {
+                      PublicPostsRef.current.getPosts();
                     } else { navigation.navigate('OtherFeed'); }
                   }}
-                  isSelected={currentRouteName === 'OtherFeed'} // FeedButton 스타일 전환
+                  isSelected={currentRouteName === 'OtherFeed'}
                 />
               </View>
             );
           },
-          headerTitleAlign: "center",
-          headerStyle: {
-            height: 30,
-          }
         })}
-      >
-      </MainPostTab.Screen>
+      />
       <MainPostTab.Screen
         name="OtherFeed"
         children={(props) => <PublicPosts ref={PublicPostsRef} {...props} />}
         options={({ navigation }) => ({
           headerTitle: () => {
-            // 현재 활성화된 탭 이름 가져오기
             const currentRouteName = navigation.getState().routes[navigation.getState().index].name;
             return (
-              <View style={{ flexDirection: 'row' }}>
+              <View style={styles.headerContainer}>
                 <FeedButton
                   title="친구"
                   onPress={() => {
-                    if (currentRouteName === 'FriendFeed') { // 현재 활성화된 탭과 비교
-                      PublicPostsRef.current.getPosts(); // FriendFeed의 새로고침 함수 호출
+                    if (currentRouteName === 'FriendFeed') {
+                      PublicPostsRef.current.getPosts();
                     } else { navigation.navigate('FriendFeed') }
                   }}
-                  isSelected={currentRouteName === 'FriendFeed'} // FeedButton 스타일 전환
+                  isSelected={currentRouteName === 'FriendFeed'}
                 />
                 <FeedButton
                   title="더보기"
                   onPress={() => {
-                    if (currentRouteName === 'OtherFeed') { // 현재 활성화된 탭과 비교
-                      PublicPostsRef.current.getPosts(); // FriendFeed의 새로고침 함수 호출
-                    } else { navigation.navigate('OtherFeed') }
+                    if (currentRouteName === 'OtherFeed') {
+                      PublicPostsRef.current.getPosts();
+                    } else { navigation.navigate('OtherFeed'); }
                   }}
-                  isSelected={currentRouteName === 'OtherFeed'} // FeedButton 스타일 전환
+                  isSelected={currentRouteName === 'OtherFeed'}
                 />
               </View>
             );
           },
-          headerTitleAlign: "center",
-          headerStyle: {
-            height: 30,
-          }
         })}
-      >
-      </MainPostTab.Screen>
+      />
     </MainPostTab.Navigator>
   );
 }
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    flexDirection: 'row',
+    paddingVertical: 10, // 패딩을 조정하여 배경 범위를 자연스럽게 확장
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'black', // 헤더 컨테이너의 배경색을 검정색으로 설정
+  },
+  container: {
+    flex: 1,
+    backgroundColor: 'black',
+  },
+});
+
+export default MainPostTabScreen;
