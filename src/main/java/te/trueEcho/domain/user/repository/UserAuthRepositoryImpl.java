@@ -4,6 +4,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import te.trueEcho.domain.setting.entity.NotiTimeStatus;
@@ -118,16 +120,16 @@ public class UserAuthRepositoryImpl implements UserAuthRepository {
         }
     }
 
+    @Transactional
     @Override
     public List<User> findAllByNotiTimeStatus(NotiTimeStatus notiTimeStatus) {
         try {
-            return em.createQuery("select u from User u where u.notificationSetting.notificationTimeStatus =: notiTimeStatus", User.class)
+            return em.createQuery(
+                            "select u from User u join fetch u.notificationSetting ns where ns.notificationTimeStatus = :notiTimeStatus", User.class)
                     .setParameter("notiTimeStatus", notiTimeStatus)
                     .getResultList();
         } catch (NoResultException e) {
             return null;
         }
     }
-
-
 }

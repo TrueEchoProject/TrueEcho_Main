@@ -39,4 +39,6 @@ public interface PostRepository {
     Comment getCommentByIdAndSender(Long contentId, Long senderId);
 
     Like getLikeByIdAndSender(Long contentId, Long id);
+
+    Like getLikeByPostIdAndSender(Long contentId, Long senderId);
 }

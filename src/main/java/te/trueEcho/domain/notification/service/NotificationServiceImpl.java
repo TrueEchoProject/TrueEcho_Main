@@ -440,6 +440,7 @@ package te.trueEcho.domain.notification.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -457,6 +458,7 @@ import te.trueEcho.domain.post.repository.PostRepository;
 import te.trueEcho.domain.rank.entity.Rank;
 import te.trueEcho.domain.rank.repository.RankRepository;
 import te.trueEcho.domain.setting.entity.NotiTimeStatus;
+import te.trueEcho.domain.setting.entity.NotificationSetting;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.UserAuthRepository;
 import te.trueEcho.domain.vote.entity.VoteResult;
@@ -743,17 +745,27 @@ public class NotificationServiceImpl implements NotificationService {
         int randomMinute = random.nextInt(60);
 
         List<User> users = userAuthRepository.findAllByNotiTimeStatus(notiTimeStatus);
+
         for (User receiver : users) {
-            if (Boolean.TRUE.equals(receiver.getNotificationSetting().getPhotoTimeNotification())) {
+            // 강제로 NotificationSetting 엔티티를 로딩
+            NotificationSetting notificationSetting = receiver.getNotificationSetting();
+
+            // Force initialization of NotificationSetting
+            if (!Hibernate.isInitialized(notificationSetting)) {
+                Hibernate.initialize(notificationSetting);
+            }
+
+            if (Boolean.TRUE.equals(notificationSetting.getPhotoTimeNotification())) {
                 String token = String.valueOf(fcmService.getToken(receiver));
                 if (token != null) {
                     LocalDateTime notiTime = LocalDateTime.now().withHour(randomHour).withMinute(randomMinute).withSecond(0);
-                    receiver.getNotificationSetting().setNotificationTime(notiTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm")));
+                    notificationSetting.setNotificationTime(notiTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm")));
                     scheduleNotification(receiver, notiTime);
                 }
             }
         }
     }
+
 
     public void scheduleNotification(User receiver, LocalDateTime notiTime) {
         Timer timer = new Timer();
@@ -802,6 +814,12 @@ public class NotificationServiceImpl implements NotificationService {
     public void sendLateNightNoti() {
         sendNotiByNotiTimeStatus(NotiTimeStatus.LATE_NIGHT);
     }
+//
+//    @Scheduled(cron = "0 49 0 * * ?", zone = "Asia/Seoul")
+//    @Transactional
+//    public void sendEx() {
+//        sendNotiByNotiTimeStatus(NotiTimeStatus.DAWN);
+//    }
 
 //    public void saveNotiInDB(String title, String body, NotificationDto request, User receiver, User sender) {
 //        NotificationEntity notification = NotificationEntity.builder()
@@ -839,7 +857,7 @@ public void saveNotiInDB(String title, String body, NotificationDto request, Use
             notification.setComment(comment);
             break;
         case POST_LIKE:
-            Like like = Optional.ofNullable(postRepositoryImpl.getLikeByIdAndSender(request.getData().getContentId(), sender.getId()))
+            Like like = Optional.ofNullable(postRepositoryImpl.getLikeByPostIdAndSender(request.getData().getContentId(), sender.getId()))
                     .orElseThrow(() -> new IllegalArgumentException("Invalid like ID: " + request.getData().getContentId()));
             notification.setLike(like);
             break;
