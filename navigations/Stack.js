@@ -71,14 +71,14 @@ const MainPostStackScreen = () => {
           <View style={{ flexDirection: 'row' }}>
             <MaterialIcons
               name="emoji-people"
-              size={24}
+              size={30}
               color="white"
               style={{ marginHorizontal: 10 }}
               onPress={() => navigation.navigate('Fri', { title: '친구' })}
             />
             <MaterialIcons
               name="assignment-ind"
-              size={24}
+              size={30}
               color="white"
               style={{ marginHorizontal: 10 }}
               onPress={() => navigation.navigate('MyP', { title: '마이 페이지' })}
