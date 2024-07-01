@@ -136,10 +136,12 @@ public class VoteRepositoryImpl implements VoteRepository {
             return em.createQuery("SELECT vr FROM VoteResult vr " +
                             "WHERE vr.vote.id = :voteId " +
                             "AND vr.userTarget.id = :targetUserId " +
-                            "AND vr.userVoter.id = :senderUserId", VoteResult.class)
+                            "AND vr.userVoter.id = :senderUserId " +
+                            "ORDER BY vr.createdAt DESC", VoteResult.class)
                     .setParameter("voteId", voteId)
                     .setParameter("targetUserId", targetUserId)
                     .setParameter("senderUserId", senderUserId)
+                    .setMaxResults(1)
                     .getSingleResult();
         } catch (Exception e) {
             log.warn("this is error {}", e);

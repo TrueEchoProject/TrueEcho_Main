@@ -785,55 +785,48 @@ public class NotificationServiceImpl implements NotificationService {
         }, Date.from(notiTime.atZone(ZoneId.systemDefault()).toInstant()));
     }
 
+    @Transactional
     @Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Seoul")
     public void sendDawnNoti() {
         sendNotiByNotiTimeStatus(NotiTimeStatus.DAWN);
     }
 
+    @Transactional
     @Scheduled(cron = "0 0 7 * * ?", zone = "Asia/Seoul")
     public void sendMorningNoti() {
         sendNotiByNotiTimeStatus(NotiTimeStatus.MORNING);
     }
 
+    @Transactional
     @Scheduled(cron = "0 0 12 * * ?", zone = "Asia/Seoul")
     public void sendEarlyAfternoonNoti() {
         sendNotiByNotiTimeStatus(NotiTimeStatus.EARLY_AFTERNOON);
     }
 
+    @Transactional
     @Scheduled(cron = "0 0 15 * * ?", zone = "Asia/Seoul")
     public void sendLateAfternoonNoti() {
         sendNotiByNotiTimeStatus(NotiTimeStatus.LATE_AFTERNOON);
     }
 
+    @Transactional
     @Scheduled(cron = "0 0 18 * * ?", zone = "Asia/Seoul")
     public void sendEarlyNightNoti() {
         sendNotiByNotiTimeStatus(NotiTimeStatus.EARLY_NIGHT);
     }
 
+    @Transactional
     @Scheduled(cron = "0 0 21 * * ?", zone = "Asia/Seoul")
     public void sendLateNightNoti() {
         sendNotiByNotiTimeStatus(NotiTimeStatus.LATE_NIGHT);
     }
-//
-//    @Scheduled(cron = "0 49 0 * * ?", zone = "Asia/Seoul")
-//    @Transactional
-//    public void sendEx() {
-//        sendNotiByNotiTimeStatus(NotiTimeStatus.DAWN);
-//    }
 
-//    public void saveNotiInDB(String title, String body, NotificationDto request, User receiver, User sender) {
-//        NotificationEntity notification = NotificationEntity.builder()
-//                .title(title)
-//                .body(body)
-//                .receiver(receiver)
-//                .data(NotificationEntity.Data.builder()
-//                        .senderId(sender != null ? sender.getId() : null)  // null 체크 추가
-//                        .contentId(request.getData().getContentId())
-//                        .notiType(request.getData().getNotiType())
-//                        .build())
-//                .build();
-//        notificationRepository.save(notification);
-//    }
+    @Scheduled(cron = "0 49 0 * * ?", zone = "Asia/Seoul")
+    @Transactional
+    public void sendEx() {
+        sendNotiByNotiTimeStatus(NotiTimeStatus.DAWN);
+    }
+
 public void saveNotiInDB(String title, String body, NotificationDto request, User receiver, User sender) {
 
     NotificationEntity.Data notificationData = NotificationEntity.Data.builder()
