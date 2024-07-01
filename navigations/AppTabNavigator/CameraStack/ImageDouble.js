@@ -47,8 +47,8 @@ const styles = StyleSheet.create({
   },
   smallImageContainer: {
     position: 'absolute',
-    top: 10,
-    left: 10,
+    top: 20,
+    left: 20,
     width: 120, // 너비를 줄임
     height: 160, // 높이를 늘려 직사각형 모양으로 변경
     zIndex: 1,

@@ -288,16 +288,15 @@ const styles = StyleSheet.create({
     marginTop: height * 0.005,
   },
   imageContainer: {
-    width: '90%',
+    width: '90%', // 제목란과 동일한 너비로 설정
     aspectRatio: 3 / 4,
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: width * 0.04,
+    borderRadius: width * 0.02, // 너비와 맞춰 조정
     overflow: 'hidden',
     position: 'relative',
     marginBottom: height * 0.01,
-    flex: 1, // Flex 속성을 사용하여 남은 공간을 채우도록 설정
   },
   cameraImage: {
     width: '100%',
@@ -367,5 +366,6 @@ const styles = StyleSheet.create({
     right: width * 0.02,
   },
 });
+
 
 export default FeedPostPage;
