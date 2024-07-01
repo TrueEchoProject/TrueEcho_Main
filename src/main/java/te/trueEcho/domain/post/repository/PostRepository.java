@@ -25,7 +25,7 @@ public interface PostRepository {
     boolean writeComment(Comment comment);
     boolean deletePost(Long postId);
     boolean deleteComment(Long commentId);
-    boolean deleteLike(Like like);
+    boolean deleteLike(Like like, Post targetPost);
     void save(Post post);
     void saveLike(Like like);
 

@@ -214,24 +214,29 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public boolean deleteLike(Like like) {
+    public boolean deleteLike(Like like, Post targetPost) {
         try {
-            if (like != null) {
-                em.remove(like);
-                return true;
+            if(like == null || targetPost == null) {
+                return false;
             }
-            return false;
+            targetPost.getLikes().remove(like);
+            em.remove(like);
+            log.info("deleteLike successful: {}", like.getId());
+            return true;
         } catch (Exception e) {
-            log.error("deleteLike error : {}", e.getMessage());
+            log.error("deleteLike error : {}", e.getMessage(), e);
             return false;
         }
     }
-    @Transactional
+
+
+    @Override
     public void saveLike(Like like) {
         try {
             em.persist(like);
         } catch (Exception e) {
-            log.error("saveLike error : {}", e.getMessage());
+            log.error("saveLike error : {}", e.getMessage(), e);
+            throw e;
         }
     }
 
