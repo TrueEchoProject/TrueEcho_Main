@@ -115,6 +115,7 @@ const CommunityStackScreen = () => {
           backgroundColor: '#000000',
         },
         headerTintColor: '#ffffff',
+        headerShown: false, // 헤더를 숨깁니다.
         headerLeft: () => {
           const title = route.name === 'Community' ? '커뮤니티' : route.name;
           return route.name === 'Community'

@@ -365,14 +365,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 10,
-    // marginTop: hp(4),
+    marginTop: hp(4),
   },
   itemContainer: {
     width: wp('100%'),
     padding: 10,
     backgroundColor: 'black',
     flex: 1,
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
   },
   scrollContainer: {
     alignItems: 'center',
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
     height: hp('50%'), // 크기를 키움
     justifyContent: 'center',
     alignItems: 'center',
-    // marginBottom: hp(2),
+    marginBottom: hp(2),
   },
   selectedImage: {
     width: wp('80%'), // 크기를 키움
@@ -419,7 +419,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: wp('100%'), // 전체 너비를 차지
     paddingHorizontal: wp('5%'), // 좌우에 여백 추가
-    // marginBottom: hp(2), // 아래 여백 추가
+    marginBottom: hp(2), // 아래 여백 추가
   },
   userContainer: {
     flexDirection: 'row',
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
   userButton: {
     flexDirection: 'column',
     alignItems: 'center',
-    marginHorizontal: 5,
+    margin: 5,
     padding: 5,
     backgroundColor: '#fff',
     borderRadius: 10,
@@ -440,9 +440,9 @@ const styles = StyleSheet.create({
   selectedUserButton: {
     flexDirection: 'column',
     alignItems: 'center',
-    marginHorizontal: 5,
+    margin: 5,
     padding: 5,
-    borderRadius: 10,
+    borderRadius: 5,
     width: wp('20%'),
     height: hp('15%'),
     justifyContent: 'center',
@@ -460,11 +460,11 @@ const styles = StyleSheet.create({
   refreshButtonContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: hp('5%'),
-    width: wp(10),
+    height: hp('6%'),
+    width: wp(13),
     borderRadius: 15,
     backgroundColor: "#fff",
-    marginTop: hp(1)
+    marginTop: hp(2),
   },
   endText: {
     fontSize: wp('5%'),
