@@ -179,7 +179,7 @@ const Vote = () => {
           data: {
             userId: userId,
             notiType: 3,
-            contentId: null
+            contentId: voteId
           }
         });
         console.log('FCM Response:', FcmResponse.data);
@@ -188,6 +188,7 @@ const Vote = () => {
       console.error('Error sending vote result: ', error);
     }
   };
+
 
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
@@ -270,7 +271,7 @@ const Vote = () => {
   if (loading) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color="#fff" />
+        <ActivityIndicator size="large" color="#0000ff" />
       </View>
     );
   }
