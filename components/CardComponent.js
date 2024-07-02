@@ -8,6 +8,7 @@ import {
     Dimensions,
     Image,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, Ionicons, Feather, SimpleLineIcons } from "@expo/vector-icons";
 import Api from '../Api';
 import { ImageButton } from "./ImageButton";
@@ -172,10 +173,15 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
                 <View style={styles.cardItem}>
                     <View style={styles.left}>
                         <TouchableOpacity onPress={() => { navigation.navigate("UserAlarm", { userId: post.userId }) }}>
-                            <Image
-                                style={styles.thumbnail}
-                                source={{ uri: post.profileUrl ? post.profileUrl : Image.resolveAssetSource(defaultImage).uri }}
-                            />
+                            <LinearGradient
+                                colors={['#fff', '#fff', '#fff']}
+                                style={styles.thumbnailGradient}
+                            >
+                                <Image
+                                    style={styles.thumbnail}
+                                    source={{ uri: post.profileUrl ? post.profileUrl : Image.resolveAssetSource(defaultImage).uri }}
+                                />
+                            </LinearGradient>
                         </TouchableOpacity>
                         <View style={styles.body}>
                             <View style={styles.rightAlignedContainer}>
@@ -266,7 +272,7 @@ const styles = StyleSheet.create({
         marginBottom: 0, // 하단 여백 제거
         paddingBottom: 0, // 하단 패딩 제거
         paddingHorizontal: 0, // 수평 패딩 제거
-        marginHorizontal: 40, // 양쪽 여백을 40단위로 설정하여 textRow와 일치
+        marginHorizontal: Dimensions.get('window').width * 0.1, // 양쪽 여백을 화면 너비의 10%로 설정
     },
     imageWrapper: {
         width: '100%', // 부모 컨테이너의 너비를 100%로 설정
@@ -331,7 +337,7 @@ const styles = StyleSheet.create({
         marginBottom: 0, // 하단 여백 제거
     },
     cardItem: {
-        padding: 10, // 내부 여백 10단위
+        padding: Dimensions.get('window').width * 0.025, // 내부 여백을 화면 너비의 2.5%로 설정
         flexDirection: 'row', // 자식 요소들을 가로로 배치
         alignItems: 'center', // 자식 요소들을 중앙 정렬
         marginBottom: 0, // 하단 여백 제거
@@ -339,55 +345,61 @@ const styles = StyleSheet.create({
     left: {
         flexDirection: 'row', // 자식 요소들을 가로로 배치
         alignItems: 'center', // 자식 요소들을 중앙 정렬
-        
     },
     body: {
-        marginLeft: 10, // 왼쪽 여백 10단위
-        height: 55, // 높이 55단위
+        marginLeft: Dimensions.get('window').width * 0.02, // 왼쪽 여백을 화면 너비의 2%로 설정
+        height: Dimensions.get('window').height * 0.075, // 높이를 화면 높이의 7.5%로 설정
+        flex: 1, // 남은 공간 차지
     },
     rightAlignedContainer: {
         flexDirection: 'column', // 자식 요소들을 세로로 배치
-        alignItems: 'flex-start', // 자식 요소들을 왼쪽 정렬
-        marginLeft: 20, // 왼쪽 여백 20단위
+        alignItems: 'flex-end', // 자식 요소들을 오른쪽 정렬
+        marginRight: Dimensions.get('window').width * 0.075, // 오른쪽 여백을 화면 너비의 5%로 설정
+    },
+    thumbnailGradient: {
+        borderRadius: Dimensions.get('window').width * 0.06, // 프로필 이미지의 둥근 테두리 반경에 맞춤
+        padding: 3, // 그라데이션 테두리 두께를 조금 더 두껍게 설정
+        marginLeft: Dimensions.get('window').width * 0.06, // 왼쪽 여백을 화면 너비의 5%로 설정 (오른쪽으로 이동)
     },
     thumbnail: {
-        width: 50, // 너비 44단위
-        height: 50, // 높이 44단위
-        borderRadius: 22, // 둥근 모서리 반경 22단위
-        marginLeft: 30, // 오른쪽 여백을 추가하여 이미지를 오른쪽으로 이동
+        width: Dimensions.get('window').width * 0.12 - 6, // 패딩을 제외한 크기로 설정
+        height: Dimensions.get('window').width * 0.12 - 6, // 패딩을 제외한 크기로 설정
+        borderRadius: (Dimensions.get('window').width * 0.12 - 6) / 2, // 둥근 모서리 반경을 새로운 크기에 맞게 조정
     },
     username: {
-        fontSize: 18, // 글자 크기 15단위
+        fontSize: Dimensions.get('window').width * 0.045, // 글자 크기를 화면 너비의 4.5%로 설정
         fontWeight: "500", // 글자 굵기 500
         color: 'white', // 글자 색상 흰색
-        marginBottom: 0, // 아래쪽 여백 3단위
-        marginTop: 5, // 위쪽 여백 3단위
-        alignSelf: 'flex-end', // 선을 왼쪽으로 정렬
-        marginRight: 3, // 오른쪽 여백 10단위
+        marginBottom: Dimensions.get('window').height * 0.005, // 아래쪽 여백을 화면 높이의 0.5%로 설정
+        marginTop: Dimensions.get('window').height * 0.005, // 위쪽 여백을 화면 높이의 0.5%로 설정
+        alignSelf: 'flex-end', // 자식 요소를 오른쪽 정렬
     },
     date: {
-        fontSize: 14, // 글자 크기 12단위
+        fontSize: Dimensions.get('window').width * 0.035, // 글자 크기를 화면 너비의 3.5%로 설정
         fontWeight: "300", // 글자 굵기 300
         color: 'white', // 글자 색상 흰색
-        marginTop: -5, // 위쪽 여백 5단위
-        marginLeft: 150, // 왼쪽 여백 5단위
-        marginRight: 5, // 오른쪽 여백 10단위
+        marginTop: 0, // 위쪽 여백 5단위
+        marginLeft: 0, // 왼쪽 여백 제거
+        marginRight: 0, // 오른쪽 여백 제거
+        alignSelf: 'flex-end', // 자식 요소를 오른쪽 정렬
     },
     title: {
         fontWeight: '900', // 글자 굵기 900
         color: 'white', // 글자 색상 흰색
-        marginBottom: 3, // 아래쪽 여백 3단위
-        fontSize: 16, // 글자 크기 18단위
+        marginBottom: Dimensions.get('window').height * 0.005, // 아래쪽 여백을 화면 높이의 0.5%로 설정
+        fontSize: Dimensions.get('window').width * 0.04, // 글자 크기를 화면 너비의 4%로 설정
+        marginTop: Dimensions.get('window').height * 0.007, // 위쪽 여백을 화면 높이의 0.5%로 설정
     },
+    
     freeText: {
         color: "white", // 글자 색상 흰색
-        fontSize: 25, // 글자 크기 25단위
+        fontSize: Dimensions.get('window').width * 0.06, // 글자 크기를 화면 너비의 6%로 설정
     },
     iconButton: {
         flexDirection: 'row', // 자식 요소들을 가로로 배치
         alignItems: 'center', // 자식 요소들을 중앙 정렬
         justifyContent: 'center', // 자식 요소들을 중앙에 정렬
-        marginRight: 15, // 오른쪽 여백 15단위
+        marginRight: Dimensions.get('window').width * 0.04, // 오른쪽 여백을 화면 너비의 4%로 설정
         marginBottom: -5, // 위쪽 여백 10단위
     },
     icon: {
@@ -403,33 +415,33 @@ const styles = StyleSheet.create({
         height: 1, // 높이 1단위
         backgroundColor: 'white', // 배경 색상 흰색
         width: '100%', // 너비 100%
-        marginVertical: 5, // 상하 여백 5단위
+        marginVertical: Dimensions.get('window').height * 0.01, // 상하 여백을 화면 높이의 1%로 설정
         marginHorizontal: 0, // 좌우 여백 0단위
-        marginBottom: 0, // 아래쪽 여백 5단위
-        marginTop: 10, // 위쪽 여백 5단위
+        marginBottom: 0, // 아래쪽 여백 0단위
+        marginTop: 10, // 위쪽 여백 10단위
     },
     usernameSeparator: {
         height: 1,
         backgroundColor: 'white',
-        width: '105%', // 원하는 만큼 길이를 늘리기 위해 100%로 설정
-        marginVertical: 5,
-        alignSelf: 'flex-end', // 선을 왼쪽으로 정렬
-        marginRight: 5, // 오른쪽 여백 10단위
+        width: '100%', // 원하는 만큼 길이를 늘리기 위해 100%로 설정
+        marginVertical: Dimensions.get('window').height * 0.005, // 상하 여백을 화면 높이의 0.5%로 설정
+        alignSelf: 'flex-end', // 자식 요소를 오른쪽 정렬
     },
     bottomContainer: {
         padding: 0, // 내부 여백 0단위
         zIndex: 2, // 다른 요소들보다 앞에 표시
-        minHeight: 50, // 최소 높이 50단위
+        minHeight: Dimensions.get('window').height * 0.075, // 최소 높이를 화면 높이의 7.5%로 설정
         backgroundColor: "black", // 배경 색상 검정
         justifyContent: 'flex-end', // 자식 요소들을 아래쪽에 정렬
         alignItems: 'center', // 자식 요소들을 중앙 정렬
-        marginHorizontal: 40, // 좌우 여백 40단위
+        marginHorizontal: Dimensions.get('window').width * 0.1, // 좌우 여백을 화면 너비의 10%로 설정
     },
     textRow: {
         flexDirection: 'row', // 텍스트를 가로로 나란히 배치
         alignItems: 'center', // 자식 요소들을 중앙 정렬
         justifyContent: 'space-between', // 양쪽 끝에 배치
         width: '100%', // 전체 너비를 차지하도록 설정
+        marginTop: Dimensions.get('window').width * 0.01,
     },
 });
 
