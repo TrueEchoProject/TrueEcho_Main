@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     },
     smallImage: {
         borderColor: '#ffffff',
-        borderWidth: 2,
+        borderWidth: 0,
     },
     largeImage: {
         width: '100%',
