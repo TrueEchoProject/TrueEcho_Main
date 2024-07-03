@@ -236,24 +236,28 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
                     />
                 </View>
                 {isOptionsVisible && (
-                    <View style={[
-                        styles.optionsContainer,
-                        post.friend === false ?
-                            { top: buttonLayout.y + buttonLayout.height, right: 10 } :
-                            { top: buttonLayout.y + buttonLayout.height + 30, right: 10 }
-                    ]}>
-                        {post.mine ? (
-                            <TouchableOpacity onPress={toggleDelete} style={styles.optionRow}>
-                                <Feather name='alert-triangle' style={styles.optionIcon} />
-                                <Text style={[styles.optionItem, styles.optionTextDelete]}>삭제하기</Text>
-                            </TouchableOpacity>
-                        ) : (
-                            <TouchableOpacity onPress={toggleBlock} style={styles.optionRow}>
-                                <Feather name='alert-triangle' style={styles.optionIcon} />
-                                <Text style={[styles.optionItem, styles.optionTextBlock]}>사용자 차단하기</Text>
-                            </TouchableOpacity>
+                    <>
+                        <View style={[
+                            styles.optionsContainer,
+                            { top: buttonLayout.y + buttonLayout.height + 80, right: 60 }
+                        ]}>
+                            {post.mine ? (
+                                <TouchableOpacity onPress={toggleDelete} style={styles.optionRow}>
+                                    <Text style={[styles.optionItem, styles.optionTextDelete]}>삭제</Text>
+                                </TouchableOpacity>
+                            ) : null}
+                        </View>
+                        {!post.mine && (
+                            <View style={[
+                                styles.optionsContainer,
+                                { top: buttonLayout.y + buttonLayout.height + 80, right: 60 } // 사용자 차단 버튼 위치 조정
+                            ]}>
+                                <TouchableOpacity onPress={toggleBlock} style={styles.optionRow}>
+                                    <Text style={[styles.optionItem, styles.optionTextBlock]}>사용자 차단</Text>
+                                </TouchableOpacity>
+                            </View>
                         )}
-                    </View>
+                    </>
                 )}
             </View>
         </TouchableWithoutFeedback>
@@ -300,7 +304,7 @@ const styles = StyleSheet.create({
     optionsContainer: {
         position: 'absolute', // 부모 뷰 내에서 절대 위치
         zIndex: 4, // 다른 요소들보다 앞에 표시
-        backgroundColor: 'white', // 배경 색상 흰색
+        backgroundColor: 'grey', // 배경 색상 흰색
         padding: 12, // 내부 여백 12단위
         paddingLeft: 14, // 왼쪽 여백 14단위
         borderRadius: 4, // 모서리 둥글게 4단위
@@ -317,10 +321,10 @@ const styles = StyleSheet.create({
         fontSize: 15, // 글자 크기 15단위
     },
     optionTextDelete: {
-        color: 'red', // 글자 색상 빨강
+        color: 'white', // 글자 색상 빨강
     },
     optionTextBlock: {
-        color: 'red', // 글자 색상 빨강
+        color: 'white', // 글자 색상 빨강
     },
     optionRow: {
         flexDirection: 'row', // 자식 요소들을 가로로 배치
@@ -328,7 +332,7 @@ const styles = StyleSheet.create({
     },
     optionIcon: {
         marginLeft: 10, // 왼쪽 여백 10단위
-        color: 'red', // 아이콘 색상 빨강
+        color: 'white', // 아이콘 색상 빨강
     },
     cardContainer: {
         flex: 1, // 컨테이너가 가용 공간을 차지하게 함
