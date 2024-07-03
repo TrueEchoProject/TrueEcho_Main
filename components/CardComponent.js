@@ -174,7 +174,9 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
                     <View style={styles.left}>
                         <TouchableOpacity onPress={() => { navigation.navigate("UserAlarm", { userId: post.userId }) }}>
                             <LinearGradient
-                                colors={['#fff', '#fff', '#fff']}
+                                colors={['#1BC5DA', '#263283', '#4641D9']}
+                                start={{ x: 0, y: 0.5 }}
+                                end={{ x: 1, y: 0.5 }}
                                 style={styles.thumbnailGradient}
                             >
                                 <Image
@@ -250,7 +252,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
                         {!post.mine && (
                             <View style={[
                                 styles.optionsContainer,
-                                { top: buttonLayout.y + buttonLayout.height + 80, right: 60 } // 사용자 차단 버튼 위치 조정
+                                { top: buttonLayout.y + buttonLayout.height + 80, right: 50 } // 사용자 차단 버튼 위치 조정
                             ]}>
                                 <TouchableOpacity onPress={toggleBlock} style={styles.optionRow}>
                                     <Text style={[styles.optionItem, styles.optionTextBlock]}>사용자 차단</Text>
