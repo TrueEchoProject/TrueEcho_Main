@@ -226,7 +226,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
                         <Text style={styles.title}>{post.title}</Text>
                         {post.status === "FREETIME" || post.status === "LATETIME" ? (
                             <Text style={styles.freeText}>
-                                {post.status === "FREETIME" ? 'free' : 'late'}
+                                {post.status === "FREETIME" ? 'Free' : 'Late'}
                             </Text>
                         ) : null}
                     </View>
