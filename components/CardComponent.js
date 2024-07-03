@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
     rightAlignedContainer: {
         flexDirection: 'column', // 자식 요소들을 세로로 배치
         alignItems: 'flex-end', // 자식 요소들을 오른쪽 정렬
-        marginRight: Dimensions.get('window').width * 0.075, // 오른쪽 여백을 화면 너비의 5%로 설정
+        marginRight: Dimensions.get('window').width * 0.07, // 오른쪽 여백을 화면 너비의 5%로 설정
     },
     thumbnailGradient: {
         borderRadius: Dimensions.get('window').width * 0.06, // 프로필 이미지의 둥근 테두리 반경에 맞춤
@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
         borderRadius: (Dimensions.get('window').width * 0.12 - 6) / 2, // 둥근 모서리 반경을 새로운 크기에 맞게 조정
     },
     username: {
-        fontSize: Dimensions.get('window').width * 0.045, // 글자 크기를 화면 너비의 4.5%로 설정
+        fontSize: Dimensions.get('window').width * 0.04, // 글자 크기를 화면 너비의 4.5%로 설정
         fontWeight: "500", // 글자 굵기 500
         color: 'white', // 글자 색상 흰색
         marginBottom: Dimensions.get('window').height * 0.005, // 아래쪽 여백을 화면 높이의 0.5%로 설정
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end', // 자식 요소를 오른쪽 정렬
     },
     date: {
-        fontSize: Dimensions.get('window').width * 0.035, // 글자 크기를 화면 너비의 3.5%로 설정
+        fontSize: Dimensions.get('window').width * 0.03, // 글자 크기를 화면 너비의 3.5%로 설정
         fontWeight: "300", // 글자 굵기 300
         color: 'white', // 글자 색상 흰색
         marginTop: 0, // 위쪽 여백 5단위

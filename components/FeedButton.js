@@ -9,14 +9,14 @@ const FeedButton = ({ title, onPress, isSelected }) => {
                 <LinearGradient
                     colors={['#1BC5DA', '#263283']}
                     start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.button}
+                    end={{ x: 0, y: 1 }}
+                    style={styles.gradientButton}
                 >
                     <Text style={styles.selectedText}>{title}</Text>
                 </LinearGradient>
             ) : (
-                <View style={styles.button}>
-                    <Text style={styles.text}>{title}</Text>
+                <View style={styles.unselectedButton}>
+                    <Text style={styles.unselectedText}>{title}</Text>
                 </View>
             )}
         </TouchableOpacity>
@@ -27,27 +27,42 @@ const styles = StyleSheet.create({
     touchable: {
         marginRight: 10,
         marginLeft: 10,
-        height: 50, // 높이 조정
+        height: 50, // 높이를 원래대로 설정
+        width: 90, // 너비를 더 크게 설정하여 패딩을 적용
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: 'black', // 배경색을 검정으로 설정
+        paddingHorizontal: 5, // 좌우 패딩을 추가하여 경계선을 덮음
+        borderRadius: 15, // 테두리를 둥글게 설정
     },
-    button: {
-        paddingVertical: 12, // 패딩 조정
-        paddingHorizontal: 25, // 패딩 조정
-        borderRadius: 10, // 테두리 반경 조정
-        alignItems: 'center',
+    gradientButton: {
+        borderRadius: 10,
+        width: '100%',
+        height: '100%',
         justifyContent: 'center',
-        backgroundColor: 'white', // 기본 배경색
-    },
-    text: {
-        color: '#3B4664', // 기본 텍스트 색상
-        fontWeight: 'bold', // 텍스트 굵기
-        fontSize: 18, // 텍스트 크기
+        alignItems: 'center',
+        overflow: 'hidden',
+        borderWidth: 0, // 경계선을 완전히 제거
     },
     selectedText: {
-        color: 'white', // 선택됐을 때 텍스트 색상
-        fontWeight: 'bold', // 선택됐을 때 텍스트 굵기
-        fontSize: 18, // 선택됐을 때 텍스트 크기
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 18,
+    },
+    unselectedButton: {
+        backgroundColor: 'black',
+        borderRadius: 10,
+        width: '100%',
+        height: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        borderWidth: 0, // 경계선을 완전히 제거
+    },
+    unselectedText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 18,
     },
 });
 
