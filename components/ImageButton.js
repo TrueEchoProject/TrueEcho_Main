@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Platform, TouchableOpacity, View, StyleSheet, Text, ActivityIndicator } from 'react-native';
+import { Platform, TouchableOpacity, View, StyleSheet, Text, ActivityIndicator, Dimensions } from 'react-native';
 import { Image as ExpoImage } from 'expo-image';
 import { BlurView } from 'expo-blur';
 import storage from '../AsyncStorage'; // storage.js 파일 위치에 따라 경로 수정함. 현재 임시 주소임.
@@ -81,6 +81,7 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
                     <ExpoImage
                         source={{ uri: isFrontShowing ? (front_image || defaultImage) : (back_image || defaultImage) }}
                         style={[styles.smallImage, { height: SmallHeight, width: SmallWidth }]}
+                        resizeMode="cover" // 추가된 속성
                         blurRadius={getBlurIntensity(isFrontShowing)}
                     />
                     {getBlurIntensity(isFrontShowing) > 0 && (
@@ -93,6 +94,7 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
                     <ExpoImage
                         source={{ uri: isFrontShowing ? (back_image || defaultImage) : (front_image || defaultImage) }}
                         style={[styles.largeImage, { height: ImageHeight, width: windowWidth }]}
+                        resizeMode="cover" // 추가된 속성
                         blurRadius={getBlurIntensity(!isFrontShowing)}
                     />
                     {getBlurIntensity(!isFrontShowing) > 0 && (
@@ -144,8 +146,8 @@ const styles = StyleSheet.create({
         left: 20,
     },
     smallImage: {
-        borderColor: '#ffffff',
-        borderWidth: 0,
+        borderColor: 'black',
+        borderWidth: 4,
     },
     largeImage: {
         width: '100%',

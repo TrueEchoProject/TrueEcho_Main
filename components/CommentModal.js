@@ -241,17 +241,19 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
 		return (
 			<View style={commentItemStyle} ref={commentItemRef}>
 				<View style={styles.commentHeader}>
-					<LinearGradient
-						colors={['#1BC5DA', '#263283']}
-						start={{ x: 0, y: 0.5 }}
-						end={{ x: 1, y: 0.5 }}
-						style={styles.thumbnailGradient}
-					>
-						<Image
-							style={styles.profileImage}
-							source={{ uri: comment.profileURL ? comment.profileURL : Image.resolveAssetSource(defaultImage).uri }}
-						/>
-					</LinearGradient>
+					<TouchableOpacity onPress={() => navigation.navigate("UserAlarm", { userId: comment.userId })}>
+						<LinearGradient
+							colors={['#1BC5DA', '#263283']}
+							start={{ x: 0, y: 0.5 }}
+							end={{ x: 1, y: 0.5 }}
+							style={styles.thumbnailGradient}
+						>
+							<Image
+								style={styles.profileImage}
+								source={{ uri: comment.profileURL ? comment.profileURL : Image.resolveAssetSource(defaultImage).uri }}
+							/>
+						</LinearGradient>
+						</TouchableOpacity>
 					<View style={styles.commentBody}>
 						<Text style={styles.commentDate}>{formatDate(comment.createdAt)}</Text>
 						<Text style={styles.commentUsername}>{comment.username}: <Text style={styles.commentContent}>{comment.content}</Text></Text>
@@ -291,16 +293,16 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
 
         return (
             <View style={styles.underCommentItem}>
-                <LinearGradient
-                    colors={['#1BC5DA', '#263283']}
-                    start={{ x: 0, y: 0.5 }}
-                    end={{ x: 1, y: 0.5 }}
-                    style={styles.underCommentThumbnailGradient}
-                >
-                    <TouchableOpacity onPress={() => navigation.navigate("UserAlarm", { userId: underComment.userId })}>
+                <TouchableOpacity onPress={() => navigation.navigate("UserAlarm", { userId: underComment.userId })}>
+                    <LinearGradient
+                        colors={['#1BC5DA', '#263283']}
+                        start={{ x: 0, y: 0.5 }}
+                        end={{ x: 1, y: 0.5 }}
+                        style={styles.underCommentThumbnailGradient}
+                    >
                         <Image style={styles.underProfileImage} source={{ uri: underComment.profileURL }} />
-                    </TouchableOpacity>
-                </LinearGradient>
+                    </LinearGradient>
+                </TouchableOpacity>
                 <View style={styles.commentBody}>
                     <Text style={styles.underCommentDate}>{formatDate(underComment.createdAt)}</Text>
                     <Text style={styles.underCommentUsername}>{underComment.username}: <Text style={styles.underCommentContent}>{underComment.content}</Text></Text>
@@ -661,5 +663,3 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
-
-

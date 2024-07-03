@@ -1,11 +1,10 @@
-import React from 'react';
-import { createStackNavigator } from "@react-navigation/stack";
-import { View, Text, Image } from 'react-native';
-import { MaterialIcons, AntDesign } from "@expo/vector-icons";
-import { MainPostTabScreen } from "./AppTabNavigator/PostTab/MainPostTab";
-import { CommunityTabScreen } from "./AppTabNavigator/CommunityTabs/CommunityTab";
+import React, { useState } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { MaterialIcons, AntDesign, SimpleLineIcons } from '@expo/vector-icons';
+import { MainPostTabScreen } from './AppTabNavigator/PostTab/MainPostTab';
+import { CommunityTabScreen } from './AppTabNavigator/CommunityTabs/CommunityTab';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-
 import {
   Friends as FriendsComponent,
   MyPage as MyPageComponent,
@@ -16,8 +15,8 @@ import {
   FeedAlarm as FeedAlarmComponent,
   UserAlarm as UserAlarmComponent,
   IsAlarm as IsAlarmComponent,
-  MyFeed as MyFeedComponent
-} from "./AppTabNavigator/ButtonStack";
+  MyFeed as MyFeedComponent,
+} from './AppTabNavigator/ButtonStack';
 
 const MainPostStack = createStackNavigator();
 const CommunityStack = createStackNavigator();
@@ -35,26 +34,80 @@ const CustomHeaderLeft = ({ navigation, title }) => (
   </View>
 );
 
-const LogoImage = () => (
-  <Image source={require('../assets/logoFont.png')} style={{ width: wp('35%'), height: hp('5%'), marginLeft: 10 }} />
-);
+const LogoImage = ({ navigation }) => {
+  const [isOptionsVisible, setIsOptionsVisible] = useState(false);
+
+  const toggleOptionsVisibility = () => {
+    setIsOptionsVisible(!isOptionsVisible);
+  };
+
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <Image
+        source={require('../assets/logoFont.png')}
+        style={styles.logoImage} // 스타일 변경
+      />
+      <TouchableOpacity onPress={toggleOptionsVisibility}>
+        <MaterialIcons
+          name="arrow-drop-down"
+          size={24}
+          color="white"
+          style={styles.dropdownIcon} // 스타일 변경
+        />
+      </TouchableOpacity>
+      {isOptionsVisible && (
+        <View style={styles.optionsContainer}>
+          <TouchableOpacity
+            onPress={() => {
+              setIsOptionsVisible(false);
+              navigation.navigate('MyFeed');
+            }}
+            style={styles.optionRow}
+          >
+            <Text style={styles.optionItem}>내 피드</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              setIsOptionsVisible(false);
+              navigation.navigate('Alarm');
+            }}
+            style={styles.optionRow}
+          >
+            <Text style={styles.optionItem}>알림</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
+  );
+};
 
 const getHeaderLeft = (navigation, route) => {
-  const title = route.name === 'FeedTab' ? '피드 탭' :
-    route.name === 'MyP' ? '마이 페이지' :
-    route.name === 'Fri' ? '친구' :
-    route.name === 'MyOp' ? '내 옵션' :
-    route.name === 'Calendar' ? '캘린더' :
-    route.name === 'MyInfo' ? '내 정보 수정' :
-    route.name === 'Alarm' ? '알림' :
-    route.name === 'FeedAlarm' ? '피드 알림' :
-    route.name === 'UserAlarm' ? '유저 알림' :
-    route.name === 'IsAlarm' ? '아이즈 알림' :
-    route.name === 'MyFeed' ? '내 피드' : route.name;
+  const title =
+    route.name === 'FeedTab'
+      ? '피드 탭'
+      : route.name === 'MyP'
+      ? '마이 페이지'
+      : route.name === 'Fri'
+      ? '친구'
+      : route.name === 'MyOp'
+      ? '내 옵션'
+      : route.name === 'Calendar'
+      ? '캘린더'
+      : route.name === 'MyInfo'
+      ? '내 정보 수정'
+      : route.name === 'Alarm'
+      ? '알림'
+      : route.name === 'FeedAlarm'
+      ? '단일 피드'
+      : route.name === 'UserAlarm'
+      ? '유저 알림'
+      : route.name === 'IsAlarm'
+      ? '아이즈 알림'
+      : route.name === 'MyFeed'
+      ? '내 피드'
+      : route.name;
 
-  return route.name === 'FeedTab'
-    ? <LogoImage />
-    : <CustomHeaderLeft navigation={navigation} title={title} />;
+  return route.name === 'FeedTab' ? <LogoImage navigation={navigation} /> : <CustomHeaderLeft navigation={navigation} title={title} />;
 };
 
 const MainPostStackScreen = () => {
@@ -67,7 +120,8 @@ const MainPostStackScreen = () => {
         },
         headerTintColor: '#ffffff',
         headerLeft: () => getHeaderLeft(navigation, route),
-        headerRight: () => (
+        headerRight: () => 
+          route.name !== 'FeedAlarm' && route.name !== 'MyFeed' && (
           <View style={{ flexDirection: 'row' }}>
             <MaterialIcons
               name="emoji-people"
@@ -118,9 +172,7 @@ const CommunityStackScreen = () => {
         headerShown: false, // 헤더를 숨깁니다.
         headerLeft: () => {
           const title = route.name === 'Community' ? '커뮤니티' : route.name;
-          return route.name === 'Community'
-            ? <LogoImage />
-            : <CustomHeaderLeft navigation={navigation} title={title} />;
+          return route.name === 'Community' ? <LogoImage navigation={navigation} /> : <CustomHeaderLeft navigation={navigation} title={title} />;
         },
         headerRight: () => (
           <View style={{ flexDirection: 'row' }}>
@@ -150,5 +202,33 @@ const CommunityStackScreen = () => {
     </CommunityStack.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  logoImage: {
+    width: wp('35%'),
+    height: hp('5%'),
+    marginLeft: 10,
+  },
+  dropdownIcon: {
+    marginTop: 25,
+  },
+  optionsContainer: {
+    position: 'absolute',
+    top: 45, // 삼각형 버튼의 위치에 맞게 조정
+    right: 10, // 삼각형 버튼의 위치에 맞게 조정
+    backgroundColor: 'grey',
+    padding: 10,
+    borderRadius: 10,
+    zIndex: 1000,
+  },
+  optionRow: {
+    paddingVertical: 3,
+  },
+  optionItem: {
+    fontSize: 18,
+    color: 'white',
+    textAlign: 'center',
+  },
+});
 
 export { MainPostStackScreen, CommunityStackScreen };

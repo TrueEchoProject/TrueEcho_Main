@@ -25,12 +25,23 @@ export const MainPostTabScreen = ({ route }) => {
   return (
     <MainPostTab.Navigator
       screenOptions={{
-        tabBarStyle: { display: 'none' },
+        tabBarStyle: {
+          display: 'none',
+        borderTopWidth: 1, // 상단 경계선 제거
+        borderColor: 'black', // 경계선 색상을 검정으로 설정
+        elevation: 0, // 안드로이드에서 그림자 제거
+        shadowOpacity: 0, // iOS에서 그림자 제거
+        backgroundColor: 'black', // 배경색을 검정으로 설정
+        },
         headerTitleAlign: "center",
         headerStyle: {
           height: 70,
           backgroundColor: 'black',
-        }
+          borderTopWidth: 0, // 상단 경계선 제거
+          borderBottomWidth: 0, // 하단 경계선 제거
+          shadowColor: 'transparent', // 그림자 색상을 투명하게 설정
+          elevation: 0, // 안드로이드에서 그림자 제거
+        },
       }}
       initialRouteName={initialTab}
     >

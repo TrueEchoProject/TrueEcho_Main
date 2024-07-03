@@ -15,7 +15,7 @@ import { ImageButton } from "./ImageButton";
 import { CommentModal } from './CommentModal';
 import { useNavigation } from '@react-navigation/native';
 
-const defaultImage = require("../assets/trueecho.png");
+const defaultImage = require("../assets/logo.png");
 
 const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExternal, onBlock, onDelete }) => {
     const navigation = useNavigation();
@@ -276,6 +276,7 @@ const styles = StyleSheet.create({
         flex: 1, // 컨테이너가 가용 공간을 차지하게 함
         position: 'relative',
         marginBottom: 0, // 하단 여백 제거
+        marginTop: 0,
         paddingBottom: 0, // 하단 패딩 제거
         paddingHorizontal: 0, // 수평 패딩 제거
         marginHorizontal: Dimensions.get('window').width * 0.1, // 양쪽 여백을 화면 너비의 10%로 설정
@@ -341,12 +342,12 @@ const styles = StyleSheet.create({
         width: '100%', // 가로 크기 100%
         backgroundColor: 'black', // 배경 색상 검정
         marginBottom: 0, // 하단 여백 제거
+        borderColor: 'black',
     },
     cardItem: {
         padding: Dimensions.get('window').width * 0.025, // 내부 여백을 화면 너비의 2.5%로 설정
         flexDirection: 'row', // 자식 요소들을 가로로 배치
         alignItems: 'center', // 자식 요소들을 중앙 정렬
-        marginBottom: 0, // 하단 여백 제거
     },
     left: {
         flexDirection: 'row', // 자식 요소들을 가로로 배치
@@ -361,16 +362,20 @@ const styles = StyleSheet.create({
         flexDirection: 'column', // 자식 요소들을 세로로 배치
         alignItems: 'flex-end', // 자식 요소들을 오른쪽 정렬
         marginRight: Dimensions.get('window').width * 0.07, // 오른쪽 여백을 화면 너비의 5%로 설정
+        marginTop: Dimensions.get('window').height * 0.015,
     },
     thumbnailGradient: {
         borderRadius: Dimensions.get('window').width * 0.06, // 프로필 이미지의 둥근 테두리 반경에 맞춤
         padding: 3, // 그라데이션 테두리 두께를 조금 더 두껍게 설정
         marginLeft: Dimensions.get('window').width * 0.06, // 왼쪽 여백을 화면 너비의 5%로 설정 (오른쪽으로 이동)
+        borderRadius: 100, // 프로필 이미지를 원형으로 설정
     },
     thumbnail: {
-        width: Dimensions.get('window').width * 0.12 - 6, // 패딩을 제외한 크기로 설정
-        height: Dimensions.get('window').width * 0.12 - 6, // 패딩을 제외한 크기로 설정
+        width: Dimensions.get('window').width * 0.17 - 6, // 패딩을 제외한 크기로 설정
+        height: Dimensions.get('window').width * 0.17 - 6, // 패딩을 제외한 크기로 설정
         borderRadius: (Dimensions.get('window').width * 0.12 - 6) / 2, // 둥근 모서리 반경을 새로운 크기에 맞게 조정
+        borderRadius: 100, // 프로필 이미지를 원형으로 설정
+
     },
     username: {
         fontSize: Dimensions.get('window').width * 0.04, // 글자 크기를 화면 너비의 4.5%로 설정
