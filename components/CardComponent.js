@@ -8,34 +8,35 @@ import {
     Dimensions,
     Image,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, Ionicons, Feather, SimpleLineIcons } from "@expo/vector-icons";
 import Api from '../Api';
 import { ImageButton } from "./ImageButton";
-import { CommentModal } from './CommentModal'; // 댓글 창 컴포넌트 임포트
-import { useNavigation } from '@react-navigation/native'; // useNavigation import
+import { CommentModal } from './CommentModal';
+import { useNavigation } from '@react-navigation/native';
 
-const defaultImage = require("../assets/trueecho.png");
+const defaultImage = require("../assets/logo.png");
 
 const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExternal, onBlock, onDelete }) => {
-    const navigation = useNavigation(); // useNavigation 훅 사용
+    const navigation = useNavigation();
     const [isOptionsVisible, setIsOptionsVisible] = useState(isOptionsVisibleExternal || false);
     const [buttonLayout, setButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
     const [imageButtonHeight, setImageButtonHeight] = useState(0);
-    const [isLiked, setIsLiked] = useState(post.myLike); // 좋아요 상태 관리
-    const [likesCount, setLikesCount] = useState(post.likesCount); // 좋아요 수 관리
-    const [isCommentVisible, setIsCommentVisible] = useState(false); // 댓글 창 표시 상태
-    const [layoutSet, setLayoutSet] = useState(false); // 레이아웃 설정 여부 상태 추가
+    const [isLiked, setIsLiked] = useState(post.myLike);
+    const [likesCount, setLikesCount] = useState(post.likesCount);
+    const [isCommentVisible, setIsCommentVisible] = useState(false);
+    const [layoutSet, setLayoutSet] = useState(false);
     const windowWidth = Dimensions.get('window').width;
-    const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
-    const [friendLook, setFriendLook] = useState(true); // 좋아요 수 관리
+    const [isLoading, setIsLoading] = useState(false);
+    const [friendLook, setFriendLook] = useState(true);
 
     useEffect(() => {
         setIsOptionsVisible(isOptionsVisibleExternal);
         console.log(`Options Visible for ${post.postId}: ${isOptionsVisibleExternal}`);
-    }, [isOptionsVisibleExternal]); // 이제 외부에서 받은 props가 변경될 때마다 로그를 찍고 상태를 업데이트합니다.
+    }, [isOptionsVisibleExternal]);
 
     const toggleLike = async () => {
-        if (isLoading) return; // 요청 중일 때 추가 요청 차단
+        if (isLoading) return;
         setIsLoading(true);
 
         const newLikesCount = isLiked ? likesCount - 1 : likesCount + 1;
@@ -67,7 +68,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
     };
 
     const toggleBlock = async () => {
-        if (isLoading) return; // 요청 중일 때 추가 요청 차단
+        if (isLoading) return;
         setIsLoading(true);
 
         try {
@@ -82,7 +83,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
             if (response.data) {
                 alert('유저를 정상적으로 차단했습니다');
                 hideOptions();
-                onBlock(post.userId); // 차단 이벤트를 상위 컴포넌트에 알림
+                onBlock(post.userId);
             }
         } catch (error) {
             console.error('Error while blocking the user:', error.response ? error.response.data : error.message);
@@ -92,7 +93,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
     };
 
     const toggleDelete = async () => {
-        if (isLoading) return; // 요청 중일 때 추가 요청 차단
+        if (isLoading) return;
         setIsLoading(true);
 
         try {
@@ -100,7 +101,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
             if (response.data) {
                 alert('정상적으로 게시물을 삭제했습니다');
                 hideOptions();
-                onDelete(post.postId); // 삭제 이벤트를 상위 컴포넌트에 알림
+                onDelete(post.postId);
             }
         } catch (error) {
             console.error('Error while deleting the post:', error.response ? error.response.data : error.message);
@@ -110,7 +111,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
     };
 
     const toggleFriendSend = async () => {
-        if (isLoading) return; // 요청 중일 때 추가 요청 차단
+        if (isLoading) return;
         setIsLoading(true);
 
         try {
@@ -143,14 +144,14 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 
     const toggleOptionsVisibility = () => {
         const newVisibility = !isOptionsVisible;
-        setIsOptionsVisible(newVisibility); // 내부 상태 업데이트
-        setIsOptionsVisibleExternal(newVisibility); // 외부 상태 업데이트로 전파
+        setIsOptionsVisible(newVisibility);
+        setIsOptionsVisibleExternal(newVisibility);
     };
 
     const hideOptions = () => {
         if (isOptionsVisible) {
             setIsOptionsVisible(false);
-            setIsOptionsVisibleExternal(false); // 외부 상태도 업데이트
+            setIsOptionsVisibleExternal(false);
         }
     };
 
@@ -159,11 +160,11 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
     };
 
     const onImageButtonLayout = (event) => {
-        if (layoutSet) return; // 레이아웃이 이미 설정되었다면 추가 업데이트 방지
+        if (layoutSet) return;
 
         const { height } = event.nativeEvent.layout;
         setImageButtonHeight(height);
-        setLayoutSet(true); // 레이아웃 설정 완료 표시
+        setLayoutSet(true);
     };
 
     return (
@@ -172,75 +173,61 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
                 <View style={styles.cardItem}>
                     <View style={styles.left}>
                         <TouchableOpacity onPress={() => { navigation.navigate("UserAlarm", { userId: post.userId }) }}>
-                            <Image
-                                style={styles.thumbnail}
-                                source={{ uri: post.profileUrl ? post.profileUrl : Image.resolveAssetSource(defaultImage).uri }}
-                            />
+                            <LinearGradient
+                                colors={['#1BC5DA', '#263283', '#4641D9']}
+                                start={{ x: 0, y: 0.5 }}
+                                end={{ x: 1, y: 0.5 }}
+                                style={styles.thumbnailGradient}
+                            >
+                                <Image
+                                    style={styles.thumbnail}
+                                    source={{ uri: post.profileUrl ? post.profileUrl : Image.resolveAssetSource(defaultImage).uri }}
+                                />
+                            </LinearGradient>
                         </TouchableOpacity>
                         <View style={styles.body}>
-                            <Text style={{ fontSize: 15, fontWeight: "500" }}>{post.username}</Text>
-                            <Text style={{ fontSize: 12, fontWeight: "300" }} note>{new Date(post.createdAt).toDateString()}</Text>
+                            <View style={styles.rightAlignedContainer}>
+                                <Text style={styles.username}>{post.username}</Text>
+                                <View style={styles.usernameSeparator} />
+                                <Text style={styles.date}>{new Date(post.createdAt).toDateString()}</Text>
+                            </View>
                         </View>
                     </View>
                 </View>
                 <View style={styles.imageButtonContainer} onLayout={onImageButtonLayout}>
-                    <ImageButton
-                        front_image={post.postFrontUrl ? post.postFrontUrl : Image.resolveAssetSource(defaultImage).uri}
-                        back_image={post.postBackUrl ? post.postBackUrl : Image.resolveAssetSource(defaultImage).uri}
-                        containerHeight={imageButtonHeight}
-                        windowWidth={windowWidth}
-                    />
+                    <View style={styles.imageWrapper}>
+                        <ImageButton
+                            front_image={post.postFrontUrl ? post.postFrontUrl : Image.resolveAssetSource(defaultImage).uri}
+                            back_image={post.postBackUrl ? post.postBackUrl : Image.resolveAssetSource(defaultImage).uri}
+                            containerHeight={imageButtonHeight}
+                            windowWidth={windowWidth}
+                            style={styles.imageButton} // 스타일 추가
+                        />
+                        <View style={styles.iconsContainer}>
+                            <TouchableOpacity style={styles.iconButton} onPress={toggleLike}>
+                                <Ionicons name={isLiked ? 'heart' : 'heart-outline'} style={styles.icon} size={28} color={isLiked ? 'red' : 'white'} />
+                                <Text style={styles.iconText}>{likesCount}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.iconButton} onPress={toggleCommentVisibility}>
+                                <MaterialIcons name='comment' style={styles.icon} size={28} color="white" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                     <TouchableOpacity style={styles.optionsIcon} onPress={toggleOptionsVisibility} onLayout={(event) => {
                         const layout = event.nativeEvent.layout;
                         setButtonLayout(layout);
                     }}>
-                        <SimpleLineIcons name="options-vertical" size={20} color="white" />
+                        <SimpleLineIcons name="options-vertical" size={28} color="white" />
                     </TouchableOpacity>
-                    <View style={styles.iconsContainer}>
-                        <TouchableOpacity style={styles.iconButton} onPress={toggleLike}>
-                            <Ionicons name={isLiked ? 'heart' : 'heart-outline'} style={styles.icon} size={24} color={isLiked ? 'red' : 'white'} />
-                            <Text style={styles.iconText}>{likesCount}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.iconButton}>
-                            <Ionicons name='chatbubbles' style={styles.icon} onPress={toggleCommentVisibility} size={24} color="white" />
-                        </TouchableOpacity>
-                    </View>
                 </View>
-                {isOptionsVisible && (
-                    <View style={[
-                        styles.optionsContainer,
-                        post.friend === false ?
-                            { top: buttonLayout.y + buttonLayout.height, right: 0 } :
-                            { top: buttonLayout.y + buttonLayout.height + 30, right: 0 }
-                    ]}>
-                        {post.mine ? (
-                            <TouchableOpacity onPress={toggleDelete} style={{ flexDirection: 'row', alignItems: 'center', }}>
-                                <Feather name='alert-triangle' style={{ marginLeft: 10, color: 'red' }} />
-                                <Text style={[styles.optionItem, { color: 'red' }]}>삭제하기</Text>
-                            </TouchableOpacity>
-                        ) : (
-                            <TouchableOpacity onPress={toggleBlock} style={{ flexDirection: 'row', alignItems: 'center', }}>
-                                <Feather name='alert-triangle' style={{ marginLeft: 10, color: 'red' }} />
-                                <Text style={[styles.optionItem, { color: 'red' }]}>사용자 차단하기</Text>
-                            </TouchableOpacity>
-                        )}
-                    </View>
-                )}
-                <View style={{ padding: 0, zIndex: 2, minHeight: 50, backgroundColor: "white", justifyContent: 'flex-end', }}>
-                    <View style={[styles.cardItem, styles.bottomTextContainer]}>
+                <View style={styles.bottomContainer}>
+                    <View style={styles.separator} />
+                    <View style={styles.textRow}>
                         <Text style={styles.title}>{post.title}</Text>
                         {post.status === "FREETIME" || post.status === "LATETIME" ? (
-                            <View style={[
-                                styles.right,
-                                styles.freeTextContainer,
-                            ]}>
-                                {post.status === "FREETIME" && (
-                                    <Text style={styles.freeText}>free</Text>
-                                )}
-                                {post.status === "LATETIME" && (
-                                    <Text style={styles.freeText}>late</Text>
-                                )}
-                            </View>
+                            <Text style={styles.freeText}>
+                                {post.status === "FREETIME" ? 'Free' : 'Late'}
+                            </Text>
                         ) : null}
                     </View>
                     <CommentModal
@@ -250,6 +237,30 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
                         userId={post.userId}
                     />
                 </View>
+                {isOptionsVisible && (
+                    <>
+                        <View style={[
+                            styles.optionsContainer,
+                            { top: buttonLayout.y + buttonLayout.height + 80, right: 60 }
+                        ]}>
+                            {post.mine ? (
+                                <TouchableOpacity onPress={toggleDelete} style={styles.optionRow}>
+                                    <Text style={[styles.optionItem, styles.optionTextDelete]}>삭제</Text>
+                                </TouchableOpacity>
+                            ) : null}
+                        </View>
+                        {!post.mine && (
+                            <View style={[
+                                styles.optionsContainer,
+                                { top: buttonLayout.y + buttonLayout.height + 80, right: 50 } // 사용자 차단 버튼 위치 조정
+                            ]}>
+                                <TouchableOpacity onPress={toggleBlock} style={styles.optionRow}>
+                                    <Text style={[styles.optionItem, styles.optionTextBlock]}>사용자 차단</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                    </>
+                )}
             </View>
         </TouchableWithoutFeedback>
     );
@@ -257,101 +268,191 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 
 const styles = StyleSheet.create({
     loader: {
-        flex: 1,
+        flex: 1, // 로더를 화면 중앙에 배치
         justifyContent: 'center',
         alignItems: 'center',
     },
     imageButtonContainer: {
-        flex: 1,
-        position: 'relative', // 추가
+        flex: 1, // 컨테이너가 가용 공간을 차지하게 함
+        position: 'relative',
+        marginBottom: 0, // 하단 여백 제거
+        marginTop: 0,
+        paddingBottom: 0, // 하단 패딩 제거
+        paddingHorizontal: 0, // 수평 패딩 제거
+        marginHorizontal: Dimensions.get('window').width * 0.1, // 양쪽 여백을 화면 너비의 10%로 설정
+    },
+    imageWrapper: {
+        width: '100%', // 부모 컨테이너의 너비를 100%로 설정
+        height: '100%', // 부모 컨테이너의 높이를 100%로 설정
+        overflow: 'hidden', // 넘치는 부분을 숨김
+        position: 'relative', // 아이콘이 이미지 안에 위치하도록 설정
+    },
+    imageButton: {
+        width: '100%', // 부모 컨테이너의 너비를 100%로 설정
+        height: '100%', // 부모 컨테이너의 높이를 100%로 설정
     },
     optionsIcon: {
-        position: 'absolute',
-        top: 10,
-        right: 10,
-        zIndex: 3,
+        position: 'absolute', // 부모 뷰 내에서 절대 위치
+        top: 10, // 위에서 10단위 떨어진 위치
+        right: 10, // 오른쪽에서 10단위 떨어진 위치
+        zIndex: 3, // 다른 요소들보다 앞에 표시
     },
     iconsContainer: {
-        position: 'absolute',
-        bottom: 10,
-        right: 10,
-        zIndex: 3,
-        flexDirection: 'row',
+        position: 'absolute', // 부모 뷰 내에서 절대 위치
+        bottom: 10, // 아래에서 10단위 떨어진 위치
+        right: -5, // 오른쪽에서 10단위 떨어진 위치
+        zIndex: 3, // 다른 요소들보다 앞에 표시
+        flexDirection: 'row', // 자식 요소들을 가로로 배치
     },
     optionsContainer: {
-        position: 'absolute',
-        zIndex: 2,
-        backgroundColor: 'white',
-        padding: 12,
-        paddingLeft: 14,
-        borderRadius: 4,
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: 2 },
-        shadowRadius: 4,
-        shadowOpacity: 0.3,
-        elevation: 4,
-        marginTop: 10,
+        position: 'absolute', // 부모 뷰 내에서 절대 위치
+        zIndex: 4, // 다른 요소들보다 앞에 표시
+        backgroundColor: 'grey', // 배경 색상 흰색
+        padding: 12, // 내부 여백 12단위
+        paddingLeft: 14, // 왼쪽 여백 14단위
+        borderRadius: 4, // 모서리 둥글게 4단위
+        shadowColor: 'black', // 그림자 색상 검정
+        shadowOffset: { width: 0, height: 2 }, // 그림자 오프셋
+        shadowRadius: 4, // 그림자 반경
+        shadowOpacity: 0.3, // 그림자 투명도
+        elevation: 4, // 안드로이드 그림자 효과
+        marginTop: 10, // 상단 여백 10단위
     },
     optionItem: {
-        marginLeft: 10,
-        marginRight: 10,
-        fontSize: 15,
+        marginLeft: 10, // 왼쪽 여백 10단위
+        marginRight: 10, // 오른쪽 여백 10단위
+        fontSize: 15, // 글자 크기 15단위
+    },
+    optionTextDelete: {
+        color: 'white', // 글자 색상 빨강
+    },
+    optionTextBlock: {
+        color: 'white', // 글자 색상 빨강
+    },
+    optionRow: {
+        flexDirection: 'row', // 자식 요소들을 가로로 배치
+        alignItems: 'center', // 자식 요소들을 중앙 정렬
+    },
+    optionIcon: {
+        marginLeft: 10, // 왼쪽 여백 10단위
+        color: 'white', // 아이콘 색상 빨강
     },
     cardContainer: {
-        flex: 1,
-        width: '100%',
+        flex: 1, // 컨테이너가 가용 공간을 차지하게 함
+        width: '100%', // 가로 크기 100%
+        backgroundColor: 'black', // 배경 색상 검정
+        marginBottom: 0, // 하단 여백 제거
+        borderColor: 'black',
     },
     cardItem: {
-        padding: 5,
-        flexDirection: 'row',
-        alignItems: 'center',
+        padding: Dimensions.get('window').width * 0.025, // 내부 여백을 화면 너비의 2.5%로 설정
+        flexDirection: 'row', // 자식 요소들을 가로로 배치
+        alignItems: 'center', // 자식 요소들을 중앙 정렬
     },
     left: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: 'row', // 자식 요소들을 가로로 배치
+        alignItems: 'center', // 자식 요소들을 중앙 정렬
     },
     body: {
-        marginLeft: 10,
-        height: 55,
+        marginLeft: Dimensions.get('window').width * 0.02, // 왼쪽 여백을 화면 너비의 2%로 설정
+        height: Dimensions.get('window').height * 0.075, // 높이를 화면 높이의 7.5%로 설정
+        flex: 1, // 남은 공간 차지
+    },
+    rightAlignedContainer: {
+        flexDirection: 'column', // 자식 요소들을 세로로 배치
+        alignItems: 'flex-end', // 자식 요소들을 오른쪽 정렬
+        marginRight: Dimensions.get('window').width * 0.07, // 오른쪽 여백을 화면 너비의 5%로 설정
+        marginTop: Dimensions.get('window').height * 0.015,
+    },
+    thumbnailGradient: {
+        borderRadius: Dimensions.get('window').width * 0.06, // 프로필 이미지의 둥근 테두리 반경에 맞춤
+        padding: 3, // 그라데이션 테두리 두께를 조금 더 두껍게 설정
+        marginLeft: Dimensions.get('window').width * 0.06, // 왼쪽 여백을 화면 너비의 5%로 설정 (오른쪽으로 이동)
+        borderRadius: 100, // 프로필 이미지를 원형으로 설정
     },
     thumbnail: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
+        width: Dimensions.get('window').width * 0.17 - 6, // 패딩을 제외한 크기로 설정
+        height: Dimensions.get('window').width * 0.17 - 6, // 패딩을 제외한 크기로 설정
+        borderRadius: (Dimensions.get('window').width * 0.12 - 6) / 2, // 둥근 모서리 반경을 새로운 크기에 맞게 조정
+        borderRadius: 100, // 프로필 이미지를 원형으로 설정
+
+    },
+    username: {
+        fontSize: Dimensions.get('window').width * 0.04, // 글자 크기를 화면 너비의 4.5%로 설정
+        fontWeight: "500", // 글자 굵기 500
+        color: 'white', // 글자 색상 흰색
+        marginBottom: Dimensions.get('window').height * 0.005, // 아래쪽 여백을 화면 높이의 0.5%로 설정
+        marginTop: Dimensions.get('window').height * 0.005, // 위쪽 여백을 화면 높이의 0.5%로 설정
+        alignSelf: 'flex-end', // 자식 요소를 오른쪽 정렬
+    },
+    date: {
+        fontSize: Dimensions.get('window').width * 0.03, // 글자 크기를 화면 너비의 3.5%로 설정
+        fontWeight: "300", // 글자 굵기 300
+        color: 'white', // 글자 색상 흰색
+        marginTop: 0, // 위쪽 여백 5단위
+        marginLeft: 0, // 왼쪽 여백 제거
+        marginRight: 0, // 오른쪽 여백 제거
+        alignSelf: 'flex-end', // 자식 요소를 오른쪽 정렬
     },
     title: {
-        fontWeight: '900',
-        color: 'black',
+        fontWeight: '900', // 글자 굵기 900
+        color: 'white', // 글자 색상 흰색
+        marginBottom: Dimensions.get('window').height * 0.005, // 아래쪽 여백을 화면 높이의 0.5%로 설정
+        fontSize: Dimensions.get('window').width * 0.04, // 글자 크기를 화면 너비의 4%로 설정
+        marginTop: Dimensions.get('window').height * 0.007, // 위쪽 여백을 화면 높이의 0.5%로 설정
     },
-    bottomTextContainer: {
-        justifyContent: 'space-between', // 제목과 free 텍스트를 양쪽에 배치
-        alignItems: 'center',
-    },
-    freeTextContainer: {
-        backgroundColor: "#3B4664",
-        padding: 5,
-        paddingLeft: 30,
-        paddingRight: 30,
-        borderRadius: 10,
-    },
+    
     freeText: {
-        color: "white",
-        fontSize: 25,
+        color: "white", // 글자 색상 흰색
+        fontSize: Dimensions.get('window').width * 0.06, // 글자 크기를 화면 너비의 6%로 설정
     },
     iconButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginRight: 15,
+        flexDirection: 'row', // 자식 요소들을 가로로 배치
+        alignItems: 'center', // 자식 요소들을 중앙 정렬
+        justifyContent: 'center', // 자식 요소들을 중앙에 정렬
+        marginRight: Dimensions.get('window').width * 0.04, // 오른쪽 여백을 화면 너비의 4%로 설정
+        marginBottom: -5, // 위쪽 여백 10단위
     },
     icon: {
-        marginRight: 4,
+        marginRight: 4, // 오른쪽 여백 4단위
     },
     iconText: {
-        color: 'white',
+        color: 'white', // 글자 색상 흰색
     },
     right: {
-        marginLeft: 'auto',
+        marginLeft: 'auto', // 왼쪽 여백 자동 설정 (가능한 만큼)
+    },
+    separator: {
+        height: 1, // 높이 1단위
+        backgroundColor: 'white', // 배경 색상 흰색
+        width: '100%', // 너비 100%
+        marginVertical: Dimensions.get('window').height * 0.01, // 상하 여백을 화면 높이의 1%로 설정
+        marginHorizontal: 0, // 좌우 여백 0단위
+        marginBottom: 0, // 아래쪽 여백 0단위
+        marginTop: 10, // 위쪽 여백 10단위
+    },
+    usernameSeparator: {
+        height: 1,
+        backgroundColor: 'white',
+        width: '100%', // 원하는 만큼 길이를 늘리기 위해 100%로 설정
+        marginVertical: Dimensions.get('window').height * 0.005, // 상하 여백을 화면 높이의 0.5%로 설정
+        alignSelf: 'flex-end', // 자식 요소를 오른쪽 정렬
+    },
+    bottomContainer: {
+        padding: 0, // 내부 여백 0단위
+        zIndex: 2, // 다른 요소들보다 앞에 표시
+        minHeight: Dimensions.get('window').height * 0.075, // 최소 높이를 화면 높이의 7.5%로 설정
+        backgroundColor: "black", // 배경 색상 검정
+        justifyContent: 'flex-end', // 자식 요소들을 아래쪽에 정렬
+        alignItems: 'center', // 자식 요소들을 중앙 정렬
+        marginHorizontal: Dimensions.get('window').width * 0.1, // 좌우 여백을 화면 너비의 10%로 설정
+    },
+    textRow: {
+        flexDirection: 'row', // 텍스트를 가로로 나란히 배치
+        alignItems: 'center', // 자식 요소들을 중앙 정렬
+        justifyContent: 'space-between', // 양쪽 끝에 배치
+        width: '100%', // 전체 너비를 차지하도록 설정
+        marginTop: Dimensions.get('window').width * 0.01,
     },
 });
 

@@ -5,6 +5,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import Api from '../../../Api';
 import CardComponent from '../../../components/CardComponent';
 import { MaterialIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -21,8 +22,11 @@ const PublicPosts = React.forwardRef((props, ref) => {
   const [copiedLocation, setCopiedLocation] = useState("");
   const [optionsVisible, setOptionsVisible] = useState(false);
 
+  const [activeButton, setActiveButton] = useState(null);
+
   React.useImperativeHandle(ref, () => ({
     getPosts: refreshPosts,
+    toggleOptions,
   }));
 
   useFocusEffect(
@@ -42,15 +46,15 @@ const PublicPosts = React.forwardRef((props, ref) => {
 
   const firstFetch = async () => {
     setRefreshing(true);
-    const serverResponse = await Api.get(`/post/read/1?index=0&pageCount=5&type=PUBLIC`);
+    const serverResponse = await Api.get('/post/read/1?index=0&pageCount=5&type=PUBLIC');
     setPosts(serverResponse.data.data.readPostResponse);
-    setLocation(serverResponse.data.data.yourLocation)
+    setLocation(serverResponse.data.data.yourLocation);
     if (serverResponse.data) {
       setRefreshing(false);
       setOptionsVisible(false);
       setTimeout(() => {
         pagerViewRef.current?.setPageWithoutAnimation(0);
-      }, 50); // 소폭의 지연을 추가하여 컴포넌트의 상태가 안정화되도록 합니다.
+      }, 50);
     }
   };
 
@@ -58,7 +62,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
     let url = `${baseUrl}?index=${index}&pageCount=15&type=PUBLIC`;
     if (selectedRange) {
       try {
-        setCopiedLocation(location)
+        setCopiedLocation(location);
         const words = copiedLocation.split(' ');
         let newLocation = '';
         switch (selectedRange) {
@@ -76,7 +80,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
             setRefreshing(false);
             return;
         }
-        console.log('Got location:', newLocation)
+        console.log('Got location:', newLocation);
         url += `&location=${encodeURIComponent(newLocation)}`;
       } catch (error) {
         console.error('Fetching user location failed:', error);
@@ -86,12 +90,12 @@ const PublicPosts = React.forwardRef((props, ref) => {
     }
 
     try {
-      console.log(`url is`, url);
+      console.log('URL is', url);
       const serverResponse = await Api.get(url);
       const newPosts = serverResponse.data.data.readPostResponse;
       if (serverResponse.data.message === "게시물을 조회를 실패했습니다.") {
         console.log("No more posts to load.");
-        alert("No more posts to load.")
+        alert("No more posts to load.");
         setRefreshing(false);
         return;
       }
@@ -150,20 +154,16 @@ const PublicPosts = React.forwardRef((props, ref) => {
     return <View style={styles.container}><Text>Loading...</Text></View>;
   }
 
+  const handlePressIn = (button) => {
+    setActiveButton(button);
+  };
+
+  const handlePressOut = () => {
+    setActiveButton(null);
+  };
+
   return (
     <>
-      <View style={{ alignItems: "flex-end", backgroundColor: "white", position: "relative" }}>
-        <TouchableOpacity onPress={toggleOptions}>
-          <MaterialIcons
-            name='settings'
-            size={28}
-            style={{
-              backgroundColor: "white",
-              marginRight: 10,
-            }}
-          />
-        </TouchableOpacity>
-      </View>
       {optionsVisible && (
         <Modal
           animationType="slide"
@@ -173,27 +173,77 @@ const PublicPosts = React.forwardRef((props, ref) => {
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              <TouchableOpacity style={styles.button} onPress={toggleOptions}>
-                <MaterialIcons name="backspace"></MaterialIcons>
+              <TouchableOpacity style={styles.closeButton} onPress={toggleOptions}>
+                <MaterialIcons name="close" size={28} />
               </TouchableOpacity>
-              <View style={{ marginTop: 10 }}>
+              <Text style={styles.modalTitle}>지역 범위</Text>
+              <Text style={styles.modalSubtitle}>게시물을 볼 지역을 정해주세요</Text>
+              <View style={styles.buttonGroup}>
                 <TouchableOpacity
-                  style={styles.rangeButton}
-                  onPress={() => getPosts('big')}
+                  style={styles.buttonContainer}
+                  onPressIn={() => handlePressIn('big')}
+                  onPressOut={handlePressOut}
+                  onPress={() => {
+                    toggleOptions();
+                    getPosts('big');
+                  }}
                 >
-                  <Text style={styles.textStyle}>넓은 범위</Text>
+                  {activeButton === 'big' ? (
+                    <LinearGradient
+                      colors={['#1BC5DA', '#263283']}
+                      style={styles.gradient}
+                    >
+                      <Text style={styles.textStylePrimary}>넓게 보기</Text>
+                    </LinearGradient>
+                  ) : (
+                    <View style={styles.rangeButton}>
+                      <Text style={styles.textStyle}>넓게 보기</Text>
+                    </View>
+                  )}
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.rangeButton}
-                  onPress={() => getPosts('middle')}
+                  style={styles.buttonContainer}
+                  onPressIn={() => handlePressIn('middle')}
+                  onPressOut={handlePressOut}
+                  onPress={() => {
+                    toggleOptions();
+                    getPosts('middle');
+                  }}
                 >
-                  <Text style={styles.textStyle}>중간 범위</Text>
+                  {activeButton === 'middle' ? (
+                    <LinearGradient
+                      colors={['#1BC5DA', '#263283']}
+                      style={styles.gradient}
+                    >
+                      <Text style={styles.textStylePrimary}>옆 동네</Text>
+                    </LinearGradient>
+                  ) : (
+                    <View style={styles.rangeButton}>
+                      <Text style={styles.textStyle}>옆 동네</Text>
+                    </View>
+                  )}
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.rangeButton}
-                  onPress={() => getPosts('small')}
+                  style={styles.buttonContainer}
+                  onPressIn={() => handlePressIn('small')}
+                  onPressOut={handlePressOut}
+                  onPress={() => {
+                    toggleOptions();
+                    getPosts('small');
+                  }}
                 >
-                  <Text style={styles.textStyle}>작은 범위</Text>
+                  {activeButton === 'small' ? (
+                    <LinearGradient
+                      colors={['#1BC5DA', '#263283']}
+                      style={styles.gradient}
+                    >
+                      <Text style={styles.textStylePrimary}>동네 친구들</Text>
+                    </LinearGradient>
+                  ) : (
+                    <View style={styles.rangeButton}>
+                      <Text style={styles.textStyle}>동네 친구들</Text>
+                    </View>
+                  )}
                 </TouchableOpacity>
               </View>
             </View>
@@ -247,13 +297,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 반투명 배경 추가
   },
   modalView: {
-    position: "relative",
-    margin: 10,
+    width: 300,
+    padding: 20,
     backgroundColor: "white",
     borderRadius: 20,
-    padding: 20,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -262,25 +312,58 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
   },
-  button: {
+  closeButton: {
     position: "absolute",
-    right: 2,
-    top: 2,
-    borderRadius: 20,
+    right: 10,
+    top: 10,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  modalSubtitle: {
+    fontSize: 16,
+    marginBottom: 20,
+  },
+  buttonGroup: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  buttonContainer: {
+    width: '80%',
+    marginVertical: 5,
+  },
+  gradient: {
     padding: 10,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center', // 버튼 내용 가운데 정렬
+    width: '100%',
+    height: 60, // 버튼 높이 조정
   },
   rangeButton: {
-    backgroundColor: "grey",
-    margin: 5,
+    backgroundColor: "white",
+    borderColor: 'black',
+    borderWidth: 1,
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center', // 버튼 내용 가운데 정렬
+    width: '100%',
+    height: 60, // 버튼 높이 조정
+  },
+  textStylePrimary: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
   textStyle: {
     color: "black",
     fontWeight: "bold",
-    textAlign: "center"
+    textAlign: "center",
   },
 });
 

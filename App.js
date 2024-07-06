@@ -15,6 +15,7 @@ import * as Linking from "expo-linking";
 import { NavigationContainer } from "@react-navigation/native";
 import Api from "./Api"; // API 파일 경로에 맞게 수정
 import AppNavigation from "./AppNavigation"; // AppNavigation 파일 경로에 맞게 수정
+import { createNavigationUrl } from "./navigationUtils"; // 추가된 부분
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -90,7 +91,7 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [initialRoute, setInitialRoute] = useState(null);
-  const [initialUrl, setInitialUrl] = useState(null);
+  const [initialUrl, setInitialUrl] = useState(null); // 추가된 부분
   const scaleValue = useRef(new Animated.Value(1)).current;
   const opacityValue = useRef(new Animated.Value(1)).current;
 
@@ -107,13 +108,7 @@ const App = () => {
   useEffect(() => {
     const initialize = async () => {
       const token = await getPushToken();
-      const loginSuccess = await prepare(token, false);
-      const url = await Linking.getInitialURL();
-      if (url) {
-        console.log("Initial URL:", url);
-        setInitialUrl(url);
-      }
-      await checkLastNotification();
+      const loginSuccess = await prepare(token);
       if (loginSuccess) {
         setInitialRoute("TabNavigation");
       } else {
@@ -122,21 +117,6 @@ const App = () => {
     };
     initialize();
   }, []);
-
-  useEffect(() => {
-    if (!isLoading && initialUrl) {
-      handleInitialUrl(initialUrl);
-    }
-  }, [initialUrl, isLoading]);
-
-  const checkLastNotification = async () => {
-    const lastNotificationResponse =
-      await Notifications.getLastNotificationResponseAsync();
-    if (lastNotificationResponse) {
-      console.log("Last notification response:", lastNotificationResponse);
-      handleNotification(lastNotificationResponse.notification);
-    }
-  };
 
   useEffect(() => {
     const subscription = Notifications.addNotificationReceivedListener(
@@ -161,14 +141,6 @@ const App = () => {
     console.log("App state changed to:", nextAppState);
   };
 
-  const handleInitialUrl = async (url) => {
-    if (isLoading) {
-      return;
-    }
-    console.log("Handling initial URL:", url);
-    Linking.openURL(url);
-  };
-
   const handleNotification = async (notification) => {
     console.log("Notification received:", notification);
     const data = notification.request.content.data;
@@ -176,57 +148,32 @@ const App = () => {
 
     if (!type || !data) {
       console.error("Notification data is missing");
+      setInitialRoute("TabNavigation");
       return;
     }
 
     const url = createNavigationUrl(type, data);
+    console.log("[app.js] Initial URL:", url);
     if (url) {
       const appState = AppState.currentState;
       const accessToken = await SecureStore.getItemAsync("accessToken");
+
       if ((appState === "active" || appState === "background") && accessToken) {
         console.log("푸쉬 알림을 통한 접속 - 포그라운드 또는 백그라운드 상태");
         Linking.openURL(url);
+      } else if ((appState === "active" || appState === "background") && !accessToken) {
+        console.log("푸쉬 알림을 통한 접속 - 포그라운드 또는 백그라운드 상태, 액세스 토큰 없음");
+        setInitialRoute("Login");
       } else {
         console.log("푸쉬 알림을 통한 접속 - 앱 종료 상태");
-        setInitialUrl(url); // 초기 URL 설정
         const token = await getPushToken();
         const loginSuccess = await prepare(token, true);
         if (!loginSuccess) {
           setInitialRoute("Login");
+        } else {
+          setInitialUrl(url); // 성공하면 URL을 상태로 저장
         }
       }
-    }
-  };
-
-  const createNavigationUrl = (type, data) => {
-    switch (type) {
-      case "0":
-        return Linking.createURL("main/camera/camera-option");
-      case "1":
-        return Linking.createURL("main/community/community/result");
-      case "2":
-        return Linking.createURL("main/community/community/result");
-      case "3":
-        return Linking.createURL(`main/mainpost/user-alarm`, {
-          queryParams: { userId: data.contentId },
-        });
-      case "4":
-        return Linking.createURL(`main/mainpost/feed-alarm`, {
-          queryParams: { postId: data.contentId },
-        });
-      case "5":
-        return Linking.createURL(`main/mainpost/feed-alarm`, {
-          queryParams: { postId: data.contentId },
-        });
-      case "6":
-        return Linking.createURL(`main/mainpost/feed-alarm`, {
-          queryParams: { postId: data.contentId },
-        });
-      case "7":
-        return Linking.createURL("main/mainpost/friends");
-      default:
-        console.log("Unknown notification type received.");
-        return null;
     }
   };
 
@@ -284,7 +231,7 @@ const App = () => {
     }
   };
 
-  const prepare = async (token, fromNotification) => {
+  const prepare = async (token) => {
     console.log("Prepare function called");
     try {
       const storedEmail = await SecureStore.getItemAsync("userEmail");
@@ -297,9 +244,6 @@ const App = () => {
         );
         if (loginSuccess) {
           setInitialRoute("TabNavigation");
-          if (fromNotification && initialUrl) {
-            handleInitialUrl(initialUrl); // 푸시 알림에서 온 경우 URL 처리
-          }
         } else {
           setInitialRoute("Login");
         }
@@ -428,7 +372,10 @@ const App = () => {
   return (
     <NavigationContainer linking={linking}>
       <StatusBar barStyle="light-content" backgroundColor="black" />
-      <AppNavigation initialRouteName={initialRoute} initialUrl={initialUrl} />
+      <AppNavigation
+        initialRouteName={initialRoute}
+        initialUrl={initialUrl} // 추가된 부분
+      />
     </NavigationContainer>
   );
 };

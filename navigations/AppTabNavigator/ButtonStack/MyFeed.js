@@ -10,7 +10,7 @@ const MyFeed = ({ navigation, route }) => {
 	const [isEndReached, setIsEndReached] = useState(false); // onEndReached 호출 상태
 	const [noMoreData, setNoMoreData] = useState(false); // 더 이상 불러올 데이터가 없는지 확인하는 상태
 	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
-	
+
 	useEffect(() => {
 		if (route.params?.deletedPostId) {
 			console.log('Received deletedPostId response:', route.params.deletedPostId);
@@ -18,15 +18,17 @@ const MyFeed = ({ navigation, route }) => {
 			setServerPosts(prevPosts => prevPosts.filter(post => post.postId !== deletedPostId));
 		}
 	}, [route.params?.deletedPostId]);
+
 	useEffect(() => {
 		if (serverPosts) {
 			console.log('server updated:', serverPosts);
 		}
 	}, [serverPosts]);
+
 	useEffect(() => {
 		fetchData(page);
 	}, []);
-	
+
 	const fetchData = async (page) => {
 		try {
 			const serverResponse = await Api.get(`/post/read/2?index=${page}&pageCount=5`);
@@ -51,7 +53,7 @@ const MyFeed = ({ navigation, route }) => {
 			setIsFetchingMore(false);
 		}
 	};
-	
+
 	const handleLoadMore = () => {
 		if (!isFetchingMore && !isEndReached && !noMoreData) {
 			setIsFetchingMore(true);
@@ -63,6 +65,7 @@ const MyFeed = ({ navigation, route }) => {
 			});
 		}
 	};
+
 	const renderItem = ({ item }) => (
 		<TouchableOpacity
 			onPress={() => navigation.navigate("FeedAlarm", { postId: item.postId })}
@@ -71,11 +74,12 @@ const MyFeed = ({ navigation, route }) => {
 			<Image source={{ uri: item.postBackUrl || defaultImage }} style={styles.postImage} />
 		</TouchableOpacity>
 	);
+
 	const renderFooter = () => {
 		if (noMoreData) {
 			return (
 				<View style={styles.footer}>
-					<Text>더 이상 불러올 게시물이 없습니다.</Text>
+					<Text style={{ color: 'white' }}>더 이상 불러올 게시물이 없습니다.</Text>
 				</View>
 			);
 		}
@@ -86,7 +90,7 @@ const MyFeed = ({ navigation, route }) => {
 			</View>
 		);
 	};
-	
+
 	if (isLoading) {
 		return <View style={styles.loader}><ActivityIndicator size="large" color="#0000ff" /></View>;
 	}
@@ -100,7 +104,8 @@ const MyFeed = ({ navigation, route }) => {
 						data={serverPosts}
 						renderItem={renderItem}
 						keyExtractor={item => item.postId.toString()}
-						numColumns={3}
+						numColumns={2}
+						key="flatlist-columns-2" // 고유한 key 설정
 						onEndReached={handleLoadMore}
 						onEndReachedThreshold={0.1}
 						ListFooterComponent={renderFooter}
@@ -108,7 +113,7 @@ const MyFeed = ({ navigation, route }) => {
 					/>
 				) : (
 					<View style={styles.emptyContainer}>
-						<Text>게시물을 추가해보세요!</Text>
+						<Text style={styles.emptyText}>게시물을 추가해보세요!</Text>
 					</View>
 				)
 			)}
@@ -119,18 +124,17 @@ const MyFeed = ({ navigation, route }) => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
-		paddingTop: 20,
+		paddingHorizontal: 10,
+		backgroundColor: '#000', // 배경색을 검정으로 설정
 	},
 	postContainer: {
-		marginBottom: 20,
+		flex: 1,
+		margin: 20, // 피드 사이의 간격을 넓히기 위해 여백을 더 추가
 		alignItems: 'center',
 	},
 	postImage: {
-		width: 100,
-		height: 100,
-		margin: 10,
+		width: '100%', // 카드 너비를 전체로 설정
+		height: 200, // 높이를 고정
 		borderRadius: 10,
 		backgroundColor: "grey"
 	},
@@ -143,6 +147,10 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
+	emptyText: {
+		color: 'white',
+		fontSize: 24, 
+	},
 	loader: {
 		flex: 1,
 		justifyContent: 'center',
@@ -151,4 +159,3 @@ const styles = StyleSheet.create({
 });
 
 export default MyFeed;
-

@@ -9,8 +9,9 @@ import LoginCheck from "./navigations/LoginCheck";
 const Stack = createStackNavigator();
 
 const AppNavigation = ({ initialRouteName, initialUrl }) => {
+  console.log("[App] Initial URL:", initialUrl);
   return (
-    <Stack.Navigator initialRouteName={initialRouteName}>
+    <Stack.Navigator initialRouteName={initialRouteName || "TabNavigation"}>
       <Stack.Screen
         name="LoginCheck"
         component={LoginCheck}
@@ -28,7 +29,7 @@ const AppNavigation = ({ initialRouteName, initialUrl }) => {
           headerLeft: null // 헤더의 뒤로 가기 버튼 비활성화
         }}
       >
-        {(props) => <TabNavigation {...props} initialUrl={initialUrl} />}
+        {(props) => <TabNavigation {...props} initialUrl={initialUrl || "default"} />}
       </Stack.Screen>
       <Stack.Screen
         name="Login"

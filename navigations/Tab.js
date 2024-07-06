@@ -1,16 +1,17 @@
 import React, { useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import * as Linking from 'expo-linking'; // 필요한 라이브러리 import
-import { AntDesign, Ionicons, Entypo, SimpleLineIcons } from "@expo/vector-icons"; // 필요한 아이콘 패키지 import
+import * as Linking from 'expo-linking';
+import { AntDesign, Ionicons, Entypo, SimpleLineIcons } from "@expo/vector-icons";
 import { MainPostStackScreen, CommunityStackScreen } from "./Stack";
 import { CameraStackScreen } from "./AppTabNavigator/CameraStack/CameraStacks";
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'; // 라이브러리 import
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 const Tab = createBottomTabNavigator();
 
 const TabNavigation = ({ initialUrl }) => {
   useEffect(() => {
-    if (initialUrl) {
+    console.log("[Tab] Initial URL:", initialUrl);
+    if (initialUrl && initialUrl !== "default") {
       Linking.openURL(initialUrl);
     }
   }, [initialUrl]);
@@ -20,10 +21,10 @@ const TabNavigation = ({ initialUrl }) => {
       screenOptions={({ route }) => ({
         tabBarShowLabel: false,
         tabBarStyle: {
-          backgroundColor: '#000000', // 네비게이터 배경색을 검정색으로 설정
-          borderTopColor: '#ffffff', // 네비게이터 탑 보더 색상을 흰색으로 설정
+          backgroundColor: '#000000',
+          borderTopColor: '#ffffff',
           borderTopWidth: 1,
-          height: hp('8%'), // 높이를 디바이스 높이의 10%로 설정
+          height: hp('8%'),
           paddingBottom: hp('2%'),
           paddingTop: hp('2%'),
         },
@@ -37,6 +38,7 @@ const TabNavigation = ({ initialUrl }) => {
           }
         },
       })}
+      initialRouteName={initialUrl === "default" ? "MainPost" : undefined} // 초기 라우트 설정
     >
       <Tab.Screen
         name="MainPost"
