@@ -9,8 +9,10 @@ import {
   ActivityIndicator,
   Alert,
   Platform,
-  StatusBar 
+  StatusBar,
+  Dimensions,
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import * as SecureStore from 'expo-secure-store';
 import Api from '../Api';
@@ -20,6 +22,9 @@ import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import { LinearGradient } from 'expo-linear-gradient';
+
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 const LoginForm = () => {
 
@@ -183,62 +188,68 @@ const LoginForm = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView  style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="black" />
-      <View>
+      <View style={styles.logoContainer}>
         <Image style={styles.logo} source={require('../assets/logo.png')} />
       </View>
-      <View style={styles.inputBox}>
-        <Text style={{color: "#fff", fontWeight: "bold", fontSize: hp(2)}}>이메일 주소</Text>
-        <TextInput
-          placeholder="이메일을 입력해주세요."
-          value={loginData.email}
-          onChangeText={(text) => handleChange("email", text)}
-          style={styles.input}
-          placeholderTextColor="#ccc"
-        />
-        {warning === "emailEmpty" && <Text style={styles.warningText}>이메일을 입력해주세요.</Text>}
-        {warning === "invalidEmail" && <Text style={styles.warningText}>유효한 이메일을 입력해주세요.</Text>}
-
-        <Text style={{color: "#fff", fontWeight: "bold", fontSize: hp(2)}}>비밀번호</Text>
-        <TextInput
-          placeholder="비밀번호를 입력해주세요."
-          value={loginData.password}
-          onChangeText={(text) => handleChange("password", text)}
-          style={styles.input}
-          secureTextEntry
-          placeholderTextColor="#ccc"
-        />
-        {warning === "passwordEmpty" && <Text style={styles.warningText}>비밀번호를 입력해주세요.</Text>}
-        {warning === "shortPassword" && <Text style={styles.warningText}>비밀번호는 최소 6자 이상이어야 합니다.</Text>}
-        {warning === "authFailed" && <Text style={styles.warningText}>비밀번호가 일치하지 않습니다. 다시 시도해주세요.</Text>}
-        {warning === "loginFailed" && <Text style={styles.warningText}>로그인 실패. 다시 시도해주세요.</Text>}
-        {warning === "networkError" && <Text style={styles.warningText}>네트워크 오류가 발생했습니다. 다시 시도해주세요.</Text>}
-
-
-        <Pressable onPress={handleLogin} style={styles.loginBtnContainer}>
-          {loading ? (
-            <ActivityIndicator size="small" color="#FFFFFF" />
-          ) : (
-            <LinearGradient
-              colors={['#1BC5DA', '#263283']}
-              style={styles.loginBtn}
-            >
-              <Text style={styles.btnText}>로그인</Text>
-            </LinearGradient>
-          )}
-        </Pressable>
+      <View style={styles.bodyContainer}>
+        <View style={styles.inputContainer}>
+          <View style={styles.inputComposition}>
+            <Text style={styles.inputText}>이메일 주소</Text>
+            <TextInput
+              placeholder="이메일을 입력해주세요."
+              value={loginData.email}
+              onChangeText={(text) => handleChange("email", text)}
+              style={styles.input}
+              placeholderTextColor="#ccc"
+            />
+            {warning === "emailEmpty" && <Text style={styles.warningText}>이메일을 입력해주세요.</Text>}
+            {warning === "invalidEmail" && <Text style={styles.warningText}>유효한 이메일을 입력해주세요.</Text>}
+          </View>
+          <View style={styles.inputComposition}>
+            <Text style={styles.inputText}>비밀번호</Text>
+            <TextInput
+              placeholder="비밀번호를 입력해주세요."
+              value={loginData.password}
+              onChangeText={(text) => handleChange("password", text)}
+              style={styles.input}
+              secureTextEntry
+              placeholderTextColor="#ccc"
+            />
+            {warning === "passwordEmpty" && <Text style={styles.warningText}>비밀번호를 입력해주세요.</Text>}
+            {warning === "shortPassword" && <Text style={styles.warningText}>비밀번호는 최소 6자 이상이어야 합니다.</Text>}
+            {warning === "authFailed" && <Text style={styles.warningText}>비밀번호가 일치하지 않습니다. 다시 시도해주세요.</Text>}
+            {warning === "loginFailed" && <Text style={styles.warningText}>로그인 실패. 다시 시도해주세요.</Text>}
+            {warning === "networkError" && <Text style={styles.warningText}>네트워크 오류가 발생했습니다. 다시 시도해주세요.</Text>}
+          </View>
+        </View>
+        <View style={styles.loginBtnContainer}>
+          <Pressable onPress={handleLogin}>
+            {loading ? (
+              <ActivityIndicator size="small" color="#FFFFFF" />
+            ) : (
+              <LinearGradient
+                colors={['#1BC5DA', '#263283']}
+                style={styles.loginBtn}
+              >
+                <Text style={styles.loginBtnText}>로그인</Text>
+              </LinearGradient>
+            )}
+          </Pressable>
+        </View>
+        
+        <View style={styles.lowButtonContainer}>
+          <Pressable style={[styles.lowBtn, {borderLeftWidth: 0}]}
+             onPress={() => navigation.navigate('SignUp')}>
+            <Text style={styles.lowBtnText}>회원 가입</Text>
+          </Pressable>
+          <Pressable style={styles.lowBtn} onPress={() => navigation.navigate('ForgotPassword')}>
+            <Text style={styles.lowBtnText}>비밀번호 찾기</Text>
+          </Pressable>
+        </View>
       </View>
-
-      <View style={styles.buttonContainer}>
-        <Pressable style={styles.lowBtn1} onPress={() => navigation.navigate('SignUp')}>
-          <Text style={styles.lowBtnText}>회원 가입</Text>
-        </Pressable>
-        <Pressable style={styles.lowBtn} onPress={() => navigation.navigate('ForgotPassword')}>
-          <Text style={styles.lowBtnText}>비밀번호 찾기</Text>
-        </Pressable>
-      </View>
-    </View>
+    </SafeAreaView >
   );
 };
 
@@ -246,69 +257,83 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "black"
+    backgroundColor: "black",
   },
-  logo: { 
-    width: wp(80),
-    height: hp(40),
-    alignSelf: "center"
+  logoContainer : {
+    height: windowHeight * 0.35,
+    justifyContent: "center",
   },
-  inputBox: { 
-    height: hp(40),
-    justifyContent: "space-between",
+    logo: {
+      width: wp(60),
+      height: hp(30),
+      alignSelf: "center",
+    },
+  
+  bodyContainer: {
+    height: windowHeight * 0.65,
+    justifyContent: "center",
   },
-  input: {
-    width: wp(85),
-    borderBottomWidth: 1,
-    borderColor: "#fff",
-    fontSize: hp(2),
-    paddingVertical: hp(1),
-    color: "#fff"
-  },
-  loginBtnContainer: {
-    width: wp(90),
-    height: hp(10),
-    borderRadius: 15,
-    overflow: 'hidden',
-    marginTop: hp(3),
-  },
-  loginBtn: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  btnText: {
-    fontSize: hp(2.5),
-    color: "#fff",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  warningText: {
-    color: "red",
-    fontSize: hp(2),
-    marginTop: 0,
-  },
-  lowBtnText: {
-    color: "#fff",
-    fontSize: hp(2),
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  buttonContainer: { 
-    alignItems: "center",
-    // justifyContent: "space-around",
-    flexDirection: "row",
-    width: wp(100),
-    height: hp(20)
-  },
-  lowBtn: {
-    width: wp(50),
-    borderLeftWidth: 1,
-    borderColor: "#fff",
-  },
-  lowBtn1: {
-    width: wp(50),
-  }
+    inputContainer: {
+      height: windowHeight * 0.28,
+      alignItems: "center",
+    },
+      inputComposition: {
+        width: windowWidth * 0.85,
+        height: "50%",
+      },
+      inputText: {
+        fontSize: windowHeight * 0.02,
+        color: "#fff",
+        fontWeight: "bold",
+        paddingBottom: windowHeight * 0.02,
+      },
+      input: {
+        width: "100%",
+        paddingBottom: windowHeight * 0.005,
+        borderBottomWidth: 1,
+        borderColor: "#fff",
+        fontSize: windowHeight * 0.02,
+        color: "#fff",
+      },
+      warningText: {
+        color: "red",
+        fontSize: hp(1.8),
+        paddingTop: hp(1),
+      },
+    loginBtnContainer: {
+      height: windowHeight * 0.075,
+      justifyContent: "center",
+      alignSelf: "center",
+    },
+      loginBtn: {
+        width: windowWidth * 0.85,
+        height: windowHeight * 0.075,
+        borderRadius: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      loginBtnText: {
+        fontSize: windowHeight * 0.02,
+        color: "#fff",
+        fontWeight: "bold",
+      },
+    lowButtonContainer: {
+      height: windowHeight * 0.3,
+      width: windowWidth,
+      flexDirection: "row",
+    },
+      lowBtnText: {
+        color: "#fff",
+        fontSize: hp(2),
+        textAlign: "center",
+      },
+      lowBtn: {
+        height: hp(3),
+        width: wp(50),
+        borderLeftWidth: 1,
+        borderColor: "#fff",
+        marginTop: hp(10),
+      },
 });
 
 export default LoginForm;

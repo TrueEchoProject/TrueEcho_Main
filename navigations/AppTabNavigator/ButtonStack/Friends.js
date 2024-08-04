@@ -4,6 +4,7 @@ import { ListItem, Avatar, Icon } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
 import Api from '../../../Api';
 import * as SecureStore from 'expo-secure-store';
+import { useNavigation} from '@react-navigation/native';
 
 const getCurrentUserId = async () => {
     try {
@@ -34,7 +35,8 @@ const FriendsScreen = () => {
     const [requests, setRequests] = useState([]);
     const [friends, setFriends] = useState([]);
     const [loading, setLoading] = useState(false);
-
+    const navigation = useNavigation();
+    
     useEffect(() => {
         const initializeData = async () => {
             setLoading(true);
@@ -69,7 +71,6 @@ const FriendsScreen = () => {
             Alert.alert('에러', '추천 친구 목록을 불러오는 중 에러가 발생했습니다.');
         }
     }, [invitedUsers]);
-
     const fetchInvitedUsers = useCallback(async () => {
         try {
             const response = await Api.get('/friends/confirmRequest/send');
@@ -84,7 +85,6 @@ const FriendsScreen = () => {
             Alert.alert('에러', '보낸 친구 요청 목록을 불러오는 중 에러가 발생했습니다.');
         }
     }, []);
-
     const fetchFriendRequests = useCallback(async () => {
         try {
             const response = await Api.get('/friends/confirmRequest/receive');
@@ -98,7 +98,6 @@ const FriendsScreen = () => {
             Alert.alert('에러', '받은 친구 요청 목록을 불러오는 중 에러가 발생했습니다.');
         }
     }, []);
-
     const fetchFriends = useCallback(async () => {
         try {
             const response = await Api.get('/friends/read');
@@ -146,7 +145,6 @@ const FriendsScreen = () => {
             Alert.alert('실패', '친구 초대 실패');
         }
     };
-
     const cancelFriendRequest = async (userId) => {
         try {
             console.log('Cancelling friend request for userId:', userId);
@@ -177,8 +175,7 @@ const FriendsScreen = () => {
             console.error('Error cancelling friend request:', error.message);
             Alert.alert('실패', '친구 요청 취소에 실패했습니다.');
         }
-    };    
-    
+    };
     const acceptFriendRequest = async (userId) => {
         try {
             const formData = new FormData();
@@ -203,7 +200,6 @@ const FriendsScreen = () => {
             Alert.alert('실패', '친구 요청 수락 실패');
         }
     };
-
     const rejectFriendRequest = async (userId) => {
         try {
             const formData = new FormData();
@@ -228,7 +224,6 @@ const FriendsScreen = () => {
             Alert.alert('실패', '친구 요청 거절 실패');
         }
     };
-
     const deleteFriend = async (friendId) => {
         try {
             const formData = new FormData();
@@ -261,56 +256,58 @@ const FriendsScreen = () => {
             item.nickname.toLowerCase().includes(lowercasedQuery) || (item.email && item.email.toLowerCase().includes(lowercasedQuery))
         );
     }, [searchQuery, activeTab, subTab, users, invitedUsers, requests, friends]);
-
+    
     const renderUser = ({ item }) => (
-        <ListItem containerStyle={styles.listItem}>
-            <Avatar source={{ uri: item.userProfileUrl }} rounded />
-            <ListItem.Content>
-                <ListItem.Title style={styles.listItemTitle}>{item.nickname}</ListItem.Title>
-                {item.email && <ListItem.Subtitle style={styles.listItemSubtitle}>{item.email}</ListItem.Subtitle>}
-            </ListItem.Content>
-            {activeTab === 'recommend' && (
-                invitedUsers.some(invited => invited.userId === item.userId) ? (
-                    <TouchableOpacity style={styles.disabledButton}>
-                        <Text style={styles.disabledButtonText}>완료</Text>
-                    </TouchableOpacity>
-                ) : (
-                    <LinearGradient colors={['#1BC5DA', '#263283']} style={styles.gradientButton}>
-                        <TouchableOpacity style={styles.innerButton} onPress={() => inviteFriend(item.userId)}>
-                            <Text style={styles.buttonText}>추가</Text>
-                        </TouchableOpacity>
-                    </LinearGradient>
-                )
-            )}
-            {activeTab === 'request' && subTab === 'receive' && (
-                <View style={styles.requestButtons}>
-                    <LinearGradient colors={['#1BC5DA', '#263283']} style={styles.gradientButton}>
-                        <TouchableOpacity style={styles.innerButton} onPress={() => acceptFriendRequest(item.userId)}>
-                            <Text style={styles.buttonText}>수락</Text>
-                        </TouchableOpacity>
-                    </LinearGradient>
-                    <LinearGradient colors={['#000', '#000', '#000']} style={styles.gradientButton}>
-                        <TouchableOpacity style={styles.innerButton} onPress={() => rejectFriendRequest(item.userId)}>
-                            <Text style={styles.buttonText}>거절</Text>
-                        </TouchableOpacity>
-                    </LinearGradient>
-                </View>
-            )}
-            {activeTab === 'request' && subTab === 'send' && (
-                <LinearGradient colors={['#000', '#000', '#000']} style={styles.gradientButton}>
-                    <TouchableOpacity style={styles.innerButton} onPress={() => cancelFriendRequest(item.userId)}>
-                        <Text style={styles.buttonText}>취소</Text>
+      <ListItem containerStyle={styles.listItem}>
+          <TouchableOpacity onPress={() => navigation.navigate("UserAlarm", { userId: item.userId })}>
+              <Avatar source={{ uri: item.userProfileUrl }} rounded />
+          </TouchableOpacity>
+          <ListItem.Content>
+              <ListItem.Title style={styles.listItemTitle}>{item.nickname}</ListItem.Title>
+              {item.email && <ListItem.Subtitle style={styles.listItemSubtitle}>{item.email}</ListItem.Subtitle>}
+          </ListItem.Content>
+          {activeTab === 'recommend' && (
+            invitedUsers.some(invited => invited.userId === item.userId) ? (
+              <TouchableOpacity style={styles.disabledButton}>
+                  <Text style={styles.disabledButtonText}>완료</Text>
+              </TouchableOpacity>
+            ) : (
+              <LinearGradient colors={['#1BC5DA', '#263283']} style={styles.gradientButton}>
+                  <TouchableOpacity style={styles.innerButton} onPress={() => inviteFriend(item.userId)}>
+                      <Text style={styles.buttonText}>추가</Text>
+                  </TouchableOpacity>
+              </LinearGradient>
+            )
+          )}
+          {activeTab === 'request' && subTab === 'receive' && (
+            <View style={styles.requestButtons}>
+                <LinearGradient colors={['#1BC5DA', '#263283']} style={styles.gradientButton}>
+                    <TouchableOpacity style={styles.innerButton} onPress={() => acceptFriendRequest(item.userId)}>
+                        <Text style={styles.buttonText}>수락</Text>
                     </TouchableOpacity>
                 </LinearGradient>
-            )}
-            {activeTab === 'friends' && (
-                <LinearGradient colors={['#000', '#000', '#000']} style={styles.gradientButton}>
-                    <TouchableOpacity style={styles.innerButton} onPress={() => deleteFriend(item.userId)}>
-                        <Text style={styles.buttonText}>삭제</Text>
+                <LinearGradient colors={['#292929', '#292929']} style={styles.gradientButton}>
+                    <TouchableOpacity style={styles.innerButton} onPress={() => rejectFriendRequest(item.userId)}>
+                        <Text style={styles.buttonText}>거절</Text>
                     </TouchableOpacity>
                 </LinearGradient>
-            )}
-        </ListItem>
+            </View>
+          )}
+          {activeTab === 'request' && subTab === 'send' && (
+            <LinearGradient colors={['#292929', '#292929']} style={styles.gradientButton}>
+                <TouchableOpacity style={styles.innerButton} onPress={() => cancelFriendRequest(item.userId)}>
+                    <Text style={styles.buttonText}>취소</Text>
+                </TouchableOpacity>
+            </LinearGradient>
+          )}
+          {activeTab === 'friends' && (
+            <LinearGradient colors={['#292929', '#292929']} style={styles.gradientButton}>
+                <TouchableOpacity style={styles.innerButton} onPress={() => deleteFriend(item.userId)}>
+                    <Text style={styles.buttonText}>삭제</Text>
+                </TouchableOpacity>
+            </LinearGradient>
+          )}
+      </ListItem>
     );
 
     return (
@@ -379,7 +376,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         padding: 10,
-        backgroundColor: '#000',
     },
     subHeader: {
         flexDirection: 'row',
@@ -387,7 +383,7 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
     },
     tabButton: {
-        padding: 15,
+        padding: 10,
         borderRadius: 15,
         alignItems: 'center',
         justifyContent: 'center',

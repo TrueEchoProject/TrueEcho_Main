@@ -34,7 +34,14 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
         setIsOptionsVisible(isOptionsVisibleExternal);
         console.log(`Options Visible for ${post.postId}: ${isOptionsVisibleExternal}`);
     }, [isOptionsVisibleExternal]);
-
+    const onImageButtonLayout = (event) => {
+        if (layoutSet) return;
+        
+        const { height } = event.nativeEvent.layout;
+        setImageButtonHeight(height);
+        setLayoutSet(true);
+    };
+    
     const toggleLike = async () => {
         if (isLoading) return;
         setIsLoading(true);
@@ -66,7 +73,6 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
             setIsLoading(false);
         }
     };
-
     const toggleBlock = async () => {
         if (isLoading) return;
         setIsLoading(true);
@@ -91,7 +97,6 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
             setIsLoading(false);
         }
     };
-
     const toggleDelete = async () => {
         if (isLoading) return;
         setIsLoading(true);
@@ -109,7 +114,6 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
             setIsLoading(false);
         }
     };
-
     const toggleFriendSend = async () => {
         if (isLoading) return;
         setIsLoading(true);
@@ -147,7 +151,6 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
         setIsOptionsVisible(newVisibility);
         setIsOptionsVisibleExternal(newVisibility);
     };
-
     const hideOptions = () => {
         if (isOptionsVisible) {
             setIsOptionsVisible(false);
@@ -158,15 +161,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
     const toggleCommentVisibility = () => {
         setIsCommentVisible(!isCommentVisible);
     };
-
-    const onImageButtonLayout = (event) => {
-        if (layoutSet) return;
-
-        const { height } = event.nativeEvent.layout;
-        setImageButtonHeight(height);
-        setLayoutSet(true);
-    };
-
+    
     return (
         <TouchableWithoutFeedback onPress={hideOptions}>
             <View style={styles.cardContainer}>
@@ -187,7 +182,27 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
                         </TouchableOpacity>
                         <View style={styles.body}>
                             <View style={styles.rightAlignedContainer}>
-                                <Text style={styles.username}>{post.username}</Text>
+                                <View style={{flexDirection: 'row', alignItems: 'center',}}>
+                                    {post.friend === false && ( friendLook === true ? (
+                                      <TouchableOpacity onPress={toggleFriendSend}>
+                                          <LinearGradient
+                                            colors={['#1BC5DA', '#263283']}
+                                            style={styles.friendButton}
+                                          >
+                                            <Text style={styles.friendText}>친구 추가</Text>
+                                        </LinearGradient>
+                                      </TouchableOpacity>
+                                      ) : (
+                                        <View style={[styles.friendButton, {
+                                            backgroundColor: "#292929",
+                                            borderRadius: 5,
+                                        }]}>
+                                            <Text style={styles.friendText}>추가 완료</Text>
+                                        </View>
+                                      )
+                                    )}
+                                    <Text style={styles.username}>{post.username}</Text>
+                                </View>
                                 <View style={styles.usernameSeparator} />
                                 <Text style={styles.date}>{new Date(post.createdAt).toDateString()}</Text>
                             </View>
@@ -267,6 +282,21 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 };
 
 const styles = StyleSheet.create({
+    friendButton: {
+        height: Dimensions.get('window').width * 0.07,
+        width: Dimensions.get('window').width * 0.15,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 10,
+        borderRadius: 5,
+    },
+    friendText: {
+        fontSize: Dimensions.get('window').width * 0.03,
+        color: "white",
+        fontWeight: 'bold',
+    },
+    
+    
     loader: {
         flex: 1, // 로더를 화면 중앙에 배치
         justifyContent: 'center',
@@ -365,7 +395,6 @@ const styles = StyleSheet.create({
         marginTop: Dimensions.get('window').height * 0.015,
     },
     thumbnailGradient: {
-        borderRadius: Dimensions.get('window').width * 0.06, // 프로필 이미지의 둥근 테두리 반경에 맞춤
         padding: 3, // 그라데이션 테두리 두께를 조금 더 두껍게 설정
         marginLeft: Dimensions.get('window').width * 0.06, // 왼쪽 여백을 화면 너비의 5%로 설정 (오른쪽으로 이동)
         borderRadius: 100, // 프로필 이미지를 원형으로 설정
@@ -373,9 +402,7 @@ const styles = StyleSheet.create({
     thumbnail: {
         width: Dimensions.get('window').width * 0.17 - 6, // 패딩을 제외한 크기로 설정
         height: Dimensions.get('window').width * 0.17 - 6, // 패딩을 제외한 크기로 설정
-        borderRadius: (Dimensions.get('window').width * 0.12 - 6) / 2, // 둥근 모서리 반경을 새로운 크기에 맞게 조정
         borderRadius: 100, // 프로필 이미지를 원형으로 설정
-
     },
     username: {
         fontSize: Dimensions.get('window').width * 0.04, // 글자 크기를 화면 너비의 4.5%로 설정

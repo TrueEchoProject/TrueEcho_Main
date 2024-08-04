@@ -6,7 +6,7 @@ import {
   Easing,
   Platform,
   AppState,
-  StatusBar,
+  StatusBar, Image,
 } from "react-native";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
@@ -15,7 +15,8 @@ import * as Linking from "expo-linking";
 import { NavigationContainer } from "@react-navigation/native";
 import Api from "./Api"; // API 파일 경로에 맞게 수정
 import AppNavigation from "./AppNavigation"; // AppNavigation 파일 경로에 맞게 수정
-import { createNavigationUrl } from "./navigationUtils"; // 추가된 부분
+import { createNavigationUrl } from "./navigationUtils";
+import LottieView from "lottie-react-native"; // 추가된 부분
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -92,8 +93,6 @@ const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [initialRoute, setInitialRoute] = useState(null);
   const [initialUrl, setInitialUrl] = useState(null); // 추가된 부분
-  const scaleValue = useRef(new Animated.Value(1)).current;
-  const opacityValue = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     const subscription = AppState.addEventListener(
@@ -319,51 +318,19 @@ const App = () => {
     }
   };
 
-  useEffect(() => {
-    Animated.loop(
-      Animated.parallel([
-        Animated.sequence([
-          Animated.timing(scaleValue, {
-            toValue: 1.2,
-            duration: 800,
-            easing: Easing.inOut(Easing.ease),
-            useNativeDriver: true,
-          }),
-          Animated.timing(scaleValue, {
-            toValue: 1,
-            duration: 800,
-            easing: Easing.inOut(Easing.ease),
-            useNativeDriver: true,
-          }),
-        ]),
-        Animated.sequence([
-          Animated.timing(opacityValue, {
-            toValue: 0.3,
-            duration: 800,
-            easing: Easing.inOut(Easing.ease),
-            useNativeDriver: true,
-          }),
-          Animated.timing(opacityValue, {
-            toValue: 1,
-            duration: 800,
-            easing: Easing.inOut(Easing.ease),
-            useNativeDriver: true,
-          }),
-        ]),
-      ])
-    ).start();
-  }, [scaleValue, opacityValue]);
-
   if (isLoading || initialRoute === null) {
     return (
       <View style={styles.container}>
-        <Animated.Image
-          style={[
-            styles.logo,
-            { transform: [{ scale: scaleValue }], opacity: opacityValue },
-          ]}
-          source={require("./assets/logo.png")}
+        <Image
+          style={styles.logo}
+          source={require('./assets/logo.png')}
           resizeMode="contain"
+        />
+        <LottieView
+          source={require('./assets/loading.json')} // 올바른 경로를 사용하세요
+          autoPlay
+          loop
+          style={styles.lottie}
         />
       </View>
     );
@@ -388,9 +355,13 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
   },
   logo: {
-    width: 280,
-    height: 280,
+    width: 300,
+    height: 300,
     marginBottom: 20,
+  },
+  lottie: {
+    width: 200,
+    height: 200,
   },
   text: {
     fontSize: 36,

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Animated, Easing, Platform } from 'react-native';
+import {View, StyleSheet, Animated, Easing, Platform, Image} from 'react-native';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import Api from '../Api';
@@ -7,6 +7,7 @@ import * as SecureStore from 'expo-secure-store';
 import * as Linking from 'expo-linking';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {CommonActions, useNavigation} from '@react-navigation/native';
+import LottieView from "lottie-react-native";
 
 Notifications.setNotificationHandler({
 	handleNotification: async () => ({
@@ -17,45 +18,9 @@ Notifications.setNotificationHandler({
 });
 
 const LoginCheck = () => {
-	const scaleValue = useRef(new Animated.Value(1)).current;
-	const opacityValue = useRef(new Animated.Value(1)).current;
 	const [expoPushToken, setExpoPushToken] = useState(null);
 	const navigation = useNavigation();
 	
-	useEffect(() => {
-		Animated.loop(
-			Animated.parallel([
-				Animated.sequence([
-					Animated.timing(scaleValue, {
-						toValue: 1.2,
-						duration: 800,
-						easing: Easing.inOut(Easing.ease),
-						useNativeDriver: true,
-					}),
-					Animated.timing(scaleValue, {
-						toValue: 1,
-						duration: 800,
-						easing: Easing.inOut(Easing.ease),
-						useNativeDriver: true,
-					})
-				]),
-				Animated.sequence([
-					Animated.timing(opacityValue, {
-						toValue: 0.3,
-						duration: 800,
-						easing: Easing.inOut(Easing.ease),
-						useNativeDriver: true,
-					}),
-					Animated.timing(opacityValue, {
-						toValue: 1,
-						duration: 800,
-						easing: Easing.inOut(Easing.ease),
-						useNativeDriver: true,
-					})
-				])
-			])
-		).start();
-	}, [scaleValue, opacityValue]);
 	useEffect(() => {
 		const initialize = async () => {
 			await getPushToken();
@@ -193,13 +158,16 @@ const LoginCheck = () => {
 	
 	return (
 		<View style={styles.container}>
-			<Animated.Image
-				style={[
-					styles.logo,
-					{ transform: [{ scale: scaleValue }], opacity: opacityValue }
-				]}
+			<Image
+				style={styles.logo}
 				source={require('../assets/logo.png')}
 				resizeMode="contain"
+			/>
+			<LottieView
+				source={require('../assets/loading.json')} // 올바른 경로를 사용하세요
+				autoPlay
+				loop
+				style={styles.lottie}
 			/>
 		</View>
 	);
@@ -213,9 +181,13 @@ const styles = StyleSheet.create({
 		backgroundColor: '#FFF',
 	},
 	logo: {
-		width: 280,
-		height: 280,
+		width: 300,
+		height: 300,
 		marginBottom: 20,
+	},
+	lottie: {
+		width: 200,
+		height: 200,
 	},
 	text: {
 		fontSize: 36,

@@ -17,23 +17,18 @@ import { useNavigation } from '@react-navigation/native';
 
 const defaultImage = require("../assets/trueecho.png");
 
-const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExternal, onBlock, onDelete }) => {
-    const navigation = useNavigation();
-    const [isOptionsVisible, setIsOptionsVisible] = useState(isOptionsVisibleExternal || false);
+const AlarmCardComponent = ({ post, onActionComplete }) => {
+    const navigation = useNavigation(); // useNavigation 훅 사용
+    const [isOptionsVisible, setIsOptionsVisible] = useState(false);
     const [buttonLayout, setButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
     const [imageButtonHeight, setImageButtonHeight] = useState(0);
     const [isLiked, setIsLiked] = useState(post.myLike);
     const [likesCount, setLikesCount] = useState(post.likesCount);
     const [isCommentVisible, setIsCommentVisible] = useState(false);
     const [layoutSet, setLayoutSet] = useState(false);
-    const windowWidth = Dimensions.get('window').width;
     const [isLoading, setIsLoading] = useState(false);
+    const windowWidth = Dimensions.get('window').width;
     const [friendLook, setFriendLook] = useState(true);
-
-    useEffect(() => {
-        setIsOptionsVisible(isOptionsVisibleExternal);
-        console.log(`Options Visible for ${post.postId}: ${isOptionsVisibleExternal}`);
-    }, [isOptionsVisibleExternal]);
 
     const toggleLike = async () => {
         if (isLoading) return;
@@ -66,7 +61,6 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
             setIsLoading(false);
         }
     };
-
     const toggleBlock = async () => {
         if (isLoading) return;
         setIsLoading(true);
@@ -83,7 +77,9 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
             if (response.data) {
                 alert('유저를 정상적으로 차단했습니다');
                 hideOptions();
-                onBlock(post.userId);
+                console.log('Blocked user:', post.userId);
+                console.log('Blocked post:', post.postId);
+                onActionComplete && onActionComplete(post.postId);
             }
         } catch (error) {
             console.error('Error while blocking the user:', error.response ? error.response.data : error.message);
@@ -91,7 +87,6 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
             setIsLoading(false);
         }
     };
-
     const toggleDelete = async () => {
         if (isLoading) return;
         setIsLoading(true);
@@ -101,7 +96,9 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
             if (response.data) {
                 alert('정상적으로 게시물을 삭제했습니다');
                 hideOptions();
-                onDelete(post.postId);
+                console.log('Blocked user:', post.userId);
+                console.log('Blocked post:', post.postId);
+                onActionComplete && onActionComplete(post.postId);
             }
         } catch (error) {
             console.error('Error while deleting the post:', error.response ? error.response.data : error.message);
@@ -109,7 +106,6 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
             setIsLoading(false);
         }
     };
-
     const toggleFriendSend = async () => {
         if (isLoading) return;
         setIsLoading(true);
@@ -141,17 +137,13 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
             setIsLoading(false);
         }
     };
-
+    
     const toggleOptionsVisibility = () => {
-        const newVisibility = !isOptionsVisible;
-        setIsOptionsVisible(newVisibility);
-        setIsOptionsVisibleExternal(newVisibility);
+        setIsOptionsVisible(!isOptionsVisible);
     };
-
     const hideOptions = () => {
         if (isOptionsVisible) {
             setIsOptionsVisible(false);
-            setIsOptionsVisibleExternal(false);
         }
     };
 
@@ -187,7 +179,27 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
                         </TouchableOpacity>
                         <View style={styles.body}>
                             <View style={styles.usernameContainer}>
-                                <Text style={styles.username}>{post.username}</Text>
+                                <View style={{flexDirection: 'row', alignItems: 'center',}}>
+                                    {post.friend === false && ( friendLook === true ? (
+                                        <TouchableOpacity onPress={toggleFriendSend}>
+                                            <LinearGradient
+                                              colors={['#1BC5DA', '#263283']}
+                                              style={styles.friendButton}
+                                            >
+                                                <Text style={styles.friendText}>친구 추가</Text>
+                                            </LinearGradient>
+                                        </TouchableOpacity>
+                                      ) : (
+                                        <View style={[styles.friendButton, {
+                                            backgroundColor: "#292929",
+                                            borderRadius: 5,
+                                        }]}>
+                                            <Text style={styles.friendText}>추가 완료</Text>
+                                        </View>
+                                      )
+                                    )}
+                                    <Text style={styles.username}>{post.username}</Text>
+                                </View>
                                 <View style={styles.usernameSeparator} />
                                 <Text style={styles.date}>{new Date(post.createdAt).toDateString()}</Text>
                             </View>
@@ -267,6 +279,20 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
 };
 
 const styles = StyleSheet.create({
+    friendButton: {
+        height: Dimensions.get('window').width * 0.07,
+        width: Dimensions.get('window').width * 0.15,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 10,
+        borderRadius: 5,
+    },
+    friendText: {
+        fontSize: Dimensions.get('window').width * 0.03,
+        color: "white",
+        fontWeight: 'bold',
+    },
+    
     loader: {
         flex: 1, // 로더를 화면 중앙에 배치
         justifyContent: 'center',
@@ -368,16 +394,14 @@ const styles = StyleSheet.create({
 		marginRight: Dimensions.get('window').width * 0.07,
     },
     thumbnailGradient: {
-        borderRadius: Dimensions.get('window').width * 0.06, // 프로필 이미지의 둥근 테두리 반경에 맞춤
         padding: 3, // 그라데이션 테두리 두께를 조금 더 두껍게 설정
         marginLeft: Dimensions.get('window').width * 0.06, // 왼쪽 여백을 화면 너비의 6%로 설정 (오른쪽으로 이동)
-		borderRadius: 100, // 프로필 이미지를 원형으로 설정
+		    borderRadius: 100, // 프로필 이미지를 원형으로 설정
     },
     thumbnail: {
         width: Dimensions.get('window').width * 0.17 - 6, // 패딩을 제외한 크기로 설정
         height: Dimensions.get('window').width * 0.17 - 6, // 패딩을 제외한 크기로 설정
-        borderRadius: (Dimensions.get('window').width * 0.12 - 6) / 2, // 둥근 모서리 반경을 새로운 크기에 맞게 조정
-		borderRadius: 100, // 프로필 이미지를 원형으로 설정
+		    borderRadius: 100, // 프로필 이미지를 원형으로 설정
     },
     username: {
         fontSize: Dimensions.get('window').width * 0.04, // 글자 크기를 화면 너비의 4%로 설정
@@ -457,4 +481,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CardComponent;
+export default AlarmCardComponent;

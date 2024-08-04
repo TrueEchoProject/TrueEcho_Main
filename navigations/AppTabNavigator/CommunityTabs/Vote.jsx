@@ -2,6 +2,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Animated, PanResponder, Dimensions, Image, TouchableOpacity, ImageBackground, Pressable, StatusBar } from 'react-native';
 import Api from '../../../Api'; // 경로를 필요에 따라 업데이트하십시오.
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -293,7 +294,7 @@ const Vote = () => {
   const currentItem = data[currentIndex];
 
   return (
-    <View style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "black"}}>
       <ImageBackground source={backgroundImage} style={styles.fullSizeBackground} resizeMode="cover">
         <View style={styles.container}>
           <Animated.View
@@ -355,7 +356,7 @@ const Vote = () => {
           </Animated.View>
         </View>
       </ImageBackground>
-    </View>
+    </SafeAreaView>
   );
 
 };
@@ -364,21 +365,19 @@ const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
     width: wp(100),
-    resizeMode: 'cover',
+    resizeMode: 'contain',
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
     paddingHorizontal: 10,
-    // marginTop: hp(4),
-    backgroundColor: "black"
+    backgroundColor: 'black',
   },
   itemContainer: {
     width: wp('100%'),
     padding: 10,
     backgroundColor: 'black',
-    flex: 1,
     justifyContent: 'space-between',
   },
   scrollContainer: {
@@ -393,26 +392,24 @@ const styles = StyleSheet.create({
     color: "#fff",
     alignItems: 'center',
     marginHorizontal: wp(4),
-    marginTop: hp(4),
-
+    marginVertical: hp(2),
   },
   imageContainer: {
-    height: hp('50%'), // 크기를 키움
+    height: hp('45%'), // 크기를 키움
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: hp(2),
   },
   selectedImage: {
     width: wp('80%'), // 크기를 키움
+    height: hp('45%'), // 크기를 키움
     aspectRatio: 1, // 이 속성을 추가하여 비율을 유지하면서 크기 조정
     resizeMode: 'contain',
     borderRadius: 20,
-    borderWidth: 2,
-    borderColor: "#fff"
   },
   placeholderImage: {
     width: wp('80%'),
-    height: '100%',
+    height: '80%',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,

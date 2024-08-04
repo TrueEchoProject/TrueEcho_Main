@@ -1,14 +1,28 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, Dimensions, ActivityIndicator, Image } from 'react-native';
-import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
-import PagerView from "react-native-pager-view";
+import React, { useState, useEffect, useRef } from "react";
+import {
+	View,
+	Text,
+	StyleSheet,
+	TouchableOpacity,
+	Modal,
+	Dimensions,
+	ActivityIndicator,
+	Image,
+} from "react-native";
 import Api from "../../../Api";
-import { Image as ExpoImage } from 'expo-image';
+import {
+	widthPercentageToDP as wp,
+	heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import { LinearGradient } from "expo-linear-gradient";
+import Carousel from 'react-native-reanimated-carousel';
+import Animated, { useAnimatedStyle, interpolate } from 'react-native-reanimated';
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+const ITEM_WIDTH = wp(100);
+const ITEM_HEIGHT = hp(57);
 
 const UserAlarm = ({ route }) => {
+	const [isLoading, setIsLoading] = useState(true);
 	const [userId, setUserId] = useState(route.params?.userId);
 	const [serverUserData, setServerUserData] = useState(null); // 서버 유저 데이터를 null로 초기화
 	const [serverPinData, setServerPinData] = useState([]); // 서버 핀 데이터를 빈 배열로 초기화
@@ -17,7 +31,6 @@ const UserAlarm = ({ route }) => {
 	const [isFrontShowing, setIsFrontShowing] = useState({});
 	const [currentPage, setCurrentPage] = useState(0);
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	const pagerRef = useRef(null);
 	const defaultImage = "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
 	
 	useEffect(() => {
@@ -26,16 +39,6 @@ const UserAlarm = ({ route }) => {
 			setUserId(route.params.userId);
 		}
 	}, [route.params?.userId]);
-	useEffect(() => {
-		if (serverUserData) {
-			console.log("server user", serverUserData);
-		}
-	}, [serverUserData]);
-	useEffect(() => {
-		if (serverPinData) {
-			console.log("server pin", serverPinData);
-		}
-	}, [serverPinData]);
 	useEffect(() => {
 		if (isFriend) {
 			console.log("friend", isFriend);
@@ -57,6 +60,7 @@ const UserAlarm = ({ route }) => {
 				console.log('No user data returned from API');
 				setServerPinData([]); // 에러 발생 시 빈 배열로 설정
 			}
+			setIsLoading(false);
 		} catch (error) {
 			console.error('Error fetching data', error);
 			setServerPinData([]); // 에러 발생 시 빈 배열로 설정
@@ -80,19 +84,9 @@ const UserAlarm = ({ route }) => {
 		}
 	};
 	
-	const changeImage = (pinId) => {
-		setIsFrontShowing(prev => ({
-			...prev,
-			[pinId]: !prev[pinId]
-		}));
-	};
 	const profileImageModalVisible = () => {
 		setIsModalVisible(!isModalVisible);
 	};
-	const handlePageChange = (e) => {
-		setCurrentPage(e.nativeEvent.position);
-	};
-	
 	const ProfileImageModal = ({ isVisible, imageUrl, onClose }) => {
 		return (
 			<Modal
@@ -101,232 +95,373 @@ const UserAlarm = ({ route }) => {
 				onRequestClose={onClose}
 				transparent={true}
 			>
-				<View style={styles.modalContainer}>
-					<View style={styles.imageContainer}>
-						<TouchableOpacity onPress={onClose}>
-							<Text style={styles.buttonText}>닫기</Text>
-						</TouchableOpacity>
+				<TouchableOpacity style={styles.profileModalContainer} onPress={onClose}>
+					<LinearGradient
+						colors={["#1BC5DA", "#263283"]}
+						style={styles.profileModalImageContainer}
+					>
 						<Image
 							source={{ uri: imageUrl }} // 수정: imageUrl을 사용
-							style={styles.smallImage}
+							style={styles.profileModalImage}
 						/>
-					</View>
-				</View>
+					</LinearGradient>
+				</TouchableOpacity>
 			</Modal>
 		);
 	};
 	
+	const renderItem = ({ item, animationValue }) => {
+		const animatedStyle = useAnimatedStyle(() => {
+			const scale = interpolate(
+				animationValue.value,
+				[-1, 0, 1],
+				[0.8, 1, 0.8]
+			);
+			
+			return {
+				transform: [{ scale }],
+			};
+		});
+		
+		return (
+			<Animated.View style={[styles.pinSlide, animatedStyle]}>
+				<TouchableOpacity
+					style={styles.pinContainer}
+					onPress={() => changeImage(item.pinId)}
+				>
+					<Image
+						source={{
+							uri: isFrontShowing[item.pinId]
+								? item.postFrontUrl
+								: item.postBackUrl,
+						}}
+						style={styles.pinImage}
+					/>
+				</TouchableOpacity>
+			</Animated.View>
+		);
+	};
+	const changeImage = (pinId) => {
+		setIsFrontShowing(prev => ({
+			...prev,
+			[pinId]: !prev[pinId]
+		}));
+	};
+	
+	if (isLoading) {
+		return (
+			<View style={styles.loader}>
+				<ActivityIndicator size="large" color="#0000ff" />
+			</View>
+		);
+	}
 	return (
 		<View style={styles.container}>
-			{!serverUserData ? (
-				<View style={styles.loader}>
-					<ActivityIndicator size="large" color="#0000ff" />
-				</View>
-			) : (
-				<>
-					<View style={styles.topContainer}>
-						<View style={{ flexDirection: "row" }}>
-							<View style={{ marginRight: "auto" }}>
-								<TouchableOpacity onPress={profileImageModalVisible}>
-									<Image source={{ uri: serverUserData.profileUrl ? serverUserData.profileUrl : defaultImage }} style={styles.avatar} />
-								</TouchableOpacity>
-								{isModalVisible && (
-									<ProfileImageModal
-										isVisible={isModalVisible}
-										imageUrl={serverUserData.profileUrl} // 수정: imageUrl 프로퍼티 전달
-										onClose={() => setIsModalVisible(false)}
-									/>
-								)}
-								<View style={styles.textContainer}>
-									<Text style={styles.name}>{serverUserData.username}</Text>
-									<FontAwesome5
-										name="crown"
-										style={{ marginLeft: 10, marginBottom: 10 }}
-										size={24}
-										color="blue"
-									/>
-								</View>
-							</View>
-							{!isFriend && (friendLook === true ? (
-									<View style={styles.friendButton}>
-										<TouchableOpacity onPress={toggleFriendSend}>
-											<Text style={{ fontSize: 15, color: "white", }}>
-												친구 추가
-											</Text>
-										</TouchableOpacity>
-									</View>
-								) : (
-									<View style={styles.friendButton}>
-										<Text style={{ fontSize: 15, color: "white", }}>
-											추가 완료
-										</Text>
-									</View>
-								)
-							)}
-						</View>
-						<View style={styles.textContainer}>
-							<Text>{serverUserData.mostVotedTitle ? serverUserData.mostVotedTitle : "투표를 진행해주세요!"}</Text>
-						</View>
+			<View>
+				<View style={styles.userContainer}>
+					<View style={styles.avatarContainer}>
+						<TouchableOpacity onPress={profileImageModalVisible}>
+							<LinearGradient
+								colors={["#1BC5DA", "#263283"]}
+								style={styles.avatarGradient}
+							>
+							<Image
+								source={{
+									uri: serverUserData.profileUrl
+										? serverUserData.profileUrl
+										: defaultImage
+								}}
+								style={styles.avatar}
+							/>
+							</LinearGradient>
+						</TouchableOpacity>
 					</View>
-					<View style={styles.pinsContainer}>
-						<View style={{ flexDirection: "row" }}>
-							<Text style={styles.pinsTitle}>Pins</Text>
-						</View>
-						{serverPinData.length === 0 ? (
-							<View style={styles.pinPlus}>
-								<View
-									style={{ alignItems: "center", padding: 30, }}
-								>
-									<AntDesign
-										name="plussquareo"
-										size={40}
-										style={{ margin: 20, }}
-										color="white"
-									/>
-									<Text style={[styles.pinsText, { textAlign: 'center' }]}>아직{'\n'}핀이 없어요...</Text>
-								</View>
-							</View>
-						) : (
-							<>
-								<PagerView
-									style={styles.pagerView}
-									initialPage={0}
-									onPageSelected={handlePageChange}
-									ref={pagerRef}
-								>
-									{serverPinData.map((item) => (
-										<View key={item.pinId} style={{ position: 'relative' }}>
-											<TouchableOpacity onPress={() => changeImage(item.pinId)}>
-												<Image
-													source={{ uri: isFrontShowing[item.pinId] ? item.postFrontUrl : item.postBackUrl }}
-													style={styles.pageStyle}
-												/>
-											</TouchableOpacity>
-										</View>
-									))}
-								</PagerView>
-								<View style={styles.indicatorContainer}>
-									{serverPinData.map((item, index) => (
-										<Text key={index} style={[styles.indicator, index === currentPage ? styles.activeIndicator : null]}>
-											&#9679;
-										</Text>
-									))}
-								</View>
-							</>
+						{isModalVisible && (
+							<ProfileImageModal
+								isVisible={isModalVisible}
+								imageUrl={serverUserData.profileUrl ? serverUserData.profileUrl : defaultImage}
+								onClose={() => setIsModalVisible(false)}
+							/>
 						)}
+					<View>
+						{!isFriend && (friendLook === true ? (
+								<TouchableOpacity onPress={toggleFriendSend}>
+									<LinearGradient
+										colors={['#1BC5DA', '#263283']}
+										style={styles.friendButton}
+									>
+										<Text style={styles.friendText}>친구 추가</Text>
+									</LinearGradient>
+								</TouchableOpacity>
+							) : (
+								<View style={[styles.friendButton, {
+									backgroundColor: "#292929",
+									borderRadius: 5,
+								}]}>
+									<Text style={styles.friendText}>추가 완료</Text>
+								</View>
+							)
+						)}
+						<View style={styles.userTextContainer}>
+							<View style={styles.nameAndOptionsContainer}>
+								<View style={styles.nameTextContainer}>
+									<Text style={styles.nameText} numberOfLines={1} ellipsizeMode="tail">{serverUserData.username}</Text>
+								</View>
+							</View>
+							<View style={styles.desTextContainer}>
+								<Text style={styles.desText}>
+									{serverUserData.mostVotedTitle
+										? serverUserData.mostVotedTitle
+										: "투표를 진행해주세요!"}
+								</Text>
+							</View>
+						</View>
 					</View>
-				</>
-			)}
+				</View>
+			</View>
+			<View style={styles.pinsContainer}>
+				<View style={styles.pinsTitleContainer}>
+					<Text style={styles.pinsTitle}>Pins</Text>
+				</View>
+				<View style={styles.pinsCardContainer}>
+				{serverPinData.length === 0 ? (
+					<View style={styles.pinsNoneContainer}>
+						<Text style={[styles.pinsNoneText, { textAlign: "center" }]}>
+							핀이 아직{"\n"}없어요...
+						</Text>
+					</View>
+				) : (
+					<Carousel
+						width={ITEM_WIDTH}
+						height={ITEM_HEIGHT}
+						data={serverPinData}
+						renderItem={renderItem}
+						mode="parallax"
+						style={{ alignSelf: 'center' }} // 캐러셀 자체를 가운데 정렬
+						modeConfig={{
+							parallaxScrollingScale: 0.9,
+							parallaxScrollingOpacity: 0.6,
+							parallaxAdjacentItemScale: 1,
+						}}
+					/>
+				)}
+				</View>
+			</View>
 		</View>
 	);
-}
+};
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#fff',
-	},
-	topContainer: {
-		flexGrow: 0,
-		margin: 15,
-		marginBottom: 10,
-	},
-	pinsContainer: {
-		height: windowHeight * 0.59,
-		marginHorizontal: 15,
-		marginBottom: 20, // 하단 마진을 추가합니다.
-	},
-	pinsTitle: {
-		fontSize: 25,
-		fontWeight: "300",
-	},
-	pinsText: {
-		fontSize: 25,
-		fontWeight: "300",
-		color: "white"
-	},
-	pagerView: {
-		flex: 1,
-	},
-	pageStyle: {
-		marginTop: 10,
-		width: "100%",
-		height: "97%",
-		borderRadius: 10,
-	},
-	pinPlus: {
-		marginTop: 10,
-		width: "100%",
-		height: "90%",
-		borderRadius: 10,
-		backgroundColor: "grey",
-		alignItems: 'center',
-		justifyContent: 'center',
-		padding: 30,
-	},
-	textContainer: {
-		flexDirection: "row",
-		alignItems: 'flex-end',
-		marginTop: 5,
-	},
-	avatar: {
-		width: 70,
-		height: 70,
-		borderRadius: 35,
-	},
-	name: {
-		fontSize: 30,
-		fontWeight: "300",
-	},
-	indicatorContainer: {
-		flexDirection: 'row',
-		justifyContent: 'center',
-		marginTop: 5,
-	},
-	indicator: {
-		margin: 3,
-		color: 'grey',
-	},
-	activeIndicator: {
-		color: 'blue',
-	},
-	modalContainer: {
-		flex: 1,
-		backgroundColor: 'rgba(0, 0, 0, 0.5)',
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	buttonText: {
-		color: "black",
-		fontSize: 15,
-		fontWeight: "bold",
-		textAlign: "center",
-		marginTop: 15,
-	},
-	imageContainer: {
-		width: windowWidth * 0.8,
-		height: windowHeight * 0.6,
-		borderRadius: 12,
-		backgroundColor: 'white',
-	},
-	smallImage: {
-		marginTop: 13,
-		width: windowWidth * 0.8,
-		height: windowHeight * 0.6,
-		borderRadius: 12,
+		backgroundColor: "black",
 	},
 	loader: {
 		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "#000",
 	},
-	friendButton: {
-		backgroundColor: "#3B4664",
-		padding: 5,
-		height: 35,
-		marginBottom: 5,
-		borderRadius: 3,
+	
+	userContainer: {
+		height: hp(22),
+		width: wp(90),
+		marginHorizontal: wp(5),
+		
+		flexDirection: "row",
+		alignItems: "flex-end",
+	},
+	avatarContainer: {
+		width: wp(40),
+		height: hp(20),
+		alignItems: "center",
 		justifyContent: "center",
 	},
-})
+	avatarGradient: {
+		width: hp(18.5),
+		height: hp(18.5),
+		borderRadius: 100,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	avatar: {
+		width: hp(17),
+		height: hp(17),
+		borderRadius: 100,
+		borderColor: "white",
+		borderWidth: 3,
+	},
+	friendButton: {
+		height: wp(7),
+    width: wp(15),
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginRight: 10,
+		borderRadius: 5,
+		
+		marginLeft: wp(5),
+	},
+	friendText: {
+		fontSize: wp(3),
+		color: "white",
+		fontWeight: 'bold',
+	},
+	userTextContainer: {
+		width: wp(47),
+		height: hp(12),
+		marginLeft: wp(3),
+		marginBottom: hp(2),
+	},
+	nameAndOptionsContainer: {
+		height: hp(5),
+		marginHorizontal: wp(2),
+		flexDirection: "row",
+		alignItems: "center",
+		borderBottomWidth: 1,
+		borderBottomColor: "white",
+	},
+	nameTextContainer: {
+		width: wp(36.5),
+		justifyContent: "center",
+	},
+	desTextContainer: {
+		width: wp(43),
+		marginHorizontal: wp(2),
+		paddingVertical: hp(1),
+	},
+	nameText: {
+		fontSize: wp(5.7),
+		fontWeight: "900",
+		color: "#fff",
+	},
+	desText: {
+		fontSize: wp(3.2),
+		color: "#fff",
+	},
+	
+	profileModalContainer: {
+		flex: 1,
+		backgroundColor: "rgba(0, 0, 0, 0.75)",
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	profileModalImageContainer: {
+		width: wp(87),
+		height: wp(87),
+		borderRadius: wp(100),
+		borderWidth: 2,
+		overflow: "hidden",
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	profileModalImage: {
+		width: "95%",
+		height: "95%",
+		borderRadius: wp(100),
+		borderWidth: 4,
+		borderColor: "white",
+	},
+	
+	pinsContainer: {
+		height: hp(75),
+		alignItems: "center",
+	},
+	pinsTitleContainer: {
+		height: hp(3.4),
+		width: "100%",
+		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "center",
+		
+	},
+	pinsTitle: {
+		fontSize: hp(2.9),
+		fontWeight: "bold",
+		color: "white",
+	},
+	pinsPlusContainer: {
+		position: "relative",
+		height: hp(3),
+		width: hp(3),
+		borderRadius: hp(3),
+		marginLeft: hp(1),
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	pinsPlusHorizontal: {
+		position: "absolute",
+		height: hp(1.5),
+		width: hp(0.3),
+		backgroundColor: "black",
+	},
+	pinsPlusVertical: {
+		position: "absolute",
+		width: hp(1.5),
+		height: hp(0.3),
+		backgroundColor: "black",
+	},
+	
+	pinsCardContainer: {
+		flex: 1,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	pinSlide: {
+		width: "100%",
+		height: "95%",
+		alignItems: "center",
+		justifyContent: "center",
+		
+	},
+	pinContainer: {
+		width: '100%',
+		height: '100%',
+		alignItems: "center",
+		justifyContent: "center",
+		
+	},
+	pinImage: {
+		width: '70%',
+		height: '100%',
+		borderRadius: 25,
+		borderWidth: 2,
+		borderColor: "#fff",
+	},
+	
+	pinsNoneContainer: {
+		width: "100%",
+		height: "100%",
+		borderRadius: 25,
+		backgroundColor: "rgba(128, 128, 128, 0.6)", // grey with 50% transparency
+		alignItems: "center",
+		justifyContent: "center",
+		padding: 30,
+	},
+	pinsNonePlusContainer: {
+		position: "relative",
+		height: 50,
+		width: 50,
+		borderRadius: 25,
+		marginBottom: "5%",
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	pinsNonePlusHorizontal: {
+		position: "absolute",
+		width: 25,
+		height: 5,
+		backgroundColor: "black",
+	},
+	pinsNonePlusVertical: {
+		position: "absolute",
+		width: 5,
+		height: 25,
+		backgroundColor: "black",
+	},
+	pinsNoneText: {
+		fontSize: 30,
+		fontWeight: "900",
+		color: "black",
+	},
+});
 export default UserAlarm;

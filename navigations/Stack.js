@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createStackNavigator } from "@react-navigation/stack";
-import { View, Text, Image } from 'react-native';
+import {View, Text, Image, TouchableOpacity} from 'react-native';
 import { MaterialIcons, AntDesign } from "@expo/vector-icons";
 import { MainPostTabScreen } from "./AppTabNavigator/PostTab/MainPostTab";
 import { CommunityTabScreen } from "./AppTabNavigator/CommunityTabs/CommunityTab";
@@ -35,9 +35,39 @@ const CustomHeaderLeft = ({ navigation, title }) => (
   </View>
 );
 
-const LogoImage = () => (
-  <Image source={require('../assets/logoFont.png')} style={{ width: wp('35%'), height: hp('5%'), marginLeft: 10 }} />
-);
+const LogoImage = ({ navigation }) => {
+  const [isOptionsVisible, setIsOptionsVisible] = useState(false);
+  const toggleOptionsVisibility = () => {
+    setIsOptionsVisible(!isOptionsVisible);
+  };
+  const navigateToMyFeed = () => {
+    setIsOptionsVisible(false);
+    navigation.navigate('MyFeed');
+  };
+  const navigateToAlarm = () => {
+    setIsOptionsVisible(false);
+    navigation.navigate('Alarm');
+  };
+  
+  return (
+    <>
+      <TouchableOpacity style={{flexDirection: "row", alignItems: "center"}} onPress={toggleOptionsVisibility}>
+        <Image source={require('../assets/logoFont.png')} style={{ width: wp('35%'), height: hp('5%'), marginLeft: 10 }} />
+        <AntDesign style={{marginLeft:5}} name="caretdown" size={10} color="white"/>
+      </TouchableOpacity>
+      {isOptionsVisible && (
+        <View style={{ position: 'absolute', top: 50, right: 0, backgroundColor: "grey", padding: 10, borderRadius: 10, }}>
+          <TouchableOpacity style={{ alignItems:"center", marginBottom: 10 }} onPress={navigateToMyFeed}>
+            <Text style={{ color: 'white'}}>내 피드</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={{ alignItems:"center" }} onPress={navigateToAlarm}>
+            <Text style={{ color: 'white'}}>알림</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </>
+  )
+};
 
 const getHeaderLeft = (navigation, route) => {
   const title = route.name === 'FeedTab' ? '피드 탭' :
@@ -47,13 +77,13 @@ const getHeaderLeft = (navigation, route) => {
     route.name === 'Calendar' ? '캘린더' :
     route.name === 'MyInfo' ? '내 정보 수정' :
     route.name === 'Alarm' ? '알림' :
-    route.name === 'FeedAlarm' ? '피드 알림' :
-    route.name === 'UserAlarm' ? '유저 알림' :
-    route.name === 'IsAlarm' ? '아이즈 알림' :
+    route.name === 'FeedAlarm' ? '피드' :
+    route.name === 'UserAlarm' ? '유저' :
+    route.name === 'IsAlarm' ? '로컬 알림 테스트' :
     route.name === 'MyFeed' ? '내 피드' : route.name;
-
+  
   return route.name === 'FeedTab'
-    ? <LogoImage />
+    ? <LogoImage navigation={navigation}/>
     : <CustomHeaderLeft navigation={navigation} title={title} />;
 };
 

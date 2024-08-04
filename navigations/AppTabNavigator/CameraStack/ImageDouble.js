@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   imageTouchable: {
+    borderRadius: 20, // 모서리를 더 둥글게 설정
     width: '100%',
     height: '100%',
     justifyContent: 'center',
@@ -47,12 +48,12 @@ const styles = StyleSheet.create({
   },
   smallImageContainer: {
     position: 'absolute',
-    top: 20,
-    left: 20,
+    top: 10,
+    left: 10,
     width: 120, // 너비를 줄임
     height: 160, // 높이를 늘려 직사각형 모양으로 변경
     zIndex: 1,
-    borderRadius: 20, // 모서리를 더 둥글게 설정
+    borderRadius: 10, // 모서리를 더 둥글게 설정
     overflow: 'hidden', // 이미지가 둥근 모서리에 맞게 잘리도록 설정
   },
   smallImage: {

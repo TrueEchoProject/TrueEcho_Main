@@ -7,34 +7,31 @@ import {
   Modal,
   Dimensions,
   ActivityIndicator,
-  ScrollView,
   Image,
 } from "react-native";
-import { AntDesign, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
-import PagerView from "react-native-pager-view";
-import { Image as ExpoImage } from "expo-image"; // expo-image 패키지 import
 import { Button3 } from "../../../components/Button";
 import Api from "../../../Api";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { LinearGradient } from "expo-linear-gradient";
+import Carousel from 'react-native-reanimated-carousel';
+import Animated, { useAnimatedStyle, interpolate } from 'react-native-reanimated';
 
-const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
+const ITEM_WIDTH = wp(100);
+const ITEM_HEIGHT = hp(57);
 
 const MyPage = ({ navigation, route }) => {
+  const [isLoading, setIsLoading] = useState(true);
   const [serverData, setServerData] = useState({}); // 서버로부터 받아온 데이터를 저장할 상태
-  const [userData, setUserData] = useState({});
   const [pinData, setPinData] = useState([]);
   const [isFrontShowing, setIsFrontShowing] = useState({});
-  const [currentPage, setCurrentPage] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const pagerRef = useRef(null);
   const defaultImage =
     "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
-
+  
   useEffect(() => {
     if (route.params?.Update) {
       fetchDataFromServer();
@@ -54,27 +51,19 @@ const MyPage = ({ navigation, route }) => {
     }
   }, [route.params?.pinRes]);
   useEffect(() => {
-    if (pinData) {
-      console.log("pinData updated:", pinData);
-    }
     if (pinData.length > 0 && pagerRef.current) {
       pagerRef.current.setPageWithoutAnimation(0);
     }
   }, [pinData]);
   useEffect(() => {
-    if (serverData) {
-      console.log("serverData updated:", serverData);
-    }
-  }, [serverData]); // serverData 변화 감지
-  useEffect(() => {
     fetchDataFromServer();
   }, []);
-
+  
   const fetchDataFromServer = async () => {
     try {
-      const response = await Api.get(`/setting/myPage`);
+      const response = await Api.get("/setting/myPage"); // 문자열로 수정
       setServerData(response.data.data); // Correctly update the state here
-      const pinResponse = await Api.get(`/setting/pins`);
+      const pinResponse = await Api.get("/setting/pins"); // 문자열로 수정
       if (pinResponse.data.message === "핀 조회를 실패했습니다.") {
         setPinData([]); // 핀 데이터가 없을 경우 빈 배열로 초기화
         setIsLoading(false);
@@ -86,22 +75,11 @@ const MyPage = ({ navigation, route }) => {
       console.error("Error fetching data", error);
     }
   };
-
-  const changeImage = (pinId) => {
-    setIsFrontShowing((prev) => ({
-      ...prev,
-      [pinId]: !prev[pinId],
-    }));
-  };
+  
   const profileImageModalVisible = () => {
     setIsModalVisible(!isModalVisible);
   };
-  const handlePageChange = (e) => {
-    setCurrentPage(e.nativeEvent.position);
-  };
-
   const ProfileImageModal = ({ isVisible, imageUrl, onClose }) => {
-    // 수정: 프로퍼티 이름 Image -> imageUrl 변경
     return (
       <Modal
         animationType="fade"
@@ -109,18 +87,59 @@ const MyPage = ({ navigation, route }) => {
         onRequestClose={onClose}
         transparent={true}
       >
-        <TouchableOpacity style={styles.modalContainer} onPress={onClose}>
-          <View style={styles.modalImageContainer}>
+        <TouchableOpacity style={styles.profileModalContainer} onPress={onClose}>
+          <LinearGradient
+            colors={["#1BC5DA", "#263283"]}
+            style={styles.profileModalImageContainer}
+          >
             <Image
               source={{ uri: imageUrl }} // 수정: imageUrl을 사용
-              style={styles.modalImage}
+              style={styles.profileModalImage}
             />
-          </View>
+          </LinearGradient>
         </TouchableOpacity>
       </Modal>
     );
   };
-
+  
+  const renderItem = ({ item, animationValue }) => {
+    const animatedStyle = useAnimatedStyle(() => {
+      const scale = interpolate(
+        animationValue.value,
+        [-1, 0, 1],
+        [0.8, 1, 0.8]
+      );
+      
+      return {
+        transform: [{ scale }],
+      };
+    });
+    
+    return (
+      <Animated.View style={[styles.pinSlide, animatedStyle]}>
+        <TouchableOpacity
+          style={styles.pinContainer}
+          onPress={() => changeImage(item.pinId)}
+        >
+          <Image
+            source={{
+              uri: isFrontShowing[item.pinId]
+                ? item.postFrontUrl
+                : item.postBackUrl,
+            }}
+            style={styles.pinImage}
+          />
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
+  const changeImage = (pinId) => {
+    setIsFrontShowing((prev) => ({
+      ...prev,
+      [pinId]: !prev[pinId],
+    }));
+  };
+  
   if (isLoading) {
     return (
       <View style={styles.loader}>
@@ -128,36 +147,44 @@ const MyPage = ({ navigation, route }) => {
       </View>
     );
   }
+  
   return (
     <View style={styles.container}>
-      <View style={styles.topContainer}>
+      <View>
         <View style={styles.userContainer}>
-          <TouchableOpacity onPress={profileImageModalVisible}>
-            <Image
-              source={{
-                uri: serverData.profileUrl
-                  ? serverData.profileUrl
-                  : defaultImage,
-              }}
-              style={styles.avatar}
-            />
-          </TouchableOpacity>
+          <View style={styles.avatarContainer}>
+            <TouchableOpacity onPress={profileImageModalVisible}>
+              <LinearGradient
+                colors={["#1BC5DA", "#263283"]}
+                style={styles.avatarGradient}
+              >
+                <Image
+                  source={{
+                    uri: serverData.profileUrl
+                      ? serverData.profileUrl
+                      : defaultImage,
+                  }}
+                  style={styles.avatar}
+                />
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
           {isModalVisible && (
             <ProfileImageModal
               isVisible={isModalVisible}
-              imageUrl={
-                serverData.profileUrl ? serverData.profileUrl : defaultImage
-              } // 수정: imageUrl 프로퍼티 전달
+              imageUrl={serverData.profileUrl ? serverData.profileUrl : defaultImage}
               onClose={() => setIsModalVisible(false)}
             />
           )}
-          <View style={{ justifyContent: "flex-end" }}>
-            <View style={styles.nameTextContainer}>
-              <Text style={styles.name}>{serverData.username}</Text>
-              <Button3 onPress={() => navigation.navigate("MyOp")} />
+          <View style={styles.userTextContainer}>
+            <View style={styles.nameAndOptionsContainer}>
+              <View style={styles.nameTextContainer}>
+                <Text style={styles.nameText} numberOfLines={1} ellipsizeMode="tail">{serverData.username}</Text>
+              </View>
+              <Button3 onPress={() => navigation.navigate("MyOp")}/>
             </View>
             <View style={styles.desTextContainer}>
-              <Text style={{ color: "#fff" }}>
+              <Text style={styles.desText}>
                 {serverData.mostVotedTitle
                   ? serverData.mostVotedTitle
                   : "투표를 진행해주세요!"}
@@ -167,202 +194,255 @@ const MyPage = ({ navigation, route }) => {
         </View>
       </View>
       <View style={styles.pinsContainer}>
-        <View style={{ flexDirection: "row" }}>
+        <View style={styles.pinsTitleContainer}>
           <Text style={styles.pinsTitle}>Pins</Text>
           <TouchableOpacity onPress={() => navigation.navigate("Calendar")}>
-            <AntDesign name="pluscircle" size={24} color="#fff" style={{marginHorizontal: hp(1)}}/>
+            <LinearGradient
+              colors={["#1BC5DA", "#263283"]}
+              style={styles.pinsPlusContainer}
+            >
+              <View style={styles.pinsPlusHorizontal}/>
+              <View style={styles.pinsPlusVertical}/>
+            </LinearGradient>
           </TouchableOpacity>
         </View>
-        {pinData.length === 0 ? (
-          <View style={styles.pinPlus}>
-            <TouchableOpacity
-              style={{ alignItems: "center", padding: 30 }}
-              onPress={() => navigation.navigate("Calendar")}
-            >
-              <AntDesign
-                name="plussquareo"
-                size={40}
-                style={{ margin: 20 }}
-                color="#fff"
-              />
-              <Text style={[styles.pinsText, { textAlign: "center" }]}>
-                핀을{"\n"}추가해보세요!
-              </Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <>
-            <PagerView
-              style={styles.pagerView}
-              initialPage={0}
-              onPageSelected={handlePageChange}
-              ref={pagerRef}
-            >
-              {pinData.map((item) => (
-                <View key={item.pinId} style={{ position: "relative" }}>
-                  <TouchableOpacity onPress={() => changeImage(item.pinId)}>
-                    <Image
-                      source={{
-                        uri: isFrontShowing[item.pinId]
-                          ? item.postFrontUrl
-                          : item.postBackUrl,
-                      }}
-                      style={styles.pageStyle}
-                    />
-                  </TouchableOpacity>
-                </View>
-              ))}
-            </PagerView>
-            <View style={styles.indicatorContainer}>
-              {pinData.map((item, index) => (
-                <Text
-                  key={index}
-                  style={[
-                    styles.indicator,
-                    index === currentPage ? styles.activeIndicator : null,
-                  ]}
+        <View style={styles.pinsCardContainer}>
+          {pinData.length === 0 ? (
+            <View style={styles.pinsNoneContainer}>
+              <TouchableOpacity
+                style={{alignItems: "center", padding: 30 }}
+                onPress={() => navigation.navigate("Calendar")}
+              >
+                <LinearGradient
+                  colors={["#1BC5DA", "#263283"]}
+                  style={styles.pinsNonePlusContainer}
                 >
-                  &#9679;
+                  <View style={styles.pinsNonePlusHorizontal}/>
+                  <View style={styles.pinsNonePlusVertical}/>
+                </LinearGradient>
+                <Text style={[styles.pinsNoneText, { textAlign: "center" }]}>
+                  핀을{"\n"}추가해보세요!
                 </Text>
-              ))}
+              </TouchableOpacity>
             </View>
-          </>
-        )}
+          ) : (
+            <Carousel
+              width={ITEM_WIDTH}
+              height={ITEM_HEIGHT}
+              data={pinData}
+              renderItem={renderItem}
+              mode="parallax"
+              style={{ alignSelf: 'center' }} // 캐러셀 자체를 가운데 정렬
+              modeConfig={{
+                parallaxScrollingScale: 0.9,
+                parallaxScrollingOpacity: 0.6,
+                parallaxAdjacentItemScale: 1,
+              }}
+            />
+          )}
+        </View>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  scrollView: {
-    height: 400,
-    width: "100%",
-    backgroundColor: "yellow",
-  },
   container: {
     flex: 1,
-    // backgroundColor: "#fff",
     backgroundColor: "black",
-    padding: hp(2),
   },
+  loader: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#000",
+  },
+  
   userContainer: {
-    flexDirection: "row",
-    // height: hp(25),
-    borderWidth: 1,
-    // borderColor: "#fff",
-    marginBottom: hp(1),
-  },
-  nameTextContainer: {
-    width: wp(50),
-    borderWidth: 2,
-    // borderColor:"#fff",
-    borderBottomColor: "#aaa",
-    marginLeft: wp(4),
-    paddingVertical: hp(1),
+    height: hp(22),
+    width: wp(90),
+    marginHorizontal: wp(5),
+    
     flexDirection: "row",
     alignItems: "flex-end",
   },
+  avatarContainer: {
+    width: wp(40),
+    height: hp(20),
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  avatarGradient: {
+    width: hp(18.5),
+    height: hp(18.5),
+    borderRadius: 100,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  avatar: {
+    width: hp(17),
+    height: hp(17),
+    borderRadius: 100,
+    borderColor: "white",
+    borderWidth: 3,
+  },
+  userTextContainer: {
+    width: wp(47),
+    height: hp(12),
+    marginLeft: wp(3),
+    marginBottom: hp(2),
+  },
+  nameAndOptionsContainer: {
+    height: hp(5),
+    marginHorizontal: wp(2),
+    flexDirection: "row",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "white",
+  },
+  nameTextContainer: {
+    width: wp(36.5),
+    justifyContent: "center",
+  },
   desTextContainer: {
-    width: wp(50),
-    borderWidth: 1,
-    // borderColor:"#fff",
-    marginLeft: wp(4),
+    width: wp(43),
+    marginHorizontal: wp(2),
     paddingVertical: hp(1),
   },
+  nameText: {
+    fontSize: wp(5.7),
+    fontWeight: "900",
+    color: "#fff",
+  },
+  desText: {
+    fontSize: wp(3.2),
+    color: "#fff",
+  },
+  
+  profileModalContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  profileModalImageContainer: {
+    width: wp(87),
+    height: wp(87),
+    borderRadius: wp(100),
+    borderWidth: 2,
+    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  profileModalImage: {
+    width: "95%",
+    height: "95%",
+    borderRadius: wp(100),
+    borderWidth: 4,
+    borderColor: "white",
+  },
+  
   pinsContainer: {
-    height: hp(55),
-    borderWidth: 1,
-    // borderColor: "#fff",
+    height: hp(75),
     alignItems: "center",
   },
+  pinsTitleContainer: {
+    height: hp(3.4),
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    
+  },
   pinsTitle: {
-    fontSize: hp(3),
+    fontSize: hp(2.9),
     fontWeight: "bold",
     color: "white",
   },
-  pinsText: {
-    fontSize: hp(3),
-    fontWeight: "300",
-    color: "white",
+  pinsPlusContainer: {
+    position: "relative",
+    height: hp(3),
+    width: hp(3),
+    borderRadius: hp(3),
+    marginLeft: hp(1),
+    alignItems: "center",
+    justifyContent: "center",
   },
-  pagerView: {
+  pinsPlusHorizontal: {
+    position: "absolute",
+    height: hp(1.5),
+    width: hp(0.3),
+    backgroundColor: "black",
+  },
+  pinsPlusVertical: {
+    position: "absolute",
+    width: hp(1.5),
+    height: hp(0.3),
+    backgroundColor: "black",
+  },
+  
+  pinsCardContainer: {
     flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  pageStyle: {
-    marginTop: 10,
+  pinSlide: {
     width: "100%",
-    height: "97%",
-    borderRadius: 10,
+    height: "95%",
+    alignItems: "center",
+    justifyContent: "center",
+
   },
-  pinPlus: {
-    marginTop: hp(1),
-    // width: "100%",
-    height: "90%",
+  pinContainer: {
+    width: '100%',
+    height: '100%',
+    alignItems: "center",
+    justifyContent: "center",
+    
+  },
+  pinImage: {
+    width: '70%',
+    height: '100%',
+    borderRadius: 25,
+    borderWidth: 2,
+    borderColor: "#fff",
+  },
+  
+  pinsNoneContainer: {
+    width: "100%",
+    height: "100%",
     borderRadius: 25,
     backgroundColor: "rgba(128, 128, 128, 0.6)", // grey with 50% transparency
     alignItems: "center",
     justifyContent: "center",
     padding: 30,
   },
-  avatar: {
-    width: wp(35),
-    height: hp(20),
-    borderRadius: 100,
-    borderColor: "#1CC4D9",
-    borderWidth: 5,
+  pinsNonePlusContainer: {
+    position: "relative",
+    height: 50,
+    width: 50,
+    borderRadius: 25,
+    marginBottom: "5%",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  name: {
+  pinsNonePlusHorizontal: {
+    position: "absolute",
+    width: 25,
+    height: 5,
+    backgroundColor: "black",
+  },
+  pinsNonePlusVertical: {
+    position: "absolute",
+    width: 5,
+    height: 25,
+    backgroundColor: "black",
+  },
+  pinsNoneText: {
     fontSize: 30,
-    fontWeight: "300",
-    color: "#fff",
-  },
-  indicatorContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 5,
-  },
-  indicator: {
-    margin: 3,
-    color: "grey",
-  },
-  activeIndicator: {
-    color: "blue",
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  modalImageContainer: {
-    width: wp(80),
-    height: wp(80),
-    borderRadius: wp(100),
-    borderWidth: 5,
-    borderColor: "#1DBED6",
-    overflow: "hidden",
-  },
-  modalImage: {
-    width: "100%",
-    height: "100%",
-  },
-  buttonText: {
+    fontWeight: "900",
     color: "black",
-    fontSize: 15,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginTop: 15,
-  },
-  imageContainer: {
-    width: windowWidth * 0.8,
-    height: windowHeight * 0.6,
-    borderRadius: 12,
-    backgroundColor: "white",
-  },
-  loader: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
 });
 export default MyPage;
+

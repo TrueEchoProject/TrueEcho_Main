@@ -6,6 +6,7 @@ import storage from '../../../AsyncStorage';
 import Api from '../../../Api';
 import ImageDouble from './ImageDouble';
 import { MaterialIcons } from '@expo/vector-icons';
+import {LinearGradient} from "expo-linear-gradient";
 
 const { width, height } = Dimensions.get('window');
 
@@ -223,13 +224,23 @@ const FeedPostPage = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.timerText}>
-        {formatTime(timer)}
-      </Text>
+      <View style={styles.timerContainer}>
+        <Text style={styles.timerText}>
+          {formatTime(timer)}
+        </Text>
+      </View>
       <View style={styles.imageContainer}>
         {renderCameraImage()}
-        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <MaterialIcons name="arrow-back" size={24} color="black" />
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={handleBack}
+        >
+          <LinearGradient
+            colors={["#1BC5DA", "#263283"]}
+            style={styles.backButtonGradient}
+          >
+            <View style={styles.backButtonIcon}/>
+          </LinearGradient>
         </TouchableOpacity>
         <View style={styles.innerButtonContainer}>
           <TouchableOpacity style={styles.innerButton} onPress={handleCameraSelection}>
@@ -251,9 +262,11 @@ const FeedPostPage = ({ route }) => {
         />
         <View style={styles.inputUnderline} />
       </View>
-      <TouchableOpacity style={styles.shareButton} onPress={shareFeed} disabled={isSubmitting}>
-        <Text style={styles.shareButtonText}>공유</Text>
-      </TouchableOpacity>
+      <View style={styles.shareButtonContainer}>
+        <TouchableOpacity style={styles.shareButton} onPress={shareFeed} disabled={isSubmitting}>
+          <Text style={styles.shareButtonText}>공유</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -261,36 +274,26 @@ const FeedPostPage = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
     alignItems: 'center',
-    paddingVertical: height * 0.02,
-  },
-  timerText: {
-    color: 'white',
-    fontSize: width * 0.06,
-    marginBottom: height * 0.01,
-  },
-  inputContainer: {
-    width: '90%',
     backgroundColor: 'black',
-    paddingHorizontal: width * 0.02,
-    paddingVertical: height * 0.01,
-    borderRadius: width * 0.02,
-    marginBottom: height * 0.01,
   },
-  input: {
-    color: 'white',
-    fontSize: width * 0.04,
+  
+  timerContainer: {
+    width: '90%',
+    height: height * 0.05,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  inputUnderline: {
-    height: 1,
-    backgroundColor: 'gray',
-    marginTop: height * 0.005,
-  },
+    timerText: {
+      color: 'white',
+      fontSize: width * 0.06,
+      marginBottom: height * 0.01,
+    },
+  
   imageContainer: {
-    width: '90%', // 제목란과 동일한 너비로 설정
+    height: height * 0.575, // 너비와 맞춰 조정
+    
     aspectRatio: 3 / 4,
-    backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: width * 0.02, // 너비와 맞춰 조정
@@ -298,72 +301,86 @@ const styles = StyleSheet.create({
     position: 'relative',
     marginBottom: height * 0.01,
   },
-  cameraImage: {
+    cameraImage: {
     width: '100%',
     height: '100%',
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    buttonContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: '90%',
+      marginBottom: height * 0.01,
+    },
+    innerButtonContainer: {
+      flexDirection: 'row',
+      position: 'absolute',
+      bottom: height * 0.01,
+      width: '90%',
+      justifyContent: 'space-evenly',
+    },
+    innerButton: {
+      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+      paddingVertical: height * 0.01,
+      paddingHorizontal: width * 0.05,
+      borderRadius: width * 0.02,
+    },
+    innerButtonText: {
+      color: 'white',
+      fontSize: width * 0.04,
+    },
+  
+  inputContainer: {
+    height: height * 0.06,
     width: '90%',
-    marginBottom: height * 0.01,
-  },
-  innerButtonContainer: {
-    flexDirection: 'row',
-    position: 'absolute',
-    bottom: height * 0.01,
-    width: '90%',
-    justifyContent: 'space-evenly',
-  },
-  innerButton: {
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    paddingHorizontal: width * 0.02,
     paddingVertical: height * 0.01,
-    paddingHorizontal: width * 0.05,
     borderRadius: width * 0.02,
+    marginVertical: height * 0.015,
   },
-  innerButtonText: {
-    color: 'white',
-    fontSize: width * 0.04,
+    input: {
+      color: 'white',
+      fontSize: width * 0.04,
+    },
+    inputUnderline: {
+      height: 1,
+      backgroundColor: 'gray',
+      marginTop: height * 0.005,
+    },
+  
+  shareButtonContainer: {
+    width: '90%',
   },
   shareButton: {
     backgroundColor: '#fff',
     paddingVertical: height * 0.02,
     paddingHorizontal: width * 0.05,
     borderRadius: width * 0.05,
-    width: '90%',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'gray',
   },
-  shareButtonText: {
-    color: '#000',
-    fontSize: width * 0.04,
-  },
+    shareButtonText: {
+      color: '#000',
+      fontSize: width * 0.04,
+    },
+  
   backButton: {
     position: 'absolute',
     top: height * 0.01,
     right: width * 0.02,
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    borderRadius: width * 0.02,
-    padding: width * 0.01,
+    justifyContent: 'center',
+    padding: width * 0.02,
   },
-  modalContainer: {
-    flex: 1,
+  backButtonGradient: {
+    width: width * 0.11,
+    height: width * 0.11,
+    borderRadius: width * 0.1,
+    borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  modalContent: {
-    backgroundColor: 'white',
-    padding: width * 0.05,
-    borderRadius: width * 0.02,
-    width: '80%',
-    alignItems: 'center',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: height * 0.01,
-    right: width * 0.02,
+  backButtonIcon: {
+    width: width * 0.06,
+    height: width * 0.0125,
+    backgroundColor: 'black',
   },
 });
 

@@ -20,7 +20,6 @@ import {
   Entypo,
   Ionicons,
 } from "@expo/vector-icons";
-import { Image as ExpoImage } from "expo-image"; // expo-image 패키지 import
 import axios from "axios";
 import Api from "../../../Api";
 import * as SecureStore from "expo-secure-store";
@@ -30,7 +29,7 @@ import { LinearGradient } from "expo-linear-gradient";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 const OptionText = ({ label }) => {
-  return <Text style={styles.smallText2}>{label}</Text>;
+  return <Text style={styles.CategoryText}>{label}</Text>;
 };
 const OptionItem = ({
   onPress,
@@ -42,11 +41,11 @@ const OptionItem = ({
   const IconComponent = iconType;
   return (
     <TouchableOpacity onPress={onPress}>
-      <View style={[styles.View, { backgroundColor }]}>
-        <View style={styles.iconWrapper}>
+      <View style={[styles.IconView, { backgroundColor }]}>
+        <View style={styles.IconAlign}>
           <IconComponent name={icon} size={30} color="black" />
         </View>
-        <Text style={styles.smallText}>{label}</Text>
+        <Text style={styles.ListText}>{label}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -99,6 +98,7 @@ const MyOptions = ({ navigation, route }) => {
   const deleteAccountModalVisible = () => {
     setIsDeleteAccountModal(!isDeleteAccountModal);
   };
+  
   const NotificationModal = ({ isVisible, onClose }) => {
     const [clickedStatus, setClickedStatus] = useState({});
     const [serverNotification, setServerNotification] = useState({});
@@ -175,44 +175,43 @@ const MyOptions = ({ navigation, route }) => {
         onRequestClose={onClose}
         transparent={true}
       >
-        <TouchableOpacity
-          style={styles.modalContainer}
-          activeOpacity={1}
-          onPressOut={onClose}
-        >
-          <TouchableOpacity style={styles.imageContainer} activeOpacity={1}>
+        <View style={styles.NotificationModalContainer}>
+          <View style={styles.NotificationModal}>
             {isLoading ? (
               <View style={styles.loader}>
                 <ActivityIndicator size="large" color="#fff" />
               </View>
             ) : (
               <>
-                <Text style={styles.modalText}>알림 설정</Text>
-                <Text style={styles.modalSmallText}>
-                  알림의 on/off를 설정해주세요!
-                </Text>
+                <View style={styles.ModalTextContainer}>
+                  <Text style={styles.ModalText}>알림 설정</Text>
+                  <Text style={styles.ModalSmallText}>
+                    알림의 on/off를 설정해주세요!
+                  </Text>
+                </View>
                 <ScrollView
-                  style={{ width: windowWidth * 0.8 }}
-                  contentContainerStyle={styles.scrollContent}
+                  style={styles.ScrollViewContainer}
+                  contentContainerStyle={styles.ScrollContent}
                 >
                   <TouchableOpacity
-                    style={styles.scrollModalButton}
+                    style={styles.NotificationScrollButton}
                     onPress={() => toggleClickStatus("communityNotiSet")}
                   >
-                    <Text style={styles.switchButtonText}>
+                    <Text style={styles.NotificationScrollButtonText}>
                       커뮤니티
-                      <AntDesign
-                        name="down"
-                        size={20}
-                        color="black"
-                        style={{ marginHorizontal: 10 }}
-                      />
+                      <View style={{ paddingLeft: 5 }}>
+                        <AntDesign
+                          name="down"
+                          size={15}
+                          color="black"
+                        />
+                      </View>
                     </Text>
                   </TouchableOpacity>
                   {clickedStatus["communityNotiSet"] && (
                     <>
-                      <View style={styles.switchModalButton}>
-                        <Text style={styles.switchButtonText}>랭킹 달성</Text>
+                      <View style={styles.NotificationScrollSubButton}>
+                        <Text style={styles.NotificationScrollButtonText}>랭킹 달성</Text>
                         <Switch
                           style={{ marginRight: 10 }}
                           trackColor={{ false: "#ABABAB", true: "#1E9FC4" }}
@@ -231,8 +230,8 @@ const MyOptions = ({ navigation, route }) => {
                           value={serverNotification.communityNotiSet?.inRank}
                         />
                       </View>
-                      <View style={styles.switchModalButton}>
-                        <Text style={styles.switchButtonText}>투표 마감</Text>
+                      <View style={styles.NotificationScrollSubButton}>
+                        <Text style={styles.NotificationScrollButtonText}>투표 마감</Text>
                         <Switch
                           style={{ marginRight: 10 }}
                           trackColor={{ false: "#ABABAB", true: "#1E9FC4" }}
@@ -251,8 +250,8 @@ const MyOptions = ({ navigation, route }) => {
                           value={serverNotification.communityNotiSet?.newRank}
                         />
                       </View>
-                      <View style={styles.switchModalButton}>
-                        <Text style={styles.switchButtonText}>투표</Text>
+                      <View style={styles.NotificationScrollSubButton}>
+                        <Text style={styles.NotificationScrollButtonText}>투표</Text>
                         <Switch
                           style={{ marginRight: 10 }}
                           trackColor={{ false: "#ABABAB", true: "#1E9FC4" }}
@@ -276,23 +275,24 @@ const MyOptions = ({ navigation, route }) => {
                     </>
                   )}
                   <TouchableOpacity
-                    style={styles.scrollModalButton}
+                    style={styles.NotificationScrollButton}
                     onPress={() => toggleClickStatus("postNotiSet")}
                   >
-                    <Text style={styles.switchButtonText}>
+                    <Text style={styles.NotificationScrollButtonText}>
                       게시물
-                      <AntDesign
-                        name="down"
-                        size={22}
-                        color="black"
-                        style={{ marginHorizontal: 5, marginTop: 2 }}
-                      />
+                      <View style={{ paddingLeft: 5 }}>
+                        <AntDesign
+                          name="down"
+                          size={15}
+                          color="black"
+                        />
+                      </View>
                     </Text>
                   </TouchableOpacity>
                   {clickedStatus["postNotiSet"] && (
                     <>
-                      <View style={styles.switchModalButton}>
-                        <Text style={styles.switchButtonText}>좋아요</Text>
+                      <View style={styles.NotificationScrollSubButton}>
+                        <Text style={styles.NotificationScrollButtonText}>좋아요</Text>
                         <Switch
                           style={{ marginRight: 10 }}
                           trackColor={{ false: "#ABABAB", true: "#1E9FC4" }}
@@ -308,8 +308,8 @@ const MyOptions = ({ navigation, route }) => {
                           value={serverNotification.postNotiSet?.postLike}
                         />
                       </View>
-                      <View style={styles.switchModalButton}>
-                        <Text style={styles.switchButtonText}>댓글 추가</Text>
+                      <View style={styles.NotificationScrollSubButton}>
+                        <Text style={styles.NotificationScrollButtonText}>댓글 추가</Text>
                         <Switch
                           style={{ marginRight: 10 }}
                           trackColor={{ false: "#ABABAB", true: "#1E9FC4" }}
@@ -328,8 +328,8 @@ const MyOptions = ({ navigation, route }) => {
                           value={serverNotification.postNotiSet?.newComment}
                         />
                       </View>
-                      <View style={styles.switchModalButton}>
-                        <Text style={styles.switchButtonText}>답글</Text>
+                      <View style={styles.NotificationScrollSubButton}>
+                        <Text style={styles.NotificationScrollButtonText}>답글</Text>
                         <Switch
                           style={{ marginRight: 10 }}
                           trackColor={{ false: "#ABABAB", true: "#1E9FC4" }}
@@ -350,8 +350,8 @@ const MyOptions = ({ navigation, route }) => {
                       </View>
                     </>
                   )}
-                  <View style={styles.scrollModalButton}>
-                    <Text style={styles.switchButtonText}>친구요청</Text>
+                  <View style={styles.NotificationScrollButton}>
+                    <Text style={styles.NotificationScrollButtonText}>친구요청</Text>
                     <Switch
                       style={{ marginRight: 10 }}
                       trackColor={{ false: "#ABABAB", true: "#1E9FC4" }}
@@ -365,8 +365,8 @@ const MyOptions = ({ navigation, route }) => {
                       value={serverNotification.friendRequest}
                     />
                   </View>
-                  <View style={styles.scrollModalButton}>
-                    <Text style={styles.switchButtonText}>서비스 알림</Text>
+                  <View style={styles.NotificationScrollButton}>
+                    <Text style={styles.NotificationScrollButtonText}>서비스 알림</Text>
                     <Switch
                       style={{ marginRight: 10 }}
                       trackColor={{ false: "#ABABAB", true: "#1E9FC4" }}
@@ -378,8 +378,8 @@ const MyOptions = ({ navigation, route }) => {
                       value={serverNotification.service}
                     />
                   </View>
-                  <View style={styles.scrollModalButton}>
-                    <Text style={styles.switchButtonText}>PhotoTime</Text>
+                  <View style={styles.NotificationScrollButton}>
+                    <Text style={styles.NotificationScrollButtonText}>PhotoTime</Text>
                     <Switch
                       style={{ marginRight: 10 }}
                       trackColor={{ false: "#ABABAB", true: "#1E9FC4" }}
@@ -396,24 +396,26 @@ const MyOptions = ({ navigation, route }) => {
                 </ScrollView>
               </>
             )}
-          </TouchableOpacity>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={saveChanges} style={styles.modalButton}>
-          <LinearGradient
-            colors={["#1BC5DA", "#263283"]}
-            style={styles.modalButton}
-          >
-            <Text
-              style={{ color: "#fff", fontWeight: "bold", textAlign: "center" }}
-            >
-              저장
-            </Text>
-          </LinearGradient>
-        </TouchableOpacity>
+          </View>
+            <TouchableOpacity onPress={saveChanges} style={styles.ModalSave}>
+              <LinearGradient
+                colors={["#1BC5DA", "#263283"]}
+                style={styles.ModalSave}
+              >
+                <Text style={styles.ModalButtonText}>
+                  저장
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onClose} style={styles.ModalClose}>
+              <Text style={[styles.ModalButtonText, {color: "black"}]}>
+                닫기
+              </Text>
+            </TouchableOpacity>
+          </View>
       </Modal>
     );
   };
-
   const BlockModal = ({ isVisible, onClose }) => {
     const [editButton, setEditButton] = useState(false);
     const [blockedStatus, setBlockedStatus] = useState({});
@@ -505,121 +507,114 @@ const MyOptions = ({ navigation, route }) => {
         onRequestClose={onClose}
         transparent={true}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.imageContainer2}>
+        <View style={styles.NotificationModalContainer}>
+          <View style={styles.NotificationModal}>
             {isLoading ? (
               <View style={styles.loader}>
                 <ActivityIndicator size="large" color="#0000ff" />
               </View>
             ) : (
               <>
-                <Text style={[styles.modalText, { marginTop: "8%" }]}>
-                  차단된 친구
-                </Text>
-                <Text style={[styles.modalSmallText, { marginBottom: "3%" }]}>
-                  {" "}
-                  차단된 친구들을 변경할 수 있어요!
-                </Text>
+                <View style={styles.ModalTextContainer}>
+                  <Text style={styles.ModalText}>
+                    차단된 친구
+                  </Text>
+                  <Text style={styles.ModalSmallText}>
+                    차단된 친구들을 변경할 수 있어요!
+                  </Text>
+                </View>
                 {blockedUsers.length === 0 ? (
-                  <View style={styles.blockNone}>
-                    <Text>차단한 친구가 없어요</Text>
+                  <View style={styles.BlockNone}>
+                    <Text style={styles.BlockNoneText}>차단한 친구가 없어요</Text>
                   </View>
                 ) : (
                   <>
+                    <View style={styles.BlockModalEditContainer}>
+                      {!editButton ? (
+                        <LinearGradient
+                          colors={["#1BC5DA", "#263283"]}
+                          style={styles.BlockModalEdit}
+                        >
+                          <TouchableOpacity
+                            onPress={startEditing}
+                          >
+                            <Text style={styles.BlockModalEditText}>편집</Text>
+                          </TouchableOpacity>
+                        </LinearGradient>
+                      ) : (
+                        <TouchableOpacity
+                          style={[styles.BlockModalEdit, { backgroundColor: "#1E1E1E" },]}
+                          onPress={cancelEditing}
+                        >
+                          <Text style={styles.BlockModalEditText}>편집 취소</Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
                     <ScrollView
-                      style={{ width: windowWidth * 0.8 }}
-                      contentContainerStyle={styles.scrollContent}
+                      style={{width:"100%"}}
+                      contentContainerStyle={styles.BlockScroll}
                     >
                       {blockedUsers.map((user) => (
                         <View
                           key={user.userId}
-                          style={styles.scrollModalButton}
+                          style={styles.BlockScrollButton}
                         >
-                          <Image
-                            style={styles.profileImage}
-                            source={{
-                              uri: user.userProfileUrl
-                                ? user.userProfileUrl
-                                : defaultImage,
-                            }}
-                          />
-                          <Text style={styles.buttonText}>{user.nickname}</Text>
+                          <LinearGradient
+                            colors={["#1BC5DA", "#263283"]}
+                            style={styles.BlockScrollProfileGradient}
+                          >
+                            <View style={styles.BlockScrollProfileContainer}>
+                              <Image
+                                style={styles.BlockScrollProfile}
+                                source={{
+                                  uri: user.userProfileUrl
+                                    ? user.userProfileUrl
+                                    : defaultImage,
+                                }}
+                              />
+                            </View>
+                          </LinearGradient>
+                          <View style={styles.ButtonTextContainer}>
+                            <Text>{user.nickname}</Text>
+                          </View>
                           {editButton && (
                             <TouchableOpacity
-                              style={[styles.blockedButton]}
                               onPress={() => toggleBlockStatus(user.userId)}
                             >
                               {blockedStatus[user.userId] ? (
-                                <AntDesign
-                                  name="checksquare"
-                                  size={30}
-                                  color="black"
-                                />
+                                <LinearGradient
+                                  colors={["#1BC5DA", "#263283"]}
+                                  style={styles.BlockSelect}
+                                >
+                                  <View style={styles.BlockButtonCircle}/>
+                                </LinearGradient>
                               ) : (
-                                <AntDesign
-                                  name="checksquareo"
-                                  size={30}
-                                  color="black"
-                                />
-                              )}
-                            </TouchableOpacity>
-                          )}
-                        </View>
-                      ))}
+                                <View
+                                  style={[styles.BlockSelect, {backgroundColor: "#232323"}]}
+                                >
+                                  <View style={styles.BlockButtonCircle}/>
+                                </View>)}
+                            </TouchableOpacity>)}
+                        </View>))}
                     </ScrollView>
-                    <View style={styles.blockedModalButton}>
-                      {!editButton ? (
-                        <TouchableOpacity
-                          style={[
-                            styles.blockedModalSaveButton,
-                            { backgroundColor: "#99A1F6" },
-                          ]}
-                          onPress={startEditing}
-                        >
-                          <Text style={styles.buttonText}>편집</Text>
-                        </TouchableOpacity>
-                      ) : (
-                        <TouchableOpacity
-                          style={[
-                            styles.blockedModalSaveButton,
-                            { backgroundColor: "#3B4664" },
-                          ]}
-                          onPress={cancelEditing}
-                        >
-                          <Text style={styles.buttonText}>편집 취소</Text>
-                        </TouchableOpacity>
-                      )}
-                      <TouchableOpacity
-                        style={styles.blockedModalSaveButton}
-                        onPress={handleSave}
-                      >
-                        <Text style={styles.buttonText}>저장</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </>
-                )}
-                <TouchableOpacity
-                  onPress={onClose}
-                  style={styles.modalButton}
-                >
-                  <LinearGradient
-                    colors={["#1BC5DA", "#263283"]}
-                    style={styles.modalButton}
-                  >
-                    <Text
-                      style={{
-                        color: "#fff",
-                        fontWeight: "bold",
-                        textAlign: "center",
-                      }}
-                    >
-                      저장
-                    </Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-              </>
-            )}
+                  </>)}
+              </>)}
           </View>
+            <TouchableOpacity onPress={handleSave} style={styles.ModalSave}>
+              <LinearGradient
+                colors={["#1BC5DA", "#263283"]}
+                style={styles.ModalSave}
+              >
+                <Text style={styles.ModalButtonText}>
+                  저장
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onClose} style={styles.ModalClose}>
+              <Text style={[styles.ModalButtonText, {color: "black"}]}>
+                닫기
+              </Text>
+            </TouchableOpacity>
         </View>
       </Modal>
     );
@@ -745,58 +740,62 @@ const MyOptions = ({ navigation, route }) => {
         onRequestClose={onClose}
         transparent={true}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.imageContainer}>
+        <View style={styles.NotificationModalContainer}>
+          <View style={[styles.NotificationModal, {height: windowHeight * 0.4}]}>
             {isLoading ? (
               <View style={styles.loader}>
                 <ActivityIndicator size="large" color="#0000ff" />
               </View>
             ) : (
               <>
-                <Text style={styles.modalText}>Photo Time</Text>
-                <Text style={styles.modalSmallText}>
-                  사진을 찍을 시간을 정해주세요!
-                </Text>
-                <ScrollView
-                  style={{ width: windowWidth * 0.8 }}
-                  contentContainerStyle={styles.scrollContent}
-                >
-                  {timeOptions.map((option) => (
+                <View style={styles.ModalTextContainer}>
+                  <Text style={styles.ModalText}>Photo Time</Text>
+                  <Text style={styles.ModalSmallText}>
+                    사진을 찍을 시간을 정해주세요!
+                  </Text>
+                </View>
+                <View style={styles.TimeOptionsContainer}>
+                  {timeOptions.map((option, index) => (
                     <TouchableOpacity
                       key={option.value}
                       onPress={() => handleTimeTypeChange(option.value)}
-                      style={
-                        severTime_type.randomNotifyTime === option.value
-                          ? styles.selectedModalButton
-                          : styles.modalButton
-                      }
+                      style={[
+                        severTime_type.randomNotifyTime === option.value ?
+                          styles.TimeSelectedBackground : styles.TimeOptionButton,
+                        index % 2 === 0 && styles.TimeOptionButtonMargin,
+                      ]}
                     >
-                      <Text style={styles.buttonText}>{option.label}</Text>
+                      {severTime_type.randomNotifyTime === option.value ? (
+                        <LinearGradient
+                          colors={["#1BC5DA", "#263283"]}
+                          style={styles.TimeSelectedOptionButton}
+                        >
+                          <Text style={styles.ModalButtonText}>{option.label}</Text>
+                        </LinearGradient>
+                      ) : (
+                        <Text style={[styles.ModalButtonText, {color: "black"}]}>{option.label}</Text>
+                      )}
                     </TouchableOpacity>
                   ))}
-                </ScrollView>
-                <TouchableOpacity
-                  style={[styles.modalButton, { backgroundColor: "#4CAF50" }]}
-                  onPress={saveChanges}
-                >
-                  <Text style={styles.buttonText}>저장</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[
-                    styles.modalButton,
-                    {
-                      marginBottom: "3%",
-                      margin: "1%",
-                      backgroundColor: "grey",
-                    },
-                  ]}
-                  onPress={onClose}
-                >
-                  <Text style={styles.buttonText}>닫기</Text>
-                </TouchableOpacity>
+                </View>
               </>
             )}
           </View>
+          <TouchableOpacity onPress={saveChanges} style={styles.ModalSave}>
+            <LinearGradient
+              colors={["#1BC5DA", "#263283"]}
+              style={styles.ModalSave}
+            >
+              <Text style={styles.ModalButtonText}>
+                저장
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onClose} style={styles.ModalClose}>
+            <Text style={[styles.ModalButtonText, {color: "black"}]}>
+              닫기
+            </Text>
+          </TouchableOpacity>
         </View>
       </Modal>
     );
@@ -804,7 +803,7 @@ const MyOptions = ({ navigation, route }) => {
   const QnAModal = ({ isVisible, onClose }) => {
     const [QnA, setQnA] = useState([]);
     const [answerShowing, setAnswerShowing] = useState({});
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     const fetchAnswer = async () => {
       try {
@@ -816,6 +815,8 @@ const MyOptions = ({ navigation, route }) => {
         }
       } catch (error) {
         console.error("Error fetching calendar data", error);
+      } finally {
+        setIsLoading(false);
       }
     };
     useEffect(() => {
@@ -836,27 +837,27 @@ const MyOptions = ({ navigation, route }) => {
         onRequestClose={onClose}
         transparent={true}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.imageContainer}>
+        <View style={styles.NotificationModalContainer}>
+          <View style={styles.NotificationModal}>
             {isLoading ? (
               <View style={styles.loader}>
                 <ActivityIndicator size="large" color="#0000ff" />
               </View>
             ) : (
               <>
-                <Text style={styles.modalText}>QnA</Text>
-                <Text style={styles.modalSmallText}>
+              <View style={styles.ModalTextContainer}>
+                <Text style={styles.ModalText}>
+                  QnA
+                </Text>
+                <Text style={styles.ModalSmallText}>
                   자주 받는 질문들에 대해 답변해드려요
                 </Text>
-                <Text
-                  style={{
-                    fontSize: 20,
-                    fontWeight: "bold",
-                    textAlign: "center",
-                  }}
-                >
-                  추후에 업데이트할 예정.
-                </Text>
+              </View>
+              {QnA.length === 0 ? (
+                <View style={styles.BlockNone}>
+                  <Text style={styles.BlockNoneText}>업데이트 예정</Text>
+                </View>
+              ) : (
                 <ScrollView
                   style={{ width: windowWidth * 0.8 }}
                   contentContainerStyle={styles.scrollContent}
@@ -881,19 +882,14 @@ const MyOptions = ({ navigation, route }) => {
                       )}
                     </View>
                   ))}
-                </ScrollView>
-                <TouchableOpacity
-                  style={[
-                    styles.modalButton,
-                    { backgroundColor: "grey", margin: 15 },
-                  ]}
-                  onPress={onClose}
-                >
-                  <Text style={styles.buttonText}>닫기</Text>
-                </TouchableOpacity>
-              </>
-            )}
+                </ScrollView>)}
+              </>)}
           </View>
+          <TouchableOpacity onPress={onClose} style={styles.ModalClose}>
+            <Text style={[styles.ModalButtonText, {color: "black"}]}>
+              닫기
+            </Text>
+          </TouchableOpacity>
         </View>
       </Modal>
     );
@@ -907,7 +903,6 @@ const MyOptions = ({ navigation, route }) => {
         setInputText(""); // Modal이 닫힐 때 입력 필드를 초기화합니다.
       }
     }, [isVisible]);
-
     const deleteAccount = async () => {
       if (isLoading) return;
 
@@ -943,84 +938,51 @@ const MyOptions = ({ navigation, route }) => {
         onRequestClose={onClose}
         transparent={true}
       >
-        <View style={styles.modalContainer}>
-          <View style={[styles.imageContainer, { height: windowHeight * 0.5 }]}>
+        <View style={styles.NotificationModalContainer}>
+          <View style={[styles.NotificationModal, { height: windowHeight * 0.4 }]}>
             {isLoading ? (
               <View style={styles.loader}>
                 <ActivityIndicator size="large" color="#0000ff" />
               </View>
             ) : (
               <>
-                <View style={{ height: "20%" }}>
-                  <Text style={styles.modalText}>계정 탈퇴</Text>
-                  <Text style={styles.modalSmallText}>
+                <View style={styles.ModalTextContainer}>
+                  <Text style={styles.ModalText}>계정 삭제</Text>
+                  <Text style={styles.ModalSmallText}>
                     정말로 계정을 탈퇴하실 건가요?
                   </Text>
                 </View>
-                <View
-                  style={{
-                    height: "20%",
-                    width: "100%",
-                    alignItems: "center",
-                    marginBottom: 50,
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: "black",
-                      fontSize: 12,
-                      fontWeight: "bold",
-                      textAlign: "center",
-                      marginTop: 3,
-                      marginBottom: 5,
-                    }}
-                  >
+                <View style={styles.DeleteTextContainer}>
+                  <Text style={styles.DeleteSmallText}>
                     아래의 글자를 동일하게 작성해주세요
                   </Text>
-                  <Text
-                    style={{
-                      color: "black",
-                      fontSize: 20,
-                      fontWeight: "bold",
-                      textAlign: "center",
-                      marginTop: 3,
-                      marginBottom: 5,
-                    }}
-                  >
-                    계정 삭제
+                  <Text style={styles.DeleteText}>
+                    탈퇴
                   </Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder=""
-                    value={inputText}
-                    onChangeText={setInputText}
-                  />
                 </View>
-                <TouchableOpacity
-                  style={
-                    inputText === "계정 삭제"
-                      ? styles.deleteModalButton
-                      : styles.disabledModalButton
-                  }
-                  onPress={deleteAccount}
-                  disabled={inputText !== "계정 삭제"}
-                >
-                  <Text style={[styles.buttonText, { color: "white" }]}>
-                    계정 탈퇴
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[
-                    styles.modalButton,
-                    { backgroundColor: "grey", margin: 15 },
-                  ]}
-                  onPress={onClose}
-                >
-                  <Text style={styles.buttonText}>닫기</Text>
-                </TouchableOpacity>
+                <TextInput
+                  style={styles.DeleteInput}
+                  placeholder=""
+                  value={inputText}
+                  onChangeText={setInputText}
+                />
               </>
             )}
           </View>
+          <TouchableOpacity
+            style={inputText === "탈퇴" ? styles.deleteModalButton : styles.disabledModalButton}
+            onPress={deleteAccount}
+            disabled={inputText !== "탈퇴"}
+          >
+            <Text style={[styles.ModalButtonText, { color: "black" }]}>
+              계정 삭제
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onClose} style={styles.ModalClose}>
+            <Text style={[styles.ModalButtonText, {color: "black"}]}>
+              닫기
+            </Text>
+          </TouchableOpacity>
         </View>
       </Modal>
     );
@@ -1060,19 +1022,28 @@ const MyOptions = ({ navigation, route }) => {
     );
   }
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
+    <View style={styles.ListContainer}>
+      <ScrollView style={styles.ListScrollView}>
         <TouchableOpacity
           onPress={() => navigation.navigate("MyInfo", { user: user })}
-          style={styles.userView}
+          style={styles.MyInfoView}
         >
-          <Image
-            source={{ uri: user.profileUrl ? user.profileUrl : defaultImage }}
-            style={styles.Image}
-          />
-          <View style={{ marginLeft: 10 }}>
-            <Text style={styles.Text}>{user.username}</Text>
-            <Text style={styles.Text}>{user.nickname}</Text>
+          <LinearGradient
+            colors={["#1BC5DA", "#263283"]}
+            style={styles.MyInfoProfileGradient}
+          >
+            <View style={styles.MyInfoProfileContainer}>
+              <Image
+                style={styles.MyInfoProfile}
+                source={{ uri: user.profileUrl ? user.profileUrl : defaultImage }}
+              />
+            </View>
+          </LinearGradient>
+          <View style={{ marginHorizontal: 10, width: "60%",}}>
+            <View style={{borderColor: "black", borderBottomWidth: 1}}>
+              <Text style={styles.MyInfoText}>{user.username}</Text>
+            </View>
+            <Text style={styles.MyInfoSmallText}>{user.nickname}</Text>
           </View>
         </TouchableOpacity>
         <View>
@@ -1164,19 +1135,14 @@ const MyOptions = ({ navigation, route }) => {
 };
 
 const styles = StyleSheet.create({
-  loader: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  container: {
+  ListContainer: {
     flex: 1,
     backgroundColor: "black", // 변경: 배경 검정색
   },
-  scrollView: {
+  ListScrollView: {
     margin: 20,
   },
-  View: {
+  IconView: {
     flexDirection: "row",
     alignItems: "center",
     padding: 20,
@@ -1184,7 +1150,25 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff", // 변경: 버튼 배경 흰색
     marginBottom: 10,
   },
-  userView: {
+  IconAlign: {
+    width: 40,
+    marginRight: 10,
+    alignItems: "center",
+  },
+  ListText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    margin: 5,
+    color: "black", // 변경: 텍스트 검정색
+  },
+  CategoryText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginVertical: 15,
+    color: "#fff", // 변경: 텍스트 검정색
+  },
+  
+  MyInfoView: {
     flexDirection: "row",
     alignItems: "center",
     padding: 10,
@@ -1192,130 +1176,112 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff", // 변경: 버튼 배경 흰색
     marginBottom: 10,
   },
-  Image: {
+  MyInfoProfileGradient: {
+    height: 90,
+    width: 90,
+    borderRadius: 100,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  MyInfoProfileContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  MyInfoProfile: {
     width: 85,
     height: 85,
     borderRadius: 100,
-    backgroundColor: "white",
-    borderWidth: 5,
-    borderColor: "#1BC5DA",
+    borderColor: "white",
+    borderWidth: 2,
   },
-  Text: {
+  MyInfoText: {
     fontSize: 20,
     fontWeight: "bold",
     color: "black", // 변경: 텍스트 흰색
+    margin: 3,
   },
-  smallText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    margin: 5,
-    color: "black", // 변경: 텍스트 검정색
+  MyInfoSmallText: {
+    fontSize: 15,
+    color: "black", // 변경: 텍스트 흰색
+    margin: 3,
   },
-  smallText2: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginVertical: 15,
-    color: "#fff", // 변경: 텍스트 검정색
-  },
-  iconWrapper: {
-    // marginRight: 15,
-    // borderRadius: 30, // 동그라미 테두리
-    // borderWidth: 1,
-    // borderColor: 'black',
-    // padding: 5,
-    // justifyContent: 'center',
-    // alignItems: 'center',
-  },
-  modalContainer: {
+  
+  loader: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "black", // 변경: 배경 검정색
+  },
+  ModalTextContainer: {
+    width: "90%",
+    height: "20%",
     alignItems: "center",
     justifyContent: "center",
   },
-  imageContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: windowWidth * 0.8,
-    height: windowHeight * 0.55,
-    borderRadius: 20,
-    backgroundColor: "white",
-  },
-  imageContainer2: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: windowWidth * 0.8,
-    height: windowHeight * 0.6,
-    borderRadius: 20,
-    backgroundColor: "white",
-  },
-  imageContainer3: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: windowWidth * 0.8,
-    height: windowHeight * 0.7,
-    borderRadius: 20,
-    backgroundColor: "white",
-  },
-  scrollContainer: {
-    width: windowWidth * 0.65,
-    borderRadius: 10,
-    borderColor: "black",
-    backgroundColor: "#81b0ff",
-  },
-  profileImage: {
-    height: 30,
-    width: 30,
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: "grey",
-    marginHorizontal: 10,
-  },
-  scrollContent: {
-    alignItems: "center", // 컨텐츠를 가운데 정렬
-    // paddingHorizontal:3
-  },
-  switchButtonText: {
-    marginLeft: 10,
-    marginRight: "auto",
-    color: "black",
-    fontSize: 15,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  buttonText: {
-    color: "black",
-    fontSize: 15,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  modalText: {
+  ModalText: {
     color: "black",
     fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
     marginTop: 10,
   },
-  modalSmallText: {
+  ModalSmallText: {
     color: "black",
     fontSize: 12,
     textAlign: "center",
     marginTop: 3,
     marginBottom: 5,
   },
-  switchModalButton: {
-    flexDirection: "row",
-    width: "60%",
+  ModalSave: {
+    alignSelf: "center",
+    justifyContent: "center",
+    width: "90%",
     height: 50,
+    marginTop: 10,
     borderRadius: 10,
-    borderWidth: 1,
-    backgroundColor: "#fff", // 변경: 버튼 배경 흰색
-    borderColor: "black",
-    alignItems: "center",
-    margin: 10,
   },
-  scrollModalButton: {
+  ModalClose: {
+    alignSelf: "center",
+    justifyContent: "center",
+    width: "81%",
+    height: 50,
+    marginTop: 10,
+    borderRadius: 10,
+    borderColor: "black",
+    borderWidth: 1,
+    backgroundColor: "white",
+  },
+  ModalButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  
+  ScrollContent: {
+    alignItems: "center", // 컨텐츠를 가운데 정렬
+  },
+  ScrollViewContainer: {
+    width: windowWidth * 0.7,
+  },
+  
+  NotificationModalContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  NotificationModal: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: windowWidth * 0.8,
+    height: windowHeight * 0.5,
+    borderRadius: 20,
+    borderWidth: 1,
+    backgroundColor: "white",
+  },
+  NotificationScrollButton: {
     flexDirection: "row",
-    width: "85%",
+    width: "100%",
     height: 40,
     borderRadius: 10,
     borderWidth: 1,
@@ -1324,9 +1290,37 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: "3%",
   },
-  blockedModalSaveButton: {
-    width: "45%",
-    // margin: "5%",
+  NotificationScrollSubButton: {
+    flexDirection: "row",
+    width: "80%",
+    height: 40,
+    borderRadius: 10,
+    borderWidth: 1,
+    backgroundColor: "#fff", // 변경: 버튼 배경 흰색
+    borderColor: "black",
+    alignItems: "center",
+    margin: "3%",
+  },
+  NotificationScrollButtonText: {
+    marginLeft: 10,
+    marginRight: "auto",
+    color: "black",
+    fontSize: 15,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  
+  BlockScroll: {
+    alignItems: "center", // 컨텐츠를 가운데 정렬
+    height: "100%",
+  },
+  BlockModalEditContainer: {
+    width:"85%",
+    height:"8%",
+    marginBottom:"3%"
+  },
+  BlockModalEdit: {
+    width: "25%",
     height: "100%",
     borderRadius: 10,
     borderWidth: 1,
@@ -1334,7 +1328,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#4CAF50",
   },
-  blockedModalButton: {
+  BlockModalButton: {
     width: "80%",
     height: 50,
     borderRadius: 10,
@@ -1346,89 +1340,103 @@ const styles = StyleSheet.create({
     borderColor: "white",
     backgroundColor: "white",
   },
-  modalButton: {
-    width: "100%",
-    height: 50,
-    borderRadius: 10,
-    borderColor: "black",
-    alignSelf: "center",
-    justifyContent: "center",
-    marginTop: 10,
-  },
-  gradientButton: {
-    width: "80%",
-    height: 50,
-    borderRadius: 10,
-    overflow: "hidden",
-    alignSelf: "center",
-    marginTop: 10,
-  },
-  fullGradient: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  btnText: {
-    color: "#fff",
-    fontSize: 15,
+  BlockModalEditText: {
+    color: "white",
+    fontSize: 12,
     fontWeight: "bold",
+    textAlign: "center",
   },
-  input: {
+  BlockNone: {
+    height: "75%",
     width: "80%",
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    marginBottom: 20,
-  },
-  disabledModalButton: {
-    width: "80%",
-    padding: 15,
+    justifyContent: "center",
     alignItems: "center",
-    borderRadius: 10,
-    backgroundColor: "grey",
-    opacity: 0.5,
   },
-  deleteModalButton: {
-    width: "80%",
-    height: 50,
+  BlockNoneText: {
+    color: "black",
+    fontSize: 15,
+    fontWeight: "extra-bold",
+    textAlign: "center",
+  },
+  BlockScrollButton: {
+    flexDirection: "row",
+    width: "85%",
+    height: "22%",
     borderRadius: 10,
-    borderWidth: 1,
-    backgroundColor: "red",
+    borderWidth: 2,
     borderColor: "black",
+    alignItems: "center",
+    margin: "2%",
+  },
+  BlockScrollProfile: {
+    height: 37,
+    width: 37,
+    borderRadius: 20,
+    borderColor: "white",
+    borderWidth: 1,
+  },
+  BlockScrollProfileGradient: {
+    height: 42,
+    width: 42,
+    borderRadius: 25,
+    marginHorizontal: 10,
     alignItems: "center",
     justifyContent: "center",
   },
-  selectedModalButton: {
-    width: "80%",
-    height: 50,
-    borderRadius: 10,
-    borderWidth: 1,
-    backgroundColor: "#3B4664",
-    borderColor: "black",
+  BlockScrollProfileContainer: {
     alignItems: "center",
     justifyContent: "center",
-    margin: "3%",
   },
-  blockedButton: {
-    marginLeft: "auto",
-    marginRight: 10,
+  ButtonTextContainer: {
+    width: "55%",
+  },
+  BlockSelect: {
     width: 30,
     height: 30,
     borderRadius: 5,
-    backgroundColor: "white",
-  },
-  blockNone: {
-    height: "70%",
-    width: "80%",
-    justifyContent: "center",
+    marginHorizontal: 5,
     alignItems: "center",
-    marginLeft: "10%",
-    marginRight: "10%",
-    backgroundColor: "#fff",
-    padding: 10,
-    borderColor: "black",
+    justifyContent: "center",
   },
+  BlockButtonCircle : {
+    width: 5,
+    height: 5,
+    borderRadius: 5,
+    backgroundColor: "white"
+  },
+  
+  TimeOptionsContainer: {
+    margin: 20,
+    width: "85%",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  TimeOptionButton: {
+    width: '45%',
+    padding: 15,
+    marginVertical: 5,
+    borderRadius: 15,
+    borderColor: 'black',
+    borderWidth: 1,
+    alignItems: 'center',
+  },
+  TimeSelectedBackground: {
+    width: '45%',
+    alignItems: 'center',
+  },
+  TimeSelectedOptionButton: {
+    width: '100%',
+    padding: 15,
+    marginVertical: 5,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  TimeOptionButtonMargin: {
+    marginRight: '10%',
+  },
+  
   QnAText: {
     fontSize: 15,
     fontWeight: "bold",
@@ -1457,6 +1465,54 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     marginVertical: 5,
+  },
+  
+  DeleteTextContainer: {
+    height: 55,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 50,
+  },
+  DeleteText: {
+    color: "black",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  DeleteSmallText: {
+    color: "#6C6C6C",
+    fontSize: 12,
+    marginBottom: 5,
+  },
+  DeleteInput: {
+    width: "80%",
+    height: 40,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    marginVertical: 10,
+  },
+  disabledModalButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: "81%",
+    height: 50,
+    marginTop: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    backgroundColor: "#949494",
+    borderColor: "black",
+  },
+  deleteModalButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: "81%",
+    height: 50,
+    marginTop: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    backgroundColor: "#FF3232",
+    borderColor: "black",
   },
 });
 export default MyOptions;

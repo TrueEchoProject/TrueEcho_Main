@@ -64,7 +64,6 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
             setPage(0);
         }
     }, [isVisible, postId]);
-
     useEffect(() => {
         if (loading) {
             fetchComments(page);
@@ -107,17 +106,7 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
             setIsLoading(false);
         }
     };
-
-    const handleScroll = ({ nativeEvent }) => {
-        const { contentOffset, layoutMeasurement, contentSize } = nativeEvent;
-        scrollPositionRef.current = contentOffset.y;
-
-        if (layoutMeasurement.height + contentOffset.y >= contentSize.height - 20 && !loading && hasMore) {
-            setPage(prevPage => prevPage + 1);
-            setLoading(true);
-        }
-    };
-
+    
     const handleDeleteComment = async (commentId) => {
         if (isLoading) return;
         setIsLoading(true);
@@ -153,7 +142,6 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
             ]
         );
     };
-
     const handleSubmitComment = async () => {
         if (isLoading) return;
         setIsLoading(true);
@@ -196,22 +184,20 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
                 console.log('FCM Response:', FcmResponse.data);
             }
             if (response.data.message === "해당 게시물의 댓글 생성을 성공했습니다.") {
-                setTextInputValue('');
-                setReplyingTo(null);
-                setShowUnderComments({});
-                setPage(0);
                 setComments([]);
+                setShowUnderComments({});
+                setReplyingTo(null);
+                setTextInputValue("");
+                setCommentNone(false);
+                setPage(0);
                 setLoading(true);
-                await fetchComments(0);
             }
         } catch (error) {
             console.error('댓글 추가 실패:', error);
-        } finally {
-            setTextInputValue('');
+        }   finally {
+            await fetchComments(0);
+            setTextInputValue("");
             setReplyingTo(null);
-            setShowUnderComments({});
-            setLoading(false);
-            setIsLoading(false);
         }
     };
 
@@ -268,19 +254,18 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
 								</TouchableOpacity>
 							)}
 						</View>
-						{comment.underComments.length > 0 && (
-							<TouchableOpacity onPress={() => toggleUnderComments(index)}>
-								<Text style={styles.moreButton}>답글 더보기</Text>
-							</TouchableOpacity>
-						)}
+              {comment.underComments.length > 0 && (
+                <TouchableOpacity style={{flexDirection: "row"}} onPress={() => toggleUnderComments(index)}>
+                    <Text>답글 {comment.underComments.length}개 더보기</Text>
+                    {showUnderComments[index] ? <Text>▲</Text> : <Text>▼</Text>}
+                </TouchableOpacity>
+              )}
 					</View>
 				</View>
 				<UnderComments commentId={comment.commentId} underComments={comment.underComments} isVisible={showUnderComments[index]} />
 			</View>
 		);
 	});
-	
-
     const UnderCommentItem = ({ underComment }) => {
         const formatDate = (dateString) => {
             const date = new Date(dateString);
@@ -316,16 +301,14 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
             </View>
         );
     };
-
     const UnderComments = React.memo(({ underComments, isVisible, commentId }) => {
-        const commentsToShow = isVisible ? underComments : underComments.slice(0, 2);
-        return (
+        return isVisible ? (
             <View style={styles.underCommentsContainer}>
-                {commentsToShow.map((underComment, index) => (
+                {underComments.map((underComment, index) => (
                     <UnderCommentItem key={index} underComment={underComment} commentId={commentId} />
                 ))}
             </View>
-        );
+        ) : null;
     });
 
     const toggleUnderComments = (index) => {
@@ -335,6 +318,11 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
         }));
     };
 
+    const handleCancelReply = () => {
+        setReplyingTo(null);
+        setTextInputValue('');
+    };
+    
     const handleInputFocus = () => {
         Animated.timing(animatedHeight, {
             toValue: marginTopLimit,
@@ -342,13 +330,12 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
             useNativeDriver: false,
         }).start();
     };
-
     const panResponder = useMemo(() => PanResponder.create({
         onStartShouldSetPanResponder: () => true,
         onPanResponderMove: (_, gestureState) => {
             const dragResponse = gestureState.dy * 0.1;
             let newMarginTop = animatedHeight._value + dragResponse;
-
+            
             newMarginTop = Math.min(Math.max(newMarginTop, marginTopLimit), windowHeight);
             animatedHeight.setValue(newMarginTop);
         },
@@ -368,12 +355,16 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
             }
         },
     }), [insets.top]);
-
-    const handleCancelReply = () => {
-        setReplyingTo(null);
-        setTextInputValue('');
+    const handleScroll = ({ nativeEvent }) => {
+        const { contentOffset, layoutMeasurement, contentSize } = nativeEvent;
+        scrollPositionRef.current = contentOffset.y;
+        
+        if (layoutMeasurement.height + contentOffset.y >= contentSize.height - 20 && !loading && hasMore) {
+            setPage(prevPage => prevPage + 1);
+            setLoading(true);
+        }
     };
-
+    
     return (
         <SafeAreaProvider>
             <Modal
@@ -426,9 +417,9 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
                             {replyingTo && (
                                 <TouchableOpacity onPress={handleCancelReply}>
 								<LinearGradient
-									colors={['#1BC5DA', '#263283']}
+									colors={['#263283', '#1DC3D9']}
 									start={{ x: 0, y: 0.5 }}
-									end={{ x: 1, y: 0.5 }}
+									end={{ x:1, y: 0.5 }}
 									style={styles.cancelButtonGradient}
 								>
 									<View style={styles.cancelButton}>
@@ -452,7 +443,7 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
                                         colors={['#1BC5DA', '#263283']}
                                         style={styles.submitButton}
                                     >
-                                        <AntDesign name='caretup' size={25} style={{ color: 'black' }} />
+                                        <AntDesign name='caretup' size={15} style={{ color: 'black' }} />
                                     </LinearGradient>
                                 </TouchableOpacity>
                             </View>
@@ -466,13 +457,23 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
 
 const styles = StyleSheet.create({
     cancelButton: {
-		paddingHorizontal: 100,
         paddingVertical: 5,
-        marginHorizontal: 5,
+        marginHorizontal: 1,
         borderRadius: 5,
         backgroundColor: 'white', // 배경 흰색으로 설정
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    cancelButtonGradient: {
+        paddingHorizontal: 5,
+        paddingVertical: 5,
+        borderRadius: 5,
+        padding: 2, // 테두리 두께 조절
+    },
+    cancelButtonText: {
+        color: 'black', // 텍스트 색상 변경
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     submitButton: {
         justifyContent: "center",
@@ -491,22 +492,16 @@ const styles = StyleSheet.create({
     },
     commentItem: {
         padding: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#FFFFFF',
-        backgroundColor: '#fff',
+
         marginBottom: 0, // 간격을 줄이려면 이 값을 더 작게 설정합니다
-        borderRadius: 0,
+        borderRadius: 10,
     },
     replyingCommentItem: {
         backgroundColor: 'white', // 회색 배경 제거
-        borderColor: '#1BC5DA',
+        borderColor: '#263283',
         borderWidth: 3,
-        borderRadius: 0,
-        shadowOpacity: 0.3,
-        shadowRadius: 10,
-        elevation: 6,
-        overflow: 'hidden', // 테두리 잘림 문제 해결
-		marginBottom: 1, // 간격을 줄이려면 이 값을 더 작게 설정합니다
+        borderRadius: 10,
+    		marginBottom: 1, // 간격을 줄이려면 이 값을 더 작게 설정합니다
     },
     commentHeader: {
         flexDirection: 'row',
@@ -520,6 +515,8 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         borderRadius: 30,
+        borderColor: 'black',
+        borderWidth: 2,
     },
     commentBody: {
         marginLeft: 10,
@@ -652,14 +649,5 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         height: 40,
         backgroundColor: '#f1f1f1',
-    },
-    cancelButtonGradient: {
-        borderRadius: 5,
-        padding: 3, // 테두리 두께 조절
-    },
-    cancelButtonText: {
-        color: 'black', // 텍스트 색상 변경
-        fontSize: 16,
-        fontWeight: 'bold',
     },
 });

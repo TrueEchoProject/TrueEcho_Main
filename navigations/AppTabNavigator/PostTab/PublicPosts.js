@@ -28,13 +28,11 @@ const PublicPosts = React.forwardRef((props, ref) => {
     getPosts: refreshPosts,
     toggleOptions,
   }));
-
   useFocusEffect(
     useCallback(() => {
       refreshPosts();
     }, [])
   );
-
   useEffect(() => {
     refreshPosts();
   }, []);
@@ -43,7 +41,6 @@ const PublicPosts = React.forwardRef((props, ref) => {
     setPage(0);
     await firstFetch();
   };
-
   const firstFetch = async () => {
     setRefreshing(true);
     const serverResponse = await Api.get('/post/read/1?index=0&pageCount=5&type=PUBLIC');
@@ -57,7 +54,6 @@ const PublicPosts = React.forwardRef((props, ref) => {
       }, 50);
     }
   };
-
   const getPosts = async (selectedRange = null, index = 0, baseUrl = '/post/read/1') => {
     let url = `${baseUrl}?index=${index}&pageCount=15&type=PUBLIC`;
     if (selectedRange) {
@@ -118,18 +114,15 @@ const PublicPosts = React.forwardRef((props, ref) => {
   const toggleOptions = () => {
     setOptionsVisible(!optionsVisible);
   };
-
   const handleBlock = async (userId) => {
     setPosts(prev => prev.filter(item => item.userId !== userId));
     await new Promise(resolve => setTimeout(resolve, 0));
   };
-
   const handleDelete = async (postId) => {
     console.log('Delete:', postId);
     setPosts(prev => prev.filter(item => item.postId !== postId));
     await new Promise(resolve => setTimeout(resolve, 0));
   };
-
   const handlePageChange = (e) => {
     const newIndex = e.nativeEvent.position;
     setCurrentPage(newIndex);
@@ -149,19 +142,16 @@ const PublicPosts = React.forwardRef((props, ref) => {
       });
     }
   };
-
-  if (posts.length === 0) {
-    return <View style={styles.container}><Text>Loading...</Text></View>;
-  }
-
   const handlePressIn = (button) => {
     setActiveButton(button);
   };
-
   const handlePressOut = () => {
     setActiveButton(null);
   };
-
+  
+  if (posts.length === 0) {
+    return <View style={styles.container}><Text>Loading...</Text></View>;
+  }
   return (
     <>
       {optionsVisible && (
@@ -253,7 +243,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
       <ScrollView
         contentContainerStyle={styles.scrollViewContent}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={() => getPosts(null, 0)} />
+          <RefreshControl onRefresh={() => getPosts(null, 0)} />
         }
       >
         <PagerView
@@ -282,7 +272,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: 'black',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -291,7 +281,7 @@ const styles = StyleSheet.create({
   },
   pagerView: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: 'black',
   },
   centeredView: {
     flex: 1,

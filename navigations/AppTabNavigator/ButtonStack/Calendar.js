@@ -12,7 +12,6 @@ import {
   Image,
 } from "react-native";
 import Api from "../../../Api";
-import { Image as ExpoImage } from "expo-image"; // expo-image 패키지 import
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -143,15 +142,15 @@ const Calendar = ({ navigation }) => {
       setIsSubmit(false);
     }
   };
-
+  
   const generateMatrix = () => {
-    let matrix = [days.map((day) => ({ day }))];
+    let matrix = [days.map((day) => ({ day, isDayHeader: true }))]; // 요일 행에 isDayHeader 추가
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
     const firstDay = new Date(year, month, 1).getDay();
     const maxDays = new Date(year, month + 1, 0).getDate();
     let counter = 1 - firstDay;
-
+    
     for (let row = 1; row < 7; row++) {
       matrix[row] = [];
       for (let col = 0; col < 7; col++, counter++) {
@@ -162,9 +161,9 @@ const Calendar = ({ navigation }) => {
           isInCurrentMonth: day !== "",
           imageUrl: specificDates[dateKey]?.front,
           imageBackUrl: specificDates[dateKey]?.back,
-          date: dateKey, // 날짜 정보 추가
-          pinId: specificDates[dateKey]?.pinId, // pinId 추가
-          postId: specificDates[dateKey]?.postId, // postId 추가
+          date: dateKey,
+          pinId: specificDates[dateKey]?.pinId,
+          postId: specificDates[dateKey]?.postId,
         };
       }
     }
@@ -173,41 +172,53 @@ const Calendar = ({ navigation }) => {
   const renderCalendar = () => {
     const matrix = generateMatrix();
     return (
-      <View style={styles.calendar}>
-        {matrix.map((row, rowIndex) => (
-          <View style={styles.row} key={rowIndex}>
-            {row.map((item, colIndex) =>
-              item.imageUrl && rowIndex !== 0 ? (
-                <TouchableOpacity
-                  key={colIndex}
-                  style={styles.cell}
-                  onPress={() =>
-                    toggleImageVisibility(
-                      item.imageUrl,
-                      item.imageBackUrl,
-                      item.date,
-                      item.postId
-                    )
-                  }
-                >
-                  <ImageBackground
-                    source={{ uri: item.imageBackUrl }}
-                    style={styles.backgroundImage}
+      <View style={styles.calendarContainer}>
+        <LinearGradient
+          colors={['rgba(0, 0, 0, 0.8)', 'transparent']}
+          style={styles.gradientTop}
+        />
+        <View style={styles.calendar}>
+          {matrix.map((row, rowIndex) => (
+            <View style={styles.row} key={rowIndex}>
+              {row.map((item, colIndex) =>
+                item.imageUrl && rowIndex !== 0 ? (
+                  <TouchableOpacity
+                    key={colIndex}
+                    style={styles.cell}
+                    onPress={() =>
+                      toggleImageVisibility(
+                        item.imageUrl,
+                        item.imageBackUrl,
+                        item.date,
+                        item.postId
+                      )
+                    }
                   >
-                    <Text style={styles.dateImageText}>{item.day}</Text>
-                  </ImageBackground>
-                </TouchableOpacity>
-              ) : (
-                <View key={colIndex} style={styles.cell}>
-                  <Text style={styles.dateText}>{item.day}</Text>
-                </View>
-              )
-            )}
-          </View>
-        ))}
+                    <ImageBackground
+                      source={{ uri: item.imageBackUrl }}
+                      style={styles.backgroundImage}
+                    >
+                      <Text style={styles.dateImageText}>{item.day}</Text>
+                    </ImageBackground>
+                  </TouchableOpacity>
+                ) : (
+                  <View key={colIndex} style={styles.cell}>
+                    <Text style={item.isDayHeader ? styles.dayHeaderText : styles.dateText}>{item.day}</Text>
+                  </View>
+                )
+              )}
+            </View>
+          ))}
+        </View>
+        <LinearGradient
+          colors={['transparent', 'rgba(0, 0, 0, 0.8)']}
+          style={styles.gradientBottom}
+        />
       </View>
     );
   };
+
+  
   const ImageModal = ({
     isVisible,
     postFront,
@@ -228,25 +239,38 @@ const Calendar = ({ navigation }) => {
         transparent={true}
       >
         <View style={styles.modalContainer}>
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <Text style={styles.buttonText}>닫기</Text>
-          </TouchableOpacity>
-          <View style={styles.imageContainer}>
-            <TouchableOpacity onPress={changeImage} style={styles.frontImage}>
-              <Image
-                source={{ uri: isFrontShowing ? postFront : postBack }}
-                style={styles.smallImage}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={changeImage} style={styles.backImage}>
-              <Image
-                source={{ uri: isFrontShowing ? postBack : postFront }}
-                style={styles.fullImage}
-              />
-            </TouchableOpacity>
-          </View>
-          <TouchableOpacity onPress={onSelectPin} style={styles.selectButton}>
-            <Text style={styles.buttonText}>Pin 지정</Text>
+          <LinearGradient
+            colors={["#1BC5DA", "#263283"]}
+            style={styles.imageContainer}
+          >
+            <View style={{position: "relative"}}>
+              <TouchableOpacity onPress={changeImage} style={styles.frontImage}>
+                <Image
+                  source={{ uri: isFrontShowing ? postFront : postBack }}
+                  style={styles.smallImage}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={changeImage} style={styles.backImage}>
+                <Image
+                  source={{ uri: isFrontShowing ? postBack : postFront }}
+                  style={styles.fullImage}
+                />
+              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={onClose}
+                  style={styles.closeButton}
+                >
+                  <View style={styles.closeIcon} />
+                </TouchableOpacity>
+            </View>
+          </LinearGradient>
+          <TouchableOpacity onPress={onSelectPin}>
+            <LinearGradient
+              colors={["#1BC5DA", "#263283"]}
+              style={styles.selectButton}
+            >
+              <Text style={styles.buttonText}>Pin 지정</Text>
+            </LinearGradient>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -320,19 +344,22 @@ const Calendar = ({ navigation }) => {
       <View style={styles.selectedPinsContainer}>
         {allSlots.map((pin, index) =>
           pin.empty ? (
-            <View key={index} style={styles.selectedImageContainer}>
-              <Text style={styles.emptyText}>핀을 추가해주세요.</Text>
+            <View key={index} style={styles.selectedPinContainer}>
+              <Text style={styles.emptyText}>핀을</Text>
+              <Text style={styles.emptyText}>추가해주세요</Text>
             </View>
           ) : (
-            <View key={index} style={styles.selectedImageContainer}>
-              <TouchableOpacity onPress={() => togglePinImage(index)}>
-                <Image
-                  source={{
-                    uri: pin.isFrontShowing ? pin.frontUrl : pin.backUrl,
-                  }}
-                  style={styles.selectedImage}
-                />
-              </TouchableOpacity>
+            <View key={index} style={styles.selectedPinContainer}>
+              <View style={styles.selectedImageContainer}>
+                <TouchableOpacity onPress={() => togglePinImage(index)}>
+                  <Image
+                    source={{
+                      uri: pin.isFrontShowing ? pin.frontUrl : pin.backUrl,
+                    }}
+                    style={styles.selectedImage}
+                  />
+                </TouchableOpacity>
+              </View>
               <View style={styles.pinInfoContainer}>
                 <Text style={styles.pinDateText}>{formatDate(pin.date)}</Text>
                 <TouchableOpacity
@@ -360,36 +387,36 @@ const Calendar = ({ navigation }) => {
     );
   }
   return (
-    <SafeAreaView style={styles.bg}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.monthLabel}>
-            {currentMonth.getFullYear()}년 {months[currentMonth.getMonth()]}월
-          </Text>
-        </View>
-        {renderCalendar()}
-        {isImageVisible && (
-          <ImageModal
-            isVisible={isImageVisible}
-            postFront={currentImageUrls.front}
-            postBack={currentImageUrls.back}
-            onClose={() => setIsImageVisible(false)}
-            onSelectPin={handleSelectPin}
-          />
-        )}
-        <SelectedPinsList />
-        <TouchableOpacity
-          style={styles.submitButtonContainer}
-          onPress={postPins}
-        >
-          <LinearGradient
-            colors={["#1BC5DA", "#263283"]}
-            style={styles.submitButton}
-          >
-            <Text style={styles.submitButtonText}>수정 제출</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.monthLabel}>
+          {currentMonth.getFullYear()}년 {months[currentMonth.getMonth()]}월
+        </Text>
       </View>
+      <View style={styles.calendarContainer}>
+        {renderCalendar()}
+      </View>
+      {isImageVisible && (
+        <ImageModal
+          isVisible={isImageVisible}
+          postFront={currentImageUrls.front}
+          postBack={currentImageUrls.back}
+          onClose={() => setIsImageVisible(false)}
+          onSelectPin={handleSelectPin}
+        />
+      )}
+      <SelectedPinsList />
+      <TouchableOpacity
+        style={styles.submitButtonContainer}
+        onPress={postPins}
+      >
+        <LinearGradient
+          colors={["#1BC5DA", "#263283"]}
+          style={styles.submitButton}
+        >
+          <Text style={styles.submitButtonText}>수정 제출</Text>
+        </LinearGradient>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -401,185 +428,222 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor:"black"
   },
-  bg: {
-    backgroundColor: "rgba(0,0,0,0.3)",
-    flex: 1,
-  },
+
   container: {
-    width: wp("100%"),
+    flex: 1,
     backgroundColor: "black",
-    position: "relative",
-    flex: 1, // flex 속성 추가
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: wp("90%"),
-    marginLeft: wp("5%"),
-    marginRight: wp("5%"),
-    padding: wp("5%"),
-    paddingBottom: hp("2%"),
-  },
-  calendar: {
-    width: wp("90%"),
-    height: hp("40%"), // 달력 높이 조정
-    marginLeft: wp("5%"),
-    marginRight: wp("5%"),
-    // borderColor: "white", // 변경: 달력 틀 흰색
-    // borderWidth: 1,
-  },
-  row: {
-    flexDirection: "row",
-  },
-  cell: {
-    flex: 1,
-    height: hp("6%"),
+    height: hp("7%"),
+    paddingLeft: wp("4%"),
     justifyContent: "center",
-    alignItems: "center",
-    borderColor: "black", // 변경: 셀 경계 흰색
-    borderWidth: 1,
-    backgroundColor: "#fff",
   },
-  backgroundImage: {
-    width: "100%",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  dateText: {
-    color: "black", // 변경: 날짜 숫자 흰색
-  },
-  dateImageText: {
-    color: "white",
-    fontWeight: "bold",
-  },
-  monthLabel: {
-    fontSize: hp("2.5%"),
+    monthLabel: {
+    fontSize: hp("3%"),
     fontWeight: "bold",
     color: "#fff", // 변경: 월 표시 흰색
   },
+  
+  calendarContainer: {
+    height: hp("40%"),
+    width: wp("100%"),
+    alignItems: "center",
+    position: "relative", // 추가: 자식 요소의 절대 위치를 위한 상대 위치
+  },
+  gradientTop: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 70, // 그라디언트 높이 조절
+    zIndex: 1,
+  },
+  gradientBottom: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 70, // 그라디언트 높이 조절
+    zIndex: 1,
+  },
+  calendar: {
+    height: "100%",
+    width: "85%",
+    justifyContent: "center",
+    zIndex: 0,
+  },
+    row: {
+      flexDirection: "row",
+    },
+    cell: {
+      flex: 1,
+      height: hp("5.2%"),
+      justifyContent: "center",
+      alignItems: "center",
+      borderColor: "black", // 변경: 셀 경계 흰색
+      borderWidth: 0.5,
+      backgroundColor: "#fff",
+    },
+    backgroundImage: {
+      width: "100%",
+      height: "100%",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    dayHeaderText: {
+      color: "#292929",
+      fontWeight: "bold", // 두껍게 설정
+    },
+    dateText: {
+      color: "#292929",
+    },
+    dateImageText: {
+      color: "white",
+      fontWeight: "bold",
+    },
+
   modalContainer: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
     alignItems: "center",
     justifyContent: "center",
   },
-  imageContainer: {
-    width: wp("80%"),
-    height: hp("60%"),
-    backgroundColor: "white",
-    position: "relative",
-  },
-  fullImage: {
-    width: wp("80%"),
-    height: hp("60%"),
-  },
-  smallImage: {
-    width: wp("30%"),
-    height: hp("20%"),
-    borderRadius: 12,
-  },
-  frontImage: {
-    zIndex: 2,
-    position: "absolute",
-    top: 10,
-    left: 10,
-  },
-  backImage: {
-    zIndex: 1,
-    position: "relative",
-  },
-  closeButton: {
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    borderTopEndRadius: 10,
-    borderTopStartRadius: 10,
-    width: wp("80%"),
-    height: hp("5%"),
-  },
-  selectButton: {
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    borderBottomEndRadius: 10,
-    borderBottomStartRadius: 10,
-    width: wp("80%"),
-    height: hp("5%"),
-  },
-  buttonText: {
-    color: "black",
-    fontSize: hp("2%"),
-    fontWeight: "bold",
-    textAlign: "center",
-  },
+    imageContainer: {
+      width: wp("83%"),
+      height: hp("62%"),
+      borderRadius: 12,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+      fullImage: {
+        width: wp("80%"),
+        height: hp("60%"),
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: "white",
+      },
+      backImage: {
+        zIndex: 1,
+        position: "relative",
+      },
+      smallImage: {
+        width: wp("30%"),
+        height: hp("20%"),
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: "white",
+      },
+      frontImage: {
+        zIndex: 2,
+        position: "absolute",
+        top: 10,
+        left: 10,
+      },
+      closeButton: {
+        zIndex: 2,
+        position: "absolute",
+        top: 15,
+        right: 15,
+        width: 40,
+        height: 40,
+        borderRadius: 50,
+        backgroundColor: "white",
+        alignItems: "center",
+        justifyContent: "center",
+      },
+      closeIcon: {
+        width: 20,
+        height: 5,
+        backgroundColor: "black",
+      },
+
+    selectButton: {
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "white",
+      borderRadius: 10,
+      
+      marginTop: hp("1.5%"),
+      width: wp("83%"),
+      height: hp("5%"),
+    },
+    buttonText: {
+      color: "black",
+      fontSize: hp("2%"),
+      fontWeight: "bold",
+    },
+  
   selectedPinsContainer: {
     flexDirection: "row",
     justifyContent: "space-around", // 핀을 가로로 정렬
-    padding: hp("1%"), // 간격 조정
-    marginTop: hp("2.5%"), // 핀 슬롯을 위로 올리기 위해 마진 조정
+    marginHorizontal: wp("3%"), // 핀 슬롯을 좌우로 이동
+    marginVertical: hp("1.75%"), // 핀 슬롯을 위로 올리기 위해 마진 조정
   },
-  selectedImageContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fff", // 배경색 변경
-    padding: hp("1%"),
-    borderRadius: 10, // 모서리 둥글게
-    width: wp("28%"), // 각 핀의 너비 설정
-    height: hp("20%"), // 핀 슬롯 높이 조정
-  },
-  pinInfoContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: hp("0.5%"),
-    width: "100%",
-  },
-  selectedImage: {
-    width: "100%",
-    height: "70%", // 핀 이미지 높이 조정
-    borderRadius: 10, // 이미지 모서리 둥글게
-  },
-  pinDateText: {
-    fontSize: hp("1.5%"),
-    color: "#333",
-    marginTop: hp("0.5%"),
-  },
+    selectedPinContainer: {
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "white", // 배경색 변경
+      borderRadius: 10, // 모서리 둥글게
+      width: wp("28%"), // 각 핀의 너비 설정
+      height: hp("21%"), // 핀 슬롯 높이 조정
+    },
+    selectedImageContainer: {
+      width: "90%",
+      height: "75%",
+      paddingBottom: hp("0.5%"),
+    },
+      selectedImage: {
+        width: "100%",
+        height: "100%",
+        borderRadius: 10, // 이미지 모서리 둥글게
+      },
+    pinInfoContainer: {
+      flexDirection: "row",
+      justifyContent: "flex-end",
+      alignItems: "center",
+      width: "90%",
+    },
+      pinDateText: {
+        fontSize: hp("1.5%"),
+        color: "#333",
+        fontWeight: "bold",
+        marginRight: wp("2%"),
+      },
+      removeButton: {
+        backgroundColor: "black",
+        padding: hp("1%"),
+        borderRadius: 5,
+      },
+      removeButtonText: {
+        color: "white",
+        fontSize: hp("1.5%"),
+        textAlign: "center",
+      },
   emptyText: {
-    fontSize: hp(2),
+    fontSize: hp(1.5),
     color: "black",
+    fontWeight: "bold",
   },
-  removeButton: {
-    marginTop: hp("0.5%"),
-    backgroundColor: "black",
-    padding: hp("0.5%"),
-    borderRadius: 5,
-  },
-  removeButtonText: {
-    color: "white",
-    fontSize: hp("1.5%"),
-    textAlign: "center",
-  },
+  
   submitButtonContainer: {
     justifyContent: "center",
     alignItems: "center",
     // marginBottom: hp('2%'),
   },
-  submitButton: {
-    padding: hp("2%"),
-    borderRadius: 10,
-    width: wp("90%"), // 버튼을 가로로 길게
-    alignItems: "center",
-    marginTop: hp(1),
-    alignSelf: "center",
-  },
-  submitButtonText: {
-    color: "white",
-    fontSize: hp("2.5%"),
-    textAlign: "center",
-    fontWeight: "bold",
-  },
+    submitButton: {
+      padding: hp("2%"),
+      borderRadius: 10,
+      width: wp("90%"), // 버튼을 가로로 길게
+      alignItems: "center",
+      marginTop: hp(0.5),
+      alignSelf: "center",
+    },
+    submitButtonText: {
+      color: "white",
+      fontSize: hp("2%"),
+      textAlign: "center",
+      fontWeight: "900",
+    },
 });
 
 export default Calendar;

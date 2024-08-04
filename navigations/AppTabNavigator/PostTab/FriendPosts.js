@@ -35,6 +35,8 @@ const FriendPosts = React.forwardRef((props, ref) => {
 
   const getPosts = async (index, isRefresh = false, baseUrl = '/post/read/0') => {
     setIsLoading(true);
+    
+    setPosts([]);
     let url = `${baseUrl}?index=${index}&pageCount=15&type=FRIEND`; // 친구 범위 게시물만 조회
     try {
       console.log(`url is`, url);
@@ -92,9 +94,26 @@ const FriendPosts = React.forwardRef((props, ref) => {
   };
   
   if (posts.length === 0 && isLoading) {
-    return <View style={styles.container}><Text>Loading...</Text></View>;
+    return (
+      <View style={styles.container}>
+        <Text style={styles.NoneText}>
+          Loading...
+        </Text>
+      </View>
+    )
   }
-
+  if (posts.length === 0) {
+    return (
+      <View style={styles.container}>
+        <Text style={[styles.NoneText , {marginBottom: windowHeight * 0.01}]}>
+          아직 친구가 없어요
+        </Text>
+        <Text style={styles.NoneText}>
+          더보기를 통해 친구를 추가해보세요!
+        </Text>
+      </View>
+    )
+  }
   return (
     <ScrollView
       contentContainerStyle={styles.scrollViewContent}
@@ -125,13 +144,18 @@ const FriendPosts = React.forwardRef((props, ref) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: 'black',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  NoneText: {
+    color: "white",
+    fontSize:windowHeight * 0.025,
+    fontWeight:"bold"
+  },
   postContainer: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: 'black',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -140,7 +164,7 @@ const styles = StyleSheet.create({
   },
   pagerView: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: 'black',
   },
 });
 

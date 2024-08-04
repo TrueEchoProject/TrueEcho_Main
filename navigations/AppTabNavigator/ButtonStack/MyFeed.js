@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, Image, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import {View, Text, FlatList, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Dimensions} from 'react-native';
 import Api from '../../../Api';
+import { LinearGradient } from "expo-linear-gradient";
 
+const windowHeight = Dimensions.get("window").height;
+const windowWidth = Dimensions.get("window").width;
 const MyFeed = ({ navigation, route }) => {
 	const [serverPosts, setServerPosts] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
@@ -18,20 +21,18 @@ const MyFeed = ({ navigation, route }) => {
 			setServerPosts(prevPosts => prevPosts.filter(post => post.postId !== deletedPostId));
 		}
 	}, [route.params?.deletedPostId]);
-
 	useEffect(() => {
 		if (serverPosts) {
 			console.log('server updated:', serverPosts);
 		}
 	}, [serverPosts]);
-
 	useEffect(() => {
 		fetchData(page);
 	}, []);
 
 	const fetchData = async (page) => {
 		try {
-			const serverResponse = await Api.get(`/post/read/2?index=${page}&pageCount=5`);
+			const serverResponse = await Api.get(`/post/read/2?index=${page}&pageCount=8`);
 			if (serverResponse.data.message === "게시물을 조회를 실패했습니다.") {
 				return;
 			} else {
@@ -53,7 +54,6 @@ const MyFeed = ({ navigation, route }) => {
 			setIsFetchingMore(false);
 		}
 	};
-
 	const handleLoadMore = () => {
 		if (!isFetchingMore && !isEndReached && !noMoreData) {
 			setIsFetchingMore(true);
@@ -65,16 +65,23 @@ const MyFeed = ({ navigation, route }) => {
 			});
 		}
 	};
-
+	
 	const renderItem = ({ item }) => (
-		<TouchableOpacity
-			onPress={() => navigation.navigate("FeedAlarm", { postId: item.postId })}
-			style={styles.postContainer}
+		<LinearGradient
+			colors={["#1BC5DA", "#263283"]}
+			style={styles.PostContainerGradient}
 		>
-			<Image source={{ uri: item.postBackUrl || defaultImage }} style={styles.postImage} />
-		</TouchableOpacity>
+			<TouchableOpacity
+				onPress={() => navigation.navigate("FeedAlarm", { postId: item.postId })}
+				style={styles.PostContainerGradient}
+			>
+				<Image
+					style={styles.Post}
+					source={{ uri: item.postBackUrl || item.postFrontUrl || defaultImage }}
+				/>
+			</TouchableOpacity>
+		</LinearGradient>
 	);
-
 	const renderFooter = () => {
 		if (noMoreData) {
 			return (
@@ -110,6 +117,7 @@ const MyFeed = ({ navigation, route }) => {
 						onEndReachedThreshold={0.1}
 						ListFooterComponent={renderFooter}
 						onMomentumScrollBegin={() => setIsEndReached(false)}
+						contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}
 					/>
 				) : (
 					<View style={styles.emptyContainer}>
@@ -124,19 +132,31 @@ const MyFeed = ({ navigation, route }) => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingHorizontal: 10,
+		alignItems: 'center',
+		justifyContent: 'center',
 		backgroundColor: '#000', // 배경색을 검정으로 설정
 	},
-	postContainer: {
-		flex: 1,
-		margin: 20, // 피드 사이의 간격을 넓히기 위해 여백을 더 추가
+	PostContainerGradient: {
+		height: windowHeight * 0.3,
+		width: windowWidth * 0.4,
+		borderRadius: 5,
+		margin: 10,
 		alignItems: 'center',
+		justifyContent: 'center',
+		flexDirection: 'column',
 	},
-	postImage: {
-		width: '100%', // 카드 너비를 전체로 설정
-		height: 200, // 높이를 고정
-		borderRadius: 10,
-		backgroundColor: "grey"
+	PostContainer: {
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	Post: {
+		height: windowHeight * 0.29,
+		width: windowWidth * 0.38,
+		borderRadius: 3,
+		alignItems: 'center',
+		borderColor: "white",
+		borderWidth: 2,
+		justifyContent: 'center',
 	},
 	footer: {
 		paddingVertical: 20,
@@ -149,7 +169,7 @@ const styles = StyleSheet.create({
 	},
 	emptyText: {
 		color: 'white',
-		fontSize: 24, 
+		fontSize: 24,
 	},
 	loader: {
 		flex: 1,

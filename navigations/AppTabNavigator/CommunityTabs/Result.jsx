@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     // maxWidth: '80%', // 질문 텍스트의 최대 넓이 설정
   },
   questionText: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: 'bold',
     textAlign: 'center',
     color: "#fff",

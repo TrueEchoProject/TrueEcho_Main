@@ -37,7 +37,7 @@ export const Button3 = ({ onPress }) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <View>
-        <AntDesign name="setting" size={24} color="white" />
+        <AntDesign name="setting" size={22} color="white" />
       </View>
     </TouchableOpacity>
   );
