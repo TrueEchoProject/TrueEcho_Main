@@ -21,7 +21,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
   const [location, setLocation] = useState("");
   const [copiedLocation, setCopiedLocation] = useState("");
   const [optionsVisible, setOptionsVisible] = useState(false);
-
+  const [friendStatuses, setFriendStatuses] = useState({});
   const [activeButton, setActiveButton] = useState(null);
 
   React.useImperativeHandle(ref, () => ({
@@ -123,6 +123,27 @@ const PublicPosts = React.forwardRef((props, ref) => {
     setPosts(prev => prev.filter(item => item.postId !== postId));
     await new Promise(resolve => setTimeout(resolve, 0));
   };
+  const handleFriendSend = async (userId) => {
+    setFriendStatuses(prev => ({ ...prev, [userId]: true }));
+    try {
+      const formData = new FormData();
+      formData.append('targetUserId', userId);
+      const response = await Api.post(`/friends/add`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      if (response.data) {
+        const FcmResponse = await Api.post(`/noti/sendToFCM`, {
+          title: null,
+          body: null,
+          data: { userId: userId, notiType: 7, contentId: null }
+        });
+      }
+    } catch (error) {
+      console.error('Error sending friend request:', error);
+      setFriendStatuses(prev => ({ ...prev, [userId]: false }));
+    }
+  };
+  
   const handlePageChange = (e) => {
     const newIndex = e.nativeEvent.position;
     setCurrentPage(newIndex);
@@ -260,6 +281,8 @@ const PublicPosts = React.forwardRef((props, ref) => {
                 onDelete={() => handleDelete(post.postId)}
                 isOptionsVisibleExternal={optionsVisibleStates[post.postId]}
                 setIsOptionsVisibleExternal={(visible) => setOptionsVisibleStates(prev => ({ ...prev, [post.postId]: visible }))}
+                isFriendAdded={friendStatuses[post.userId] || post.friend}
+                onFriendSend={() => handleFriendSend(post.userId)}
               />
             </View>
           ))}

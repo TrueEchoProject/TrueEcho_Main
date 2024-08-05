@@ -17,7 +17,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const defaultImage = require("../assets/logo.png");
 
-const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExternal, onBlock, onDelete }) => {
+const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExternal, onBlock, onDelete, isFriendAdded, onFriendSend }) => {
     const navigation = useNavigation();
     const [isOptionsVisible, setIsOptionsVisible] = useState(isOptionsVisibleExternal || false);
     const [buttonLayout, setButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
@@ -28,7 +28,6 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
     const [layoutSet, setLayoutSet] = useState(false);
     const windowWidth = Dimensions.get('window').width;
     const [isLoading, setIsLoading] = useState(false);
-    const [friendLook, setFriendLook] = useState(true);
 
     useEffect(() => {
         setIsOptionsVisible(isOptionsVisibleExternal);
@@ -36,7 +35,6 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
     }, [isOptionsVisibleExternal]);
     const onImageButtonLayout = (event) => {
         if (layoutSet) return;
-        
         const { height } = event.nativeEvent.layout;
         setImageButtonHeight(height);
         setLayoutSet(true);
@@ -45,12 +43,10 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
     const toggleLike = async () => {
         if (isLoading) return;
         setIsLoading(true);
-
         const newLikesCount = isLiked ? likesCount - 1 : likesCount + 1;
         const newIsLiked = !isLiked;
         setIsLiked(newIsLiked);
         setLikesCount(newLikesCount);
-
         try {
             const response = await Api.patch(`/post/update/likes`, {
                 postId: post.postId,
@@ -76,11 +72,9 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
     const toggleBlock = async () => {
         if (isLoading) return;
         setIsLoading(true);
-
         try {
             const formData = new FormData();
             formData.append('blockUserId', post.userId);
-
             const response = await Api.post(`/blocks/add`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -100,7 +94,6 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
     const toggleDelete = async () => {
         if (isLoading) return;
         setIsLoading(true);
-
         try {
             const response = await Api.delete(`/post/delete/${post.postId}`);
             if (response.data) {
@@ -110,37 +103,6 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
             }
         } catch (error) {
             console.error('Error while deleting the post:', error.response ? error.response.data : error.message);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-    const toggleFriendSend = async () => {
-        if (isLoading) return;
-        setIsLoading(true);
-
-        try {
-            const formData = new FormData();
-            formData.append('targetUserId', post.userId);
-
-            const response = await Api.post(`/friends/add`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            if (response.data) {
-                setFriendLook(false);
-                const FcmResponse = await Api.post(`/noti/sendToFCM`, {
-                    title: null,
-                    body: null,
-                    data: {
-                        userId: post.userId,
-                        notiType: 7,
-                        contentId: null
-                    }
-                });
-            }
-        } catch (error) {
-            console.error('Error updating friend send:', error);
         } finally {
             setIsLoading(false);
         }
@@ -183,8 +145,8 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
                         <View style={styles.body}>
                             <View style={styles.rightAlignedContainer}>
                                 <View style={{flexDirection: 'row', alignItems: 'center',}}>
-                                    {post.friend === false && ( friendLook === true ? (
-                                      <TouchableOpacity onPress={toggleFriendSend}>
+                                    {post.friend === false && (isFriendAdded === false ? (
+                                      <TouchableOpacity onPress={onFriendSend}>
                                           <LinearGradient
                                             colors={['#1BC5DA', '#263283']}
                                             style={styles.friendButton}

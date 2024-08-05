@@ -16,10 +16,8 @@ const FriendPosts = React.forwardRef((props, ref) => {
   const [page, setPage] = useState(0);
   const pagerViewRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [friendStatuses, setFriendStatuses] = useState({});
   
-  useEffect(() => {
-    console.log("post is", posts);
-  }, [posts]);
   React.useImperativeHandle(ref, () => ({
     getPosts: refreshPosts,
   }));
@@ -35,7 +33,6 @@ const FriendPosts = React.forwardRef((props, ref) => {
 
   const getPosts = async (index, isRefresh = false, baseUrl = '/post/read/0') => {
     setIsLoading(true);
-    
     setPosts([]);
     let url = `${baseUrl}?index=${index}&pageCount=15&type=FRIEND`; // 친구 범위 게시물만 조회
     try {
@@ -69,11 +66,29 @@ const FriendPosts = React.forwardRef((props, ref) => {
     setPosts(prev => prev.filter(item => item.userId !== userId));
     await new Promise(resolve => setTimeout(resolve, 0));
   };
-
   const handleDelete = async (postId) => {
-    console.log('Delete:', postId);
     setPosts(prev => prev.filter(item => item.postId !== postId));
     await new Promise(resolve => setTimeout(resolve, 0));
+  };
+  const handleFriendSend = async (userId) => {
+    setFriendStatuses(prev => ({ ...prev, [userId]: true }));
+    try {
+      const formData = new FormData();
+      formData.append('targetUserId', userId);
+      const response = await Api.post(`/friends/add`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      if (response.data) {
+        const FcmResponse = await Api.post(`/noti/sendToFCM`, {
+          title: null,
+          body: null,
+          data: { userId: userId, notiType: 7, contentId: null }
+        });
+      }
+    } catch (error) {
+      console.error('Error sending friend request:', error);
+      setFriendStatuses(prev => ({ ...prev, [userId]: false }));
+    }
   };
   
   const handlePageChange = (e) => {
@@ -133,6 +148,8 @@ const FriendPosts = React.forwardRef((props, ref) => {
               onDelete={() => handleDelete(post.postId)}
               isOptionsVisibleExternal={optionsVisibleStates[post.postId]}
               setIsOptionsVisibleExternal={(visible) => setOptionsVisibleStates(prev => ({ ...prev, [post.postId]: visible }))}
+              isFriendAdded={friendStatuses[post.userId] || post.friend}
+              onFriendSend={() => handleFriendSend(post.userId)}
             />
           </View>
         ))}
