@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, TextInput, FlatList, StyleSheet, Alert, ActivityIndicator, TouchableOpacity, Text } from 'react-native';
-import { ListItem, Avatar, Icon } from 'react-native-elements';
+import { View, TextInput, FlatList, StyleSheet, Alert, ActivityIndicator, TouchableOpacity, Text, Image } from 'react-native';
+import { ListItem, Icon } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
 import Api from '../../../Api';
 import * as SecureStore from 'expo-secure-store';
-import { useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
 const getCurrentUserId = async () => {
     try {
@@ -36,7 +36,7 @@ const FriendsScreen = () => {
     const [friends, setFriends] = useState([]);
     const [loading, setLoading] = useState(false);
     const navigation = useNavigation();
-    
+
     useEffect(() => {
         const initializeData = async () => {
             setLoading(true);
@@ -55,7 +55,7 @@ const FriendsScreen = () => {
         };
         initializeData();
     }, [activeTab]);
-    
+
     const fetchRecommendedUsers = useCallback(async () => {
         try {
             const response = await Api.get('/friends/recommend');
@@ -71,6 +71,7 @@ const FriendsScreen = () => {
             Alert.alert('에러', '추천 친구 목록을 불러오는 중 에러가 발생했습니다.');
         }
     }, [invitedUsers]);
+
     const fetchInvitedUsers = useCallback(async () => {
         try {
             const response = await Api.get('/friends/confirmRequest/send');
@@ -85,6 +86,7 @@ const FriendsScreen = () => {
             Alert.alert('에러', '보낸 친구 요청 목록을 불러오는 중 에러가 발생했습니다.');
         }
     }, []);
+
     const fetchFriendRequests = useCallback(async () => {
         try {
             const response = await Api.get('/friends/confirmRequest/receive');
@@ -98,6 +100,7 @@ const FriendsScreen = () => {
             Alert.alert('에러', '받은 친구 요청 목록을 불러오는 중 에러가 발생했습니다.');
         }
     }, []);
+
     const fetchFriends = useCallback(async () => {
         try {
             const response = await Api.get('/friends/read');
@@ -145,25 +148,26 @@ const FriendsScreen = () => {
             Alert.alert('실패', '친구 초대 실패');
         }
     };
+
     const cancelFriendRequest = async (userId) => {
         try {
             console.log('Cancelling friend request for userId:', userId);
-    
+
             const formData = new FormData();
             formData.append('targetUserId', userId);
-    
+
             const accessToken = await getAccessToken();
             console.log('Access Token:', accessToken);
-    
+
             const response = await Api.post('/friends/cancel', formData, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                     'Content-Type': 'multipart/form-data',
                 },
             });
-    
+
             console.log('Cancel friend request response:', response.data);
-    
+
             if (response.data.code === "T002" && response.data.message === "친구 요청 취소에 성공했습니다.") {
                 setInvitedUsers((prevInvitedUsers) => prevInvitedUsers.filter(user => user.userId !== userId));
                 setRequests((prevRequests) => prevRequests.filter(user => user.userId !== userId));
@@ -176,6 +180,7 @@ const FriendsScreen = () => {
             Alert.alert('실패', '친구 요청 취소에 실패했습니다.');
         }
     };
+
     const acceptFriendRequest = async (userId) => {
         try {
             const formData = new FormData();
@@ -189,8 +194,10 @@ const FriendsScreen = () => {
             });
             console.log('Accept friend request response:', response.data);
             if (response.data.status === 202) {
+                setRequests((prevRequests) => prevRequests.map(request =>
+                    request.userId === userId ? { ...request, status: '수락 완료' } : request
+                ));
                 Alert.alert('성공', '친구 요청 수락 완료');
-                fetchFriendRequests();
                 fetchFriends();
             } else {
                 Alert.alert('실패', '친구 요청 수락 실패');
@@ -200,6 +207,7 @@ const FriendsScreen = () => {
             Alert.alert('실패', '친구 요청 수락 실패');
         }
     };
+
     const rejectFriendRequest = async (userId) => {
         try {
             const formData = new FormData();
@@ -214,8 +222,10 @@ const FriendsScreen = () => {
             });
             console.log('Reject friend request response:', response.data);
             if (response.data.status === 202) {
+                setRequests((prevRequests) => prevRequests.map(request =>
+                    request.userId === userId ? { ...request, status: '거절 완료' } : request
+                ));
                 Alert.alert('성공', '친구 요청 거절 완료');
-                fetchFriendRequests();
             } else {
                 Alert.alert('실패', '친구 요청 거절 실패');
             }
@@ -224,6 +234,7 @@ const FriendsScreen = () => {
             Alert.alert('실패', '친구 요청 거절 실패');
         }
     };
+
     const deleteFriend = async (friendId) => {
         try {
             const formData = new FormData();
@@ -256,58 +267,78 @@ const FriendsScreen = () => {
             item.nickname.toLowerCase().includes(lowercasedQuery) || (item.email && item.email.toLowerCase().includes(lowercasedQuery))
         );
     }, [searchQuery, activeTab, subTab, users, invitedUsers, requests, friends]);
-    
+
     const renderUser = ({ item }) => (
-      <ListItem containerStyle={styles.listItem}>
-          <TouchableOpacity onPress={() => navigation.navigate("UserAlarm", { userId: item.userId })}>
-              <Avatar source={{ uri: item.userProfileUrl }} rounded />
-          </TouchableOpacity>
-          <ListItem.Content>
-              <ListItem.Title style={styles.listItemTitle}>{item.nickname}</ListItem.Title>
-              {item.email && <ListItem.Subtitle style={styles.listItemSubtitle}>{item.email}</ListItem.Subtitle>}
-          </ListItem.Content>
-          {activeTab === 'recommend' && (
-            invitedUsers.some(invited => invited.userId === item.userId) ? (
-              <TouchableOpacity style={styles.disabledButton}>
-                  <Text style={styles.disabledButtonText}>완료</Text>
-              </TouchableOpacity>
-            ) : (
-              <LinearGradient colors={['#1BC5DA', '#263283']} style={styles.gradientButton}>
-                  <TouchableOpacity style={styles.innerButton} onPress={() => inviteFriend(item.userId)}>
-                      <Text style={styles.buttonText}>추가</Text>
-                  </TouchableOpacity>
-              </LinearGradient>
-            )
-          )}
-          {activeTab === 'request' && subTab === 'receive' && (
-            <View style={styles.requestButtons}>
-                <LinearGradient colors={['#1BC5DA', '#263283']} style={styles.gradientButton}>
-                    <TouchableOpacity style={styles.innerButton} onPress={() => acceptFriendRequest(item.userId)}>
-                        <Text style={styles.buttonText}>수락</Text>
+        <ListItem containerStyle={styles.listItem}>
+            <TouchableOpacity onPress={() => navigation.navigate("UserAlarm", { userId: item.userId })}>
+                <View style={styles.avatarContainer}>
+                    <LinearGradient
+                        colors={["#1BC5DA", "#263283"]}
+                        style={styles.avatarGradient}
+                    >
+                        <Image
+                            source={{ uri: item.userProfileUrl }}
+                            style={styles.avatar}
+                        />
+                    </LinearGradient>
+                </View>
+            </TouchableOpacity>
+            <ListItem.Content>
+                <ListItem.Title style={styles.listItemTitle}>{item.nickname}</ListItem.Title>
+                {item.email && <ListItem.Subtitle style={styles.listItemSubtitle}>{item.email}</ListItem.Subtitle>}
+            </ListItem.Content>
+            {activeTab === 'recommend' && (
+                invitedUsers.some(invited => invited.userId === item.userId) ? (
+                    <TouchableOpacity style={styles.disabledButton}>
+                        <Text style={styles.disabledButtonText}>완료</Text>
                     </TouchableOpacity>
-                </LinearGradient>
+                ) : (
+                    <LinearGradient colors={['#1BC5DA', '#263283']} style={styles.gradientButton}>
+                        <TouchableOpacity style={styles.innerButton} onPress={() => inviteFriend(item.userId)}>
+                            <Text style={styles.buttonText}>추가</Text>
+                        </TouchableOpacity>
+                    </LinearGradient>
+                )
+            )}
+            {activeTab === 'request' && subTab === 'receive' && (
+                item.status === '수락 완료' ? (
+                    <TouchableOpacity style={styles.acceptedButton}>
+                        <Text style={styles.buttonText}>수락 완료</Text>
+                    </TouchableOpacity>
+                ) : item.status === '거절 완료' ? (
+                    <TouchableOpacity style={styles.acceptedButton}>
+                        <Text style={styles.buttonText}>거절 완료</Text>
+                    </TouchableOpacity>
+                ) : (
+                    <View style={styles.requestButtons}>
+                        <LinearGradient colors={['#1BC5DA', '#263283']} style={styles.gradientButton}>
+                            <TouchableOpacity style={styles.innerButton} onPress={() => acceptFriendRequest(item.userId)}>
+                                <Text style={styles.buttonText}>수락</Text>
+                            </TouchableOpacity>
+                        </LinearGradient>
+                        <LinearGradient colors={['#292929', '#292929']} style={styles.gradientButton}>
+                            <TouchableOpacity style={styles.innerButton} onPress={() => rejectFriendRequest(item.userId)}>
+                                <Text style={styles.buttonText}>거절</Text>
+                            </TouchableOpacity>
+                        </LinearGradient>
+                    </View>
+                )
+            )}
+            {activeTab === 'request' && subTab === 'send' && (
                 <LinearGradient colors={['#292929', '#292929']} style={styles.gradientButton}>
-                    <TouchableOpacity style={styles.innerButton} onPress={() => rejectFriendRequest(item.userId)}>
-                        <Text style={styles.buttonText}>거절</Text>
+                    <TouchableOpacity style={styles.innerButton} onPress={() => cancelFriendRequest(item.userId)}>
+                        <Text style={styles.buttonText}>취소</Text>
                     </TouchableOpacity>
                 </LinearGradient>
-            </View>
-          )}
-          {activeTab === 'request' && subTab === 'send' && (
-            <LinearGradient colors={['#292929', '#292929']} style={styles.gradientButton}>
-                <TouchableOpacity style={styles.innerButton} onPress={() => cancelFriendRequest(item.userId)}>
-                    <Text style={styles.buttonText}>취소</Text>
-                </TouchableOpacity>
-            </LinearGradient>
-          )}
-          {activeTab === 'friends' && (
-            <LinearGradient colors={['#292929', '#292929']} style={styles.gradientButton}>
-                <TouchableOpacity style={styles.innerButton} onPress={() => deleteFriend(item.userId)}>
-                    <Text style={styles.buttonText}>삭제</Text>
-                </TouchableOpacity>
-            </LinearGradient>
-          )}
-      </ListItem>
+            )}
+            {activeTab === 'friends' && (
+                <LinearGradient colors={['#292929', '#292929']} style={styles.gradientButton}>
+                    <TouchableOpacity style={styles.innerButton} onPress={() => deleteFriend(item.userId)}>
+                        <Text style={styles.buttonText}>삭제</Text>
+                    </TouchableOpacity>
+                </LinearGradient>
+            )}
+        </ListItem>
     );
 
     return (
@@ -394,7 +425,7 @@ const styles = StyleSheet.create({
         borderRadius: 15,
     },
     subTab: {
-        flex: 0.25, // 길이를 조정
+        flex: 0.25,
         marginHorizontal: 5,
         borderRadius: 15,
     },
@@ -409,12 +440,12 @@ const styles = StyleSheet.create({
     },
     subTabButtonText: {
         color: '#fff',
-        fontSize: 18, // 글자 크기 조정
+        fontSize: 18,
     },
     activeSubTabButtonText: {
         color: '#fff',
         fontWeight: 'bold',
-        fontSize: 18, // 글자 크기 조정
+        fontSize: 18,
     },
     searchSection: {
         flexDirection: 'row',
@@ -423,7 +454,7 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         margin: 10,
         paddingHorizontal: 10,
-        width: '95%', // 너비를 동일하게 설정
+        width: '95%',
         alignSelf: 'center',
     },
     searchIcon: {
@@ -459,20 +490,21 @@ const styles = StyleSheet.create({
         padding: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        width: 70,
+        minWidth: 70,
     },
     buttonText: {
         color: '#fff',
         textAlign: 'center',
+        fontSize: 12,
     },
     requestButtons: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        width: 150, // 양옆 길이를 줄임
+        width: 150,
     },
     subTabButton: {
         paddingVertical: 10,
-        paddingHorizontal: 20, // 버튼 크기 조정
+        paddingHorizontal: 20,
         borderRadius: 15,
         alignItems: 'center',
         justifyContent: 'center',
@@ -483,14 +515,43 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         alignItems: 'center',
         justifyContent: 'center',
-        width: 70,
+        minWidth: 70,
     },
     disabledButtonText: {
         color: '#fff',
+        fontSize: 12,
+    },
+    acceptedButton: {
+        backgroundColor: '#000',
+        padding: 10,
+        borderRadius: 15,
+        alignItems: 'center',
+        justifyContent: 'center',
+        minWidth: 70,
     },
     userList: {
-        width: '95%', // 너비를 동일하게 설정
+        width: '95%',
         alignSelf: 'center',
+    },
+    avatarContainer: {
+        height: 40,
+        width: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    avatarGradient: {
+        height: 35,
+        width: 35,
+        borderRadius: 17.5,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    avatar: {
+        height: 32,
+        width: 32,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: "white",
     },
 });
 
