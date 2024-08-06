@@ -208,22 +208,24 @@ const MyPage = ({ navigation, route }) => {
         </View>
         <View style={styles.pinsCardContainer}>
           {pinData.length === 0 ? (
-            <View style={styles.pinsNoneContainer}>
-              <TouchableOpacity
-                style={{alignItems: "center", padding: 30 }}
-                onPress={() => navigation.navigate("Calendar")}
-              >
-                <LinearGradient
-                  colors={["#1BC5DA", "#263283"]}
-                  style={styles.pinsNonePlusContainer}
+            <View style={styles.pinsNone}>
+              <View style={styles.pinsNoneContainer}>
+                <TouchableOpacity
+                  style={{alignItems: "center", padding: 30 }}
+                  onPress={() => navigation.navigate("Calendar")}
                 >
-                  <View style={styles.pinsNonePlusHorizontal}/>
-                  <View style={styles.pinsNonePlusVertical}/>
-                </LinearGradient>
-                <Text style={[styles.pinsNoneText, { textAlign: "center" }]}>
-                  핀을{"\n"}추가해보세요!
-                </Text>
-              </TouchableOpacity>
+                  <LinearGradient
+                    colors={["#1BC5DA", "#263283"]}
+                    style={styles.pinsNonePlusContainer}
+                  >
+                    <View style={styles.pinsNonePlusHorizontal}/>
+                    <View style={styles.pinsNonePlusVertical}/>
+                  </LinearGradient>
+                  <Text style={[styles.pinsNoneText, { textAlign: "center" }]}>
+                    핀을{"\n"}추가해보세요!
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           ) : (
             <Carousel
@@ -408,9 +410,14 @@ const styles = StyleSheet.create({
     borderColor: "#fff",
   },
   
+  pinsNone: {
+    width: wp(100),
+    height: hp(65),
+    alignItems: "center",
+  },
   pinsNoneContainer: {
-    width: "100%",
-    height: "100%",
+    width: "72%",
+    height: "75%",
     borderRadius: 25,
     backgroundColor: "rgba(128, 128, 128, 0.6)", // grey with 50% transparency
     alignItems: "center",
@@ -439,7 +446,7 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
   },
   pinsNoneText: {
-    fontSize: 30,
+    fontSize: wp(6),
     fontWeight: "900",
     color: "black",
   },

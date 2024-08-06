@@ -225,10 +225,12 @@ const UserAlarm = ({ route }) => {
 				</View>
 				<View style={styles.pinsCardContainer}>
 				{serverPinData.length === 0 ? (
-					<View style={styles.pinsNoneContainer}>
-						<Text style={[styles.pinsNoneText, { textAlign: "center" }]}>
-							핀이 아직{"\n"}없어요...
-						</Text>
+					<View style={styles.pinsNone}>
+						<View style={styles.pinsNoneContainer}>
+							<Text style={[styles.pinsNoneText, { textAlign: "center" }]}>
+								핀이{"\n"}아직 없어요...
+							</Text>
+						</View>
 					</View>
 				) : (
 					<Carousel
@@ -428,9 +430,14 @@ const styles = StyleSheet.create({
 		borderColor: "#fff",
 	},
 	
+	pinsNone: {
+		width: wp(100),
+		height: hp(65),
+		alignItems: "center",
+	},
 	pinsNoneContainer: {
-		width: "100%",
-		height: "100%",
+		width: "72%",
+		height: "75%",
 		borderRadius: 25,
 		backgroundColor: "rgba(128, 128, 128, 0.6)", // grey with 50% transparency
 		alignItems: "center",
@@ -459,7 +466,7 @@ const styles = StyleSheet.create({
 		backgroundColor: "black",
 	},
 	pinsNoneText: {
-		fontSize: 30,
+		fontSize: wp(6),
 		fontWeight: "900",
 		color: "black",
 	},
