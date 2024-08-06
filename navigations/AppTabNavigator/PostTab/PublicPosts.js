@@ -40,6 +40,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
   const refreshPosts = async () => {
     setPage(0);
     await firstFetch();
+    setRefreshing(false);
   };
   const firstFetch = async () => {
     setRefreshing(true);
@@ -110,7 +111,6 @@ const PublicPosts = React.forwardRef((props, ref) => {
       }
     }
   };
-
   const toggleOptions = () => {
     setOptionsVisible(!optionsVisible);
   };
@@ -263,9 +263,7 @@ const PublicPosts = React.forwardRef((props, ref) => {
       )}
       <ScrollView
         contentContainerStyle={styles.scrollViewContent}
-        refreshControl={
-          <RefreshControl onRefresh={() => getPosts(null, 0)} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshPosts} />}
       >
         <PagerView
           style={styles.pagerView}
