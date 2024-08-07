@@ -12,6 +12,8 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import * as SecureStore from 'expo-secure-store';
 import Api from '../Api';
 import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 
 const ForgotPassword = () => {
   const navigation = useNavigation();
@@ -102,9 +104,8 @@ const ForgotPassword = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.safeAreaContainer}>
       <BackButton />
-      <StatusBar barStyle="light-content" backgroundColor="#fff" />
       <View>
         <Image style={styles.logo} source={require('../assets/logo.png')} />
       </View>
@@ -157,17 +158,22 @@ const ForgotPassword = () => {
           </>
         )}
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  // container: {
+  //   flex: 1,
+  //   alignItems: "center",
+  //   backgroundColor: "black"
+  // },
+  safeAreaContainer: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "black"
+    backgroundColor: "black",
   },
-  logo: { 
+  logo: {
     width: wp(80),
     height: hp(40),
     alignSelf: "center"

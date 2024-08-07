@@ -21,6 +21,7 @@ import * as SecureStore from 'expo-secure-store';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native'; // useNavigation 훅을 임포트
 import { LinearGradient } from 'expo-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SignUpForm = () => {
   const navigation = useNavigation(); // navigation 초기화
@@ -240,7 +241,7 @@ const SignUpForm = () => {
 
   const handleEmailButtonPress = async () => {
     if (isSendingEmail) return; // 이미 요청 중이라면 아무 작업도 하지 않음
-  
+
     if (!isCodeSent) {
       setIsSendingEmail(true);  // 요청 시작 시 버튼 비활성화
       await sendEmailToServer(userData.email);
@@ -251,7 +252,7 @@ const SignUpForm = () => {
       resendAuthCode();
     }
   };
-  
+
   const verifyCode = async () => {
     console.log("인증 코드 확인 시도"); // 디버깅용 로그 추가
     try {
@@ -325,7 +326,8 @@ const SignUpForm = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.safeAreaContainer}>
+
       <BackButton />
       {step !== 7 && <Image style={styles.logo} source={require('../assets/logo.png')} />}
       <View style={styles.inputBox}>
@@ -615,19 +617,27 @@ const SignUpForm = () => {
           </LinearGradient>
         )}
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  // container: {
+  //   flex: 1,
+  //   justifyContent: "space-between",
+  //   alignItems: "center",
+  //   padding: wp(10),
+  //   paddingBottom: wp(0),
+  //   backgroundColor: "black"
+  //   // backgroundColor: "#fff"
+  // },
+  safeAreaContainer: {
     flex: 1,
-    justifyContent: "space-between",
+    // justifyContent: "space-between",
     alignItems: "center",
     padding: wp(10),
     paddingBottom: wp(0),
     backgroundColor: "black"
-    // backgroundColor: "#fff"
   },
   logo: {
     width: wp(50),
