@@ -307,8 +307,7 @@ const FriendsScreen = () => {
                 </View>
             </TouchableOpacity>
             <ListItem.Content>
-                <ListItem.Title style={styles.listItemTitle}>{item.nickname}</ListItem.Title>
-                {item.email && <ListItem.Subtitle style={styles.listItemSubtitle}>{item.email}</ListItem.Subtitle>}
+                <ListItem.Title style={styles.listItemTitle} numberOfLines={1} ellipsizeMode="tail">{item.nickname}</ListItem.Title>
             </ListItem.Content>
             {activeTab === 'recommend' && (
                 invitedUsers.some(invited => invited.userId === item.userId) ? (
@@ -317,7 +316,7 @@ const FriendsScreen = () => {
                     </TouchableOpacity>
                 ) : (
                     <LinearGradient colors={['#1BC5DA', '#263283']} style={styles.gradientButton}>
-                        <TouchableOpacity style={styles.innerButton} onPress={() => inviteFriend(item.userId)}>
+                        <TouchableOpacity onPress={() => inviteFriend(item.userId)}>
                             <Text style={styles.buttonText}>추가</Text>
                         </TouchableOpacity>
                     </LinearGradient>
@@ -335,12 +334,12 @@ const FriendsScreen = () => {
                 ) : (
                     <View style={styles.requestButtons}>
                         <LinearGradient colors={['#1BC5DA', '#263283']} style={styles.gradientButton}>
-                            <TouchableOpacity style={styles.innerButton} onPress={() => acceptFriendRequest(item.userId)}>
+                            <TouchableOpacity onPress={() => acceptFriendRequest(item.userId)}>
                                 <Text style={styles.buttonText}>수락</Text>
                             </TouchableOpacity>
                         </LinearGradient>
                         <LinearGradient colors={['#292929', '#292929']} style={styles.gradientButton}>
-                            <TouchableOpacity style={styles.innerButton} onPress={() => rejectFriendRequest(item.userId)}>
+                            <TouchableOpacity onPress={() => rejectFriendRequest(item.userId)}>
                                 <Text style={styles.buttonText}>거절</Text>
                             </TouchableOpacity>
                         </LinearGradient>
@@ -350,7 +349,7 @@ const FriendsScreen = () => {
             {activeTab === 'request' && subTab === 'send' && (
                 invitedUsers.some(user => user.userId === item.userId) ? (
                     <LinearGradient colors={['#292929', '#292929']} style={styles.gradientButton}>
-                        <TouchableOpacity style={styles.innerButton} onPress={() => cancelFriendRequest(item.userId)}>
+                        <TouchableOpacity onPress={() => cancelFriendRequest(item.userId)}>
                             <Text style={styles.buttonText}>취소</Text>
                         </TouchableOpacity>
                     </LinearGradient>
@@ -362,7 +361,7 @@ const FriendsScreen = () => {
             )}
             {activeTab === 'friends' && (
                 <LinearGradient colors={['#292929', '#292929']} style={styles.gradientButton}>
-                    <TouchableOpacity style={styles.innerButton} onPress={() => deleteFriend(item.userId)}>
+                    <TouchableOpacity onPress={() => deleteFriend(item.userId)}>
                         <Text style={styles.buttonText}>삭제</Text>
                     </TouchableOpacity>
                 </LinearGradient>
@@ -374,41 +373,44 @@ const FriendsScreen = () => {
         <View style={styles.container}>
             <View style={styles.header}>
                 <LinearGradient colors={activeTab === 'recommend' ? ['#1BC5DA', '#263283'] : ['#000', '#000', '#000']} style={styles.gradientTab}>
-                    <TouchableOpacity onPress={() => { setActiveTab('recommend'); setSubTab('receive'); }} style={styles.tabButton}>
+                    <TouchableOpacity onPress={() => { setActiveTab('recommend'); setSubTab('receive'); }}>
                         <Text style={[styles.tabButtonText, activeTab === 'recommend' && styles.activeTabButtonText]}>추천</Text>
                     </TouchableOpacity>
                 </LinearGradient>
                 <LinearGradient colors={activeTab === 'request' ? ['#1BC5DA', '#263283'] : ['#000', '#000', '#000']} style={styles.gradientTab}>
-                    <TouchableOpacity onPress={() => { setActiveTab('request'); setSubTab('receive'); }} style={styles.tabButton}>
+                    <TouchableOpacity onPress={() => { setActiveTab('request'); setSubTab('receive'); }}>
                         <Text style={[styles.tabButtonText, activeTab === 'request' && styles.activeTabButtonText]}>요청</Text>
                     </TouchableOpacity>
                 </LinearGradient>
                 <LinearGradient colors={activeTab === 'friends' ? ['#1BC5DA', '#263283'] : ['#000', '#000', '#000']} style={styles.gradientTab}>
-                    <TouchableOpacity onPress={() => { setActiveTab('friends'); setSubTab('receive'); }} style={styles.tabButton}>
+                    <TouchableOpacity onPress={() => { setActiveTab('friends'); setSubTab('receive'); }}>
                         <Text style={[styles.tabButtonText, activeTab === 'friends' && styles.activeTabButtonText]}>목록</Text>
                     </TouchableOpacity>
                 </LinearGradient>
             </View>
-            <View style={styles.searchSection}>
-                <Icon style={styles.searchIcon} name="search" size={28} color="#D4D4D4" />
-                <TextInput
-                    style={styles.searchInput}
-                    placeholder="검색"
-                    placeholderTextColor="#AEAEAE"
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
-                />
+            <View style={styles.searchContainer}>
+                <View style={styles.searchSection}>
+                    <Icon style={styles.searchIcon} name="search" size={25} color="#D4D4D4" />
+                    <TextInput
+                      style={styles.searchInput}
+                      placeholder="검색"
+                      placeholderTextColor="#AEAEAE"
+                      value={searchQuery}
+                      onChangeText={setSearchQuery}
+                    />
+                </View>
             </View>
+
             {activeTab === 'request' && (
                 <View style={styles.subHeader}>
                     <LinearGradient colors={subTab === 'receive' ? ['#1BC5DA', '#263283'] : ['#000', '#000', '#000']} style={styles.subTab}>
-                        <TouchableOpacity onPress={() => setSubTab('receive')} style={styles.subTabButton}>
-                            <Text style={[styles.subTabButtonText, subTab === 'receive' && styles.activeSubTabButtonText]}>수신</Text>
+                        <TouchableOpacity onPress={() => setSubTab('receive')}>
+                            <Text style={styles.subTabButtonText}>수신</Text>
                         </TouchableOpacity>
                     </LinearGradient>
                     <LinearGradient colors={subTab === 'send' ? ['#1BC5DA', '#263283'] : ['#000', '#000', '#000']} style={styles.subTab}>
-                        <TouchableOpacity onPress={() => setSubTab('send')} style={styles.subTabButton}>
-                            <Text style={[styles.subTabButtonText, subTab === 'send' && styles.activeSubTabButtonText]}>송신</Text>
+                        <TouchableOpacity onPress={() => setSubTab('send')}>
+                            <Text style={styles.subTabButtonText}>송신</Text>
                         </TouchableOpacity>
                     </LinearGradient>
                 </View>
@@ -431,182 +433,154 @@ const FriendsScreen = () => {
 
 const styles = StyleSheet.create({
     container: {
+        alignItems: 'center',
         flex: 1,
         backgroundColor: '#000',
     },
     header: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        padding: 10,
-    },
-    subHeader: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        paddingVertical: 10,
-        marginHorizontal: 30,
-    },
-    tabButton: {
-        padding: 10,
-        borderRadius: 15,
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        width: '92.5%',
+        height: windowHeight * 0.08,
     },
-    gradientTab: {
-        flex: 1,
-        marginHorizontal: 10,
-        borderRadius: 16,
-        width: (250 / 1080) * windowWidth, 
-        height: (110 / 1813) * windowHeight, 
-    },
-    subTab: {
-        flex: 0.25,
-        marginHorizontal: 0,
-        borderRadius: 16,
-        width: (230 / 1080) * windowWidth, 
-        height: (110 / 1813) * windowHeight, 
-    },
-    tabButtonText: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    activeTabButtonText: {
-        color: '#fff',
-        fontWeight: 'bold',
-        fontSize: 18,
-    },
-    subTabButtonText: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    activeSubTabButtonText: {
-        color: '#fff',
-        fontWeight: 'bold',
-        fontSize: 18,
+        gradientTab: {
+            alignItems: 'center',
+            justifyContent: 'center',
+            width:  "30%",
+            height: "70%",
+            borderRadius: windowHeight * 0.017,
+        },
+        activeTabButtonText: {
+            color: '#fff',
+            fontSize: windowHeight * 0.023,
+            fontWeight: 'bold',
+        },
+        tabButtonText: {
+            color: '#fff',
+            fontSize: windowHeight * 0.023,
+            fontWeight: 'bold',
+        },
+    
+    searchContainer: {
+        width: '92.5%',
+        height: windowHeight * 0.07,
     },
     searchSection: {
         flexDirection: 'row',
         alignItems: 'center',
+        width: '100%',
+        height: windowHeight * 0.06,
+        borderRadius: windowHeight * 0.015,
         backgroundColor: '#3B3B3B',
-        borderRadius: 16,
-        marginTop: 0,
-        marginBottom: 5,
-        paddingHorizontal: 10,
-        width: '91%',
-        height: (115 / 1813) * windowHeight, 
-        alignSelf: 'center',
     },
-    searchIcon: {
-        padding: 5,
-        fontSize: 24,
-        color: '#aaa',
-        marginTop: 4,
-        marginRight: 3,
+        searchIcon: {
+            padding: windowHeight * 0.013,
+        },
+        searchInput: {
+            color: '#fff',
+            fontSize: windowHeight * 0.023,
+        },
+    
+    subHeader: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '92.5%',
+        height: windowHeight * 0.08,
     },
-    searchInput: {
-        flex: 1,
-        fontSize: 20,
-        color: '#fff',
-        paddingVertical: 10,
-        paddingLeft: 0,
+        subTab: {
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: "23%",
+            height: "70%",
+            borderRadius: windowHeight * 0.0175,
+        },
+        subTabButtonText: {
+            color: '#fff',
+            fontSize: windowHeight * 0.022,
+            fontWeight: 'bold',
+        },
+    
+    userList: {
+        width: '92.5%',
     },
     listItem: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: windowHeight * 0.1,
+        width: '100%',
+        borderRadius: windowHeight * 0.015,
+        marginVertical: windowHeight * 0.008,
+        paddingHorizontal: windowWidth * 0.02,
         backgroundColor: '#fff',
-        borderRadius: 16,
-        marginVertical: 5,
-        paddingHorizontal: 10,
-        height: (200 / 1813) * windowHeight, 
-        width: '95%', 
-        alignSelf: 'center',
     },
-    listItemTitle: {
-        color: '#000',
-        fontSize: 18, 
-        fontWeight: 'bold',
-    },
-    listItemSubtitle: {
-        color: '#aaa',
-        fontSize: 12, 
-    },
-    gradientButton: {
-        borderRadius: 15,
-        marginRight: 10,
-        width: (175 / 1080) * windowWidth, 
-        height: (100 / 1813) * windowHeight, 
-        justifyContent: 'center', 
-    },
-    innerButton: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: (175 / 1080) * windowWidth, 
-        height: (100 / 1813) * windowHeight, 
-    },
-    buttonText: {
-        color: '#fff',
-        textAlign: 'center',
-        fontSize: 14,
-        fontWeight: 'bold',
-    },
-    requestButtons: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: (350 / 1080) * windowWidth, 
-        marginRight: 10,
-    },
-    subTabButton: {
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 15,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    disabledButton: {
-        backgroundColor: '#292929', 
-        borderRadius: 15,
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: (175 / 1080) * windowWidth, 
-        height: (100 / 1813) * windowHeight, 
-    },
-    disabledButtonText: {
-        backgroundColor: '#292929', 
-        color: '#fff',
-        fontSize: 14,
-    },
-    acceptedButton: {
-        backgroundColor: '#292929', 
-        borderRadius: 15,
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: (175 / 1080) * windowWidth, 
-        height: (100 / 1813) * windowHeight, 
-        marginRight: 10,
-    },
-    userList: {
-        width: '95%',
-        alignSelf: 'center',
-    },
-    avatarContainer: {
-        height: (165 / 1813) * windowHeight, 
-        width: (165 / 1813) * windowHeight, 
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    avatarGradient: {
-        height: (165 / 1813) * windowHeight, 
-        width: (165 / 1813) * windowHeight, 
-        borderRadius: ((165 / 1813) * windowHeight) / 2, 
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    avatar: {
-        height: (150 / 1813) * windowHeight, 
-        width: (150 / 1813) * windowHeight, 
-        borderRadius: ((150 / 1813) * windowHeight) / 2, 
-        borderWidth: 1,
-        borderColor: "white",
-    },
+        avatarContainer: {
+            height: windowHeight * 0.078,
+            width: windowHeight * 0.078,
+        },
+            avatarGradient: {
+                alignItems: "center",
+                justifyContent: "center",
+                height: windowHeight * 0.078,
+                width: windowHeight * 0.078,
+                borderRadius: windowHeight,
+            },
+            avatar: {
+                height: windowHeight * 0.072,
+                width: windowHeight * 0.072,
+                borderRadius: windowHeight,
+                borderWidth: windowHeight * 0.002,
+                borderColor: "white",
+            },
+        listItemTitle: {
+            color: '#000',
+            fontSize: windowHeight * 0.02,
+            fontWeight: 'bold',
+        },
+    
+        gradientButton: {
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: windowHeight * 0.05,
+            width: windowWidth * 0.17,
+            borderRadius: windowHeight * 0.017,
+            marginRight: windowWidth * 0.03,
+        },
+            buttonText: {
+                color: '#fff',
+                fontSize: windowHeight * 0.0175,
+                fontWeight: 'bold',
+            },
+        disabledButton: {
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: windowHeight * 0.05,
+            width: windowWidth * 0.17,
+            borderRadius: windowHeight * 0.017,
+            marginRight: windowWidth * 0.03,
+            backgroundColor: '#292929',
+        },
+            disabledButtonText: {
+                backgroundColor: '#292929',
+                color: '#fff',
+                fontSize: 14,
+            },
+    
+        requestButtons: {
+            flexDirection: 'row',
+            width: windowWidth * 0.372,
+            marginRight: windowWidth * 0.03,
+        },
+            acceptedButton: {
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: windowWidth * 0.215,
+                height: windowHeight * 0.05,
+                borderRadius: windowHeight * 0.017,
+                marginRight: windowWidth * 0.03,
+                backgroundColor: '#292929',
+            },
 });
 
 export default FriendsScreen;
