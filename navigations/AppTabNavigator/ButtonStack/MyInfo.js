@@ -24,7 +24,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -51,11 +51,11 @@ const MyInfo = ({ navigation }) => {
 
   const defaultImage =
     "https://i.ibb.co/drqjXPV/DALL-E-2024-05-05-22-55-53-A-realistic-and-vibrant-photograph-of-Shibuya-Crossing-in-Tokyo-Japan-dur.webp";
-  
+
   useEffect(() => {
     fetchServerData();
   }, []);
-  
+
   const fetchServerData = async () => {
     try {
       const response = await Api.get(`/setting/myInfo`);
@@ -72,7 +72,7 @@ const MyInfo = ({ navigation }) => {
       console.error("Error fetching data", error);
     }
   };
-  
+
   const pickImage = async () => {
     if (Platform.OS !== "web") {
       const { status } =
@@ -108,7 +108,7 @@ const MyInfo = ({ navigation }) => {
   const PofileInitialization = () => {
     setImageUri(defaultImage);
   };
-  
+
   const handleUserIdChange = (text) => {
     setEditableUserId(text);
   };
@@ -119,7 +119,7 @@ const MyInfo = ({ navigation }) => {
   const duplicateCheck = async () => {
     if (isRequestPending) return; // 요청 중일 때 함수 실행 막기
     setIsRequestPending(true); // 요청 상태 시작
-    
+
     if (editableUserId === "") {
       Alert.alert("알림", "이름을 입력해주세요!");
       setEditableUserId(initialUserId);
@@ -146,7 +146,7 @@ const MyInfo = ({ navigation }) => {
       setIsRequestPending(false); // 요청 상태 종료
     }
   };
-  
+
   const handleLocationReceived = (lat, lon) => {
     console.log("Received new location:", { lat, lon });
     setTempLatitude(lat); // 임시 위도 업데이트
@@ -159,12 +159,12 @@ const MyInfo = ({ navigation }) => {
       setLongitude(tempLongitude); // 최종 경도 업데이트
       onClose();
     };
-    
+
     const handleRefresh = () => {
       setLoading(true);
       setRefresh((prev) => !prev);
     };
-    
+
     return (
       <Modal
         animationType="fade"
@@ -178,34 +178,38 @@ const MyInfo = ({ navigation }) => {
               {loading ? (
                 <ActivityIndicator size="large" color="#0000ff" />
               ) : (
-                tempLatitude !== null &&
-                tempLongitude !== null && (
-                  <MapView
-                    provider={PROVIDER_GOOGLE}
-                    style={styles.map}
-                    region={{
-                      latitude: tempLatitude,
-                      longitude: tempLongitude,
-                      latitudeDelta: 0.0922,
-                      longitudeDelta: 0.0421,
-                    }}
+                <>
+                  {tempLatitude !== null && tempLongitude !== null && (
+                    <MapView
+                      provider={PROVIDER_GOOGLE}
+                      style={styles.map}
+                      region={{
+                        latitude: tempLatitude,
+                        longitude: tempLongitude,
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.0421,
+                      }}
+                    >
+                      <Marker
+                        coordinate={{
+                          latitude: tempLatitude,
+                          longitude: tempLongitude,
+                        }}
+                      />
+                    </MapView>
+                  )}
+                  <Pressable
+                    onPress={handleRefresh}
+                    style={styles.refreshButton}
                   >
-                    <Marker coordinate={{ latitude: tempLatitude, longitude: tempLongitude }} />
-                  </MapView>
-                )
+                    <Ionicons name="refresh" size={24} color="black" />
+                  </Pressable>
+                </>
               )}
               <GetLocation
                 onLocationReceived={handleLocationReceived}
                 refresh={refresh}
               />
-              <View style={styles.refreshButtonContainer}>
-                <Pressable
-                  onPress={handleRefresh}
-                  style={styles.pressableButton}
-                >
-                  <Ionicons name="refresh" size={24} color="black" />
-                </Pressable>
-              </View>
             </View>
             <View style={styles.buttonContainer}>
               <LinearGradient
@@ -226,11 +230,11 @@ const MyInfo = ({ navigation }) => {
       </Modal>
     );
   };
-  
+
   const handleSave = async () => {
     if (isRequestPending) return; // 요청 중일 때 함수 실행 막기
     setIsRequestPending(true); // 요청 상태 시작
-    
+
     if (editableUserId === "") {
       Alert.alert("알림", "이름을 입력해주세요!");
       setIsRequestPending(false); // 요청 상태 종료
@@ -241,7 +245,7 @@ const MyInfo = ({ navigation }) => {
       setIsRequestPending(false); // 요청 상태 종료
       return;
     }
-    
+
     const formData = new FormData();
     if (imageUri) {
       formData.append("profileImage", {
@@ -255,14 +259,14 @@ const MyInfo = ({ navigation }) => {
     formData.append("nickname", editableUserId);
     formData.append("x", longitude.toString());
     formData.append("y", latitude.toString());
-    
+
     try {
       const response = await Api.patch(`/setting/myInfo`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      
+
       const responseData = response.data;
       console.log("User updated:", responseData);
       if (responseData.data.message === "개인정보 수정를 성공했습니다.") {
@@ -276,7 +280,7 @@ const MyInfo = ({ navigation }) => {
       setIsRequestPending(false); // 요청 상태 종료
     }
   };
-  
+
   if (isLoading) {
     return (
       <View style={styles.loader}>
@@ -315,16 +319,18 @@ const MyInfo = ({ navigation }) => {
       <View style={styles.infoBodySection}>
         <View style={styles.infoSection}>
           <Text style={styles.infoText}>이름</Text>
-          <View style={[styles.inputDiv, {width: wp(90)}]}>
+          <View style={[styles.inputDiv, { width: wp(90) }]}>
             <Text style={styles.text}>{username}</Text>
           </View>
         </View>
-        <View style={[
-          styles.infoSection,
-          !showDuplicateButton && !isDuplicateChecked
-            ? ({marginBottom: hp(1.5)})
-            : ({marginBottom: hp(0)})
-        ]}>
+        <View
+          style={[
+            styles.infoSection,
+            !showDuplicateButton && !isDuplicateChecked
+              ? { marginBottom: hp(1.5) }
+              : { marginBottom: hp(0) },
+          ]}
+        >
           <Text style={styles.infoText}>사용자 이름</Text>
           <View style={styles.inputDiv}>
             <View style={styles.inputContainer}>
@@ -368,13 +374,15 @@ const MyInfo = ({ navigation }) => {
               </Text>
             </View>
           ))}
-        <View style={[styles.infoSection, {marginTop: hp(1.5) }]}>
+        <View style={[styles.infoSection, { marginTop: hp(1.5) }]}>
           <TouchableOpacity
             onPress={() => setIsLocVisible(!isLocVisible)}
             disabled={isRequestPending}
           >
             <Text style={styles.infoText}>위치</Text>
-            <View style={[styles.inputDiv, {justifyContent: "space-between"}]}>
+            <View
+              style={[styles.inputDiv, { justifyContent: "space-between" }]}
+            >
               <Text style={styles.text}>{serverUserLocation}</Text>
               <LinearGradient
                 colors={["#1BC5DA", "#263283"]} // Define your gradient colors here
@@ -428,212 +436,221 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     alignItems: "center",
   },
-  
+
   profileSection: {
     width: wp(100),
     height: hp(18),
     padding: wp(3),
     flexDirection: "row",
     alignItems: "center",
-    
   },
-    imageSection: {
-      width: wp(30),
-      height: wp(30),
-      justifyContent: "center",
-      alignItems: "center",
-      marginRight: wp("5%"),
+  imageSection: {
+    width: wp(30),
+    height: wp(30),
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: wp("5%"),
+  },
+  imageGradient: {
+    width: wp("25.5%"),
+    height: wp("25.5%"),
+    borderRadius: wp("100%"),
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  image: {
+    width: wp("23%"),
+    height: wp("23%"),
+    borderRadius: wp("100%"),
+    borderWidth: 2,
+    borderColor: "white",
+  },
+  profileTextSection: {
+    width: wp(55),
+    height: wp(25),
+    justifyContent: "flex-end",
+  },
+  profileSmallTextSection: {
+    width: wp(55),
+    height: wp(5),
+    justifyContent: "center",
+  },
+  profileSmallText: {
+    fontSize: hp(1.75),
+    fontWeight: "bold",
+    color: "#fff",
+  },
+  profileBigTextSection: {
+    width: wp(55),
+    height: wp(18),
+    justifyContent: "center",
+  },
+  buttonText: {
+    fontSize: hp(2.5),
+    fontWeight: "bold",
+    color: "#fff",
+    marginVertical: hp(0.2),
+  },
 
-    },
-      imageGradient: {
-        width: wp("25.5%"),
-        height: wp("25.5%"),
-        borderRadius: wp("100%"),
-        alignItems: "center",
-        justifyContent: "center",
-      },
-      image: {
-        width: wp("23%"),
-        height: wp("23%"),
-        borderRadius: wp("100%"),
-        borderWidth: 2,
-        borderColor: "white",
-      },
-    profileTextSection: {
-      width: wp(55),
-      height: wp(25),
-      justifyContent: "flex-end",
-      
-    },
-      profileSmallTextSection: {
-        width: wp(55),
-        height: wp(5),
-        justifyContent: "center",
-        
-      },
-        profileSmallText: {
-          fontSize: hp(1.75),
-          fontWeight: "bold",
-          color: "#fff",
-        },
-      profileBigTextSection: {
-        width: wp(55),
-        height: wp(18),
-        justifyContent: "center",
-        
-      },
-        buttonText: {
-          fontSize: hp(2.5),
-          fontWeight: "bold",
-          color: "#fff",
-          marginVertical: hp(0.2),
-        },
-  
   infoBodySection: {
     flex: 1,
   },
-    infoSection: {
-      width: "90%",
-      height: hp(12),
-      marginBottom: hp(1.5),
-    },
-      infoText: {
-        fontSize: hp(2.5),
-        fontWeight: "bold",
-        marginBottom: hp(1),
-        color: "#fff",
-      },
-        inputDiv: {
-          width: "100%",
-          backgroundColor: "white",
-          borderRadius: 10,
-          flexDirection: "row",
-          alignItems: "center",
-          paddingLeft: hp(1.5), // 왼쪽 패딩만 남겨둠
-          paddingRight: hp(0.6), // 왼쪽 패딩만 남겨둠
-          height: hp(6.5), // 고정된 높이
-        },
-      text: {
-        borderRadius: 10,
-        fontSize: hp("2%"),
-        fontWeight: "400",
-        color: "black",
-      },
-      inputContainer: {
-      flex: 1,
-    },
-        input: {
-          width: "100%",
-          borderRadius: 10,
-          fontSize: hp("2%"),
-          fontWeight: "400",
-          color: "black",
-        },
-    duplicateConfirm: {
-      padding: hp(1.5),
-      borderRadius: 10,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-      duplicateText: {
-        fontSize: hp("1.75%"),
-        fontWeight: "bold",
-        color: "white",
-        textAlign: "center",
-      },
-    
-    warningSection: {
-      width: "90%",
-      justifyContent: "center",
-    },
-      warningText: {
-        fontSize: hp("1.75%"),
-        fontWeight: "bold",
-        color: "white",
-        
-        marginBottom: hp(1),
-      },
-      warningTextRed: {
-        color: "red",
-      },
-      warningTextGreen: {
-        color: "green",
-      },
-  
+  infoSection: {
+    width: "90%",
+    height: hp(12),
+    marginBottom: hp(1.5),
+  },
+  infoText: {
+    fontSize: hp(2.5),
+    fontWeight: "bold",
+    marginBottom: hp(1),
+    color: "#fff",
+  },
+  inputDiv: {
+    width: "100%",
+    backgroundColor: "white",
+    borderRadius: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingLeft: hp(1.5), // 왼쪽 패딩만 남겨둠
+    paddingRight: hp(0.6), // 왼쪽 패딩만 남겨둠
+    height: hp(6.5), // 고정된 높이
+  },
+  text: {
+    borderRadius: 10,
+    fontSize: hp("2%"),
+    fontWeight: "400",
+    color: "black",
+  },
+  inputContainer: {
+    flex: 1,
+  },
+  input: {
+    width: "100%",
+    borderRadius: 10,
+    fontSize: hp("2%"),
+    fontWeight: "400",
+    color: "black",
+  },
+  duplicateConfirm: {
+    padding: hp(1.5),
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  duplicateText: {
+    fontSize: hp("1.75%"),
+    fontWeight: "bold",
+    color: "white",
+    textAlign: "center",
+  },
+
+  warningSection: {
+    width: "90%",
+    justifyContent: "center",
+  },
+  warningText: {
+    fontSize: hp("1.75%"),
+    fontWeight: "bold",
+    color: "white",
+
+    marginBottom: hp(1),
+  },
+  warningTextRed: {
+    color: "red",
+  },
+  warningTextGreen: {
+    color: "green",
+  },
+
   submitInfoSection: {
     width: "100%",
     alignItems: "center",
   },
-    saveButton: {
-      flexDirection: "column",
-      width: "90%",
-      borderRadius: 15,
-      padding: wp("5%"), // 버튼 내부에 여백 추가
-      alignItems: "center", // 텍스트를 가운데 정렬
-      justifyContent: "center", // 텍스트를 가운데 정렬
-      marginBottom: hp("2%"),
-    },
-    saveText: {
-      borderRadius: 10,
-      fontSize: hp(2.3),
-      fontWeight: "bold",
-      color: "white",
-      minWidth: "100%",
-      textAlign: "center",
-    },
-  
-  
+  saveButton: {
+    flexDirection: "column",
+    width: "90%",
+    borderRadius: 15,
+    padding: wp("5%"), // 버튼 내부에 여백 추가
+    alignItems: "center", // 텍스트를 가운데 정렬
+    justifyContent: "center", // 텍스트를 가운데 정렬
+    marginBottom: hp("2%"),
+  },
+  saveText: {
+    borderRadius: 10,
+    fontSize: hp(2.3),
+    fontWeight: "bold",
+    color: "white",
+    minWidth: "100%",
+    textAlign: "center",
+  },
+
   modalContainer: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     alignItems: "center",
     justifyContent: "center",
   },
-    pressableButton: {
-      borderRadius: 5,
-      marginHorizontal: 5,
-    },
-    pressableContent: {
-      padding: 10,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    pressableButtonText: {
-      color: "black",
-      fontSize: 16,
-      fontWeight: "bold",
-    },
-    locModalWrapper: {
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    refreshButtonContainer: {
-      alignItems: 'flex-end',
-      marginTop: 10,
-    },
-    LocModalContainer: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    locModalContent: {
-      width: wp("90%"),
-      backgroundColor: "white",
-      padding: hp("2%"),
-      borderRadius: 10,
-    },
-    title: {
-      fontSize: hp("2.5%"),
-    },
-    map: {
-      width: wp("90%"),
-      height: hp("60%"),
-    },
-    buttonContainer: {
-      marginTop: 10,
-      width: wp('80%'),
-      alignItems: 'center',
-    },
+  pressableButton: {
+    borderRadius: 10,
+    width: wp("75%"), // 버튼의 너비를 80%로 설정하여 가로로 길게 만듭니다.
+    paddingVertical: hp("2%"), // 수직 패딩
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  pressableContent: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  pressableButtonText: {
+    color: "white",
+    fontSize: hp("2%"),
+    fontWeight: "bold",
+  },
+  locModalWrapper: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  refreshButtonContainer: {
+    alignItems: "flex-end",
+    marginTop: 10,
+  },
+  LocModalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  locModalContent: {
+    width: wp("90%"),
+    backgroundColor: "black",
+    padding: hp("2%"),
+    borderRadius: 10,
+    alignItems: "center", // 추가된 부분: 컨텐츠를 가운데 정렬
+    position: "relative", // position 속성 추가
+  },
+  title: {
+    fontSize: hp("2.5%"),
+  },
+  map: {
+    width: "100%",
+    height: hp("40%"), // 지도 높이를 60%에서 40%로 조정
+  },
+  buttonContainer: {
+    marginTop: hp("3%"), // 여백 추가
+    width: wp("80%"),
+    alignItems: "center",
+  },
+  refreshButton: {
+    position: "absolute", // 절대 위치 지정
+    bottom: hp("3%"), // 반응형 하단 위치
+    right: wp("7%"), // 반응형 오른쪽 위치
+    backgroundColor: "#fff", // 버튼 배경색
+    borderRadius: 30, // 둥근 모서리 정도를 줄임
+    width: wp("15%"), // 버튼의 너비 추가
+    paddingVertical: hp("1%"), // 수직 패딩
+    paddingHorizontal: wp("4%"), // 수평 패딩
+    alignItems: "center", // 텍스트 가운데 정렬
+  },
 });
 
 export default MyInfo;
