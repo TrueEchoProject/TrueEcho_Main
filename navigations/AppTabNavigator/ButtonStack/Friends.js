@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, TextInput, FlatList, StyleSheet, Alert, ActivityIndicator, TouchableOpacity, Text, Image } from 'react-native';
+import { View, TextInput, FlatList, StyleSheet, Alert, ActivityIndicator, TouchableOpacity, Text, Image, Dimensions } from 'react-native';
 import { ListItem, Icon } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
 import Api from '../../../Api';
 import * as SecureStore from 'expo-secure-store';
 import { useNavigation } from '@react-navigation/native';
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 const getCurrentUserId = async () => {
     try {
@@ -35,6 +38,7 @@ const FriendsScreen = () => {
     const [requests, setRequests] = useState([]);
     const [friends, setFriends] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [refreshKey, setRefreshKey] = useState(0); 
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -46,7 +50,6 @@ const FriendsScreen = () => {
             } else if (activeTab === 'invite') {
                 await fetchInvitedUsers();
             } else if (activeTab === 'request') {
-                setSubTab('receive');
                 await fetchFriendRequests();
             } else if (activeTab === 'friends') {
                 await fetchFriends();
@@ -55,6 +58,19 @@ const FriendsScreen = () => {
         };
         initializeData();
     }, [activeTab]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (activeTab === 'request') {
+                if (subTab === 'receive') {
+                    await fetchFriendRequests();
+                } else if (subTab === 'send') {
+                    await fetchInvitedUsers();
+                }
+            }
+        };
+        fetchData();
+    }, [subTab]);
 
     const fetchRecommendedUsers = useCallback(async () => {
         try {
@@ -152,34 +168,37 @@ const FriendsScreen = () => {
     const cancelFriendRequest = async (userId) => {
         try {
             console.log('Cancelling friend request for userId:', userId);
-
+    
             const formData = new FormData();
             formData.append('targetUserId', userId);
-
+    
             const accessToken = await getAccessToken();
             console.log('Access Token:', accessToken);
-
+    
             const response = await Api.post('/friends/cancel', formData, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                     'Content-Type': 'multipart/form-data',
                 },
             });
-
+    
             console.log('Cancel friend request response:', response.data);
-
+    
             if (response.data.code === "T002" && response.data.message === "친구 요청 취소에 성공했습니다.") {
+                
                 setInvitedUsers((prevInvitedUsers) => prevInvitedUsers.filter(user => user.userId !== userId));
-                setRequests((prevRequests) => prevRequests.filter(user => user.userId !== userId));
-                Alert.alert('성공', '친구 요청이 취소되었습니다.');
+                setRefreshKey(prevKey => prevKey + 1); 
+    
+                Alert.alert('성공', '친구 요청 취소에 성공했습니다.');
             } else {
-                Alert.alert('실패', response.data.message || '친구 요청 취소에 실패했습니다.');
+                Alert.alert('성공', response.data.message || '친구 요청 취소에 실패했습니다.');
             }
         } catch (error) {
             console.error('Error cancelling friend request:', error.message);
             Alert.alert('실패', '친구 요청 취소에 실패했습니다.');
         }
     };
+    
 
     const acceptFriendRequest = async (userId) => {
         try {
@@ -268,6 +287,10 @@ const FriendsScreen = () => {
         );
     }, [searchQuery, activeTab, subTab, users, invitedUsers, requests, friends]);
 
+    useEffect(() => {
+        // 상태가 변경될 때마다 리렌더링
+    }, [invitedUsers, requests]);
+
     const renderUser = ({ item }) => (
         <ListItem containerStyle={styles.listItem}>
             <TouchableOpacity onPress={() => navigation.navigate("UserAlarm", { userId: item.userId })}>
@@ -277,7 +300,7 @@ const FriendsScreen = () => {
                         style={styles.avatarGradient}
                     >
                         <Image
-                            source={{ uri: item.userProfileUrl }}
+                            source={item.userProfileUrl ? { uri: item.userProfileUrl } : require('../../../assets/logo.png')}
                             style={styles.avatar}
                         />
                     </LinearGradient>
@@ -325,11 +348,17 @@ const FriendsScreen = () => {
                 )
             )}
             {activeTab === 'request' && subTab === 'send' && (
-                <LinearGradient colors={['#292929', '#292929']} style={styles.gradientButton}>
-                    <TouchableOpacity style={styles.innerButton} onPress={() => cancelFriendRequest(item.userId)}>
-                        <Text style={styles.buttonText}>취소</Text>
+                invitedUsers.some(user => user.userId === item.userId) ? (
+                    <LinearGradient colors={['#292929', '#292929']} style={styles.gradientButton}>
+                        <TouchableOpacity style={styles.innerButton} onPress={() => cancelFriendRequest(item.userId)}>
+                            <Text style={styles.buttonText}>취소</Text>
+                        </TouchableOpacity>
+                    </LinearGradient>
+                ) : (
+                    <TouchableOpacity style={styles.disabledButton}>
+                        <Text style={styles.disabledButtonText}>취소 완료</Text>
                     </TouchableOpacity>
-                </LinearGradient>
+                )
             )}
             {activeTab === 'friends' && (
                 <LinearGradient colors={['#292929', '#292929']} style={styles.gradientButton}>
@@ -345,27 +374,27 @@ const FriendsScreen = () => {
         <View style={styles.container}>
             <View style={styles.header}>
                 <LinearGradient colors={activeTab === 'recommend' ? ['#1BC5DA', '#263283'] : ['#000', '#000', '#000']} style={styles.gradientTab}>
-                    <TouchableOpacity onPress={() => setActiveTab('recommend')} style={styles.tabButton}>
+                    <TouchableOpacity onPress={() => { setActiveTab('recommend'); setSubTab('receive'); }} style={styles.tabButton}>
                         <Text style={[styles.tabButtonText, activeTab === 'recommend' && styles.activeTabButtonText]}>추천</Text>
                     </TouchableOpacity>
                 </LinearGradient>
                 <LinearGradient colors={activeTab === 'request' ? ['#1BC5DA', '#263283'] : ['#000', '#000', '#000']} style={styles.gradientTab}>
-                    <TouchableOpacity onPress={() => setActiveTab('request')} style={styles.tabButton}>
+                    <TouchableOpacity onPress={() => { setActiveTab('request'); setSubTab('receive'); }} style={styles.tabButton}>
                         <Text style={[styles.tabButtonText, activeTab === 'request' && styles.activeTabButtonText]}>요청</Text>
                     </TouchableOpacity>
                 </LinearGradient>
                 <LinearGradient colors={activeTab === 'friends' ? ['#1BC5DA', '#263283'] : ['#000', '#000', '#000']} style={styles.gradientTab}>
-                    <TouchableOpacity onPress={() => setActiveTab('friends')} style={styles.tabButton}>
+                    <TouchableOpacity onPress={() => { setActiveTab('friends'); setSubTab('receive'); }} style={styles.tabButton}>
                         <Text style={[styles.tabButtonText, activeTab === 'friends' && styles.activeTabButtonText]}>목록</Text>
                     </TouchableOpacity>
                 </LinearGradient>
             </View>
             <View style={styles.searchSection}>
-                <Icon style={styles.searchIcon} name="search" size={24} color="#aaa" />
+                <Icon style={styles.searchIcon} name="search" size={28} color="#D4D4D4" />
                 <TextInput
                     style={styles.searchInput}
                     placeholder="검색"
-                    placeholderTextColor="#aaa"
+                    placeholderTextColor="#AEAEAE"
                     value={searchQuery}
                     onChangeText={setSearchQuery}
                 />
@@ -388,8 +417,10 @@ const FriendsScreen = () => {
                 <ActivityIndicator size="large" color="#0000ff" />
             ) : (
                 <FlatList 
+                    key={`${activeTab}-${subTab}-${refreshKey}`} 
                     style={styles.userList}
                     data={getFilteredUsers()} 
+                    extraData={invitedUsers} 
                     keyExtractor={(item) => item.userId.toString()} 
                     renderItem={renderUser} 
                 />
@@ -412,6 +443,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         paddingVertical: 10,
+        marginHorizontal: 30,
     },
     tabButton: {
         padding: 10,
@@ -421,17 +453,22 @@ const styles = StyleSheet.create({
     },
     gradientTab: {
         flex: 1,
-        marginHorizontal: 5,
-        borderRadius: 15,
+        marginHorizontal: 10,
+        borderRadius: 16,
+        width: (250 / 1080) * windowWidth, 
+        height: (110 / 1813) * windowHeight, 
     },
     subTab: {
         flex: 0.25,
-        marginHorizontal: 5,
-        borderRadius: 15,
+        marginHorizontal: 0,
+        borderRadius: 16,
+        width: (230 / 1080) * windowWidth, 
+        height: (110 / 1813) * windowHeight, 
     },
     tabButtonText: {
         color: '#fff',
         fontSize: 18,
+        fontWeight: 'bold',
     },
     activeTabButtonText: {
         color: '#fff',
@@ -441,6 +478,7 @@ const styles = StyleSheet.create({
     subTabButtonText: {
         color: '#fff',
         fontSize: 18,
+        fontWeight: 'bold',
     },
     activeSubTabButtonText: {
         color: '#fff',
@@ -450,11 +488,13 @@ const styles = StyleSheet.create({
     searchSection: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#222',
-        borderRadius: 15,
-        margin: 10,
+        backgroundColor: '#3B3B3B',
+        borderRadius: 16,
+        marginTop: 0,
+        marginBottom: 5,
         paddingHorizontal: 10,
-        width: '95%',
+        width: '91%',
+        height: (115 / 1813) * windowHeight, 
         alignSelf: 'center',
     },
     searchIcon: {
@@ -466,41 +506,53 @@ const styles = StyleSheet.create({
     },
     searchInput: {
         flex: 1,
-        fontSize: 18,
+        fontSize: 20,
         color: '#fff',
         paddingVertical: 10,
         paddingLeft: 0,
     },
     listItem: {
         backgroundColor: '#fff',
-        borderRadius: 15,
+        borderRadius: 16,
         marginVertical: 5,
         paddingHorizontal: 10,
+        height: (200 / 1813) * windowHeight, 
+        width: '95%', 
+        alignSelf: 'center',
     },
     listItemTitle: {
         color: '#000',
+        fontSize: 18, 
+        fontWeight: 'bold',
     },
     listItemSubtitle: {
         color: '#aaa',
+        fontSize: 12, 
     },
     gradientButton: {
         borderRadius: 15,
+        marginRight: 10,
+        width: (175 / 1080) * windowWidth, 
+        height: (100 / 1813) * windowHeight, 
+        justifyContent: 'center', 
     },
     innerButton: {
-        padding: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        minWidth: 70,
+        width: (175 / 1080) * windowWidth, 
+        height: (100 / 1813) * windowHeight, 
     },
     buttonText: {
         color: '#fff',
         textAlign: 'center',
-        fontSize: 12,
+        fontSize: 14,
+        fontWeight: 'bold',
     },
     requestButtons: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        width: 150,
+        justifyContent: 'space-between',
+        width: (350 / 1080) * windowWidth, 
+        marginRight: 10,
     },
     subTabButton: {
         paddingVertical: 10,
@@ -510,46 +562,48 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     disabledButton: {
-        backgroundColor: '#333',
-        padding: 10,
+        backgroundColor: '#292929', 
         borderRadius: 15,
         alignItems: 'center',
         justifyContent: 'center',
-        minWidth: 70,
+        width: (175 / 1080) * windowWidth, 
+        height: (100 / 1813) * windowHeight, 
     },
     disabledButtonText: {
+        backgroundColor: '#292929', 
         color: '#fff',
-        fontSize: 12,
+        fontSize: 14,
     },
     acceptedButton: {
-        backgroundColor: '#000',
-        padding: 10,
+        backgroundColor: '#292929', 
         borderRadius: 15,
         alignItems: 'center',
         justifyContent: 'center',
-        minWidth: 70,
+        width: (175 / 1080) * windowWidth, 
+        height: (100 / 1813) * windowHeight, 
+        marginRight: 10,
     },
     userList: {
         width: '95%',
         alignSelf: 'center',
     },
     avatarContainer: {
-        height: 40,
-        width: 40,
+        height: (165 / 1813) * windowHeight, 
+        width: (165 / 1813) * windowHeight, 
         alignItems: 'center',
         justifyContent: 'center',
     },
     avatarGradient: {
-        height: 35,
-        width: 35,
-        borderRadius: 17.5,
+        height: (165 / 1813) * windowHeight, 
+        width: (165 / 1813) * windowHeight, 
+        borderRadius: ((165 / 1813) * windowHeight) / 2, 
         alignItems: "center",
         justifyContent: "center",
     },
     avatar: {
-        height: 32,
-        width: 32,
-        borderRadius: 16,
+        height: (150 / 1813) * windowHeight, 
+        width: (150 / 1813) * windowHeight, 
+        borderRadius: ((150 / 1813) * windowHeight) / 2, 
         borderWidth: 1,
         borderColor: "white",
     },
