@@ -306,7 +306,7 @@ const Vote = () => {
               <View style={styles.imageContainer}>
                 {!selectedImage && (
                   <View>
-                    <Image source={defaultImage} style={styles.placeholderImage} />
+                    <Image source={defaultImage} style={styles.placeholderImage} resizeMode="contain" />
                   </View>
                 )}
                 {selectedImage && (selectedImage.front || selectedImage.back) && (
@@ -314,6 +314,7 @@ const Vote = () => {
                     <Image
                       source={{ uri: isFrontImage ? selectedImage.front : selectedImage.back }}
                       style={styles.selectedImage}
+                      resizeMode="contain"
                     />
                   </TouchableOpacity>
                 )}
@@ -333,12 +334,12 @@ const Vote = () => {
                             colors={['#1BC5DA', '#263283']}
                             style={styles.selectedUserButton}
                           >
-                            <Image source={{ uri: user.profileUrl }} style={styles.profileImage} />
+                            <Image source={{ uri: user.profileUrl }} style={styles.profileImage} resizeMode="contain" />
                             <Text style={styles.btnText}>{user.username}</Text>
                           </LinearGradient>
                         ) : (
                           <View style={styles.userButton}>
-                            <Image source={{ uri: user.profileUrl }} style={styles.profileImage} />
+                            <Image source={{ uri: user.profileUrl }} style={styles.profileImage} resizeMode="contain" />
                             <Text>{user.username}</Text>
                           </View>
                         )}

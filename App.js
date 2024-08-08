@@ -1,9 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
-  Animated,
-  Easing,
   Platform,
   AppState,
   StatusBar, Image,
@@ -16,7 +14,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import Api from "./Api"; // API 파일 경로에 맞게 수정
 import AppNavigation from "./AppNavigation"; // AppNavigation 파일 경로에 맞게 수정
 import { createNavigationUrl } from "./navigationUtils";
-import LottieView from "lottie-react-native"; // 추가된 부분
+import LoadingScreen from "./SignUp/LoadingScreen"; // 추가된 부분
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -259,8 +257,7 @@ const App = () => {
       setInitialRoute("Login");
       return false;
     } finally {
-      setIsLoading(false);
-      console.log("일반 로그인으로 접속");
+      // setIsLoading(false); // 이 부분을 주석 처리
     }
   };
 
@@ -314,25 +311,17 @@ const App = () => {
         return false;
       }
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false); // 이 부분을 주석 처리
     }
+  };
+
+  const handleLoadingFinish = () => {
+    setIsLoading(false); // 로딩 완료 후 isLoading을 false로 설정
   };
 
   if (isLoading || initialRoute === null) {
     return (
-      <View style={styles.container}>
-        <Image
-          style={styles.logo}
-          source={require('./assets/logo.png')}
-          resizeMode="contain"
-        />
-        <LottieView
-          source={require('./assets/loading.json')} // 올바른 경로를 사용하세요
-          autoPlay
-          loop
-          style={styles.lottie}
-        />
-      </View>
+      <LoadingScreen onFinish={handleLoadingFinish} />
     );
   }
 
@@ -346,33 +335,5 @@ const App = () => {
     </NavigationContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "black",
-  },
-  logo: {
-    width: 300,
-    height: 300,
-    marginBottom: 20,
-  },
-  lottie: {
-    width: 200,
-    height: 200,
-  },
-  text: {
-    fontSize: 36,
-    fontWeight: "600",
-    color: "#000",
-    textAlign: "center",
-    fontFamily: "sans-serif-medium",
-    textShadowColor: "rgba(0, 0, 0, 0.6)",
-    textShadowOffset: { width: 3, height: 3 },
-    textShadowRadius: 5,
-  },
-});
 
 export default App;

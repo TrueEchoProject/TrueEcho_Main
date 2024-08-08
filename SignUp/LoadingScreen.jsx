@@ -1,62 +1,64 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Image, Animated, Easing } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
+import { View, StyleSheet, Image } from 'react-native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
-const ZigzagGauge = ({ percentage }) => {
-  const pathData = 'M10 60 L15 50 L30 10 L40 50 L50 80 L60 40 L70 10 L80 60 L90 80'; // 지그재그 경로
-  const totalLength = 180; // 경로의 총 길이 (직접 측정하거나 계산 필요)
-  const strokeDashoffset = totalLength - (totalLength * percentage) / 100;
+const frames = [
+  require('../assets/loadingFrame/frame1.png'),
+  require('../assets/loadingFrame/frame2.png'),
+  require('../assets/loadingFrame/frame3.png'),
+  require('../assets/loadingFrame/frame4.png'),
+  require('../assets/loadingFrame/frame5.png'),
+  require('../assets/loadingFrame/frame6.png'),
+  require('../assets/loadingFrame/frame7.png'),
+  require('../assets/loadingFrame/frame8.png'),
+  require('../assets/loadingFrame/frame9.png'),
+  require('../assets/loadingFrame/frame10.png'),
+  require('../assets/loadingFrame/frame11.png'),
+  require('../assets/loadingFrame/frame12.png'),
+];
 
-  return (
-    <Svg height="100" width="100" viewBox="0 0 100 100">
-      <Path
-        d={pathData}
-        stroke="#e6e6e6"
-        strokeWidth="5"
-        fill="none"
-      />
-      <Path
-        d={pathData}
-        stroke="#3b5998"
-        strokeWidth="5"
-        fill="none"
-        strokeDasharray={totalLength}
-        strokeDashoffset={strokeDashoffset}
-        strokeLinecap="round"
-      />
-    </Svg>
-  );
-};
-
-const LoadingScreen = () => {
-  const [progress, setProgress] = useState(new Animated.Value(0));
+const LoadingScreen = ({ onFinish }) => {
+  const [currentFrameIndex, setCurrentFrameIndex] = useState(0);
 
   useEffect(() => {
-    Animated.loop(
-      Animated.timing(progress, {
-        toValue: 1,
-        duration: 2000,
-        easing: Easing.linear,
-        useNativeDriver: false,
-      })
-    ).start();
-  }, []);
+    const interval = setInterval(() => {
+      setCurrentFrameIndex((prevIndex) => {
+        const nextIndex = prevIndex + 1;
+        if (nextIndex === frames.length) {
+          clearInterval(interval);
+          setTimeout(onFinish, 200); // 마지막 프레임이 끝난 후 onFinish 콜백 호출
+          return prevIndex;
+        }
+        return nextIndex;
+      });
+    }, 300);
 
-  const percentage = progress.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 100],
-  });
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <View style={styles.container}>
       <Image
         style={styles.logo}
-        source={require('../assets/logo.png')}
+        source={require('../assets/loadingLogo.png')}
         resizeMode="contain"
       />
-      <Animated.View style={styles.zigzagContainer}>
-        <ZigzagGauge percentage={percentage} />
-      </Animated.View>
+      <View style={styles.animationContainer}>
+        {frames.map((frame, index) => (
+          <Image
+            key={index}
+            style={[
+              styles.image,
+              {
+                opacity: index === currentFrameIndex ? 1 : 0,
+                position: 'absolute',
+              },
+            ]}
+            source={frame}
+            resizeMode="contain"
+          />
+        ))}
+      </View>
     </View>
   );
 };
@@ -69,13 +71,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    width: 300,
-    height: 300,
-    marginBottom: 20,
+    width: wp('100%'), // 로고 너비를 화면 너비의 70%로 설정
+    height: hp('40%'), // 로고 높이를 화면 높이의 25%로 설정
+    marginBottom: hp('2%'), // 로고와 애니메이션 사이의 간격을 화면 높이의 2%로 설정
   },
-  zigzagContainer: {
-    width: 200,
-    height: 200,
+  animationContainer: {
+    width: wp('40%'), // 로딩 애니메이션 컨테이너 너비를 화면 너비의 30%로 설정
+    height: wp('40%'), // 로딩 애니메이션 컨테이너 높이를 화면 너비의 30%로 설정 (비율 유지)
+    justifyContent: 'center', // 애니메이션 컨테이너 중앙 정렬
+    alignItems: 'center', // 애니메이션 컨테이너 중앙 정렬
+  },
+  image: {
+    width: '100%',
+    height: '100%',
   },
 });
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,11 +6,11 @@ import {
   Pressable,
   StyleSheet,
   Image,
-  ActivityIndicator,
   Alert,
   Platform,
   StatusBar,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -28,16 +28,17 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const LoginForm = () => {
-
   const navigation = useNavigation();
   const [expoPushToken, setExpoPushToken] = useState('');
   const [warning, setWarning] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // 비밀번호 토글
-  const [loginData, setLoginData] = useState({
-    email: "",
-    password: "",
-  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [loginData, setLoginData] = useState({ email: "", password: "" });
+
+  const handleLoadingFinish = () => {
+    setLoading(false);
+    navigation.navigate('TabNavigation'); // Replace 'TabNavigation' with your target screen name
+  };
 
   async function registerForPushNotificationsAsync() {
     if (Platform.OS === 'android') {
@@ -78,6 +79,7 @@ const LoginForm = () => {
       return null;
     }
   }
+  
   useEffect(() => {
     const getPushToken = async () => {
       const token = await registerForPushNotificationsAsync();
@@ -90,6 +92,7 @@ const LoginForm = () => {
     };
     getPushToken();
   }, []);
+  
   const handleLogin = () => {
     if (expoPushToken) {
       submitLoginData(loginData.email, loginData.password);
@@ -102,10 +105,12 @@ const LoginForm = () => {
     setLoginData({ ...loginData, [key]: value });
     setWarning("");
   };
+
   const validateEmail = (email) => {
     const re = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
     return re.test(String(email).toLowerCase());
   };
+
   const submitLoginData = async (email, password) => {
     if (email === "") {
       setWarning("emailEmpty");
@@ -128,10 +133,7 @@ const LoginForm = () => {
     setLoading(true);
 
     try {
-      const response = await Api.post('/accounts/login', {
-        email,
-        password
-      });
+      const response = await Api.post('/accounts/login', { email, password });
 
       console.log("백엔드로 전송", response.data);
 
@@ -153,17 +155,15 @@ const LoginForm = () => {
           console.log('FCM token being sent:', expoPushToken);
 
           const fcmResponse = await Api.post(`/fcm/save`, formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
+            headers: { 'Content-Type': 'multipart/form-data' },
           });
 
           console.log('서버 응답:', fcmResponse.data);
         } else {
           console.error('Token was not obtained');
         }
-        setLoading(false);
-        navigation.navigate('TabNavigation');
+        // 여기에서 로딩이 끝날 때까지 기다림
+        setLoading(true);
       } else if (response.data.status === 401 && response.data.code === 'T001') {
         console.log("로그인 실패: 사용자 인증에 실패했습니다.");
         setLoading(false);
@@ -186,7 +186,7 @@ const LoginForm = () => {
   };
 
   if (loading) {
-    return <LoadingScreen />;
+    return <LoadingScreen onFinish={handleLoadingFinish} />;
   }
 
   return (
@@ -275,7 +275,6 @@ const styles = StyleSheet.create({
     height: hp(30),
     alignSelf: "center",
   },
-
   bodyContainer: {
     height: windowHeight * 0.65,
     justifyContent: "center",
@@ -355,7 +354,6 @@ const styles = StyleSheet.create({
   },
   toggleButton: {
     paddingHorizontal: 10,
-    
   },
 });
 

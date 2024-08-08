@@ -45,29 +45,31 @@ export const CommunityTabScreen = () => {
         headerTintColor: '#ffffff',
         headerLeft: () => getHeaderLeft(navigation, route),
         headerRight: () => (
-          <View style={{ flexDirection: 'row' }}>
-            <MaterialIcons
-              name="emoji-people"
-              size={30}
-              color="white"
-              style={{ marginHorizontal: 10 }}
-              onPress={() => navigation.navigate('Fri', { title: '친구' })}
-            />
-            <MaterialIcons
-              name="assignment-ind"
-              size={30}
-              color="white"
-              style={{ marginHorizontal: 10 }}
-              onPress={() => navigation.navigate('MyP', { title: '마이 페이지' })}
-            />
-          </View>
+          route.name !== 'Vote' && (
+            <View style={{ flexDirection: 'row' }}>
+              <MaterialIcons
+                name="emoji-people"
+                size={30}
+                color="white"
+                style={{ marginHorizontal: 10 }}
+                onPress={() => navigation.navigate('Fri', { title: '친구' })}
+              />
+              <MaterialIcons
+                name="assignment-ind"
+                size={30}
+                color="white"
+                style={{ marginHorizontal: 10 }}
+                onPress={() => navigation.navigate('MyP', { title: '마이 페이지' })}
+              />
+            </View>
+          )
         ),
       })}
     >
       <CommunityStack.Screen
         name="Vote"
         component={Vote}
-        options={{ headerShown: false }}
+        options={{ headerShown: true }}
       />
       <CommunityStack.Screen
         name="Result"
