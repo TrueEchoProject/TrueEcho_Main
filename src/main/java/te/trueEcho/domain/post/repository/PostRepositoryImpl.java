@@ -145,13 +145,14 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public boolean writeComment(Comment comment) {
+    public Comment writeComment(Comment comment) {
         try {
             em.persist(comment);
-            return true;
+            em.flush();
+            return comment;
         } catch (Exception e) {
             log.error("writeComment error : {}", e.getMessage());
-            return false;
+            return null;
         }
     }
 
