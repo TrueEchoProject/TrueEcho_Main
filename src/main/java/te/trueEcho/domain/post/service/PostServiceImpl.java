@@ -274,11 +274,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public boolean writeComment(WriteCommentRequest writeCommentRequest) {
+    public NewCommentResponse writeComment(WriteCommentRequest writeCommentRequest) {
         User loginUser = authUtil.getLoginUser();
         if (loginUser == null) {
             log.error("Authentication failed - No login user found");
-            return false;
+            return null;
         }
 
         Comment mainComment = null;
@@ -292,7 +292,14 @@ public class PostServiceImpl implements PostService {
         }
 
         Comment newComment = dtoToComment.converter(writeCommentRequest, loginUser, commentedPost, mainComment);
-        return postRepository.writeComment(newComment);
+
+        Comment retrievedNewComment = postRepository.writeComment(newComment);
+
+        if(retrievedNewComment==null){
+            return null;
+        }
+
+        return NewCommentResponse.builder().commentId(retrievedNewComment.getId()).build();
     }
 
     @Transactional

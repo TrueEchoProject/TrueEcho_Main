@@ -22,7 +22,7 @@ public interface PostRepository {
     List<Post> getRandomPost();
     Comment getParentComment(Long commentId);
 
-    boolean writeComment(Comment comment);
+    Comment writeComment(Comment comment);
     boolean deletePost(Long postId);
     boolean deleteComment(Long commentId);
     boolean deleteLike(Like like);

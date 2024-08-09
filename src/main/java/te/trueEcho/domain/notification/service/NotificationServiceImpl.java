@@ -528,23 +528,13 @@ public class NotificationServiceImpl implements NotificationService {
 
                 case COMMENT:
                     if (Boolean.TRUE.equals(receiver.getNotificationSetting().getCommentNotification())) {
-                        String title = "댓글 추가";
-                        String body = "새로 작성된 댓글이 있어요";
-                        NotificationDto fcmData = getNotificationDto(title, body, request);
-                        fcmService.sendNotification(token, fcmData);
-                        saveNotiInDB(title, body, request, receiver, sender);
-                        return true;
+                        return handleNotification("댓글 추가", "새로 작성된 댓글이 있어요", request, receiver, sender, token);
                     }
                     break;
 
                 case SUB_COMMENT:
                     if (Boolean.TRUE.equals(receiver.getNotificationSetting().getSubCommentNotification())) {
-                        String title = "답글 추가";
-                        String body = "당신의 덧글에 답글이 달렸어요";
-                        NotificationDto fcmData = getNotificationDto(title, body, request);
-                        fcmService.sendNotification(token, fcmData);
-                        saveNotiInDB(title, body, request, receiver, sender);
-                        return true;
+                        return handleNotification("답글 추가", "당신의 덧글에 답글이 달렸어요", request, receiver, sender, token);
                     }
                     break;
 
@@ -883,5 +873,17 @@ public void saveNotiInDB(String title, String body, NotificationDto request, Use
                         .notiType(request.getData().getNotiType())
                         .build())
                 .build();
+    }
+
+    private boolean handleNotification(String title, String body, NotificationDto request, User receiver, User sender, String token) {
+        Long commentId = request.getData().getContentId();
+        Comment comment = postRepositoryImpl.findCommentById(commentId);
+        Long postId = comment.getPost().getId();
+        request.getData().setContentId(postId);
+        NotificationDto fcmData = getNotificationDto(title, body, request);
+        fcmService.sendNotification(token, fcmData);
+        request.getData().setContentId(commentId);
+        saveNotiInDB(title, body, request, receiver, sender);
+        return true;
     }
 }

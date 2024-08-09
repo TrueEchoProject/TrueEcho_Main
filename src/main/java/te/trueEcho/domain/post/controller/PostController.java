@@ -191,10 +191,10 @@ public class PostController {
     public ResponseEntity<ResponseForm> writeComment(
             @RequestBody WriteCommentRequest writeCommentRequest){
 
-        boolean isWritten = postService.writeComment(writeCommentRequest);
+        NewCommentResponse retrievedComment = postService.writeComment(writeCommentRequest);
 
-        return isWritten ?
-                ResponseEntity.ok(ResponseForm.of(ResponseCode.POST_COMMENT_SUCCESS)) :
+        return retrievedComment != null ?
+                ResponseEntity.ok(ResponseForm.of(ResponseCode.POST_COMMENT_SUCCESS, retrievedComment)) :
                 ResponseEntity.ok(ResponseForm.of(ResponseCode.POST_COMMENT_FAIL));
     }
     @Operation(summary = "댓글 삭제", description = "댓글을 삭제합니다.")

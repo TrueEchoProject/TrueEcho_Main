@@ -19,7 +19,6 @@ import java.util.List;
 @Table(name = "comments")
 public class Comment extends CreatedDateAudit {
 
-
     @Id
     @Column(name = "comment_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -22,7 +22,7 @@ public interface PostService {
 
     PostStatus getPostStatus(String todaySHot);
 
-    boolean writeComment(WriteCommentRequest writeCommentRequest);
+    NewCommentResponse writeComment(WriteCommentRequest writeCommentRequest);
 
     boolean deleteComment(Long commentId);
 
