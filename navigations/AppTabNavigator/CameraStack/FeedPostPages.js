@@ -6,7 +6,7 @@ import storage from '../../../AsyncStorage';
 import Api from '../../../Api';
 import ImageDouble from './ImageDouble';
 import { MaterialIcons } from '@expo/vector-icons';
-import {LinearGradient} from "expo-linear-gradient";
+import { LinearGradient } from "expo-linear-gradient";
 
 const { width, height } = Dimensions.get('window');
 
@@ -110,22 +110,22 @@ const FeedPostPage = ({ route }) => {
 
   const shareFeed = async () => {
     if (isSubmitting) return;
-
+  
     if (!title.trim()) {
       Alert.alert('오류', '제목을 입력해주세요!');
       return;
     }
-
+  
     setIsSubmitting(true);
-
+  
     const formData = new FormData();
-
+  
     formData.append('type', friendRange);
     formData.append('title', title);
-
+  
     let resizedFrontImage = null;
     let resizedBackImage = null;
-
+  
     if (selectedCamera === 'front' || selectedCamera === 'dual') {
       if (cameraData.front.uris[cameraData.front.selectedIndex]) {
         resizedFrontImage = await resizeImage(cameraData.front.uris[cameraData.front.selectedIndex]);
@@ -138,7 +138,7 @@ const FeedPostPage = ({ route }) => {
         }
       }
     }
-
+  
     if (selectedCamera === 'back' || selectedCamera === 'dual') {
       if (cameraData.back.uris[cameraData.back.selectedIndex]) {
         resizedBackImage = await resizeImage(cameraData.back.uris[cameraData.back.selectedIndex]);
@@ -151,21 +151,21 @@ const FeedPostPage = ({ route }) => {
         }
       }
     }
-
+  
     const currentTime = new Date();
     const formattedTime = `${currentTime.getFullYear()}-${String(currentTime.getMonth() + 1).padStart(2, '0')}-${String(currentTime.getDate()).padStart(2, '0')}-${String(currentTime.getHours()).padStart(2, '0')}-${String(currentTime.getMinutes()).padStart(2, '0')}`;
     formData.append('todayShot', formattedTime);
-
+  
     try {
       const response = await Api.post('post/write', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-
+  
       if (response.status === 202 || response.status === 200) {
         const { data } = response;
-
+  
         await storage.set('title', title);
         await storage.set('type', friendRange);
         if (resizedFrontImage) {
@@ -175,26 +175,37 @@ const FeedPostPage = ({ route }) => {
           await storage.set('postBack', resizedBackImage.uri);
         }
         await storage.set('todayShot', formattedTime);
-
+  
         const postedIn24H = {
           postedFront: !!resizedFrontImage,
           postedBack: !!resizedBackImage,
           postedAt: formattedTime
         };
         await storage.set('postedIn24H', JSON.stringify(postedIn24H));
+  
+        // Navigate to the appropriate tab and refresh data
+        // Step 1: Reset navigation stack and set the tab based on friendRange
+navigation.reset({
+  index: 0,
+  routes: [{
+    name: 'MainPost',
+    params: {
+      initialTab: friendRange === 'PUBLIC' ? 'OtherFeed' : 'FriendFeed',
+      refresh: true
+    }
+  }],
+});
 
-        // Navigate to the appropriate tab
-        if (friendRange === 'PUBLIC') {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'MainPost', params: { initialTab: 'OtherFeed' } }],
-          });
-        } else {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'MainPost', params: { initialTab: 'FriendFeed' } }],
-          });
-        }
+// Step 2: Immediately navigate to the appropriate tab if it's PUBLIC
+if (friendRange === 'PUBLIC') {
+  setTimeout(() => {
+    navigation.navigate('MainPost', {
+      initialTab: 'OtherFeed',
+      refresh: true
+    });
+  }, 0);
+}
+        
       } else {
         console.error('Unexpected response status:', response.status);
         Alert.alert('오류', '피드 업로드 중 예상치 못한 오류가 발생했습니다.');
@@ -207,6 +218,9 @@ const FeedPostPage = ({ route }) => {
       setIsSubmitting(false);
     }
   };
+  
+  
+  
 
   const handleTitleSave = () => {
     Keyboard.dismiss();
@@ -383,6 +397,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
   },
 });
-
 
 export default FeedPostPage;

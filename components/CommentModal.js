@@ -107,41 +107,6 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
         }
     };
     
-    const handleDeleteComment = async (commentId) => {
-        if (isLoading) return;
-        setIsLoading(true);
-
-        Alert.alert(
-            "댓글 삭제",
-            "이 댓글을 삭제하시겠습니까?",
-            [
-                { text: "취소", onPress: () => console.log("삭제 취소"), style: "cancel" },
-                {
-                    text: "삭제", onPress: async () => {
-                        try {
-                            const response = await Api.delete(`/post/delete/comment/${commentId}`);
-                            setTextInputValue('');
-                            setComments([]);
-                            setShowUnderComments({});
-                            setReplyingTo(null);
-                            setTextInputValue("");
-                            setCommentNone(false);
-                            setPage(0);
-                            setLoading(true);
-                            await fetchComments(0);
-                        } catch (error) {
-                            console.error('댓글 삭제 실패:', error);
-                            setTextInputValue('');
-                            setShowUnderComments({});
-                            setReplyingTo(null);
-                        } finally {
-                            setIsLoading(false);
-                        }
-                    }
-                }
-            ]
-        );
-    };
     const handleSubmitComment = async () => {
         if (isLoading) return;
         setIsLoading(true);
@@ -150,13 +115,18 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
             setIsLoading(false);
             return;
         }
-
+    
         try {
+            // 댓글 생성 API 호출
             const response = await Api.post(`/post/write/comment`, {
                 postId: postId,
                 parentCommentId: replyingTo,
                 content: textInputValue
             });
+    
+            // 서버에서 반환된 commentId를 가져옵니다.
+            const commentId = response.data.data.commentId;
+    
             let FcmResponse;
             if (replyingTo) {
                 const parentComment = comments.find(comment => comment.commentId === replyingTo);
@@ -164,9 +134,9 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
                     title: null,
                     body: null,
                     data: {
-                        userId: parentComment.userId,
-                        notiType: 5,
-                        contentId: postId
+                        userId: parentComment.userId,  // 알림을 받을 사용자 ID
+                        notiType: 5,                   // 댓글 알림 타입
+                        contentId: commentId           // 생성된 댓글의 ID
                     }
                 });
             } else {
@@ -174,15 +144,17 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
                     title: null,
                     body: null,
                     data: {
-                        userId: userId,
-                        notiType: 4,
-                        contentId: postId
+                        userId: userId,                // 알림을 받을 사용자 ID
+                        notiType: 4,                   // 댓글 알림 타입
+                        contentId: commentId           // 생성된 댓글의 ID
                     }
                 });
             }
+    
             if (FcmResponse.data) {
                 console.log('FCM Response:', FcmResponse.data);
             }
+    
             if (response.data.message === "해당 게시물의 댓글 생성을 성공했습니다.") {
                 setComments([]);
                 setShowUnderComments({});
@@ -194,12 +166,14 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
             }
         } catch (error) {
             console.error('댓글 추가 실패:', error);
-        }   finally {
-            await fetchComments(0);
+        } finally {
+            await fetchComments(0);  // 새로 댓글 리스트를 불러옵니다.
             setTextInputValue("");
             setReplyingTo(null);
         }
     };
+    
+    
 
     const CommentItem = React.memo(({ comment, toggleUnderComments, showUnderComments, index }) => {
 		const isReplyingTo = replyingTo === comment.commentId;
