@@ -22,6 +22,8 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native'; // useNavigation 훅을 임포트
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Ionicons from '@expo/vector-icons/Ionicons';
+
 
 const SignUpForm = () => {
   const navigation = useNavigation(); // navigation 초기화
@@ -54,6 +56,8 @@ const SignUpForm = () => {
   const [isAuthValid, setIsAuthValid] = useState(false); // 인증 여부 상태 변수 추가
   const [isSendingEmail, setIsSendingEmail] = useState(false); // 이메인 인증 로딩 인디케이터.
   const emailInputRef = useRef(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
 
   const BackButton = () => (
@@ -329,7 +333,7 @@ const SignUpForm = () => {
     <SafeAreaView style={styles.safeAreaContainer}>
 
       <BackButton />
-      {step !== 7 && <Image style={styles.logo} source={require('../assets/logo.png')} />}
+      {step !== 7 && <Image style={styles.logo} source={require('../assets/SignUpLogo.png')} />}
       <View style={styles.inputBox}>
         {step === 1 && (
           <>
@@ -342,7 +346,7 @@ const SignUpForm = () => {
                 // setIsNicknameValid(false); // 닉네임 변경 시 유효성 초기화
               }}
               style={styles.input}
-              placeholderTextColor="#ccc"
+              placeholderTextColor="#aaa"
             />
             {warning === "닉네임 미입력" && <Text style={styles.warningText}>닉네임를 입력해주세요.</Text>}
             {warning === "닉네임 중복검사 미통과" && <Text style={styles.warningText}>닉네임 중복검사를 통과해주세요.</Text>}
@@ -354,7 +358,7 @@ const SignUpForm = () => {
               style={styles.input}
               keyboardType="email-address"
               ref={emailInputRef}
-              placeholderTextColor="#ccc"
+              placeholderTextColor="#aaa"
             />
             {warning === "이메일 공란" && <Text style={styles.warningText}>이메일을 입력해주세요.</Text>}
             {warning === "이메일 정규식 오류" && <Text style={styles.warningText}>올바른 이메일을 입력해주세요.</Text>}
@@ -380,7 +384,7 @@ const SignUpForm = () => {
                   style={styles.input}
                   editable={timer !== 0}
                   keyboardType="default"
-                  placeholderTextColor="#ccc"
+                  placeholderTextColor="#aaa"
                 />
                 {warning === "인증코드 미입력" && <Text style={styles.warningText}>인증번호를 입력해주세요.</Text>}
                 {warning === "인증코드 불일치" && <Text style={styles.warningText}>인증번호를 확인해주세요.</Text>}
@@ -408,25 +412,35 @@ const SignUpForm = () => {
         {step === 2 && (
           <>
             <Text style={styles.text}>비밀번호</Text>
-            <TextInput
-              placeholder="비밀번호를 입력해주세요."
-              value={userData.password}
-              onChangeText={(text) => handleChange("password", text)}
-              style={styles.input}
-              secureTextEntry
-              placeholderTextColor="#ccc"
-            />
+            <View style={styles.passwordContainer}>
+              <TextInput
+                placeholder="비밀번호를 입력해주세요."
+                value={userData.password}
+                onChangeText={(text) => handleChange("password", text)}
+                style={styles.passwordInput}
+                secureTextEntry={!showPassword}
+                placeholderTextColor="#aaa"
+              />
+              <Pressable onPress={() => setShowPassword(!showPassword)} style={styles.toggleButton}>
+                <Ionicons name={showPassword ? "eye-off-outline" : "eye-outline"} size={24} color="white" />
+              </Pressable>
+            </View>
             {warning === "비밀번호 공란" && <Text style={styles.warningText}>비밀번호를 입력해주세요.</Text>}
             {warning === "비밀번호 자릿수 오류" && <Text style={styles.warningText}>비밀번호는 8~16자리로 구성해주세요.</Text>}
             <Text style={styles.text}>비밀번호확인</Text>
-            <TextInput
-              placeholder="비밀번호를 다시 입력해주세요."
-              value={confirmPassword}
-              onChangeText={handleConfirmPasswordChange}
-              style={styles.input}
-              secureTextEntry
-              placeholderTextColor="#ccc"
-            />
+            <View style={styles.passwordContainer}>
+              <TextInput
+                placeholder="비밀번호를 다시 입력해주세요."
+                value={confirmPassword}
+                onChangeText={handleConfirmPasswordChange}
+                style={styles.passwordInput}
+                secureTextEntry={!showConfirmPassword}
+                placeholderTextColor="#aaa"
+              />
+              <Pressable onPress={() => setShowConfirmPassword(!showConfirmPassword)} style={styles.toggleButton}>
+                <Ionicons name={showConfirmPassword ? "eye-off-outline" : "eye-outline"} size={24} color="white" />
+              </Pressable>
+            </View>
             {warning === "비밀번호 재확인 공란" && <Text style={styles.warningText}>비밀번호 확인을 입력해주세요.</Text>}
             {warning === "비밀번호 확인 불일치" && <Text style={styles.warningText}>비밀번호가 일치하지 않습니다.</Text>}
           </>
@@ -439,7 +453,7 @@ const SignUpForm = () => {
               value={userData.name}
               onChangeText={(text) => handleChange("name", text)}
               style={styles.input}
-              placeholderTextColor="#ccc"
+              placeholderTextColor="#aaa"
             />
             {warning === "이름 공란" && <Text style={styles.warningText}>이름을 입력해주세요.</Text>}
             {warning === "이름 형식 오류" && <Text style={styles.warningText}>이름엔 특수문자가 올 수 없습니다.</Text>}
@@ -530,29 +544,28 @@ const SignUpForm = () => {
                       }}
                     />
                   </MapView>
+                  <View style={styles.refreshButtonContainer}> 
+                    {loadingLocation ? (
+                      <ActivityIndicator size="large" color="#0000ff" />
+                    ) : (
+                      <Pressable
+                        style={({ pressed }) => [
+                          {
+                            backgroundColor: pressed ? '#d1d1d1' : '#fff',
+                            padding: 10,
+                            borderRadius: 10,
+                            alignItems: 'center',
+                          },
+                          styles.refreshButton, // 지도 위에 새로고침 버튼 스타일 추가
+                        ]}
+                        onPress={handleGetLocation}
+                      >
+                        <Ionicons name="refresh" size={24} color="black" />
+                      </Pressable>
+                    )}
+                  </View>
                 </View>
               </>
-            )}
-            {loadingLocation ? (
-              <ActivityIndicator size="large" color="#0000ff" />
-            ) : (
-              <Pressable
-                style={({ pressed }) => [
-                  {
-                    backgroundColor: pressed ? '#d1d1d1' : '#fff',
-                    padding: 10,
-                    borderRadius: 10,
-                    marginVertical: 10,
-                    alignItems: 'center',
-                  },
-                  styles.button, // 버튼 스타일 추가
-                ]}
-                onPress={handleGetLocation}
-              >
-                <Text style={styles.TimeButtonText}>
-                  {userData.y && userData.x ? "새고고침" : "위치 불러오기"}
-                </Text>
-              </Pressable>
             )}
             <GetLocation onLocationReceived={handleLocationReceived} refresh={loadingLocation} />
             <Text style={styles.text}>위치정보</Text>
@@ -560,7 +573,6 @@ const SignUpForm = () => {
             {warning === "위치 정보 미수집" && <Text style={styles.warningText}>위치 정보를 활성화해주세요.</Text>}
           </>
         )}
-
         {step === 8 && (
           <>
             <Text style={styles.text}>알림시간</Text>
@@ -635,13 +647,13 @@ const styles = StyleSheet.create({
     flex: 1,
     // justifyContent: "space-between",
     alignItems: "center",
-    padding: wp(10),
+    padding: wp(7),
     paddingBottom: wp(0),
     backgroundColor: "black"
   },
   logo: {
-    width: wp(50),
-    height: hp(20),
+    width: wp(80),
+    height: hp(35),
     alignSelf: "center",
     // marginBottom: hp(2),
   },
@@ -651,20 +663,20 @@ const styles = StyleSheet.create({
   },
   text: {
     fontWeight: "bold",
-    fontSize: hp(2.5),
+    fontSize: hp(2),
     color: "#fff",
     marginTop: hp(4),
   },
   description: {
     fontSize: hp(2),
     marginVertical: hp(2),
-    color: "#fff"
+    color: "#aaa"
   },
   input: {
     width: wp(85),
     borderBottomWidth: 1,
     borderColor: "#fff",
-    paddingVertical: hp(2),
+    paddingVertical: hp(1),
     // marginTop: hp(2),
     fontSize: hp(2),
     color: "#fff"
@@ -684,16 +696,16 @@ const styles = StyleSheet.create({
   },
   sexBtn: {
     backgroundColor: '#fff',
-    paddingVertical: wp(5),
-    paddingHorizontal: wp(15),
-    borderRadius: 15,
+    paddingVertical: wp(4),
+    paddingHorizontal: wp(17),
+    borderRadius: 20,
     marginHorizontal: wp(3),
     marginTop: hp(3),
   },
   sexBtnText: {
     color: "black",
     fontWeight: "bold",
-    fontSize: hp(2.5),
+    fontSize: hp(2),
   },
   selectedSexBtnText: {
     color: '#fff', // 선택된 버튼의 폰트 색상을 흰색으로 변경
@@ -704,13 +716,13 @@ const styles = StyleSheet.create({
     fontSize: hp(2),
   },
   btnText: {
-    fontSize: hp(2.5),
+    fontSize: hp(2),
     color: "black",
     fontWeight: "bold",
     textAlign: "center",
   },
   finBtnText: {
-    fontSize: hp(2.5),
+    fontSize: hp(2),
     color: "#fff",
     fontWeight: "bold",
     textAlign: "center",
@@ -751,20 +763,26 @@ const styles = StyleSheet.create({
     marginTop: hp(1),
   },
   mapContainer: {
-    borderRadius: 15,
     overflow: 'hidden',
-    width: '100%',
-    height: 250,
-    marginBottom: hp(2),
-  },
-  mapContainer: {
-    borderRadius: 15,
-    overflow: 'hidden',
-    width: '100%',
-    height: 250,
-    marginBottom: hp(2),
+    width: '120%',
+    height: hp(50),
     marginTop: hp(5),
+    alignSelf: 'center', // 수평 가운데 정렬
+    position: 'relative', // 자식 요소들이 절대 위치를 가질 수 있도록 설정
   },
+  refreshButtonContainer: {
+    position: 'absolute',
+    bottom: hp(2), // 지도의 하단에서 적당한 위치로 떨어뜨림
+    right: wp(5), // 지도의 오른쪽에서 적당한 위치로 떨어뜨림
+    zIndex: 1000, // 지도 위에 버튼을 표시
+  },
+  refreshButton: {
+    backgroundColor: '#fff',
+    padding: wp(2),
+    borderRadius: 10,
+    zIndex: 1000, // 지도 위에 버튼을 표시
+  },
+
   map: {
     width: '100%',
     height: '100%',
@@ -779,9 +797,9 @@ const styles = StyleSheet.create({
   },
   timeButton: {
     backgroundColor: '#fff',
-    paddingVertical: wp(5),
-    paddingHorizontal: wp(10),
-    borderRadius: 15,
+    paddingVertical: wp(4),
+    paddingHorizontal: wp(12),
+    borderRadius: 20,
     margin: wp(2),
     marginTop: hp(1),
     minWidth: wp(28),
@@ -841,6 +859,24 @@ const styles = StyleSheet.create({
   },
   datePickerContainer: {
     marginBottom: hp(3),
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderColor: "#fff",
+  },
+  passwordInput: {
+    flex: 1,  // Flex 사용하여 TextInput 확장
+    paddingBottom: hp(1),
+    fontSize: hp(2),
+    color: "#fff",
+  },
+  toggleButton: {
+    paddingHorizontal: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10, // zIndex로 버튼을 최상위로 설정
   },
 
 });
