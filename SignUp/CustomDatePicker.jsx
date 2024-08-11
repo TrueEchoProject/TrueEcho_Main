@@ -121,22 +121,26 @@ const CustomDatePicker = ({ onConfirm }) => {
 const styles = StyleSheet.create({
   pickerContainer: {
     flexDirection: 'row',
-    height: hp('20%'),
-    width: wp('70%'),
+    height: hp('15%'),
+    width: wp('72%'),
   },
   pickerItem: {
     height: ITEM_HEIGHT,
     justifyContent: 'center',
     alignItems: 'center',
-    width: wp(20),
-    fontSize: hp('4%'),
-    textAlign: 'center',
+    // width: wp(22),
+    fontSize: hp('4.5%'),
+    textAlign:"left",
     color: '#FFFFFF',
     fontWeight: 'bold',
+    borderWidth: 1,
+    borderColor:"#fff",
+    // paddingVertical: hp(1),
   },
   selectedItem: {
     color: '#1BC6DA',
     fontWeight: 'bold',
+    textAlign:"left"
   },
   buttonContainer: {
     flexDirection: 'row',
