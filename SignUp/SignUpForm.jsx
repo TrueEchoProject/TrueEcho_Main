@@ -23,6 +23,8 @@ import { useNavigation } from '@react-navigation/native'; // useNavigation 훅�
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+
 
 
 const SignUpForm = () => {
@@ -119,7 +121,7 @@ const SignUpForm = () => {
       return;
     }
     setWarning("");
-    if (step < 9) {
+    if (step < 8) {
       setStep(step + 1);
     } else {
       if (!loading) { // 로딩 중이 아닐 때만 실행
@@ -180,8 +182,9 @@ const SignUpForm = () => {
   const handleConfirmPasswordChange = (value) => setConfirmPassword(value);
 
   const sendDataToServer = async (userData) => {
+    console.log(userData);
     try {
-      const response = await Api.post('/accounts/register', userData);
+      const response = await Api.post('/accounts/register',userData);
       console.log("백엔드로 전송", response.data);
       if (response.data.code === "U001") {
         // 성공적으로 서버에 데이터 전송 후, 로컬 스토리지에 저장
@@ -324,6 +327,7 @@ const SignUpForm = () => {
   const handleLocationReceived = (latitude, longitude) => {
     setUserData({ ...userData, y: latitude, x: longitude });
     setLoadingLocation(false);
+    alert(`Location received:\nLatitude: ${latitude}\nLongitude: ${longitude}`); // 추가된 alert
   };
   const handleGetLocation = () => {
     setLoadingLocation(true);
@@ -341,14 +345,11 @@ const SignUpForm = () => {
             <TextInput
               placeholder="닉네임을 입력해주세요."
               value={userData.nickname}
-              onChangeText={(text) => {
-                handleChange("nickname", text);
-                // setIsNicknameValid(false); // 닉네임 변경 시 유효성 초기화
-              }}
+              onChangeText={(text) => handleChange("nickname", text)}
               style={styles.input}
               placeholderTextColor="#aaa"
             />
-            {warning === "닉네임 미입력" && <Text style={styles.warningText}>닉네임를 입력해주세요.</Text>}
+            {warning === "닉네임 미입력" && <Text style={styles.warningText}>닉네임을 입력해주세요.</Text>}
             {warning === "닉네임 중복검사 미통과" && <Text style={styles.warningText}>닉네임 중복검사를 통과해주세요.</Text>}
             <Text style={styles.text}>이메일</Text>
             <TextInput
@@ -367,9 +368,9 @@ const SignUpForm = () => {
             <Pressable
               onPress={handleEmailButtonPress}
               style={({ pressed }) => [
-                styles.authBtn, // 스타일 클래스 사용
+                styles.authBtn,
                 (isCodeSent && !canResend || userData.nickname === "") && styles.disabledBtn,
-                pressed && styles.pressedBtn // 버튼을 눌렀을 때의 스타일
+                pressed && styles.pressedBtn
               ]}
               disabled={isCodeSent && !canResend || userData.nickname === ""}
             >
@@ -377,32 +378,40 @@ const SignUpForm = () => {
             </Pressable>
             {isCodeSent && (
               <>
-                <TextInput
-                  placeholder="인증번호를 입력해주세요."
-                  value={authCode}
-                  onChangeText={setAuthCode}
-                  style={styles.input}
-                  editable={timer !== 0}
-                  keyboardType="default"
-                  placeholderTextColor="#aaa"
-                />
-                {warning === "인증코드 미입력" && <Text style={styles.warningText}>인증번호를 입력해주세요.</Text>}
-                {warning === "인증코드 불일치" && <Text style={styles.warningText}>인증번호를 확인해주세요.</Text>}
-                {warning === "인증번호 인증 성공" && <Text style={styles.successText}>인증 성공! 다음으로 넘어가주세요.</Text>}
+                <View style={styles.authCodeContainer}>
+                  <TextInput
+                    placeholder="인증번호를 입력해주세요."
+                    value={authCode}
+                    onChangeText={setAuthCode}
+                    style={[styles.Authinput, styles.authCodeInput]}
+                    editable={timer !== 0}
+                    keyboardType="default"
+                    placeholderTextColor="#aaa"
+                  />
+                  <Text style={styles.timerText}>
+                    {Math.floor(timer / 60)}:{('0' + (timer % 60)).slice(-2)}
+                  </Text>
+                </View>
                 {timer === 0 && <Text style={styles.warningText}>인증 시간이 초과되었습니다. 다시 인증해주세요.</Text>}
-                <View style={styles.rowContainer}>
-                  <Text style={styles.description}>남은 시간: {Math.floor(timer / 60)}:{('0' + (timer % 60)).slice(-2)}</Text>
-                  <Pressable
-                    onPress={verifyCode}
-                    style={[
-                      styles.authBtn, // 스타일 클래스 사용
-                      !authCode && styles.disabledBtn, // 인풋이 빈칸일 때
-                      { alignSelf: 'flex-end' } // 인증번호 확인 버튼도 오른쪽 정렬
-                    ]}
-                    disabled={!authCode || isAuthValid} // 인증이 성공했을 때 비활성화
-                  >
-                    <Text style={styles.btnText2}>인증 번호 확인</Text>
-                  </Pressable>
+                <View style={styles.confirmButtonContainer}>
+                  <View style={styles.messageContainer}>
+                    {warning === "인증코드 미입력" && <Text style={styles.warningText}>인증번호를 입력해주세요.</Text>}
+                    {warning === "인증코드 불일치" && <Text style={styles.warningText}>인증번호를 확인해주세요.</Text>}
+                    {warning === "인증번호 인증 성공" && <Text style={styles.successText}>인증 성공! 다음으로 넘어가주세요.</Text>}
+                  </View>
+
+                  <View style={styles.confirmButtonWrapper}>
+                    <Pressable
+                      onPress={verifyCode}
+                      style={[
+                        styles.authBtn,
+                        !authCode && styles.disabledBtn,
+                      ]}
+                      disabled={!authCode || isAuthValid}
+                    >
+                      <Text style={styles.btnText2}>확인</Text>
+                    </Pressable>
+                  </View>
                 </View>
               </>
             )}
@@ -465,14 +474,27 @@ const SignUpForm = () => {
             <Text style={styles.description}>같은 연령대의 친구들을 추천해드려요!</Text>
             {warning === "생년월일 미입력" && <Text style={styles.warningText}>생년월일을 입력해주세요.</Text>}
             <View style={styles.datePickerContainer}>
-              <CustomDatePicker
-                onConfirm={handleConfirm}
-              />
+              <CustomDatePicker onConfirm={handleConfirm}/>
             </View>
             {displayAge !== "" && (
-              <>
-                <Text style={{ fontSize: hp(4), fontWeight: "bold", color: "#fff" }}>만 {`${displayAge}세`}</Text>
-              </>
+              <View style={{ flexDirection: "row", alignItems: "center", marginTop: hp(2) }}>
+                <Text style={{ fontSize: hp(4), fontWeight: "bold", color: "#fff" }}>{`${displayAge}세`}</Text>
+                <TouchableOpacity
+                  onPress={() => setDisplayAge("")}  // 버튼을 눌렀을 때 displayAge 초기화
+                  style={{
+                    marginLeft: wp(2),
+                    paddingVertical: hp(0.3),
+                    paddingHorizontal: wp(2), // 버튼의 가로 길이를 넓게 설정
+                    backgroundColor: "#fff",
+                    borderRadius: 100,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    alignSelf: 'flex-end', // 버튼을 아래로 정렬
+                  }}
+                >
+                  <MaterialIcons name="refresh" size={24} color="black" />
+                </TouchableOpacity>
+              </View>
             )}
           </>
         )}
@@ -544,7 +566,7 @@ const SignUpForm = () => {
                       }}
                     />
                   </MapView>
-                  <View style={styles.refreshButtonContainer}> 
+                  <View style={styles.refreshButtonContainer}>
                     {loadingLocation ? (
                       <ActivityIndicator size="large" color="#0000ff" />
                     ) : (
@@ -600,13 +622,6 @@ const SignUpForm = () => {
             </View>
           </>
         )}
-
-        {step === 9 && (
-          <>
-            <Text style={styles.text}>TrueEcho를 위한 준비가 끝났어요!</Text>
-            <Text style={styles.description}>사람들을 만날 준비가 되었나요?{'\n'}바로 시작할게요!</Text>
-          </>
-        )}
       </View>
       <KeyboardAvoidingView style={styles.buttonContainer}>
         {step > 1 && (
@@ -614,9 +629,9 @@ const SignUpForm = () => {
             <Text style={styles.backBtnText}>Back</Text>
           </Pressable>
         )}
-        {step < 9 ? (
+        {step < 8 || selectedNotificationTime === null ? (
           <Pressable style={styles.continueBtn} onPress={continueClick} disabled={loading}>
-            <Text style={styles.btnText}>{step < 9 ? "Continue" : "지금 만나러 가기!"}</Text>
+            <Text style={styles.btnText}>{step < 8 ? "Continue" : "지금 만나러 가기!"}</Text>
           </Pressable>
         ) : (
           <LinearGradient
@@ -624,13 +639,14 @@ const SignUpForm = () => {
             style={styles.continueBtn}
           >
             <Pressable style={styles.gradientButtonContent} onPress={continueClick} disabled={loading}>
-              <Text style={styles.finBtnText}>{step < 9 ? "Continue" : "지금 만나러 가기!"}</Text>
+              <Text style={styles.finBtnText}>지금 만나러 가기!</Text>
             </Pressable>
           </LinearGradient>
         )}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
+
 };
 
 const styles = StyleSheet.create({
@@ -676,6 +692,13 @@ const styles = StyleSheet.create({
     width: wp(85),
     borderBottomWidth: 1,
     borderColor: "#fff",
+    paddingVertical: hp(1),
+    // marginTop: hp(2),
+    fontSize: hp(2),
+    color: "#fff"
+  },
+  Authinput: {
+    width: wp(85),
     paddingVertical: hp(1),
     // marginTop: hp(2),
     fontSize: hp(2),
@@ -732,6 +755,7 @@ const styles = StyleSheet.create({
     color: "black",
     fontWeight: "bold",
     textAlign: "center",
+    alignSelf: "flex-end",
   },
   warningText: {
     color: "red",
@@ -779,8 +803,10 @@ const styles = StyleSheet.create({
   refreshButton: {
     backgroundColor: '#fff',
     padding: wp(2),
-    borderRadius: 10,
+    borderRadius: 50,
     zIndex: 1000, // 지도 위에 버튼을 표시
+    borderWidth: 1.5,
+    borderColor: "black"
   },
 
   map: {
@@ -847,10 +873,12 @@ const styles = StyleSheet.create({
   },
   rowContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    justifyContent: "space-between", // 버튼을 오른쪽 정렬
+    alignItems: 'flex-start', // 인증 번호 확인 버튼이 오른쪽 끝에 위치하도록 설정
     width: '100%', // 필요한 경우 너비를 조정합니다.
-    marginTop: 10, // 위에 간격 조정
+
+    borderColor: '#fff',
+    borderWidth: 1,
   },
   backBtnText: {
     color: '#fff',
@@ -858,7 +886,7 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   datePickerContainer: {
-    marginBottom: hp(3),
+    // marginBottom: hp(1),
   },
   passwordContainer: {
     flexDirection: 'row',
@@ -878,7 +906,46 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 10, // zIndex로 버튼을 최상위로 설정
   },
+  authCodeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderColor: "#fff",
+  },
+  authCodeInput: {
+    flex: 1,
+    paddingBottom: hp(1),
+    fontSize: hp(2),
+    color: "#fff",
+  },
+  timerText: {
+    color: '#aaa',
+    fontSize: hp(2),
+    paddingRight: 10,
+  },
+  alignRightButton: {
+    alignSelf: 'flex-end', // 확인 버튼을 오른쪽으로 고정
+  },
+  confirmButtonContainer: {
+    flexDirection: 'row', // 수평 배치를 위해 row 사용
+    justifyContent: 'space-between', // 두 개의 View를 양쪽에 배치
 
+    // alignItems: 'center', // 수직 중앙 정렬
+    // borderWidth: 1,
+    // borderColor:"#fff",
+  },
+  messageContainer: {
+    flex: 1, // 남는 공간을 차지하여 버튼이 오른쪽으로 밀리도록 함
+    // borderWidth: 1,
+    // borderColor:"#fff",
+  },
+  confirmButtonWrapper: {
+    justifyContent: 'flex-end', // 확인 버튼을 오른쪽으로 고정
+  },
+  datePicker: {
+    // width: wp('90%'), // CustomDatePicker의 너비를 조정
+    // height: hp('30%'), // CustomDatePicker의 높이를 조정
+  },
 });
 
 export default SignUpForm;

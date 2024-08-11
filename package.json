@@ -13,6 +13,7 @@
     "@expo/vector-icons": "^14.0.2",
     "@ptomasroos/react-native-multi-slider": "^2.2.2",
     "@react-native-async-storage/async-storage": "1.23.1",
+    "@react-native-picker/picker": "^2.7.7",
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/stack": "^6.3.29",
@@ -61,6 +62,7 @@
     "react-native-snap-carousel": "^3.9.1",
     "react-native-svg": "^15.3.0",
     "react-native-svg-transformer": "^1.4.0",
+    "react-native-wheel-picker": "^1.2.0",
     "styled-components": "^6.1.11"
   },
   "devDependencies": {
