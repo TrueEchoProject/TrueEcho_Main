@@ -27,9 +27,14 @@ const ResultPage = ({ question, topRankList = [], thisWeek }) => {
                 </View>
               </View>
               <View style={[styles.profileItem, { bottom: profileBottom, width: wp('20%') }]}>
-                <Image source={{ uri: rank.profileUrl }} style={styles.profileImage} />
-				<Text style={styles.nicknameText}>
-				{rank.nickname}
+                <LinearGradient
+                  colors={['#1BC5DA', '#263283']}
+                  style={styles.profileImageBackground}
+                >
+                  <Image source={{ uri: rank.profileUrl }} style={styles.profileImage} />
+                </LinearGradient>
+                <Text style={styles.nicknameText}>
+                  {rank.nickname}
                 </Text>
               </View>
             </View>
@@ -39,7 +44,6 @@ const ResultPage = ({ question, topRankList = [], thisWeek }) => {
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   page: {
@@ -77,17 +81,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'absolute',
   },
-  profileImage: {
-    width: wp('15%'),
-    height: wp('15%'),
+  profileImageBackground: {
+    width: wp('14.5%'),
+    height: wp('14.5%'),
     borderRadius: wp('7.5%'),
     marginBottom: hp('1%'),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  profileImage: {
+    width: wp('13%'),
+    height: wp('13%'),
+    borderRadius: wp('7.5%'),
+    borderWidth:1.5,
+    borderColor:"#fff"
   },
   nicknameText: {
     fontSize: hp('2%'),
     fontWeight: 'bold',
     textAlign: 'center',
-    color: 'black',  // Changed to black
+    color: 'black',
   },
   chartBarWrapper: {
     width: wp('20%'),

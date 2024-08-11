@@ -294,7 +294,7 @@ const Vote = () => {
   const currentItem = data[currentIndex];
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "black"}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "black" }}>
       <ImageBackground source={backgroundImage} style={styles.fullSizeBackground} resizeMode="cover">
         <View style={styles.container}>
           <Animated.View
@@ -334,13 +334,23 @@ const Vote = () => {
                             colors={['#1BC5DA', '#263283']}
                             style={styles.selectedUserButton}
                           >
-                            <Image source={{ uri: user.profileUrl }} style={styles.profileImage} resizeMode="contain" />
+                            <LinearGradient
+                              colors={['#fff', '#fff']}
+                              style={styles.profileImageBackground}
+                            >
+                              <Image source={{ uri: user.profileUrl }} style={styles.profileImage1} resizeMode="contain" />
+                            </LinearGradient>
                             <Text style={styles.btnText}>{user.username}</Text>
                           </LinearGradient>
                         ) : (
                           <View style={styles.userButton}>
-                            <Image source={{ uri: user.profileUrl }} style={styles.profileImage} resizeMode="contain" />
-                            <Text>{user.username}</Text>
+                            <LinearGradient
+                              colors={['#1BC5DA', '#263283']}
+                              style={styles.profileImageBackground}
+                            >
+                              <Image source={{ uri: user.profileUrl }} style={styles.profileImage} resizeMode="contain" />
+                            </LinearGradient>
+                            <Text style={{fontWeight: "bold",marginTop:hp(1),}}>{user.username}</Text>
                           </View>
                         )}
                       </TouchableOpacity>
@@ -359,6 +369,10 @@ const Vote = () => {
       </ImageBackground>
     </SafeAreaView>
   );
+  
+  
+  
+  
 
 };
 
@@ -457,11 +471,30 @@ const styles = StyleSheet.create({
     width: wp('13%'),
     height: wp('13%'),
     borderRadius: wp('7.5%'),
-    marginBottom: 5,
+    // marginBottom: 5,
+    borderWidth:1.5,
+    borderColor:"#fff"
+  },
+  profileImage1: {
+    width: wp('13%'),
+    height: wp('13%'),
+    borderRadius: wp('7.5%'),
+    // marginBottom: 5,
+    borderWidth:1.5,
+    borderColor:"#1BC5DA"
+  },
+  profileImageBackground:{
+    width: wp('14.5%'),
+    height: wp('14.5%'),
+    borderRadius: wp('7.5%'),
+    justifyContent:"center",
+    alignItems:"center",
   },
   btnText: {
     fontSize: wp(3.5),
     fontWeight: 'bold',
+    color:"#fff",
+    marginTop:hp(1),
   },
   refreshButtonContainer: {
     justifyContent: 'center',
