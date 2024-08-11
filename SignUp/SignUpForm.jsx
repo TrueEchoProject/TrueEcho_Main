@@ -60,6 +60,7 @@ const SignUpForm = () => {
   const emailInputRef = useRef(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [mapLoaded, setMapLoaded] = useState(false); // 지도 로딩 상태 추가
 
 
   const BackButton = () => (
@@ -184,7 +185,7 @@ const SignUpForm = () => {
   const sendDataToServer = async (userData) => {
     console.log(userData);
     try {
-      const response = await Api.post('/accounts/register',userData);
+      const response = await Api.post('/accounts/register', userData);
       console.log("백엔드로 전송", response.data);
       if (response.data.code === "U001") {
         // 성공적으로 서버에 데이터 전송 후, 로컬 스토리지에 저장
@@ -327,10 +328,11 @@ const SignUpForm = () => {
   const handleLocationReceived = (latitude, longitude) => {
     setUserData({ ...userData, y: latitude, x: longitude });
     setLoadingLocation(false);
-    alert(`Location received:\nLatitude: ${latitude}\nLongitude: ${longitude}`); // 추가된 alert
+    setMapLoaded(true); // 위치를 받은 후 지도 로딩 상태를 true로 변경
   };
   const handleGetLocation = () => {
     setLoadingLocation(true);
+    setMapLoaded(false); // 새 위치를 요청할 때 지도 로딩 상태를 false로 설정
   };
 
   return (
@@ -474,7 +476,7 @@ const SignUpForm = () => {
             <Text style={styles.description}>같은 연령대의 친구들을 추천해드려요!</Text>
             {warning === "생년월일 미입력" && <Text style={styles.warningText}>생년월일을 입력해주세요.</Text>}
             <View style={styles.datePickerContainer}>
-              <CustomDatePicker onConfirm={handleConfirm}/>
+              <CustomDatePicker onConfirm={handleConfirm} />
             </View>
             {displayAge !== "" && (
               <View style={{ flexDirection: "row", alignItems: "center", marginTop: hp(2) }}>
@@ -546,18 +548,26 @@ const SignUpForm = () => {
         )}
         {step === 7 && (
           <>
-            {userData.y && userData.x && (
-              <>
-                <View style={styles.mapContainer}>
+            <View style={styles.mapContainer}>
+              {/* 플레이스홀더 이미지가 항상 표시됨 */}
+              <Image
+                source={require('../assets/mapPlaceholder.png')} // 대체 이미지 경로 설정
+                style={styles.map}
+                resizeMode="cover"
+              />
+              {userData.y && userData.x && (
+                <>
+                  {/* 지도는 플레이스홀더 이미지 위에 덮어씌워짐 */}
                   <MapView
                     provider={PROVIDER_GOOGLE} // Google Maps를 사용하도록 설정
-                    style={styles.map}
+                    style={styles.map} // 지도는 항상 플레이스홀더 이미지 위에 렌더링됨
                     initialRegion={{
                       latitude: parseFloat(userData.y),
                       longitude: parseFloat(userData.x),
                       latitudeDelta: 0.0922,
                       longitudeDelta: 0.0421,
                     }}
+                    onMapReady={() => setMapLoaded(true)} // 지도 로딩이 완료되면 mapLoaded를 true로 설정
                   >
                     <Marker
                       coordinate={{
@@ -568,7 +578,7 @@ const SignUpForm = () => {
                   </MapView>
                   <View style={styles.refreshButtonContainer}>
                     {loadingLocation ? (
-                      <ActivityIndicator size="large" color="#0000ff" />
+                      <ActivityIndicator size="large" color="black" />
                     ) : (
                       <Pressable
                         style={({ pressed }) => [
@@ -578,7 +588,7 @@ const SignUpForm = () => {
                             borderRadius: 10,
                             alignItems: 'center',
                           },
-                          styles.refreshButton, // 지도 위에 새로고침 버튼 스타일 추가
+                          styles.refreshButton,
                         ]}
                         onPress={handleGetLocation}
                       >
@@ -586,15 +596,17 @@ const SignUpForm = () => {
                       </Pressable>
                     )}
                   </View>
-                </View>
-              </>
-            )}
+                </>
+              )}
+            </View>
             <GetLocation onLocationReceived={handleLocationReceived} refresh={loadingLocation} />
             <Text style={styles.text}>위치정보</Text>
             <Text style={styles.description}>현재 위치를 기반으로 게시물을 보여드려요!</Text>
             {warning === "위치 정보 미수집" && <Text style={styles.warningText}>위치 정보를 활성화해주세요.</Text>}
           </>
         )}
+
+
         {step === 8 && (
           <>
             <Text style={styles.text}>알림시간</Text>
@@ -812,6 +824,12 @@ const styles = StyleSheet.create({
   map: {
     width: '100%',
     height: '100%',
+    position: 'absolute',  // 지도를 맵 컨테이너에 고정
+    top: 0,
+    left: 0,
+  },
+  mapOverlay: {
+    zIndex: 1,  // 지도는 항상 이미지 위에 렌더링
   },
   buttonContainer: {
     width: '100%',
