@@ -133,8 +133,8 @@ const styles = StyleSheet.create({
     textAlign:"left",
     color: '#FFFFFF',
     fontWeight: 'bold',
-    borderWidth: 1,
-    borderColor:"#fff",
+    // borderWidth: 1,
+    // borderColor:"#fff",
     // paddingVertical: hp(1),
   },
   selectedItem: {
