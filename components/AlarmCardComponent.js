@@ -180,7 +180,7 @@ const AlarmCardComponent = ({ post, onActionComplete }) => {
                         <View style={styles.body}>
                             <View style={styles.usernameContainer}>
                                 <View style={{flexDirection: 'row', alignItems: 'center',}}>
-                                    {post.friend === false && ( friendLook === true ? (
+                                    {post.friend === false && post.mine === false && (friendLook === true ? (
                                         <TouchableOpacity onPress={toggleFriendSend}>
                                             <LinearGradient
                                               colors={['#1BC5DA', '#263283']}

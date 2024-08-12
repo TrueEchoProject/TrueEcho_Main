@@ -1,19 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import {
-    View,
-    Text,
-    StyleSheet,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    Dimensions,
-    Image,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Dimensions, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialIcons, Ionicons, Feather, SimpleLineIcons } from "@expo/vector-icons";
+import { MaterialIcons, Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 import Api from '../Api';
 import { ImageButton } from "./ImageButton";
 import { CommentModal } from './CommentModal';
 import { useNavigation } from '@react-navigation/native';
+import storage from '../AsyncStorage';
 
 const defaultImage = require("../assets/logo.png");
 
@@ -28,18 +21,66 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
     const [layoutSet, setLayoutSet] = useState(false);
     const windowWidth = Dimensions.get('window').width;
     const [isLoading, setIsLoading] = useState(false);
+    const [myPicture, setMyPicture] = useState("");  // 블러 상태를 관리하는 state 추가
 
     useEffect(() => {
         setIsOptionsVisible(isOptionsVisibleExternal);
         console.log(`Options Visible for ${post.postId}: ${isOptionsVisibleExternal}`);
     }, [isOptionsVisibleExternal]);
+
+    useEffect(() => {
+        checkPostedIn24H();  // 컴포넌트가 마운트되면 상태 확인 함수 호출
+    }, []);
+
+    const fetchPostDataFromServer = async (requireRefresh = false) => {
+        const baseUrl = post.type === 'public' ? '/post/read/1' : '/post/read/0';
+        try {
+            const response = await Api.get(`${baseUrl}?index=0&pageCount=1&postId=${post.postId}&requireRefresh=${requireRefresh}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching post data:', error);
+            return null;
+        }
+    };
+
+    const checkPostedIn24H = async () => {
+        try {
+            const response = await fetchPostDataFromServer(true);
+            if (response) {
+                const { postedIn24H } = response.data;
+
+                if (postedIn24H) {
+                    const newPostedIn24H = {
+                        postedFront: postedIn24H.postedFront,
+                        postedBack: postedIn24H.postedBack,
+                        postedAt: postedIn24H.postedAt,
+                    };
+                    await storage.set(`postedIn24H-${post.postId}`, JSON.stringify(newPostedIn24H));
+
+                    // 블러 처리를 위한 상태 업데이트
+                    if (postedIn24H.postedFront && postedIn24H.postedBack) {
+                        setMyPicture("both"); // 양면이 업로드된 경우 블러 없음
+                    } else if (postedIn24H.postedFront) {
+                        setMyPicture("front"); // 앞면만 업로드된 경우
+                    } else if (postedIn24H.postedBack) {
+                        setMyPicture("back"); // 뒷면만 업로드된 경우
+                    } else {
+                        setMyPicture("none"); // 아무것도 업로드되지 않은 경우
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error checking postedIn24H:', error);
+        }
+    };
+
     const onImageButtonLayout = (event) => {
         if (layoutSet) return;
         const { height } = event.nativeEvent.layout;
         setImageButtonHeight(height);
         setLayoutSet(true);
     };
-    
+
     const toggleLike = async () => {
         if (isLoading) return;
         setIsLoading(true);
@@ -69,6 +110,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
             setIsLoading(false);
         }
     };
+
     const toggleBlock = async () => {
         if (isLoading) return;
         setIsLoading(true);
@@ -91,6 +133,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
             setIsLoading(false);
         }
     };
+
     const toggleDelete = async () => {
         if (isLoading) return;
         setIsLoading(true);
@@ -113,6 +156,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
         setIsOptionsVisible(newVisibility);
         setIsOptionsVisibleExternal(newVisibility);
     };
+
     const hideOptions = () => {
         if (isOptionsVisible) {
             setIsOptionsVisible(false);
@@ -123,7 +167,7 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
     const toggleCommentVisibility = () => {
         setIsCommentVisible(!isCommentVisible);
     };
-    
+
     return (
         <TouchableWithoutFeedback onPress={hideOptions}>
             <View style={styles.cardContainer}>
@@ -144,24 +188,24 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
                         </TouchableOpacity>
                         <View style={styles.body}>
                             <View style={styles.rightAlignedContainer}>
-                                <View style={{flexDirection: 'row', alignItems: 'center',}}>
-                                    {post.friend === false && (isFriendAdded === false ? (
-                                      <TouchableOpacity onPress={onFriendSend}>
-                                          <LinearGradient
-                                            colors={['#1BC5DA', '#263283']}
-                                            style={styles.friendButton}
-                                          >
-                                            <Text style={styles.friendText}>친구 추가</Text>
-                                        </LinearGradient>
-                                      </TouchableOpacity>
-                                      ) : (
+                                <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                                    {post.friend === false && post.mine === false && (isFriendAdded === false ? (
+                                        <TouchableOpacity onPress={onFriendSend}>
+                                            <LinearGradient
+                                                colors={['#1BC5DA', '#263283']}
+                                                style={styles.friendButton}
+                                            >
+                                                <Text style={styles.friendText}>친구 추가</Text>
+                                            </LinearGradient>
+                                        </TouchableOpacity>
+                                    ) : (
                                         <View style={[styles.friendButton, {
                                             backgroundColor: "#292929",
                                             borderRadius: 5,
                                         }]}>
                                             <Text style={styles.friendText}>추가 완료</Text>
                                         </View>
-                                      )
+                                    )
                                     )}
                                     <Text style={styles.username}>{post.username}</Text>
                                 </View>
@@ -178,7 +222,8 @@ const CardComponent = ({ post, isOptionsVisibleExternal, setIsOptionsVisibleExte
                             back_image={post.postBackUrl ? post.postBackUrl : Image.resolveAssetSource(defaultImage).uri}
                             containerHeight={imageButtonHeight}
                             windowWidth={windowWidth}
-                            style={styles.imageButton} // 스타일 추가
+                            myPicture={myPicture}  // 상태를 전달
+                            style={styles.imageButton}
                         />
                         <View style={styles.iconsContainer}>
                             <TouchableOpacity style={styles.iconButton} onPress={toggleLike}>
@@ -257,190 +302,187 @@ const styles = StyleSheet.create({
         color: "white",
         fontWeight: 'bold',
     },
-    
-    
     loader: {
-        flex: 1, // 로더를 화면 중앙에 배치
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
     imageButtonContainer: {
-        flex: 1, // 컨테이너가 가용 공간을 차지하게 함
+        flex: 1,
         position: 'relative',
-        marginBottom: 0, // 하단 여백 제거
+        marginBottom: 0,
         marginTop: 0,
-        paddingBottom: 0, // 하단 패딩 제거
-        paddingHorizontal: 0, // 수평 패딩 제거
-        marginHorizontal: Dimensions.get('window').width * 0.1, // 양쪽 여백을 화면 너비의 10%로 설정
+        paddingBottom: 0,
+        paddingHorizontal: 0,
+        marginHorizontal: Dimensions.get('window').width * 0.1,
     },
     imageWrapper: {
-        width: '100%', // 부모 컨테이너의 너비를 100%로 설정
-        height: '100%', // 부모 컨테이너의 높이를 100%로 설정
-        overflow: 'hidden', // 넘치는 부분을 숨김
-        position: 'relative', // 아이콘이 이미지 안에 위치하도록 설정
+        width: '100%',
+        height: '100%',
+        overflow: 'hidden',
+        position: 'relative',
     },
     imageButton: {
-        width: '100%', // 부모 컨테이너의 너비를 100%로 설정
-        height: '100%', // 부모 컨테이너의 높이를 100%로 설정
+        width: '100%',
+        height: '100%',
     },
     optionsIcon: {
-        position: 'absolute', // 부모 뷰 내에서 절대 위치
-        top: 10, // 위에서 10단위 떨어진 위치
-        right: 10, // 오른쪽에서 10단위 떨어진 위치
-        zIndex: 3, // 다른 요소들보다 앞에 표시
+        position: 'absolute',
+        top: 10,
+        right: 10,
+        zIndex: 3,
     },
     iconsContainer: {
-        position: 'absolute', // 부모 뷰 내에서 절대 위치
-        bottom: 10, // 아래에서 10단위 떨어진 위치
-        right: -5, // 오른쪽에서 10단위 떨어진 위치
-        zIndex: 3, // 다른 요소들보다 앞에 표시
-        flexDirection: 'row', // 자식 요소들을 가로로 배치
+        position: 'absolute',
+        bottom: 10,
+        right: -5,
+        zIndex: 3,
+        flexDirection: 'row',
     },
     optionsContainer: {
-        position: 'absolute', // 부모 뷰 내에서 절대 위치
-        zIndex: 4, // 다른 요소들보다 앞에 표시
-        backgroundColor: 'grey', // 배경 색상 흰색
-        padding: 12, // 내부 여백 12단위
-        paddingLeft: 14, // 왼쪽 여백 14단위
-        borderRadius: 4, // 모서리 둥글게 4단위
-        shadowColor: 'black', // 그림자 색상 검정
-        shadowOffset: { width: 0, height: 2 }, // 그림자 오프셋
-        shadowRadius: 4, // 그림자 반경
-        shadowOpacity: 0.3, // 그림자 투명도
-        elevation: 4, // 안드로이드 그림자 효과
-        marginTop: 10, // 상단 여백 10단위
+        position: 'absolute',
+        zIndex: 4,
+        backgroundColor: 'grey',
+        padding: 12,
+        paddingLeft: 14,
+        borderRadius: 4,
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 4,
+        shadowOpacity: 0.3,
+        elevation: 4,
+        marginTop: 10,
     },
     optionItem: {
-        marginLeft: 10, // 왼쪽 여백 10단위
-        marginRight: 10, // 오른쪽 여백 10단위
-        fontSize: 15, // 글자 크기 15단위
+        marginLeft: 10,
+        marginRight: 10,
+        fontSize: 15,
     },
     optionTextDelete: {
-        color: 'white', // 글자 색상 빨강
+        color: 'white',
     },
     optionTextBlock: {
-        color: 'white', // 글자 색상 빨강
+        color: 'white',
     },
     optionRow: {
-        flexDirection: 'row', // 자식 요소들을 가로로 배치
-        alignItems: 'center', // 자식 요소들을 중앙 정렬
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     optionIcon: {
-        marginLeft: 10, // 왼쪽 여백 10단위
-        color: 'white', // 아이콘 색상 빨강
+        marginLeft: 10,
+        color: 'white',
     },
     cardContainer: {
-        flex: 1, // 컨테이너가 가용 공간을 차지하게 함
-        width: '100%', // 가로 크기 100%
-        backgroundColor: 'black', // 배경 색상 검정
-        marginBottom: 0, // 하단 여백 제거
+        flex: 1,
+        width: '100%',
+        backgroundColor: 'black',
+        marginBottom: 0,
         borderColor: 'black',
     },
     cardItem: {
-        padding: Dimensions.get('window').width * 0.025, // 내부 여백을 화면 너비의 2.5%로 설정
-        flexDirection: 'row', // 자식 요소들을 가로로 배치
-        alignItems: 'center', // 자식 요소들을 중앙 정렬
+        padding: Dimensions.get('window').width * 0.025,
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     left: {
-        flexDirection: 'row', // 자식 요소들을 가로로 배치
-        alignItems: 'center', // 자식 요소들을 중앙 정렬
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     body: {
-        marginLeft: Dimensions.get('window').width * 0.02, // 왼쪽 여백을 화면 너비의 2%로 설정
-        height: Dimensions.get('window').height * 0.075, // 높이를 화면 높이의 7.5%로 설정
-        flex: 1, // 남은 공간 차지
+        marginLeft: Dimensions.get('window').width * 0.02,
+        height: Dimensions.get('window').height * 0.075,
+        flex: 1,
     },
     rightAlignedContainer: {
-        flexDirection: 'column', // 자식 요소들을 세로로 배치
-        alignItems: 'flex-end', // 자식 요소들을 오른쪽 정렬
-        marginRight: Dimensions.get('window').width * 0.07, // 오른쪽 여백을 화면 너비의 5%로 설정
+        flexDirection: 'column',
+        alignItems: 'flex-end',
+        marginRight: Dimensions.get('window').width * 0.07,
         marginTop: Dimensions.get('window').height * 0.015,
     },
     thumbnailGradient: {
-        padding: 3, // 그라데이션 테두리 두께를 조금 더 두껍게 설정
-        marginLeft: Dimensions.get('window').width * 0.06, // 왼쪽 여백을 화면 너비의 5%로 설정 (오른쪽으로 이동)
-        borderRadius: 100, // 프로필 이미지를 원형으로 설정
+        padding: 3,
+        marginLeft: Dimensions.get('window').width * 0.06,
+        borderRadius: 100,
     },
     thumbnail: {
-        width: Dimensions.get('window').width * 0.17 - 6, // 패딩을 제외한 크기로 설정
-        height: Dimensions.get('window').width * 0.17 - 6, // 패딩을 제외한 크기로 설정
-        borderRadius: 100, // 프로필 이미지를 원형으로 설정
+        width: Dimensions.get('window').width * 0.17 - 6,
+        height: Dimensions.get('window').width * 0.17 - 6,
+        borderRadius: 100,
     },
     username: {
-        fontSize: Dimensions.get('window').width * 0.04, // 글자 크기를 화면 너비의 4.5%로 설정
-        fontWeight: "500", // 글자 굵기 500
-        color: 'white', // 글자 색상 흰색
-        marginBottom: Dimensions.get('window').height * 0.005, // 아래쪽 여백을 화면 높이의 0.5%로 설정
-        marginTop: Dimensions.get('window').height * 0.005, // 위쪽 여백을 화면 높이의 0.5%로 설정
-        alignSelf: 'flex-end', // 자식 요소를 오른쪽 정렬
+        fontSize: Dimensions.get('window').width * 0.04,
+        fontWeight: "500",
+        color: 'white',
+        marginBottom: Dimensions.get('window').height * 0.005,
+        marginTop: Dimensions.get('window').height * 0.005,
+        alignSelf: 'flex-end',
     },
     date: {
-        fontSize: Dimensions.get('window').width * 0.03, // 글자 크기를 화면 너비의 3.5%로 설정
-        fontWeight: "300", // 글자 굵기 300
-        color: 'white', // 글자 색상 흰색
-        marginTop: 0, // 위쪽 여백 5단위
-        marginLeft: 0, // 왼쪽 여백 제거
-        marginRight: 0, // 오른쪽 여백 제거
-        alignSelf: 'flex-end', // 자식 요소를 오른쪽 정렬
+        fontSize: Dimensions.get('window').width * 0.03,
+        fontWeight: "300",
+        color: 'white',
+        marginTop: 0,
+        marginLeft: 0,
+        marginRight: 0,
+        alignSelf: 'flex-end',
     },
     title: {
-        fontWeight: '900', // 글자 굵기 900
-        color: 'white', // 글자 색상 흰색
-        marginBottom: Dimensions.get('window').height * 0.005, // 아래쪽 여백을 화면 높이의 0.5%로 설정
-        fontSize: Dimensions.get('window').width * 0.04, // 글자 크기를 화면 너비의 4%로 설정
-        marginTop: Dimensions.get('window').height * 0.007, // 위쪽 여백을 화면 높이의 0.5%로 설정
+        fontWeight: '900',
+        color: 'white',
+        marginBottom: Dimensions.get('window').height * 0.005,
+        fontSize: Dimensions.get('window').width * 0.04,
+        marginTop: Dimensions.get('window').height * 0.007,
     },
-    
     freeText: {
-        color: "white", // 글자 색상 흰색
-        fontSize: Dimensions.get('window').width * 0.06, // 글자 크기를 화면 너비의 6%로 설정
+        color: "white",
+        fontSize: Dimensions.get('window').width * 0.06,
     },
     iconButton: {
-        flexDirection: 'row', // 자식 요소들을 가로로 배치
-        alignItems: 'center', // 자식 요소들을 중앙 정렬
-        justifyContent: 'center', // 자식 요소들을 중앙에 정렬
-        marginRight: Dimensions.get('window').width * 0.04, // 오른쪽 여백을 화면 너비의 4%로 설정
-        marginBottom: -5, // 위쪽 여백 10단위
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: Dimensions.get('window').width * 0.04,
+        marginBottom: -5,
     },
     icon: {
-        marginRight: 4, // 오른쪽 여백 4단위
+        marginRight: 4,
     },
     iconText: {
-        color: 'white', // 글자 색상 흰색
+        color: 'white',
     },
     right: {
-        marginLeft: 'auto', // 왼쪽 여백 자동 설정 (가능한 만큼)
+        marginLeft: 'auto',
     },
     separator: {
-        height: 1, // 높이 1단위
-        backgroundColor: 'white', // 배경 색상 흰색
-        width: '100%', // 너비 100%
-        marginVertical: Dimensions.get('window').height * 0.01, // 상하 여백을 화면 높이의 1%로 설정
-        marginHorizontal: 0, // 좌우 여백 0단위
-        marginBottom: 0, // 아래쪽 여백 0단위
-        marginTop: 10, // 위쪽 여백 10단위
+        height: 1,
+        backgroundColor: 'white',
+        width: '100%',
+        marginVertical: Dimensions.get('window').height * 0.01,
+        marginHorizontal: 0,
+        marginBottom: 0,
+        marginTop: 10,
     },
     usernameSeparator: {
         height: 1,
         backgroundColor: 'white',
-        width: '100%', // 원하는 만큼 길이를 늘리기 위해 100%로 설정
-        marginVertical: Dimensions.get('window').height * 0.005, // 상하 여백을 화면 높이의 0.5%로 설정
-        alignSelf: 'flex-end', // 자식 요소를 오른쪽 정렬
+        width: '100%',
+        marginVertical: Dimensions.get('window').height * 0.005,
+        alignSelf: 'flex-end',
     },
     bottomContainer: {
-        padding: 0, // 내부 여백 0단위
-        zIndex: 2, // 다른 요소들보다 앞에 표시
-        minHeight: Dimensions.get('window').height * 0.075, // 최소 높이를 화면 높이의 7.5%로 설정
-        backgroundColor: "black", // 배경 색상 검정
-        justifyContent: 'flex-end', // 자식 요소들을 아래쪽에 정렬
-        alignItems: 'center', // 자식 요소들을 중앙 정렬
-        marginHorizontal: Dimensions.get('window').width * 0.1, // 좌우 여백을 화면 너비의 10%로 설정
+        padding: 0,
+        zIndex: 2,
+        minHeight: Dimensions.get('window').height * 0.075,
+        backgroundColor: "black",
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        marginHorizontal: Dimensions.get('window').width * 0.1,
     },
     textRow: {
-        flexDirection: 'row', // 텍스트를 가로로 나란히 배치
-        alignItems: 'center', // 자식 요소들을 중앙 정렬
-        justifyContent: 'space-between', // 양쪽 끝에 배치
-        width: '100%', // 전체 너비를 차지하도록 설정
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
         marginTop: Dimensions.get('window').width * 0.01,
     },
 });

@@ -1,5 +1,5 @@
-import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context'; // SafeAreaView import 추가
 import { LinearGradient } from 'expo-linear-gradient';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
@@ -7,7 +7,7 @@ const ResultPage = ({ question, topRankList = [], thisWeek }) => {
   const maxVoteCount = topRankList.length > 0 ? Math.max(...topRankList.map(rank => rank.voteCount)) : 1;
 
   return (
-    <View style={styles.page}>
+    <SafeAreaView style={styles.page}> 
       <Text style={styles.weekText}>{thisWeek} 랭킹</Text>
       <View style={styles.chartContainer}>
         {topRankList.slice(0, 3).map((rank, index) => {
@@ -41,9 +41,10 @@ const ResultPage = ({ question, topRankList = [], thisWeek }) => {
           );
         })}
       </View>
-    </View>
+    </SafeAreaView>  
   );
 };
+
 
 const styles = StyleSheet.create({
   page: {

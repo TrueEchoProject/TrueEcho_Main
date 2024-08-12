@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createStackNavigator } from "@react-navigation/stack";
 import {View, Text, Image, TouchableOpacity} from 'react-native';
 import { MaterialIcons, AntDesign } from "@expo/vector-icons";
@@ -87,7 +87,18 @@ const getHeaderLeft = (navigation, route) => {
     : <CustomHeaderLeft navigation={navigation} title={title} />;
 };
 
-const MainPostStackScreen = () => {
+const MainPostStackScreen = ({ route, navigation }) => {
+  // 추가된 부분: initialTab 처리
+  useEffect(() => {
+    const initialTab = route.params?.initialTab;
+
+    if (initialTab === 'OtherFeed') {
+      navigation.navigate('FeedTab', { screen: 'OtherFeed' });
+    } else if (initialTab === 'FriendFeed') {
+      navigation.navigate('FeedTab', { screen: 'FriendFeed' });
+    }
+  }, [route.params?.initialTab, navigation]);
+
   return (
     <MainPostStack.Navigator
       screenOptions={({ navigation, route }) => ({

@@ -176,7 +176,7 @@ const MyInfo = ({ navigation }) => {
           <View style={styles.locModalWrapper}>
             <View style={styles.locModalContent}>
               {loading ? (
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator size="large" color="#fff" />
               ) : (
                 <>
                   {tempLatitude !== null && tempLongitude !== null && (
@@ -650,6 +650,8 @@ const styles = StyleSheet.create({
     paddingVertical: hp("1%"), // 수직 패딩
     paddingHorizontal: wp("4%"), // 수평 패딩
     alignItems: "center", // 텍스트 가운데 정렬
+    borderWidth: 1,
+    borderColor:"black"
   },
 });
 

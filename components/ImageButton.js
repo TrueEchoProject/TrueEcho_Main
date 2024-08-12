@@ -1,44 +1,26 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Platform, TouchableOpacity, View, StyleSheet, Text, ActivityIndicator, Image } from 'react-native';
 import { BlurView } from 'expo-blur';
-import storage from '../AsyncStorage'; // storage.js 파일 위치에 따라 경로 수정함. 현재 임시 주소임.
-import { useFocusEffect } from '@react-navigation/native'; // useFocusEffect 훅 import
+import storage from '../AsyncStorage';
+import { useFocusEffect } from '@react-navigation/native';
 
-const ImageButton = React.memo(({ front_image, back_image, containerHeight, windowWidth }) => {
+const ImageButton = React.memo(({ front_image, back_image, containerHeight, windowWidth, myPicture }) => {  // myPicture prop 추가
     const [isFrontShowing, setIsFrontShowing] = useState(true);
-    const [myPicture, setMyPicture] = useState("");
     const [loading, setLoading] = useState(true);
     const defaultImage = "https://ppss.kr/wp-content/uploads/2020/07/01-4-540x304.png";
     const ImageHeight = Math.floor(containerHeight);
     const SmallHeight = Math.floor(ImageHeight / 3);
     const SmallWidth = Math.floor(windowWidth / 3.5);
-    
-    useFocusEffect(
-      useCallback(() => {
-          loadImage();
-      }, [])
-    );
-    const loadImage = async () => {
-        const Front = await storage.get('postFront');
-        const Back = await storage.get('postBack');
-        console.log('Retrieved data:', Front);
-        console.log('Retrieved data:', Back);
-        if (Front && Back) {
-            setMyPicture(""); // Both images exist
-        } else if (Front) {
-            setMyPicture("front"); // Only front image exists
-        } else if (Back) {
-            setMyPicture("back"); // Only back image exists
-        } else {
-            setMyPicture("none"); // Neither image exists
-        }
-        await new Promise(resolve => setTimeout(resolve, 20)); // 예: 1초 대기
-        setLoading(false);
-    };
-    
+
+    useEffect(() => {
+        console.log('myPicture state:', myPicture);
+        setLoading(false);  // 블러 상태가 이미 상위 컴포넌트에서 설정되므로, 별도 데이터 로드가 필요 없음
+    }, [myPicture]);
+
     const changeImage = () => {
         setIsFrontShowing(!isFrontShowing);
     };
+
     const getBlurIntensity = (isFront) => {
         if (myPicture === "none") return 50;
         if ((myPicture === "front" && !isFront) || (myPicture === "back" && isFront)) {
@@ -46,6 +28,7 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
         }
         return 0;
     };
+
     const renderOverlayText = (isFront) => {
         if (myPicture === "back" && isFront) {
             return "당신의 얼굴을\n보고싶어요!";
@@ -54,53 +37,53 @@ const ImageButton = React.memo(({ front_image, back_image, containerHeight, wind
         }
         return null;
     };
-    
+
     if (loading) {
         return (
-          <View style={styles.overlayTextContainer}>
-              <ActivityIndicator size="large" color="#0000ff" />
-          </View>
+            <View style={styles.overlayTextContainer}>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </View>
         );
     }
-    
+
     return (
-      <View style={{ position: 'relative' }}>
-          {myPicture === "none" && (
-            <View style={styles.overlayTextContainer}>
-                <Text style={styles.overlayText}>
-                    게시물을 작성해보세요!
-                </Text>
-            </View>
-          )}
-          <TouchableOpacity onPress={changeImage} style={styles.smallImageContainer}>
-              <View>
-                  <Image
-                    source={{ uri: isFrontShowing ? (front_image || defaultImage) : (back_image || defaultImage) }}
-                    style={[styles.smallImage, { height: SmallHeight, width: SmallWidth }]}
-                    blurRadius={Platform.OS === 'android' ? getBlurIntensity(isFrontShowing) : 0}
-                  />
+        <View style={{ position: 'relative' }}>
+            {myPicture === "none" && (
+                <View style={styles.overlayTextContainer}>
+                    <Text style={styles.overlayText}>
+                        게시물을 작성해보세요!
+                    </Text>
+                </View>
+            )}
+            <TouchableOpacity onPress={changeImage} style={styles.smallImageContainer}>
+                <View>
+                    <Image
+                        source={{ uri: isFrontShowing ? (front_image || defaultImage) : (back_image || defaultImage) }}
+                        style={[styles.smallImage, { height: SmallHeight, width: SmallWidth }]}
+                        blurRadius={Platform.OS === 'android' ? getBlurIntensity(isFrontShowing) : 0}
+                    />
                     <BlurView intensity={getBlurIntensity(isFrontShowing)} style={styles.blurView}>
                         {renderOverlayText(isFrontShowing) && (
-                          <Text style={styles.overlayTextSmall}>{renderOverlayText(isFrontShowing)}</Text>
+                            <Text style={styles.overlayTextSmall}>{renderOverlayText(isFrontShowing)}</Text>
                         )}
                     </BlurView>
-              </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={changeImage} style={{ zIndex: 1 }}>
-              <View>
-                  <Image
-                    source={{ uri: isFrontShowing ? (back_image || defaultImage) : (front_image || defaultImage) }}
-                    style={[styles.largeImage, { height: ImageHeight, width: windowWidth }]}
-                    blurRadius={Platform.OS === 'android' ? getBlurIntensity(!isFrontShowing) : 0}
-                  />
+                </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={changeImage} style={{ zIndex: 1 }}>
+                <View>
+                    <Image
+                        source={{ uri: isFrontShowing ? (back_image || defaultImage) : (front_image || defaultImage) }}
+                        style={[styles.largeImage, { height: ImageHeight, width: windowWidth }]}
+                        blurRadius={Platform.OS === 'android' ? getBlurIntensity(!isFrontShowing) : 0}
+                    />
                     <BlurView intensity={getBlurIntensity(!isFrontShowing)} style={styles.blurView}>
                         {renderOverlayText(!isFrontShowing) && (
-                          <Text style={styles.overlayText}>{renderOverlayText(!isFrontShowing)}</Text>
+                            <Text style={styles.overlayText}>{renderOverlayText(!isFrontShowing)}</Text>
                         )}
                     </BlurView>
-              </View>
-          </TouchableOpacity>
-      </View>
+                </View>
+            </TouchableOpacity>
+        </View>
     );
 });
 
