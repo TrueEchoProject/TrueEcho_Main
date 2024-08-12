@@ -121,7 +121,7 @@ const CustomDatePicker = ({ onConfirm }) => {
 const styles = StyleSheet.create({
   pickerContainer: {
     flexDirection: 'row',
-    height: hp('15%'),
+    height: hp('12%'),
     width: wp('72%'),
   },
   pickerItem: {
