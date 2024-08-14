@@ -243,8 +243,8 @@ export const CommentModal = React.memo(({ userId, isVisible, postId, onClose }) 
                       >
                           <Image
                             style={styles.profileImage}
-                            source={{ uri: comment.profileURL ? comment.profileURL : defaultImage }}
-                          />
+                            source={typeof comment.profileURL === 'string' ? { uri: comment.profileURL } : defaultImage}
+                        />
                       </LinearGradient>
                   </TouchableOpacity>
                   <View style={styles.commentBody}>

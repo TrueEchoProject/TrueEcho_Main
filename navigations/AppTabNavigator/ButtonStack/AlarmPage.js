@@ -27,6 +27,9 @@ const Alarm = ({ navigation }) => {
 		try {
 			setIsLoading(true);
 			const serverResponse = await Api.get(`/noti/readPost?index=${index}&pageCount=10`);
+
+			// 서버 응답 데이터 확인
+			console.log('서버 응답 데이터:', serverResponse.data.data.allNotis);
 			if (serverResponse.data.message === "커뮤니티 알림 피드 조회에 실패했습니다.") {
 				if (index === 0) {
 					alert("불러올 알림이 없습니다.");
@@ -200,35 +203,38 @@ const Alarm = ({ navigation }) => {
 			)}
 		</TouchableOpacity>
 	);
-	const renderAlarmContent = (alarm, text, comment) => (
-		<View style={{ alignItems: "center", flexDirection: "row" }}>
-			<View style={styles.AlarmAvatarContainer}>
-				<LinearGradient
-					colors={["#1BC5DA", "#263283"]}
-					style={styles.AlarmAvatarGradient}
-				>
+	const renderAlarmContent = (alarm, text, comment) => {
+		console.log("렌더링 중인 알람:", alarm);
+		return (
+			<View style={{ alignItems: "center", flexDirection: "row" }}>
+				<View style={styles.AlarmAvatarContainer}>
+					<LinearGradient
+						colors={["#1BC5DA", "#263283"]}
+						style={styles.AlarmAvatarGradient}
+					>
+						<Image
+							source={{ uri: alarm.profile_url ? alarm.profile_url : defaultImage }}
+							style={styles.AlarmAvatar}
+						/>
+					</LinearGradient>
+				</View>
+				<View style={styles.AlarmTextContainer}>
+					<Text style={styles.AlarmText} numberOfLines={2} ellipsizeMode="tail">
+						<Text style={styles.AlarmEmphasizedText}>{alarm.username}</Text>
+						{text}
+						<Text style={styles.AlarmEmphasizedText}> {comment}</Text>
+					</Text>
+					<Text style={styles.AlarmText}>{moment(alarm.created_at).fromNow()}</Text>
+				</View>
+				<View style={styles.AlarmPostContainer}>
 					<Image
-						source={{ uri: alarm.profile_url ? alarm.profile_url : defaultImage }}
-						style={styles.AlarmAvatar}
+						source={{ uri: alarm.post_back_url ? alarm.post_back_url : defaultImage }}
+						style={styles.AlarmPost}
 					/>
-				</LinearGradient>
+				</View>
 			</View>
-			<View style={styles.AlarmTextContainer}>
-				<Text style={styles.AlarmText} numberOfLines={2} ellipsizeMode="tail">
-					<Text style={styles.AlarmEmphasizedText}>{alarm.username}</Text>
-					{text}
-					<Text style={styles.AlarmEmphasizedText}> {comment}</Text>
-				</Text>
-				<Text style={styles.AlarmText}>{moment(alarm.created_at).fromNow()}</Text>
-			</View>
-			<View style={styles.AlarmPostContainer}>
-				<Image
-					source={{ uri: alarm.post_back_url ? alarm.post_back_url : defaultImage }}
-					style={styles.AlarmPost}
-				/>
-			</View>
-		</View>
-	);
+		);
+	};
 	const renderMultipleProfilesAlarm = (alarm) => (
 		<View style={{ alignItems: "center", flexDirection: "row" }}>
 			<View style={alarm.profile_urls.length > 1 ? styles.AlarmMultipleContainer : styles.AlarmAvatarContainer}>

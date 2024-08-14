@@ -135,27 +135,38 @@ const FriendsScreen = () => {
     const inviteFriend = async (userId) => {
         try {
             console.log('Inviting friend with userId:', userId);
-
+    
             const formData = new FormData();
             formData.append('targetUserId', userId);
-
+    
             const accessToken = await getAccessToken();
             console.log('Access Token:', accessToken);
-
+    
             const response = await Api.post('/friends/add', formData, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                     'Content-Type': 'multipart/form-data',
                 },
             });
-
+    
             console.log('Invite friend response:', response.data);
-
+    
             if (response.data.code === "T002" && response.data.message === "친구 추가에 성공했습니다.") {
                 const invitedUser = users.find(user => user.userId === userId);
                 setInvitedUsers([...invitedUsers, invitedUser]);
                 setUsers(users.filter(user => user.userId !== userId));
                 Alert.alert('성공', '친구 초대 완료');
+    
+                // 알림 전송 로직 추가
+                await Api.post('/noti/sendToFCM', {
+                    title: "새 친구 요청",
+                    body: `${invitedUser.nickname}님이 친구 요청을 보냈습니다.`,
+                    data: {
+                        userId: userId, // 수신자 ID
+                        notiType: 7, // 친구 요청 알림 타입
+                        contentId: invitedUser.userId // 알림과 연결된 사용자 ID
+                    }
+                });
             } else {
                 Alert.alert('실패', response.data.message || '친구 초대 실패');
             }
@@ -164,6 +175,7 @@ const FriendsScreen = () => {
             Alert.alert('실패', '친구 초대 실패');
         }
     };
+    
 
     const cancelFriendRequest = async (userId) => {
         const originalUser = invitedUsers.find(user => user.userId === userId);
