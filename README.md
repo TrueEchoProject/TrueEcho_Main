@@ -44,10 +44,10 @@
 <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat&logo=Spring Boot&logoColor=white" alt="Spring Boot Badge"/><img src="https://img.shields.io/badge/MariaDB-003545?style=flat&logo=MariaDB&logoColor=white" alt="MariaDB Badge"/><img src="https://img.shields.io/badge/Firebase-FFCA28?style=flat&logo=Firebase&logoColor=white" alt="Firebase Badge"/><img src="https://img.shields.io/badge/REST API-005571?style=flat&logo=Swagger&logoColor=white" alt="REST API Badge"/>
 
 ### 다운로드
-<img src="https://github.com/user-attachments/assets/24788534-e8d8-49d3-b90f-b12f9f6ec510" alt="TrueEchoQR" width="300"/>
+<img src="https://github.com/user-attachments/assets/a250f5f8-be36-4f5a-9828-f3700571a7e7" alt="TrueEchoQR" width="300"/>
 
 ### 다운로드 링크
-[Download the file](https://drive.google.com/uc?export=download&id=1RBaunmOsIQIJ1SS1wwuugmzkQzxL0brq)
+[Download the file](https://drive.google.com/file/d/1ZyoF986brmczK_Myt70U6TW_ZMWsXzT-/view?usp=drive_link)
 
 ### 📑 프로젝트 노션 링크
 [![Notion](https://img.shields.io/badge/Notion-TrueEcho-%23000000?style=for-the-badge&logo=notion&logoColor=white)](https://bamlatte.notion.site/TrueEcho-5901c5f619ac4247bc2609efb5e22561?pvs=4)
