@@ -599,6 +599,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   pressableContent: {
+    width: "100%", // 버튼 전체를 클릭할 수 있도록 넓이를 100%로 설정
     alignItems: "center",
     justifyContent: "center",
   },
@@ -642,13 +643,12 @@ const styles = StyleSheet.create({
     height: hp("40%"), // 지도 높이를 60%에서 40%로 조정
   },
   buttonContainer: {
-    marginTop: hp("3%"), // 여백 추가
     width: wp("80%"),
     alignItems: "center",
   },
   refreshButton: {
     position: "absolute", // 절대 위치 지정
-    bottom: hp("3%"), // 반응형 하단 위치
+    bottom: hp("9%"), // 반응형 하단 위치
     right: wp("7%"), // 반응형 오른쪽 위치
     backgroundColor: "#fff", // 버튼 배경색
     borderRadius: 30, // 둥근 모서리 정도를 줄임
