@@ -176,7 +176,7 @@ const MyInfo = ({ navigation }) => {
           <View style={styles.locModalWrapper}>
             <View style={styles.locModalContent}>
               {loading ? (
-                <ActivityIndicator size="large" color="#fff" />
+                <View style={styles.mapPlaceholder} />
               ) : (
                 <>
                   {tempLatitude !== null && tempLongitude !== null && (
@@ -625,8 +625,14 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     padding: hp("2%"),
     borderRadius: 10,
-    alignItems: "center", // 추가된 부분: 컨텐츠를 가운데 정렬
-    position: "relative", // position 속성 추가
+    alignItems: "center",
+    position: "relative",
+    height: hp("50%"), // 맵이 로드되기 전에도 모달 크기 고정
+  },
+  mapPlaceholder: {
+    width: "100%",
+    height: hp("40%"), // 맵과 동일한 높이
+    backgroundColor: "black", // 로딩 중일 때 보여줄 배경색
   },
   title: {
     fontSize: hp("2.5%"),

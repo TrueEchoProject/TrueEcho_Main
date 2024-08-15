@@ -30,6 +30,7 @@ yarn-error.*
 
 # local env files
 .env*.local
+.env     # .env 파일 무시
 
 # typescript
 *.tsbuildinfo
