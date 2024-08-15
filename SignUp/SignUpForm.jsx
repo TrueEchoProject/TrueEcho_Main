@@ -115,6 +115,10 @@ const SignUpForm = () => {
     }
   };
 
+  useEffect(() => {
+    console.log('Loading state:', loading);
+  }, [loading]);
+
   const continueClick = async () => {
     const validationWarning = validateStep();
     if (validationWarning) {
@@ -122,16 +126,24 @@ const SignUpForm = () => {
       return;
     }
     setWarning("");
+    
     if (step < 8) {
       setStep(step + 1);
     } else {
       if (!loading) { // 로딩 중이 아닐 때만 실행
         setLoading(true);
-        await sendDataToServer(userData);
-        setLoading(false);
+        try {
+          await sendDataToServer(userData);
+        } catch (error) {
+          console.error('Error sending data:', error);
+          setWarning('서버와 통신 중 문제가 발생했습니다. 다시 시도해 주세요.');
+        } finally {
+          setLoading(false);
+        }
       }
     }
   };
+
 
   const goBack = () => {
     if (step > 1) setStep(step - 1);
