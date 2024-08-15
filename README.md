@@ -21,16 +21,19 @@
 - 네트워킹을 통해 자존감을 높이며 지속적인 성장을 도모할 수 있는 SNS 플랫폼
 - 친구들과 자연스러운 일상을 나누고, 재미있는 콘텐츠를 통해 소통
 
-### 기술적 목표
+## 기술적 목표
+### 프론트엔드
 - React Native를 활용한 사용자 친화적인 UI/UX 개발
-- Spring Boot를 활용한 RESTful API 설계 및 구현
-- MariaDB와의 효율적인 데이터베이스 통신
+### 백엔드
+- 엔티티 연관관계 & JPA 쿼리 수정으로 성능 66.7/97% 최적화
 - Firebase Cloud Messaging(FCS)를 활용한 실시간 알림 기능 구현
-- Google Play Store에 배포하기 위한 CI/CD 구축
-- Google Play Store 자동 배포 시스템 구축
-- 팀원 간의 협업을 위한 그라운드 룰 수립
+- 친구 추천 FOF 알고리즘 설계 및 개발
+- Azure Blob Storage 를 통해 이미지 URL 형태로 DB에 저장
+- GitHub Actions을 통해서 AWS EC2 서버에 배포 자동화 구현
+- Spring Boot를 활용한 RESTful API 설계 및 구현
 
-### 📚 기술 스택
+
+## 📚 기술 스택
 
 ### 프론트엔드
 
@@ -40,24 +43,24 @@
 
 <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat&logo=Spring Boot&logoColor=white" alt="Spring Boot Badge"/><img src="https://img.shields.io/badge/MariaDB-003545?style=flat&logo=MariaDB&logoColor=white" alt="MariaDB Badge"/><img src="https://img.shields.io/badge/Firebase-FFCA28?style=flat&logo=Firebase&logoColor=white" alt="Firebase Badge"/><img src="https://img.shields.io/badge/REST API-005571?style=flat&logo=Swagger&logoColor=white" alt="REST API Badge"/>
 
+### 다운로드
+<img src="https://github.com/user-attachments/assets/24788534-e8d8-49d3-b90f-b12f9f6ec510" alt="TrueEchoQR" width="300"/>
+
+### 다운로드 링크
+[Download the file](https://drive.google.com/uc?export=download&id=1RBaunmOsIQIJ1SS1wwuugmzkQzxL0brq)
+
 ### 📑 프로젝트 노션 링크
 [![Notion](https://img.shields.io/badge/Notion-TrueEcho-%23000000?style=for-the-badge&logo=notion&logoColor=white)](https://bamlatte.notion.site/TrueEcho-5901c5f619ac4247bc2609efb5e22561?pvs=4)
 
 ---
 ## 🎯 기술적 도전
 
-### 프론트엔드
-- [내용추가](홈페이지)
-
 ### 백엔드
-- [FCM을 사용한 효율적인 알림 시스템 구현](https://bamlatte.notion.site/754b4397b4fe483e917a85b3b5d4117c?pvs=4)
-
-## 🚀 문제 해결 과정
-- [N + 1 문제를 극악무도하게 66.7%  최적화한 이야기](https://bamlatte.notion.site/1-N-9a0675cb8a0d40c899a0f816be641413?pvs=4)_
-- [JPA 성능 최적화: 엔티티 연관관계 개선으로 97% 성과를 얻다](https://bamlatte.notion.site/09c78c60348e4aca9b637d90061b186b?pvs=4)
-- [IntelliJ 사용자를 위한 .env 파일로 개발 환경 보호하기](https://bamlatte.notion.site/7c3c15df48884d7b8ab57e6e604ced85?pvs=4)
----
-
+- [N + 1 문제를 극악무도하게 66.7% 최적화한 이야기](https://jun10920.tistory.com/26)
+- [JPA 성능 최적화: 엔티티 연관관계 개선으로 97% 성과를 얻다](https://www.notion.so/09c78c60348e4aca9b637d90061b186b?pvs=21)
+- [FOF 알고리즘_User들 사이에 친구 추천은 어떻게 하면 좋을까!?](https://jun10920.tistory.com/28)
+- [영속성 전이에 의한 em.remove()문제와 해결](https://jun10920.tistory.com/27)
+  
 ## 👨‍👩‍👧‍👦 팀원 소개
 | 서희준 | 박준형 |                             백효영                              | 박신형 | 강상호 |
 | :---: | :---: |:------------------------------------------------------------:| :---: | :---: |
