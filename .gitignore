@@ -30,7 +30,11 @@ yarn-error.*
 
 # local env files
 .env*.local
+<<<<<<< HEAD
 .env
+=======
+.env     # .env 파일 무시
+>>>>>>> 57ff09fb085002921def091c217bf14ef7e3a65a
 
 # typescript
 *.tsbuildinfo
