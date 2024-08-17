@@ -62,11 +62,12 @@
 - [영속성 전이에 의한 em.remove()문제와 해결](https://jun10920.tistory.com/27)
   
 ## 👨‍👩‍👧‍👦 팀원 소개
-| 서희준 | 박준형 |                             백효영                              | 박신형 | 강상호 |
-| :---: | :---: |:------------------------------------------------------------:| :---: | :---: |
-| <img src="https://github.com/HeeJohn.png" width="100"/> | <img src="https://github.com/jun10920.png" width="100"/> | <img src="https://github.com/HyoYoung0829.png" width="100"/> | <img src="https://github.com/HolMoly.png" width="100"/> | <img src="https://github.com/sh7558.png" width="100"/> |
-| **Backend** | **Backend** |                         **Frontend**                         | **Frontend** | **Frontend** |
-| [@HeeJohn](https://github.com/HeeJohn) | [@jun10920](https://github.com/jun10920) |         [@HyoYoung](https://github.com/HyoYoung0829)         | [@HolyMoly](https://github.com/HolMoly) | [@sh7558](https://github.com/sh7558) |
+| 서희준 | 박준형 |                             백효영                              | 박신형 |
+| :---: | :---: |:------------------------------------------------------------:| :---: |
+| <img src="https://github.com/HeeJohn.png" width="100"/> | <img src="https://github.com/jun10920.png" width="100"/> | <img src="https://github.com/HyoYoung0829.png" width="100"/> | <img src="https://github.com/HolMoly.png" width="100"/> |
+| **Backend** | **Backend** |                         **Frontend**                         | **Frontend** |
+| [@HeeJohn](https://github.com/HeeJohn) | [@jun10920](https://github.com/jun10920) |         [@HyoYoung](https://github.com/HyoYoung0829)         | [@HolyMoly](https://github.com/HolMoly) |
+
 
 ---
 
