@@ -21,13 +21,38 @@ jobs:
           token: ${{ secrets.CLOUDTYPE_TOKEN }}
           ghtoken: ${{ secrets.GHP_TOKEN }}
 
+      # MariaDB를 먼저 기동하는 단계 (Secrets 이용)
+      - name: Start MariaDB
+        uses: cloudtype-github-actions/deploy@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          project: gjshj366/test_server
+          stage: main
+          yaml: |
+            name: mariadb
+            app: mariadb@11.2
+            options:
+              rootpassword: ${{ secrets.DB_PASSWORD }}
+              database: ${{ secrets.DB_NAME }}
+              username: ${{ secrets.DB_USERNAME }}
+              password: ${{ secrets.DB_PASSWORD }}
+              tz: Asia/Seoul
+            context:
+              preset: mariadb
+              git:
+                url: git@github.com:${{ github.repository }}.git
+                ref: ${{ github.ref }}
+
+      # 디렉토리를 먼저 생성하는 단계
       - name: Create key directory
         run: mkdir -p src/main/resources/key
 
+      # Firebase 서비스 계정 키 JSON 파일로 저장하는 단계
       - name: Save Firebase Service Account Key
         run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}" > src/main/resources/key/serviceAccountKey.json
 
-      - name: Deploy
+      # 애플리케이션을 배포하는 단계 (MariaDB 기동 후 실행)
+      - name: Deploy Application
         uses: cloudtype-github-actions/deploy@v1
         with:
           token: ${{ secrets.CLOUDTYPE_TOKEN }}
