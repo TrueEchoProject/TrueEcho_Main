@@ -1,0 +1,75 @@
+name: Deploy to cloudtype
+on:
+  push:
+    branches:
+      - back_main
+  pull_request:
+    branches:
+      - back_main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Connect deploy key
+        uses: cloudtype-github-actions/connect@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          ghtoken: ${{ secrets.GHP_TOKEN }}
+      - name: Deploy
+        uses: cloudtype-github-actions/deploy@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          project: gjshj366/test_server
+          stage: main
+          yaml: >
+            name: true-echo
+
+            app: java@17
+
+            options:
+              ports: 8080
+              env:
+                - name: DB_PASSWORD
+                  value: ${{ secrets.DB_PASSWORD }}
+                - name: DB_USERNAME
+                  value: ${{ secrets.DB_USERNAME }}
+                - name: DB_HOST
+                  value: ${{ secrets.DB_HOST }}
+                - name: DB_PORT
+                  value: ${{ secrets.DB_PORT }}
+                - name: DB_NAME
+                  value: ${{ secrets.DB_NAME }}
+                - name: MAIL_HOST
+                  value: ${{ secrets.MAIL_HOST }}
+                - name: MAIL_PORT
+                  value: ${{ secrets.MAIL_PORT }}
+                - name: MAIL_USERNAME
+                  value: ${{ secrets.MAIL_USERNAME }}
+                - name: MAIL_PW
+                  value: ${{ secrets.MAIL_PW }}
+                - name: TLS_ENABLE
+                  value: ${{ secrets.TLS_ENABLE }}
+                - name: ACCESS_TOKEN
+                  value: ${{ secrets.ACCESS_TOKEN }}
+                - name: REFRESH_TOKEN
+                  value: ${{ secrets.REFRESH_TOKEN }}
+                - name: ACCESS_TOKEN_TIME
+                  value: ${{ secrets.ACCESS_TOKEN_TIME }}
+                - name: REFRESH_TOKEN_TIME
+                  value: ${{ secrets.REFRESH_TOKEN_TIME }}
+                - name: AZURE_CONTAINER_NAME
+                  value: ${{ secrets.AZURE_CONTAINER_NAME }}
+                - name: AZURE_CONNECTION_STRING
+                  value: ${{ secrets.AZURE_CONNECTION_STRING }}
+                - name: FIREBASE_SERVICE_ACCOUNT_KEY
+                  value: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
+                - name: KAKAO_API_KEY
+                  value: ${{ secrets.KAKAO_API_KEY }}
+              start: java -Duser.timezone=Asia/Seoul -jar ./build/libs/trueEcho-0.0.1-SNAPSHOT.jar
+              buildenv: []
+            context:
+              git:
+                url: git@github.com:${{ github.repository }}.git
+                ref: ${{ github.ref }}
