@@ -145,13 +145,14 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public boolean writeComment(Comment comment) {
+    public Comment writeComment(Comment comment) {
         try {
             em.persist(comment);
-            return true;
+            em.flush();
+            return comment;
         } catch (Exception e) {
             log.error("writeComment error : {}", e.getMessage());
-            return false;
+            return null;
         }
     }
 
@@ -214,24 +215,29 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public boolean deleteLike(Like like) {
+    public boolean deleteLike(Like like, Post targetPost) {
         try {
-            if (like != null) {
-                em.remove(like);
-                return true;
+            if(like == null || targetPost == null) {
+                return false;
             }
-            return false;
+            targetPost.getLikes().remove(like);
+            em.remove(like);
+            log.info("deleteLike successful: {}", like.getId());
+            return true;
         } catch (Exception e) {
-            log.error("deleteLike error : {}", e.getMessage());
+            log.error("deleteLike error : {}", e.getMessage(), e);
             return false;
         }
     }
-    @Transactional
+
+
+    @Override
     public void saveLike(Like like) {
         try {
             em.persist(like);
         } catch (Exception e) {
-            log.error("saveLike error : {}", e.getMessage());
+            log.error("saveLike error : {}", e.getMessage(), e);
+            throw e;
         }
     }
 
@@ -280,24 +286,35 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public Comment getCommentByIdAndSender(Long contentId, Long senderId) {
-        Comment comment = em.createQuery("SELECT c FROM Comment c " +
+        List<Comment> comments = em.createQuery("SELECT c FROM Comment c " +
                         "JOIN FETCH c.user " +
-                        "WHERE c.id = :contentId AND c.user.id = :senderId", Comment.class)
+                        "WHERE c.id = :contentId AND c.user.id = :senderId ORDER BY c.createdAt DESC", Comment.class)
                 .setParameter("contentId", contentId)
                 .setParameter("senderId", senderId)
-                .getSingleResult();
-        return comment;
+                .getResultList();
+        return comments.isEmpty() ? null : comments.get(0);
     }
 
 
     @Override
     public Like getLikeByIdAndSender(Long contentId, Long id) {
-        Like like = em.createQuery("SELECT l FROM Like l " +
+        List<Like> likes = em.createQuery("SELECT l FROM Like l " +
                         "JOIN FETCH l.user " +
-                        "WHERE l.id = :contentId AND l.user.id = :senderId", Like.class)
+                        "WHERE l.id = :contentId AND l.user.id = :senderId ORDER BY l.createdAt DESC", Like.class)
                 .setParameter("contentId", contentId)
                 .setParameter("senderId", id)
-                .getSingleResult();
-        return like;
+                .getResultList();
+        return likes.isEmpty() ? null : likes.get(0);
+    }
+
+    @Override
+    public Like getLikeByPostIdAndSender(Long contentId, Long senderId) {
+        List<Like> likes = em.createQuery("SELECT l FROM Like l " +
+                        "JOIN FETCH l.user " +
+                        "WHERE l.post.id = :postId AND l.user.id = :senderId ORDER BY l.createdAt DESC", Like.class)
+                .setParameter("postId", contentId)
+                .setParameter("senderId", senderId)
+                .getResultList();
+        return likes.isEmpty() ? null : likes.get(0);
     }
 }

@@ -3,6 +3,7 @@ package te.trueEcho.domain.user.converter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import te.trueEcho.domain.setting.entity.NotiTimeStatus;
 import te.trueEcho.domain.user.dto.RegisterRequest;
 import te.trueEcho.domain.user.entity.Coordinate;
 import te.trueEcho.domain.user.entity.Role;

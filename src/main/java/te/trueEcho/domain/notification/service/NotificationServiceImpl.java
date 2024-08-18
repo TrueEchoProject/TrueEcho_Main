@@ -440,6 +440,7 @@ package te.trueEcho.domain.notification.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -457,6 +458,7 @@ import te.trueEcho.domain.post.repository.PostRepository;
 import te.trueEcho.domain.rank.entity.Rank;
 import te.trueEcho.domain.rank.repository.RankRepository;
 import te.trueEcho.domain.setting.entity.NotiTimeStatus;
+import te.trueEcho.domain.setting.entity.NotificationSetting;
 import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.domain.user.repository.UserAuthRepository;
 import te.trueEcho.domain.vote.entity.VoteResult;
@@ -526,23 +528,13 @@ public class NotificationServiceImpl implements NotificationService {
 
                 case COMMENT:
                     if (Boolean.TRUE.equals(receiver.getNotificationSetting().getCommentNotification())) {
-                        String title = "댓글 추가";
-                        String body = "새로 작성된 댓글이 있어요";
-                        NotificationDto fcmData = getNotificationDto(title, body, request);
-                        fcmService.sendNotification(token, fcmData);
-                        saveNotiInDB(title, body, request, receiver, sender);
-                        return true;
+                        return handleNotification("댓글 추가", "새로 작성된 댓글이 있어요", request, receiver, sender, token);
                     }
                     break;
 
                 case SUB_COMMENT:
                     if (Boolean.TRUE.equals(receiver.getNotificationSetting().getSubCommentNotification())) {
-                        String title = "답글 추가";
-                        String body = "당신의 덧글에 답글이 달렸어요";
-                        NotificationDto fcmData = getNotificationDto(title, body, request);
-                        fcmService.sendNotification(token, fcmData);
-                        saveNotiInDB(title, body, request, receiver, sender);
-                        return true;
+                        return handleNotification("답글 추가", "당신의 덧글에 답글이 달렸어요", request, receiver, sender, token);
                     }
                     break;
 
@@ -743,17 +735,27 @@ public class NotificationServiceImpl implements NotificationService {
         int randomMinute = random.nextInt(60);
 
         List<User> users = userAuthRepository.findAllByNotiTimeStatus(notiTimeStatus);
+
         for (User receiver : users) {
-            if (Boolean.TRUE.equals(receiver.getNotificationSetting().getPhotoTimeNotification())) {
+            // 강제로 NotificationSetting 엔티티를 로딩
+            NotificationSetting notificationSetting = receiver.getNotificationSetting();
+
+            // Force initialization of NotificationSetting
+            if (!Hibernate.isInitialized(notificationSetting)) {
+                Hibernate.initialize(notificationSetting);
+            }
+
+            if (Boolean.TRUE.equals(notificationSetting.getPhotoTimeNotification())) {
                 String token = String.valueOf(fcmService.getToken(receiver));
                 if (token != null) {
                     LocalDateTime notiTime = LocalDateTime.now().withHour(randomHour).withMinute(randomMinute).withSecond(0);
-                    receiver.getNotificationSetting().setNotificationTime(notiTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm")));
+                    notificationSetting.setNotificationTime(notiTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm")));
                     scheduleNotification(receiver, notiTime);
                 }
             }
         }
     }
+
 
     public void scheduleNotification(User receiver, LocalDateTime notiTime) {
         Timer timer = new Timer();
@@ -773,49 +775,48 @@ public class NotificationServiceImpl implements NotificationService {
         }, Date.from(notiTime.atZone(ZoneId.systemDefault()).toInstant()));
     }
 
+    @Transactional
     @Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Seoul")
     public void sendDawnNoti() {
         sendNotiByNotiTimeStatus(NotiTimeStatus.DAWN);
     }
 
+    @Transactional
     @Scheduled(cron = "0 0 7 * * ?", zone = "Asia/Seoul")
     public void sendMorningNoti() {
         sendNotiByNotiTimeStatus(NotiTimeStatus.MORNING);
     }
 
+    @Transactional
     @Scheduled(cron = "0 0 12 * * ?", zone = "Asia/Seoul")
     public void sendEarlyAfternoonNoti() {
         sendNotiByNotiTimeStatus(NotiTimeStatus.EARLY_AFTERNOON);
     }
 
+    @Transactional
     @Scheduled(cron = "0 0 15 * * ?", zone = "Asia/Seoul")
     public void sendLateAfternoonNoti() {
         sendNotiByNotiTimeStatus(NotiTimeStatus.LATE_AFTERNOON);
     }
 
+    @Transactional
     @Scheduled(cron = "0 0 18 * * ?", zone = "Asia/Seoul")
     public void sendEarlyNightNoti() {
         sendNotiByNotiTimeStatus(NotiTimeStatus.EARLY_NIGHT);
     }
 
+    @Transactional
     @Scheduled(cron = "0 0 21 * * ?", zone = "Asia/Seoul")
     public void sendLateNightNoti() {
         sendNotiByNotiTimeStatus(NotiTimeStatus.LATE_NIGHT);
     }
 
-//    public void saveNotiInDB(String title, String body, NotificationDto request, User receiver, User sender) {
-//        NotificationEntity notification = NotificationEntity.builder()
-//                .title(title)
-//                .body(body)
-//                .receiver(receiver)
-//                .data(NotificationEntity.Data.builder()
-//                        .senderId(sender != null ? sender.getId() : null)  // null 체크 추가
-//                        .contentId(request.getData().getContentId())
-//                        .notiType(request.getData().getNotiType())
-//                        .build())
-//                .build();
-//        notificationRepository.save(notification);
-//    }
+    @Scheduled(cron = "0 49 0 * * ?", zone = "Asia/Seoul")
+    @Transactional
+    public void sendEx() {
+        sendNotiByNotiTimeStatus(NotiTimeStatus.DAWN);
+    }
+
 public void saveNotiInDB(String title, String body, NotificationDto request, User receiver, User sender) {
 
     NotificationEntity.Data notificationData = NotificationEntity.Data.builder()
@@ -839,7 +840,7 @@ public void saveNotiInDB(String title, String body, NotificationDto request, Use
             notification.setComment(comment);
             break;
         case POST_LIKE:
-            Like like = Optional.ofNullable(postRepositoryImpl.getLikeByIdAndSender(request.getData().getContentId(), sender.getId()))
+            Like like = Optional.ofNullable(postRepositoryImpl.getLikeByPostIdAndSender(request.getData().getContentId(), sender.getId()))
                     .orElseThrow(() -> new IllegalArgumentException("Invalid like ID: " + request.getData().getContentId()));
             notification.setLike(like);
             break;
@@ -872,5 +873,17 @@ public void saveNotiInDB(String title, String body, NotificationDto request, Use
                         .notiType(request.getData().getNotiType())
                         .build())
                 .build();
+    }
+
+    private boolean handleNotification(String title, String body, NotificationDto request, User receiver, User sender, String token) {
+        Long commentId = request.getData().getContentId();
+        Comment comment = postRepositoryImpl.findCommentById(commentId);
+        Long postId = comment.getPost().getId();
+        request.getData().setContentId(postId);
+        NotificationDto fcmData = getNotificationDto(title, body, request);
+        fcmService.sendNotification(token, fcmData);
+        request.getData().setContentId(commentId);
+        saveNotiInDB(title, body, request, receiver, sender);
+        return true;
     }
 }

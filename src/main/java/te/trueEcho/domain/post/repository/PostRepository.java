@@ -22,10 +22,10 @@ public interface PostRepository {
     List<Post> getRandomPost();
     Comment getParentComment(Long commentId);
 
-    boolean writeComment(Comment comment);
+    Comment writeComment(Comment comment);
     boolean deletePost(Long postId);
     boolean deleteComment(Long commentId);
-    boolean deleteLike(Like like);
+    boolean deleteLike(Like like, Post targetPost);
     void save(Post post);
     void saveLike(Like like);
 
@@ -39,4 +39,6 @@ public interface PostRepository {
     Comment getCommentByIdAndSender(Long contentId, Long senderId);
 
     Like getLikeByIdAndSender(Long contentId, Long id);
+
+    Like getLikeByPostIdAndSender(Long contentId, Long senderId);
 }

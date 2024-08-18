@@ -215,9 +215,11 @@ public class PostServiceImpl implements PostService {
     @Transactional
     @Override
     public LikeUpdateResponse updateLikes(UpdateLikesRequest updateLikesRequest) {
+        log.info("Transaction start: updateLikes");
         final User loginUser = authUtil.getLoginUser();
         if (loginUser == null) {
             log.error("Authentication failed - No login user found");
+            log.info("Transaction rollback: updateLikes");
             return null;
         }
 
@@ -230,15 +232,40 @@ public class PostServiceImpl implements PostService {
                     .post(targetPost)
                     .user(loginUser)
                     .build();
-            postRepository.saveLike(newLike);
-            return LikeUpdateResponse.builder().msg("좋아요 추가에 성공했습니다.").build();
-        } else {
-            Like targetLike = postRepository.findLikeByUserAndPost(loginUser, targetPost);
-            boolean deleted = postRepository.deleteLike(targetLike);
-            if (deleted) {
-                return LikeUpdateResponse.builder().msg("좋아요 삭제에 성공했습니다.").build();
+
+            try {
+                postRepository.saveLike(newLike);
+                log.info("Transaction commit: updateLikes");
+                return LikeUpdateResponse.builder().msg("좋아요 추가에 성공했습니다.").build();
+            } catch (Exception e) {
+                log.error("saveLike error : {}", e.getMessage());
+                log.info("Transaction rollback: updateLikes");
+                return LikeUpdateResponse.builder().msg("좋아요 추가에 실패했습니다.").build();
             }
-            return null;
+        } else {
+            Like targetLike = targetPost.getLikes().stream()
+                    .filter(like -> like.getUser().getId().equals(loginUser.getId()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (targetLike == null) {
+                log.info("Transaction commit: updateLikes");
+                return LikeUpdateResponse.builder().msg("좋아요를 찾을 수 없습니다.").build();
+            }
+
+            boolean deleted = false;
+            try {
+                deleted = postRepository.deleteLike(targetLike, targetPost);
+                if (deleted) {
+                    log.info("Transaction commit: updateLikes");
+                    return LikeUpdateResponse.builder().msg("좋아요 삭제에 성공했습니다.").build();
+                }
+            } catch (Exception e) {
+                log.error("deleteLike failed: {}", e.getMessage());
+                log.info("Transaction rollback: updateLikes");
+                return LikeUpdateResponse.builder().msg("좋아요 삭제에 실패했습니다.").build();
+            }
+            return LikeUpdateResponse.builder().msg("좋아요 삭제에 실패했습니다.").build();
         }
     }
 
@@ -274,11 +301,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public boolean writeComment(WriteCommentRequest writeCommentRequest) {
+    public NewCommentResponse writeComment(WriteCommentRequest writeCommentRequest) {
         User loginUser = authUtil.getLoginUser();
         if (loginUser == null) {
             log.error("Authentication failed - No login user found");
-            return false;
+            return null;
         }
 
         Comment mainComment = null;
@@ -292,7 +319,14 @@ public class PostServiceImpl implements PostService {
         }
 
         Comment newComment = dtoToComment.converter(writeCommentRequest, loginUser, commentedPost, mainComment);
-        return postRepository.writeComment(newComment);
+
+        Comment retrievedNewComment = postRepository.writeComment(newComment);
+
+        if(retrievedNewComment==null){
+            return null;
+        }
+
+        return NewCommentResponse.builder().commentId(retrievedNewComment.getId()).build();
     }
 
     @Transactional

@@ -10,6 +10,7 @@ import te.trueEcho.domain.user.entity.User;
 import te.trueEcho.global.entity.CreatedDateAudit;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -19,7 +20,6 @@ import java.util.List;
 @Table(name = "posts")
 
 public class Post extends CreatedDateAudit {
-
 
     @Id
     @Column(name = "post_id")
@@ -46,10 +46,10 @@ public class Post extends CreatedDateAudit {
     private User user;
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Like> likes;
+    private List<Like> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     @Builder
     public Post(String title, String urlFront, String urlBack, PostStatus status, User user) {
