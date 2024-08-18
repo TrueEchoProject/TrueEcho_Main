@@ -42,3 +42,4 @@ out/
 .env
 src/main/resources/.env
 serviceAccountKey.json
+*/key
