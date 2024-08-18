@@ -21,9 +21,11 @@ jobs:
           token: ${{ secrets.CLOUDTYPE_TOKEN }}
           ghtoken: ${{ secrets.GHP_TOKEN }}
 
+      - name: Create key directory
+        run: mkdir -p src/main/resources/key
 
-      - name: Decode and save Firebase JSON file
-        run: echo ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }} | base64 --decode > src/main/resources/key/serviceAccountKey.json
+      - name: Save Firebase Service Account Key
+        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}" > src/main/resources/key/serviceAccountKey.json
 
       - name: Deploy
         uses: cloudtype-github-actions/deploy@v1
