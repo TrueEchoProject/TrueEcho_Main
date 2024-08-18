@@ -21,13 +21,15 @@ jobs:
           token: ${{ secrets.CLOUDTYPE_TOKEN }}
           ghtoken: ${{ secrets.GHP_TOKEN }}
 
-      # base64 명령어를 설치하는 단계 추가
-      - name: Install base64
-        run: sudo apt-get update && sudo apt-get install -y coreutils
 
-      # Base64로 인코딩된 JSON 파일을 디코딩하여 저장하는 단계 추가
+      - name: Install base64
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y coreutils
+
       - name: Decode and save Firebase JSON file
         run: echo ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }} | base64 --decode > src/main/resources/key/serviceAccountKey.json
+       
 
       - name: Deploy
         uses: cloudtype-github-actions/deploy@v1
